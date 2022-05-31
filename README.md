@@ -6,7 +6,7 @@ Themes
 ---
 Blaze | Chocolate | Dark | Jungle | Light | Midnight | Violet |
 -|-|-|-|-|-|-|
-<img src="https://github.com/imagin-tech/Core/blob/phoenix/Images/Theme-Blaze.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core/blob/phoenix/Images/Theme-Chocolate.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core/blob/phoenix/Images/Theme-Dark.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core/blob/phoenix/Images/Theme-Jungle.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core/blob/phoenix/Images/Theme-Light.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core/blob/phoenix/Images/Theme-Midnight.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core/blob/phoenix/Images/Theme-Violet.png?raw=true" width="64" />
+<img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Blaze.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Chocolate.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Dark.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Jungle.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Light.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Midnight.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Violet.png?raw=true" width="64" />
 
 Languages
 ---
