@@ -12,7 +12,7 @@ Languages
 ---
 English | French | Italian | Japanese |
 -|-|-|-|
- | Français | Italiano | 日本 |
+\- | Français | Italiano | 日本 |
 
 
 [Nuget](https://www.nuget.org/packages/Imagin.Core.WPF/)
