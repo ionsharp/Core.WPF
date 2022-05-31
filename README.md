@@ -1,4 +1,4 @@
-Imagin.Core.WPF ![](https://img.shields.io/badge/style-7.1-blue.svg?style=flat&label=Version)
+﻿Imagin.Core.WPF ![](https://img.shields.io/badge/style-7.1-blue.svg?style=flat&label=Version)
 ---
 Core elements for WPF projects.
 
@@ -10,10 +10,10 @@ Blaze | Chocolate | Dark | Jungle | Light | Midnight | Violet |
 
 Languages
 ---
-- English
-- French
-- Italian
-- Japanese
+English | French | Italian | Japanese |
+-|-|-|-|
+- | Français | Italiano | 日本 |
+
 
 [Nuget](https://www.nuget.org/packages/Imagin.Core.WPF/)
 ---
