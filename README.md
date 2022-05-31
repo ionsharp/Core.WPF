@@ -2,17 +2,17 @@
 ---
 Core elements for WPF projects.
 
-Themes
----
-Blaze | Chocolate | Dark | Jungle | Light | Midnight | Violet |
--|-|-|-|-|-|-|
-<img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Blaze.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Chocolate.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Dark.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Jungle.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Light.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Midnight.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Violet.png?raw=true" width="64" />
-
 Languages
 ---
 English | French | Italian | Japanese |
 -|-|-|-|
 \- | Français | Italiano | 日本 |
+
+Themes
+---
+Blaze | Chocolate | Dark | Jungle | Light | Midnight | Violet |
+-|-|-|-|-|-|-|
+<img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Blaze.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Chocolate.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Dark.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Jungle.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Light.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Midnight.png?raw=true" width="64" /> | <img src="https://github.com/imagin-tech/Core.WPF/blob/main/Themes/Violet.png?raw=true" width="64" />
 
 
 [Nuget](https://www.nuget.org/packages/Imagin.Core.WPF/)
