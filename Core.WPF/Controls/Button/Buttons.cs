@@ -17,37 +17,37 @@ namespace Imagin.Core.Controls
         //...
 
         public static Button[] AbortRetryIgnore 
-            = Array<Button>.New(New("Abort", 0), New("Retry", 1, true), New("Ignore", 2, false, true));
+            = XArray.New(New("Abort", 0), New("Retry", 1, true), New("Ignore", 2, false, true));
 
         public static Button[] Cancel 
-            = Array<Button>.New(New("Cancel", 0, false, true));
+            = XArray.New(New("Cancel", 0, false, true));
 
         public static Button[] Continue 
-            = Array<Button>.New(New("Continue", 0, true));
+            = XArray.New(New("Continue", 0, true));
 
         public static Button[] ContinueCancel 
-            = Array<Button>.New(New("Continue", 0, true), New("Cancel", 1, false, true));
+            = XArray.New(New("Continue", 0, true), New("Cancel", 1, false, true));
 
         public static Button[] Done 
-            = Array<Button>.New(New("Done", 0, true));
+            = XArray.New(New("Done", 0, true));
 
         public static Button[] Ok 
-            = Array<Button>.New(New("Ok", 0, true));
+            = XArray.New(New("Ok", 0, true));
 
         public static Button[] OkCancel 
-            = Array<Button>.New(New("Ok", 0, true), New("Cancel", 1, false, true));
+            = XArray.New(New("Ok", 0, true), New("Cancel", 1, false, true));
 
         public static Button[] SaveCancel 
-            = Array<Button>.New(New("Save", 0, true), New("Cancel", 1, false, true));
+            = XArray.New(New("Save", 0, true), New("Cancel", 1, false, true));
 
         public static Button[] YesCancel 
-            = Array<Button>.New(New("Yes", 0, true), New("Cancel", 1, false, true));
+            = XArray.New(New("Yes", 0, true), New("Cancel", 1, false, true));
 
         public static Button[] YesNo 
-            = Array<Button>.New(New("Yes", 0, true), New("No", 1, false, true));
+            = XArray.New(New("Yes", 0, true), New("No", 1, false, true));
 
         public static Button[] YesNoCancel 
-            = Array<Button>.New(New("Yes", 0, true), New("No", 1), New("Cancel", 2, false, true));
+            = XArray.New(New("Yes", 0, true), New("No", 1), New("Cancel", 2, false, true));
 
         //...
 

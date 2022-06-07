@@ -1,5 +1,4 @@
 ﻿using Imagin.Core.Linq;
-using Imagin.Core.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,24 +8,7 @@ namespace Imagin.Core.Controls
 {
     public class MemberSource : IEnumerable
     {
-        public class Ancestor
-        {
-            public readonly string Name;
-
-            public readonly object Value;
-
-            public Ancestor(string name, object value)
-            {
-                Name = name;
-                Value = value;
-            }
-        }
-
-        //...
-
         readonly Array Items;
-
-        public readonly Ancestor Parent;
 
         /// <summary>
         /// Gets the shared type of all items.
@@ -53,10 +35,8 @@ namespace Imagin.Core.Controls
 
         //...
 
-        public MemberSource(MemberRouteElement input, Ancestor ancestor)
+        public MemberSource(MemberRouteElement input)
         {
-            Parent 
-                = ancestor;
             Items 
                 = input.Values;
             SharedType 

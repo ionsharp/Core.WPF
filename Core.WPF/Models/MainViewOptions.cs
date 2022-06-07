@@ -81,7 +81,7 @@ namespace Imagin.Core.Models
         #endregion
 
         #region Log
-        
+
         bool logEnabled = true;
         [Category(Category.Log)]
         [DisplayName("Enabled")]
@@ -89,6 +89,15 @@ namespace Imagin.Core.Models
         {
             get => logEnabled;
             set => this.Change(ref logEnabled, value);
+        }
+
+        bool logClearOnExit = true;
+        [Category(Category.Log)]
+        [DisplayName("Clear on exit")]
+        public bool LogClearOnExit
+        {
+            get => logClearOnExit;
+            set => this.Change(ref logClearOnExit, value);
         }
 
         #endregion

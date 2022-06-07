@@ -2,6 +2,7 @@
 using Imagin.Core.Numerics;
 using System.Windows;
 using System.Windows.Media;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -29,7 +30,7 @@ namespace Imagin.Core.Controls
         protected override void OnMouseChanged(Vector2<One> input)
         {
             base.OnMouseChanged(input);
-            SetCurrentValue(ValueProperty, (input.Y.Value * 255).Clamp(255).Byte());
+            SetCurrentValue(ValueProperty, Clamp(input.Y.Value * 255, 255).Byte());
         }
 
         protected virtual void OnValueChanged(Value<byte> input) => Mark();

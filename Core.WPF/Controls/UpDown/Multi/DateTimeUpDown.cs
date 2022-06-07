@@ -195,14 +195,14 @@ namespace Imagin.Core.Controls
 
         protected override object OnMaximumCoerced(object input)
         {
-            var result = input.As<DateTime>().Coerce(AbsoluteMaximum, Value);
+            var result = input.As<DateTime>().Clamp(AbsoluteMaximum, Value);
             result = Convert(result, Kind);
             return result;
         }
 
         protected override object OnMinimumCoerced(object input)
         {
-            var result = input.As<DateTime>().Coerce(Value, AbsoluteMinimum);
+            var result = input.As<DateTime>().Clamp(Value, AbsoluteMinimum);
             result = Convert(result, Kind);
             return result;
         }
@@ -239,7 +239,7 @@ namespace Imagin.Core.Controls
 
         protected override object OnValueCoerced(object input)
         {
-            var result = input.As<DateTime>().Coerce(Maximum, Minimum);
+            var result = input.As<DateTime>().Clamp(Maximum, Minimum);
 
             if (Kind != DateTimeKind.Unspecified)
                 result = Convert(result, Kind);

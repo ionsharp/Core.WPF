@@ -56,7 +56,7 @@ namespace Imagin.Core.Controls
     public static class MarkDownBoxExtensions
     {
         public static string[] GetColumns(this string input)
-            => input.Split(Array<char>.New('|'), StringSplitOptions.RemoveEmptyEntries);
+            => input.Split(XArray.New<char>('|'), StringSplitOptions.RemoveEmptyEntries);
 
         //...
 
@@ -539,7 +539,7 @@ namespace Imagin.Core.Controls
                     u += i;
                 }
             }
-            return s ? Array<string>.New(c, u) : null;
+            return s ? XArray.New<string>(c, u) : null;
         }
 
         //...

@@ -138,9 +138,9 @@ namespace Imagin.Core.Collections.Serialization
 
         //...
 
-        public async Task<Result> Export() => await Export(Array<T>.New(this));
+        public async Task<Result> Export() => await Export(XArray.New<T>(this));
 
-        public async Task<Result> Export(T i) => await Export(Array<T>.New(i));
+        public async Task<Result> Export(T i) => await Export(XArray.New<T>(i));
 
         public async Task<Result> Export(IEnumerable<T> items)
         {

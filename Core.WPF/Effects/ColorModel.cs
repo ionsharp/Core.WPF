@@ -1,30 +1,18 @@
 ﻿using Imagin.Core.Colors;
 using Imagin.Core.Converters;
 using Imagin.Core.Linq;
+using Imagin.Core.Numerics;
 using System;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
 
 namespace Imagin.Core.Effects;
 
-[ValueConversion(typeof(int), typeof(string))]
-public class ColorModelConverter : Converters.Converter<int, string>
-{
-    public static ColorModelConverter Default { get; private set; } = new();
-    public ColorModelConverter() { }
-
-    protected override ConverterValue<string> ConvertTo(ConverterData<int> input) => ColorVector.Type[input.Value].Name;
-
-    protected override ConverterValue<int> ConvertBack(ConverterData<string> input) => Nothing.Do;
-}
-
 public class ColorModelEffect : BaseEffect
 {
-
     #region (enum) Modes
 
-    public enum Modes 
+    public enum Modes
     {
         /// <summary>
         /// Given <see cref="Components.X"/>, <see cref="Components.Y"/>, and <see cref="Components.Z"/>, displays original color with corresponding components adjusted.
@@ -46,12 +34,7 @@ public class ColorModelEffect : BaseEffect
 
     public override string FilePath => "ColorModel.ps";
 
-    public static readonly DependencyProperty ProfileIndexProperty = DependencyProperty.Register(nameof(ProfileIndex), typeof(WorkingProfiles), typeof(ColorModelEffect), new FrameworkPropertyMetadata(WorkingProfiles.sRGB));
-    public WorkingProfiles ProfileIndex
-    {
-        get => (WorkingProfiles)GetValue(ProfileIndexProperty);
-        set => SetValue(ProfileIndexProperty, value);
-    }
+    #region Profile
 
     public static readonly DependencyProperty ProfileProperty = DependencyProperty.Register(nameof(Profile), typeof(WorkingProfile), typeof(ColorModelEffect), new FrameworkPropertyMetadata(WorkingProfile.Default.sRGB, OnProfileChanged));
     public WorkingProfile Profile
@@ -60,6 +43,8 @@ public class ColorModelEffect : BaseEffect
         set => SetValue(ProfileProperty, value);
     }
     static void OnProfileChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => sender.As<ColorModelEffect>().OnProfileChanged(e);
+
+    #endregion
 
     #region (C0) Model
 
@@ -115,6 +100,24 @@ public class ColorModelEffect : BaseEffect
 
     #endregion
 
+    #region (C22) Shape
+
+    internal static readonly DependencyProperty ActualShapeProperty = DependencyProperty.Register(nameof(ActualShape), typeof(double), typeof(ColorModelEffect), new FrameworkPropertyMetadata((double)(int)Shapes2.Square, PixelShaderConstantCallback(22)));
+    internal double ActualShape
+    {
+        get => (double)GetValue(ActualShapeProperty);
+        set => SetValue(ActualShapeProperty, value);
+    }
+
+    public static readonly DependencyProperty ViewProperty = DependencyProperty.Register(nameof(Shape), typeof(Shapes2), typeof(ColorModelEffect), new FrameworkPropertyMetadata(Shapes2.Square));
+    public Shapes2 Shape
+    {
+        get => (Shapes2)GetValue(ViewProperty);
+        set => SetValue(ViewProperty, value);
+    }
+
+    #endregion
+
     #region (C3-5) X|Y|Z
 
     //(C3)
@@ -146,7 +149,7 @@ public class ColorModelEffect : BaseEffect
 
     #endregion
 
-    //(C6)
+    #region (C6) Companding
 
     public static readonly DependencyProperty CompandingProperty = DependencyProperty.Register(nameof(Companding), typeof(double), typeof(ColorModelEffect), new FrameworkPropertyMetadata(4.0, PixelShaderConstantCallback(6)));
     /// <summary>The default is <see cref="WorkingProfile.Default.sRGB"/>.</summary>
@@ -156,7 +159,9 @@ public class ColorModelEffect : BaseEffect
         set => SetValue(CompandingProperty, value);
     }
 
-    //(C7)
+    #endregion
+
+    #region (C7) Gamma
 
     public static readonly DependencyProperty GammaProperty = DependencyProperty.Register(nameof(Gamma), typeof(double), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(double), PixelShaderConstantCallback(7)));
     public double Gamma
@@ -164,6 +169,8 @@ public class ColorModelEffect : BaseEffect
         get => (double)GetValue(GammaProperty);
         set => SetValue(GammaProperty, value);
     }
+
+    #endregion
 
     #region (C8-9) White(X|Y)
 
@@ -313,9 +320,148 @@ public class ColorModelEffect : BaseEffect
 
     #endregion
 
+    //...
+
+    #region (C23-25) LABk_LMSk_(x|y|z)
+
+    //(C23)
+
+    public static readonly DependencyProperty LABk_LMSk_xProperty = DependencyProperty.Register(nameof(LABk_LMSk_x), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(23)));
+    public System.Windows.Media.Media3D.Point3D LABk_LMSk_x
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LABk_LMSk_xProperty);
+        set => SetValue(LABk_LMSk_xProperty, value);
+    }
+
+    //(C24)
+
+    public static readonly DependencyProperty LABk_LMSk_yProperty = DependencyProperty.Register(nameof(LABk_LMSk_y), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(24)));
+    public System.Windows.Media.Media3D.Point3D LABk_LMSk_y
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LABk_LMSk_yProperty);
+        set => SetValue(LABk_LMSk_yProperty, value);
+    }
+
+    //(C25)
+
+    public static readonly DependencyProperty LABk_LMSk_zProperty = DependencyProperty.Register(nameof(LABk_LMSk_z), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(25)));
+    public System.Windows.Media.Media3D.Point3D LABk_LMSk_z
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LABk_LMSk_zProperty);
+        set => SetValue(LABk_LMSk_zProperty, value);
+    }
+
     #endregion
 
-    #region ColorModelEffect
+    #region (C26-28) LMSk_LABk_(x|y|z)
+
+    //(C26)
+
+    public static readonly DependencyProperty LMSk_LABk_xProperty = DependencyProperty.Register(nameof(LMSk_LABk_x), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(26)));
+    public System.Windows.Media.Media3D.Point3D LMSk_LABk_x
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LMSk_LABk_xProperty);
+        set => SetValue(LMSk_LABk_xProperty, value);
+    }
+
+    //(C27)
+
+    public static readonly DependencyProperty LMSk_LABk_yProperty = DependencyProperty.Register(nameof(LMSk_LABk_y), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(27)));
+    public System.Windows.Media.Media3D.Point3D LMSk_LABk_y
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LMSk_LABk_yProperty);
+        set => SetValue(LMSk_LABk_yProperty, value);
+    }
+
+    //(C28)
+
+    public static readonly DependencyProperty LMSk_LABk_zProperty = DependencyProperty.Register(nameof(LMSk_LABk_z), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(28)));
+    public System.Windows.Media.Media3D.Point3D LMSk_LABk_z
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LMSk_LABk_zProperty);
+        set => SetValue(LMSk_LABk_zProperty, value);
+    }
+
+    #endregion
+
+    #region (C29-31) LMSk_XYZk_(x|y|z)
+
+    //(C29)
+
+    public static readonly DependencyProperty LMSk_XYZk_xProperty = DependencyProperty.Register(nameof(LMSk_XYZk_x), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(29)));
+    public System.Windows.Media.Media3D.Point3D LMSk_XYZk_x
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LMSk_XYZk_xProperty);
+        set => SetValue(LMSk_XYZk_xProperty, value);
+    }
+
+    //(C30)
+
+    public static readonly DependencyProperty LMSk_XYZk_yProperty = DependencyProperty.Register(nameof(LMSk_XYZk_y), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(30)));
+    public System.Windows.Media.Media3D.Point3D LMSk_XYZk_y
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LMSk_XYZk_yProperty);
+        set => SetValue(LMSk_XYZk_yProperty, value);
+    }
+
+    //(C31)
+
+    public static readonly DependencyProperty LMSk_XYZk_zProperty = DependencyProperty.Register(nameof(LMSk_XYZk_z), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(31)));
+    public System.Windows.Media.Media3D.Point3D LMSk_XYZk_z
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(LMSk_XYZk_zProperty);
+        set => SetValue(LMSk_XYZk_zProperty, value);
+    }
+
+    #endregion
+
+    #region (C32-34) XYZk_LMSk_(x|y|z)
+
+    //(C32)
+
+    public static readonly DependencyProperty XYZk_LMSk_xProperty = DependencyProperty.Register(nameof(XYZk_LMSk_x), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(32)));
+    public System.Windows.Media.Media3D.Point3D XYZk_LMSk_x
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(XYZk_LMSk_xProperty);
+        set => SetValue(XYZk_LMSk_xProperty, value);
+    }
+
+    //(C33)
+
+    public static readonly DependencyProperty XYZk_LMSk_yProperty = DependencyProperty.Register(nameof(XYZk_LMSk_y), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(33)));
+    public System.Windows.Media.Media3D.Point3D XYZk_LMSk_y
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(XYZk_LMSk_yProperty);
+        set => SetValue(XYZk_LMSk_yProperty, value);
+    }
+
+    //(C34)
+
+    public static readonly DependencyProperty XYZk_LMSk_zProperty = DependencyProperty.Register(nameof(XYZk_LMSk_z), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(34)));
+    public System.Windows.Media.Media3D.Point3D XYZk_LMSk_z
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(XYZk_LMSk_zProperty);
+        set => SetValue(XYZk_LMSk_zProperty, value);
+    }
+
+    #endregion
+
+    //...
+
+    #region (C35) xyYC_exy
+
+    public static readonly DependencyProperty xyYC_exyProperty = DependencyProperty.Register(nameof(xyYC_exy), typeof(System.Windows.Media.Media3D.Point3D), typeof(ColorModelEffect), new FrameworkPropertyMetadata(default(System.Windows.Media.Media3D.Point3D), PixelShaderConstantCallback(35)));
+    public System.Windows.Media.Media3D.Point3D xyYC_exy
+    {
+        get => (System.Windows.Media.Media3D.Point3D)GetValue(xyYC_exyProperty);
+        set => SetValue(xyYC_exyProperty, value);
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Constructor
 
     public ColorModelEffect() : base()
     {
@@ -325,9 +471,8 @@ public class ColorModelEffect : BaseEffect
             $"{nameof(Model)}", this, BindingMode.OneWay, new SimpleConverter<Type, double>(i => ColorVector.Index[i]));
         this.Bind(ActualModeProperty,
             $"{nameof(Mode)}", this, BindingMode.OneWay, new SimpleConverter<Modes, double>(i => (int)i));
-        
-        
-        this.Bind(ProfileProperty, $"{nameof(ProfileIndex)}", this, BindingMode.OneWay, new SimpleConverter<WorkingProfiles, WorkingProfile>(i => (WorkingProfile)typeof(WorkingProfile.Default).GetProperty($"{i}", BindingFlags.Public | BindingFlags.Static).GetValue(null)));
+        this.Bind(ActualShapeProperty,
+            $"{nameof(Shape)}", this, BindingMode.OneWay, new SimpleConverter<Shapes2, double>(i => (int)i));
 
         //...
 
@@ -335,6 +480,7 @@ public class ColorModelEffect : BaseEffect
         UpdateShaderValue(ActualComponentProperty);
 
         UpdateShaderValue(ActualModeProperty);
+        UpdateShaderValue(ActualShapeProperty);
 
         UpdateShaderValue(XProperty);
         UpdateShaderValue(YProperty);
@@ -364,6 +510,47 @@ public class ColorModelEffect : BaseEffect
         UpdateShaderValue(XYZ_RGB_yProperty);
         UpdateShaderValue(XYZ_RGB_zProperty);
 
+        //...
+
+        UpdateShaderValue(LABk_LMSk_xProperty);
+        UpdateShaderValue(LABk_LMSk_yProperty);
+        UpdateShaderValue(LABk_LMSk_zProperty);
+
+        UpdateShaderValue(LMSk_LABk_xProperty);
+        UpdateShaderValue(LMSk_LABk_yProperty);
+        UpdateShaderValue(LMSk_LABk_zProperty);
+
+        UpdateShaderValue(LMSk_XYZk_xProperty);
+        UpdateShaderValue(LMSk_XYZk_yProperty);
+        UpdateShaderValue(LMSk_XYZk_zProperty);
+
+        UpdateShaderValue(XYZk_LMSk_xProperty);
+        UpdateShaderValue(XYZk_LMSk_yProperty);
+        UpdateShaderValue(XYZk_LMSk_zProperty);
+
+        //...
+
+        SetCurrentValue(LABk_LMSk_xProperty, GetPoint(Labk.LAB_LMS, 0));
+        SetCurrentValue(LABk_LMSk_yProperty, GetPoint(Labk.LAB_LMS, 1));
+        SetCurrentValue(LABk_LMSk_zProperty, GetPoint(Labk.LAB_LMS, 2));
+
+        SetCurrentValue(LMSk_LABk_xProperty, GetPoint(Labk.LMS_LAB, 0));
+        SetCurrentValue(LMSk_LABk_yProperty, GetPoint(Labk.LMS_LAB, 1));
+        SetCurrentValue(LMSk_LABk_zProperty, GetPoint(Labk.LMS_LAB, 2));
+
+        SetCurrentValue(LMSk_XYZk_xProperty, GetPoint(Labk.LMS_XYZ, 0));
+        SetCurrentValue(LMSk_XYZk_yProperty, GetPoint(Labk.LMS_XYZ, 1));
+        SetCurrentValue(LMSk_XYZk_zProperty, GetPoint(Labk.LMS_XYZ, 2));
+
+        SetCurrentValue(XYZk_LMSk_xProperty, GetPoint(Labk.XYZ_LMS, 0));
+        SetCurrentValue(XYZk_LMSk_yProperty, GetPoint(Labk.XYZ_LMS, 1));
+        SetCurrentValue(XYZk_LMSk_zProperty, GetPoint(Labk.XYZ_LMS, 2));
+
+        //...
+
+        UpdateShaderValue(xyYC_exyProperty);
+        SetCurrentValue(xyYC_exyProperty, new System.Windows.Media.Media3D.Point3D(xyYC.Colors[xyYC.MinHue][1], xyYC.Colors[xyYC.MinHue][2], xyYC.Colors[xyYC.MinHue][3]));
+
         OnProfileChanged(new(Profile));
     }
 
@@ -371,32 +558,14 @@ public class ColorModelEffect : BaseEffect
 
     #region Methods
 
-    int GetCompandingIndex(ICompanding input)
-    {   
-        if (input is GammaCompanding)
-            return 0;
-
-        if (input is LCompanding)
-            return 1;
-
-        if (input is Rec709Companding)
-            return 2;
-
-        if (input is Rec2020Companding)
-            return 3;
-
-        if (input is sRGBCompanding)
-            return 4;
-
-        return 0;
-    }
+    System.Windows.Media.Media3D.Point3D GetPoint(Matrix m, int y) => new System.Windows.Media.Media3D.Point3D(m[y][0], m[y][1], m[y][2]);
 
     protected virtual void OnProfileChanged(Value<WorkingProfile> input)
     {
-        SetCurrentValue(CompandingProperty, 
-            GetCompandingIndex(input.New.Companding).Double());
+        SetCurrentValue(CompandingProperty,
+            input.New.Compression.GetAttribute<IndexAttribute>().Index.Double());
         SetCurrentValue(GammaProperty, 
-            input.New.Companding is GammaCompanding gammaCompanding ? gammaCompanding.Gamma : 0d);
+            input.New.Compression is GammaCompression gammaCompanding ? gammaCompanding.Gamma : 0.0);
 
         var white = Illuminant.GetChromacity(input.New.White);
         SetCurrentValue(WhiteXProperty, white.X);
@@ -405,32 +574,30 @@ public class ColorModelEffect : BaseEffect
         //...
 
         var m_RGB_XYZ 
-            = WorkingProfile.GetRxGyBz(input.New.Chromacity, input.New.White);
+            = WorkingProfile.GetRxGyBz(input.New.Primary, input.New.White);
         var m_XYZ_LMS 
-            = LMSTransformationMatrix.VonKriesHPEAdjusted;
+            = LMS.Transform.VonKriesHPEAdjusted;
 
         var m_LMS_XYZ 
             = m_XYZ_LMS.Invert3By3();
         var m_XYZ_RGB 
             = m_RGB_XYZ.Invert3By3();
 
-        System.Windows.Media.Media3D.Point3D f(Matrix m, int y) => new System.Windows.Media.Media3D.Point3D(m[y][0], m[y][1], m[y][2]);
+        SetCurrentValue(LMS_XYZ_xProperty, GetPoint(m_LMS_XYZ, 0));
+        SetCurrentValue(LMS_XYZ_yProperty, GetPoint(m_LMS_XYZ, 1));
+        SetCurrentValue(LMS_XYZ_zProperty, GetPoint(m_LMS_XYZ, 2));
 
-        SetCurrentValue(LMS_XYZ_xProperty, f(m_LMS_XYZ, 0));
-        SetCurrentValue(LMS_XYZ_yProperty, f(m_LMS_XYZ, 1));
-        SetCurrentValue(LMS_XYZ_zProperty, f(m_LMS_XYZ, 2));
+        SetCurrentValue(RGB_XYZ_xProperty, GetPoint(m_RGB_XYZ, 0));
+        SetCurrentValue(RGB_XYZ_yProperty, GetPoint(m_RGB_XYZ, 1));
+        SetCurrentValue(RGB_XYZ_zProperty, GetPoint(m_RGB_XYZ, 2));
 
-        SetCurrentValue(RGB_XYZ_xProperty, f(m_RGB_XYZ, 0));
-        SetCurrentValue(RGB_XYZ_yProperty, f(m_RGB_XYZ, 1));
-        SetCurrentValue(RGB_XYZ_zProperty, f(m_RGB_XYZ, 2));
+        SetCurrentValue(XYZ_LMS_xProperty, GetPoint(m_XYZ_LMS, 0));
+        SetCurrentValue(XYZ_LMS_yProperty, GetPoint(m_XYZ_LMS, 1));
+        SetCurrentValue(XYZ_LMS_zProperty, GetPoint(m_XYZ_LMS, 2));
 
-        SetCurrentValue(XYZ_LMS_xProperty, f(m_XYZ_LMS, 0));
-        SetCurrentValue(XYZ_LMS_yProperty, f(m_XYZ_LMS, 1));
-        SetCurrentValue(XYZ_LMS_zProperty, f(m_XYZ_LMS, 2));
-
-        SetCurrentValue(XYZ_RGB_xProperty, f(m_XYZ_RGB, 0));
-        SetCurrentValue(XYZ_RGB_yProperty, f(m_XYZ_RGB, 1));
-        SetCurrentValue(XYZ_RGB_zProperty, f(m_XYZ_RGB, 2));
+        SetCurrentValue(XYZ_RGB_xProperty, GetPoint(m_XYZ_RGB, 0));
+        SetCurrentValue(XYZ_RGB_yProperty, GetPoint(m_XYZ_RGB, 1));
+        SetCurrentValue(XYZ_RGB_zProperty, GetPoint(m_XYZ_RGB, 2));
     }
 
     #endregion

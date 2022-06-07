@@ -421,7 +421,6 @@
                         GroupName="Category"
                         HeaderVisibility="Collapsed"
                         Margin="10,2"
-                        MemberOptionsVisibility="Collapsed"
                         Orientation="Horizontal"
                         Source="{local:SourceFilterBinding Common:ToolAttribute}"
                         VerticalAlignment="Center"/>

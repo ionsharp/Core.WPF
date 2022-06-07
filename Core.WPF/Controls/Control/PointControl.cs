@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -113,7 +114,7 @@ namespace Imagin.Core.Controls
             if (targetPoint != null)
             {
                 var point = e.GetPosition(this);
-                targetPoint.X = (point.X / Zoom).Clamp(1); targetPoint.Y = (point.Y / Zoom).Clamp(1);
+                targetPoint.X = Clamp(point.X / Zoom, 1); targetPoint.Y = Clamp(point.Y / Zoom, 1);
             }
         }
 

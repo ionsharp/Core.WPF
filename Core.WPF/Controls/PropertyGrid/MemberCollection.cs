@@ -106,7 +106,7 @@ namespace Imagin.Core.Controls
         //... (private)
 
         /// <summary>
-        /// If <see cref="FieldInfo"/>, must be public. If <see cref="PropertyInfo"/>, must have <see langword="public"/> getter (with <see langword="internal"/>, <see langword="private"/>, <see langword="protected"/>, or <see langword="public"/> setter).
+        /// If <see cref="FieldInfo"/>, must be public. If <see cref="PropertyInfo"/>, cannot be indexor and must have <see langword="public"/> getter (with <see langword="internal"/>, <see langword="private"/>, <see langword="protected"/>, or <see langword="public"/> setter).
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -125,7 +125,7 @@ namespace Imagin.Core.Controls
                 if (PropertyGrid.ForbiddenTypes.Contains(b.PropertyType))
                     return false;
 
-                return b.GetGetMethod(false) != null;
+                return b.GetIndexParameters()?.Length == 0 && b.GetGetMethod(false) != null;
             }
 
             return false;
@@ -315,13 +315,6 @@ namespace Imagin.Core.Controls
         }
 
         //... (internal)
-
-        internal MemberSource GetSource(MemberRouteElement input)
-        {
-            var a = ParentControl.Route.LastOrDefault(0) as MemberRouteElement;
-            var b = ParentControl.Route.LastOrDefault(1) as MemberRouteElement;
-            return new MemberSource(input, input.Name == null || b == null ? null : new MemberSource.Ancestor(a.Name, b.Value));
-        }
 
         internal async Task Reload(LoadType type, MemberSource source, MemberFilter filter, Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
         {

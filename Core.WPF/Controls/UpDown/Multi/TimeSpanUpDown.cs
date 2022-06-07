@@ -4,6 +4,7 @@ using Imagin.Core.Time;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -183,8 +184,8 @@ namespace Imagin.Core.Controls
                     index++;
                 }
 
-                start = start.Clamp(length);
-                length = (end - start).Clamp(length);
+                start = Clamp(start, length);
+                length = Clamp(end - start, length);
 
                 if (SelectionStart!= start && SelectionLength != length)
                 {
@@ -199,9 +200,9 @@ namespace Imagin.Core.Controls
 
         //...
 
-        protected override object OnMaximumCoerced(object input) => input.As<TimeSpan>().Coerce(AbsoluteMaximum, Value);
+        protected override object OnMaximumCoerced(object input) => input.As<TimeSpan>().Clamp(AbsoluteMaximum, Value);
 
-        protected override object OnMinimumCoerced(object input) => input.As<TimeSpan>().Coerce(Value, AbsoluteMinimum);
+        protected override object OnMinimumCoerced(object input) => input.As<TimeSpan>().Clamp(Value, AbsoluteMinimum);
 
         //...
 
@@ -222,7 +223,7 @@ namespace Imagin.Core.Controls
 
         //...
 
-        protected override object OnValueCoerced(object input) => input.As<TimeSpan>().Coerce(Maximum, Minimum);
+        protected override object OnValueCoerced(object input) => input.As<TimeSpan>().Clamp(Maximum, Minimum);
 
         //...
 

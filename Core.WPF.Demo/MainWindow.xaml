@@ -189,7 +189,6 @@
                             </local:Element>
                             <local:Element Category="ColorSelector" Type="i:ComponentSelector">
                                 <i:ComponentSelector
-                                    Alpha="255"
                                     Model="{i:RemoteBinding RemoteSource=MainViewModel, Path=ColorConverter.VisualModel}"
                                     X="{i:RemoteBinding RemoteSource=MainViewModel, Path=Color.X, Mode=TwoWay}"
                                     Y="{i:RemoteBinding RemoteSource=MainViewModel, Path=Color.Y, Mode=TwoWay}"
@@ -197,7 +196,6 @@
                             </local:Element>
                             <local:Element Category="ColorSelector" Type="i:ComponentSlider">
                                 <i:ComponentSlider
-                                    Alpha="255"
                                     Component="{i:RemoteBinding RemoteSource=MainViewModel, Path=Color.Component}"
                                     Model="{i:RemoteBinding RemoteSource=MainViewModel, Path=Color.Model}"
                                     X="{i:RemoteBinding RemoteSource=MainViewModel, Path=Color.X, Mode=TwoWay}"

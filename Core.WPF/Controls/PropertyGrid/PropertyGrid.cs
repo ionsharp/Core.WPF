@@ -1,20 +1,28 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Collections.ObjectModel;
+using Imagin.Core.Configuration;
 using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
+using Imagin.Core.Media;
+using Imagin.Core.Models;
+using Imagin.Core.Numerics;
+using Imagin.Core.Text;
 using Imagin.Core.Threading;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Imagin.Core.Controls
 {
@@ -181,6 +189,138 @@ namespace Imagin.Core.Controls
         readonly CancelTask<Value> loadTask;
 
         readonly Handle handleFilter = false;
+
+        #endregion
+
+        #region Constants
+
+        #region DefaultTypes
+
+        /// <summary>
+        /// Types that have a default visual representation.
+        /// </summary>
+        public static List<Type> DefaultTypes = new()
+        {
+            typeof(Alignment),
+            typeof(Array),
+            typeof(bool),
+            typeof(Bullets),
+            typeof(byte),
+            typeof(CardinalDirection),
+            typeof(System.Drawing.Color),
+            typeof(System.Windows.Media.Color),
+            typeof(DateTime),
+            typeof(decimal),
+            typeof(double),
+            typeof(DoubleMatrix),
+            typeof(Enum),
+            typeof(float),
+            typeof(FontFamily),
+            typeof(FontStyle),
+            typeof(FontWeight),
+            typeof(Gradient),
+            typeof(GradientStepCollection),
+            typeof(Unit),
+            typeof(Guid),
+            typeof(Hexadecimal),
+            typeof(ICommand),
+            typeof(IEnumerable),
+            typeof(IList),
+            typeof(int),
+            typeof(Int32Pattern),
+            typeof(ItemCollection),
+            typeof(long),
+            typeof(Layouts),
+            typeof(LinearGradientBrush),
+            typeof(ListCollectionView),
+            typeof(NetworkCredential),
+            typeof(object),
+            typeof(PanelCollection),
+            typeof(PointCollection),
+            typeof(RadialGradientBrush),
+            typeof(short),
+            typeof(SolidColorBrush),
+            typeof(string),
+            typeof(StringColor),
+            typeof(ApplicationResources),
+            typeof(Thickness),
+            typeof(TimeSpan),
+            typeof(TimeZoneInfo),
+            typeof(Type),
+            typeof(UDouble),
+            typeof(UIElementCollection),
+            typeof(uint),
+            typeof(ulong),
+            typeof(Uri),
+            typeof(ushort),
+            typeof(Version),
+            typeof(VisualCollection),
+        };
+
+        #endregion
+
+        #region AssignableTypes
+
+        /// <summary>
+        /// Types that can be assigned other (derived) types.
+        /// </summary>
+        public static Dictionary<Type, Type[]> AssignableTypes = new()
+        {
+            { typeof(Brush), XArray.New<Type>(typeof(LinearGradientBrush), typeof(RadialGradientBrush), typeof(SolidColorBrush)) }
+        };
+
+        #endregion
+
+        #region ForbiddenTypes
+
+        /// <summary>
+        /// Types to avoid.
+        /// </summary>
+        public static List<Type> ForbiddenTypes = new()
+        {
+            typeof(ItemCollection),
+            typeof(UIElementCollection),
+            typeof(VisualCollection),
+        };
+
+        #endregion
+
+        #region IndeterminableTypes
+
+        /// <summary>
+        /// Types where an indeterminable state can be represented visually.
+        /// </summary>
+        public static List<Type> IndeterminableTypes = new()
+        {
+            typeof(bool),
+            typeof(byte),
+            typeof(DateTime),
+            typeof(decimal),
+            typeof(double),
+            typeof(Enum),
+            typeof(FontFamily),
+            typeof(FontStyle),
+            typeof(FontWeight),
+            typeof(Guid),
+            typeof(ICommand),
+            typeof(short),
+            typeof(int),
+            typeof(long),
+            typeof(object),
+            typeof(float),
+            typeof(string),
+            typeof(TimeSpan),
+            typeof(TimeZoneInfo),
+            typeof(Type),
+            typeof(UDouble),
+            typeof(ushort),
+            typeof(uint),
+            typeof(ulong),
+            typeof(Uri),
+            typeof(Version),
+        };
+
+        #endregion
 
         #endregion
 
@@ -529,19 +669,6 @@ namespace Imagin.Core.Controls
 
         #endregion
 
-        //...
-
-        #region MemberOptionsVisibility
-
-        public static readonly DependencyProperty MemberOptionsVisibilityProperty = DependencyProperty.Register(nameof(MemberOptionsVisibility), typeof(Visibility), typeof(PropertyGrid), new FrameworkPropertyMetadata(Visibility.Visible));
-        public Visibility MemberOptionsVisibility
-        {
-            get => (Visibility)GetValue(MemberOptionsVisibilityProperty);
-            set => SetValue(MemberOptionsVisibilityProperty, value);
-        }
-
-        #endregion
-
         #region (ReadOnly) Members
 
         static readonly DependencyPropertyKey MembersKey = DependencyProperty.RegisterReadOnly(nameof(Members), typeof(MemberCollection), typeof(PropertyGrid), new FrameworkPropertyMetadata(null));
@@ -587,7 +714,7 @@ namespace Imagin.Core.Controls
         static void OnNameColumnVisibilityChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<PropertyGrid>().OnNameColumnVisibilityChanged(new Value<Visibility>(e));
 
         #endregion
-
+        
         #region NameColumnWidth
 
         public static readonly DependencyProperty NameColumnWidthProperty = DependencyProperty.Register(nameof(NameColumnWidth), typeof(DataGridLength), typeof(PropertyGrid), new FrameworkPropertyMetadata(default(DataGridLength)));
@@ -606,6 +733,17 @@ namespace Imagin.Core.Controls
         {
             get => (DataTemplate)GetValue(NameTemplateProperty);
             set => SetValue(NameTemplateProperty, value);
+        }
+
+        #endregion
+
+        #region OptionsButtonVisibility
+
+        public static readonly DependencyProperty OptionsButtonVisibilityProperty = DependencyProperty.Register(nameof(OptionsButtonVisibility), typeof(Visibility), typeof(PropertyGrid), new FrameworkPropertyMetadata(Visibility.Visible));
+        public Visibility OptionsButtonVisibility
+        {
+            get => (Visibility)GetValue(OptionsButtonVisibilityProperty);
+            set => SetValue(OptionsButtonVisibilityProperty, value);
         }
 
         #endregion
@@ -1043,9 +1181,9 @@ namespace Imagin.Core.Controls
                     var oldSource
                         = Members.Source;
                     var newSource
-                        = Members.GetSource(j.Element);
+                        = new MemberSource(j.Element);
 
-                    ActualSource 
+                    ActualSource
                         = j.Element.Value;
                     IsIndeterminate
                         = newSource.Indeterminate;
@@ -1143,10 +1281,10 @@ namespace Imagin.Core.Controls
                 }
                 if (i.IsFeatured)
                 {
-                    if (i.Attributes.Get<FeaturedAttribute>()?.Where == AboveBelow.Above)
+                    if (i.Attributes.GetFirst<FeaturedAttribute>()?.Where == AboveBelow.Above)
                         FeaturedAbove.Add(i);
 
-                    if (i.Attributes.Get<FeaturedAttribute>()?.Where == AboveBelow.Below)
+                    if (i.Attributes.GetFirst<FeaturedAttribute>()?.Where == AboveBelow.Below)
                         FeaturedBelow.Add(i);
 
                     if (!FeaturedRepeats)
@@ -1353,13 +1491,8 @@ namespace Imagin.Core.Controls
 
         #region Commands
 
-        ICommand memberDefaultCommand;
-        public ICommand MemberDefaultCommand => memberDefaultCommand
-        ??= new RelayCommand<MemberModel>
-            (i => Try.Invoke(() => i.Value = i.Type.GetDefaultValue(), e => Log.Write<PropertyGrid>(e)), i => i?.Type?.IsAbstract == false && !i.IsReadOnly);
-
-        ICommand memberNewCommand;
-        public ICommand MemberNewCommand => memberNewCommand
+        ICommand memberCreateCommand;
+        public ICommand MemberCreateCommand => memberCreateCommand
             ??= new RelayCommand<DoubleReference>(i =>
             {
                 if (i.First is MemberModel j)
@@ -1370,9 +1503,14 @@ namespace Imagin.Core.Controls
             },
             i => i?.First is MemberModel j && !j.IsReadOnly && i.Second is Type k && j.AssignableTypes?.Contains(k) == true);
 
-        ICommand memberNullCommand;
-        public ICommand MemberNullCommand => memberNullCommand
+        ICommand memberClearCommand;
+        public ICommand MemberClearCommand => memberClearCommand
             ??= new RelayCommand<MemberModel>(i => i.Value = null, i => i is not null && !i.IsReadOnly && (i.Type?.IsValueType == false || i.Type?.IsNullable() == true) && i.Value is not null);
+
+        ICommand memberDefaultCommand;
+        public ICommand MemberDefaultCommand => memberDefaultCommand
+        ??= new RelayCommand<MemberModel>
+            (i => Try.Invoke(() => i.Value = i.Type.GetDefaultValue(), e => Log.Write<PropertyGrid>(e)), i => i?.Type?.IsAbstract == false && !i.IsReadOnly);
 
         ICommand memberResetCommand;
         public ICommand MemberResetCommand => memberResetCommand
@@ -1380,6 +1518,8 @@ namespace Imagin.Core.Controls
             {
                 if (i.Value is IReset j)
                     j.Reset();
+
+                else i.Reset();
             }, 
             i => i is not null && i.Value is IReset);
 

@@ -78,7 +78,6 @@
                 GroupName="Category"
                 HeaderVisibility="Collapsed"
                 Margin="4"
-                MemberOptionsVisibility="Collapsed"
                 Orientation="Horizontal"
                 Source="{local:SourceFilterBinding Common:ToolAttribute}"/>
         </Border>
@@ -121,7 +120,6 @@
                         GroupName="Category"
                         HeaderVisibility="Collapsed"
                         Margin="10,2"
-                        MemberOptionsVisibility="Collapsed"
                         Orientation="Horizontal"
                         Source="{local:SourceFilterBinding ActiveDocument.Status, local:StatusAttribute}"/>
                 </Grid>

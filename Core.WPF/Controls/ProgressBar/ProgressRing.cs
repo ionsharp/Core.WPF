@@ -101,7 +101,7 @@ namespace Imagin.Core.Controls
             double targetAngle
                 = Value / Maximum * 359.999;
             double duration
-                = (currentAngle - targetAngle).Absolute() / 359.999 * 500;
+                = (currentAngle - targetAngle).Abs() / 359.999 * 500;
 
             var animation = new DoubleAnimation(currentAngle, targetAngle, TimeSpan.FromMilliseconds(duration > 0 ? duration : 10));
             BeginAnimation(AngleProperty, animation, HandoffBehavior.Compose);

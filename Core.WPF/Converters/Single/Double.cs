@@ -2,6 +2,7 @@
 using Imagin.Core.Numerics;
 using System;
 using System.Windows.Data;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Converters
 {
@@ -31,9 +32,9 @@ namespace Imagin.Core.Converters
         public static InverseDoubleConverter Default { get; private set; } = new();
         InverseDoubleConverter() { }
 
-        protected override ConverterValue<double> ConvertTo(ConverterData<double> input) => 1 - input.Value.Clamp(1);
+        protected override ConverterValue<double> ConvertTo(ConverterData<double> input) => 1 - Clamp(input.Value, 1);
 
-        protected override ConverterValue<double> ConvertBack(ConverterData<double> input) => 1 - input.Value.Clamp(1);
+        protected override ConverterValue<double> ConvertBack(ConverterData<double> input) => 1 - Clamp(input.Value, 1);
     }
 
     [ValueConversion(typeof(double), typeof(double))]

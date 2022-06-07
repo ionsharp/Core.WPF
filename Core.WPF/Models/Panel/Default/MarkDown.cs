@@ -110,7 +110,7 @@ namespace Imagin.Core.Models
         [Tool]
         public ICommand OpenCommand => openCommand ??= new RelayCommand(() =>
         {
-            if (StorageWindow.Show(out string filePath, "Open...", StorageWindowModes.OpenFile, Array<string>.New("md")))
+            if (StorageWindow.Show(out string filePath, "Open...", StorageWindowModes.OpenFile, XArray.New<string>("md")))
                 Open(filePath);
         },
         () => true);
@@ -122,7 +122,7 @@ namespace Imagin.Core.Models
         [Tool]
         public ICommand SaveCommand => saveCommand ??= new RelayCommand(() =>
         {
-            if (StorageWindow.Show(out string filePath, "Save...", StorageWindowModes.SaveFile, Array<string>.New("md")))
+            if (StorageWindow.Show(out string filePath, "Save...", StorageWindowModes.SaveFile, XArray.New<string>("md")))
                 Save(filePath);
         },
         () => true);

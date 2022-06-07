@@ -181,7 +181,7 @@ namespace Imagin.Core.Controls
 
         protected virtual void OnIntervalChanged(Value<TimeSpan> input)
         {
-            timer.Interval = input.New.Coerce(TimeSpan.MaxValue, TimeSpan.FromSeconds(3));
+            timer.Interval = input.New.Clamp(TimeSpan.MaxValue, TimeSpan.FromSeconds(3));
         }
 
         protected virtual void OnPathChanged(Value<string> input)

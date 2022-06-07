@@ -122,14 +122,8 @@ namespace Imagin.Core.Configuration
                     error = new(e);
                 });
 
-                if (MainViewModel is IDockViewModel dockViewModel)
-                {
-                    if (dockViewModel.Panels.FirstOrDefault<LogPanel>() is LogPanel logPanel)
-                    {
-                        if (logPanel.ClearOnApplicationExit)
-                            Log.Clear();
-                    }
-                }
+                if (Options.LogClearOnExit)
+                    Log.Clear();
 
                 Try.Invoke(() => Log.Save(), e => error = new(e));
             });

@@ -38,7 +38,7 @@ namespace Imagin.Core.Controls
 
         public event LayoutSavedEventHandler Saved;
 
-        static readonly XmlSerializer Serializer = new(typeof(DockLayout), new XmlAttributeOverrides(), Array<Type>.New(typeof(DoubleSize), typeof(ControlLength), typeof(ControlLengthUnit), typeof(DockLayout), typeof(DockLayoutDocumentGroup), typeof(DockLayoutElement), typeof(DockLayoutGroup), typeof(DockLayoutPanel), typeof(DockLayoutPanelGroup), typeof(DockLayoutWindow), typeof(Point2D)), new XmlRootAttribute(nameof(Layout)), $"{nameof(Imagin)}.{nameof(Core)}.{nameof(Controls)}");
+        static readonly XmlSerializer Serializer = new(typeof(DockLayout), new XmlAttributeOverrides(), XArray.New<Type>(typeof(DoubleSize), typeof(ControlLength), typeof(ControlLengthUnit), typeof(DockLayout), typeof(DockLayoutDocumentGroup), typeof(DockLayoutElement), typeof(DockLayoutGroup), typeof(DockLayoutPanel), typeof(DockLayoutPanelGroup), typeof(DockLayoutWindow), typeof(Point2D)), new XmlRootAttribute(nameof(Layout)), $"{nameof(Imagin)}.{nameof(Core)}.{nameof(Controls)}");
 
         //...
 

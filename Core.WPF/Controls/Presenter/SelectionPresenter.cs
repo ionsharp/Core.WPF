@@ -1,12 +1,11 @@
 ﻿using Imagin.Core.Linq;
-using Imagin.Core.Analytics;
 using Imagin.Core.Numerics;
-using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -166,7 +165,7 @@ namespace Imagin.Core.Controls
 
         Rect GetSelection(Point a, Point b)
         {
-            b = new Point(b.X.Clamp(ActualWidth), b.Y.Clamp(ActualHeight));
+            b = new Point(Clamp(b.X, ActualWidth), Clamp(b.Y, ActualHeight));
 
             double
                 x = a.X < b.X ? a.X : b.X,
@@ -174,9 +173,9 @@ namespace Imagin.Core.Controls
 
             //Now, the point is precisely what it should be
             var width
-                = (a.X > b.X ? a.X - b.X : b.X - a.X).Absolute();
+                = (a.X > b.X ? a.X - b.X : b.X - a.X).Abs();
             var height
-                = (a.Y > b.Y ? a.Y - b.Y : b.Y - a.Y).Absolute();
+                = (a.Y > b.Y ? a.Y - b.Y : b.Y - a.Y).Abs();
 
             return new Rect(new Point(x, y), new Size(width, height));
         }

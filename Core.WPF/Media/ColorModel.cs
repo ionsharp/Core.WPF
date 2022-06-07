@@ -2,6 +2,7 @@
 using Imagin.Core.Colors;
 using Imagin.Core.Data;
 using Imagin.Core.Linq;
+using Imagin.Core.Models;
 using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
 using System;
@@ -12,11 +13,12 @@ using System.Windows.Media;
 
 namespace Imagin.Core.Media;
 
-/// <summary>
-/// A normalized [0, 1] color with three components.
-/// </summary>
-public class ObservableColor : Base
+/// <summary>A normalized <see cref="ColorVector"/> used to convert between color spaces via user interface.</summary>
+[DisplayName("Color")]
+public class ColorModel : ViewModel
 {
+    enum Category { Component, Profile }
+
     #region Properties
 
     readonly Handle handle = false;
@@ -34,7 +36,14 @@ public class ObservableColor : Base
         set => this.Change(ref actualColor, value);
     }
 
-    //...
+    IAdapt adapt = new VonKriesAdaptation();
+    [Assignable(typeof(VonKriesAdaptation))]
+    [Category(Category.Profile), Index(-1), Style(ObjectStyle.Default), Visible]
+    public IAdapt Adapt
+    {
+        get => adapt;
+        set => this.Change(ref adapt, value);
+    }
 
     Components component = Components.X;
     [Index(1), Label(false), Tool]
@@ -42,6 +51,15 @@ public class ObservableColor : Base
     {
         get => component;
         set => this.Change(ref component, value);
+    }
+
+    ICompress compress = WorkingProfile.DefaultCompression;
+    [Assignable(typeof(GammaCompression), typeof(LCompression), typeof(Rec601Compression), typeof(Rec709Compression), typeof(Rec2100Compression), typeof(Rec2020Compression), typeof(sRGBCompression))]
+    [Category(Category.Profile), Index(0), Style(ObjectStyle.Default), Visible]
+    public ICompress Compress
+    {
+        get => compress;
+        set => this.Change(ref compress, value);
     }
 
     [Hidden]
@@ -59,7 +77,7 @@ public class ObservableColor : Base
     [Label(false)]
     [Localize(false)]
     [Index(0)]
-    [Source(nameof(Models))]
+    [Source(nameof(Models), nameof(Type.Name))]
     [Style(Int32Style.Index)]
     [Tool]
     public virtual int Model
@@ -90,34 +108,76 @@ public class ObservableColor : Base
         }
     }
 
-    WorkingProfiles profile = WorkingProfiles.sRGB;
-    [Index(-1), Label(false), Localize(false), Tool]
-    public WorkingProfiles Profile
+    WorkingProfile profile = WorkingProfile.Default.sRGB;
+    [Hidden]
+    public WorkingProfile Profile
     {
         get => profile;
-        set => this.Change(ref profile, value);
+        set
+        {
+            var oldProfile = profile;
+            var newProfile = value;
+
+            this.Change(ref profile, newProfile);
+            OnProfileChanged(new(oldProfile, newProfile));
+        }
+    }
+
+    Vector2 primaryRed = WorkingProfile.DefaultPrimary.X;
+    [Category(Category.Profile), DisplayName("Primary (R)"), Index(1), Style(ObjectStyle.Default), Visible]
+    public Vector2 PrimaryRed
+    {
+        get => primaryRed;
+        set => this.Change(ref primaryRed, value);
+    }
+
+    Vector2 primaryGreen = WorkingProfile.DefaultPrimary.Y;
+    [Category(Category.Profile), DisplayName("Primary (G)"), Index(2), Style(ObjectStyle.Default), Visible]
+    public Vector2 PrimaryGreen
+    {
+        get => primaryGreen;
+        set => this.Change(ref primaryGreen, value);
+    }
+
+    Vector2 primaryBlue = WorkingProfile.DefaultPrimary.Z;
+    [Category(Category.Profile), DisplayName("Primary (B)"), Index(3), Style(ObjectStyle.Default), Visible]
+    public Vector2 PrimaryBlue
+    {
+        get => primaryBlue;
+        set => this.Change(ref primaryBlue, value);
+    }
+
+    Vector2 white = WorkingProfile.DefaultWhite;
+    [Category(Category.Profile), Index(4), Style(ObjectStyle.Default), Visible]
+    public Vector2 White
+    {
+        get => white;
+        set => this.Change(ref white, value);
     }
 
     //...
 
+    [PropertyTrigger(nameof(Controls.MemberModel.RightText), nameof(UnitX))]
     [PropertyTrigger(nameof(Controls.MemberModel.DisplayName), nameof(NameX))]
-    [Index(0), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
+    [Category(Category.Component), Clear(false), Index(0), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayX
     {
         get => GetDisplayValue(0);
         set => SetDisplayValue(value, 0);
     }
 
+    [PropertyTrigger(nameof(Controls.MemberModel.RightText), nameof(UnitY))]
     [PropertyTrigger(nameof(Controls.MemberModel.DisplayName), nameof(NameY))]
-    [Index(1), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
+    [Category(Category.Component), Clear(false), Index(1), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayY
     {
         get => GetDisplayValue(1);
         set => SetDisplayValue(value, 1);
     }
 
+    [PropertyTrigger(nameof(Controls.MemberModel.RightText), nameof(UnitZ))]
     [PropertyTrigger(nameof(Controls.MemberModel.DisplayName), nameof(NameZ))]
-    [Index(2), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
+    [Category(Category.Component), Clear(false), Index(2), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayZ
     {
         get => GetDisplayValue(2);
@@ -134,6 +194,15 @@ public class ObservableColor : Base
 
     [Hidden]
     public string NameZ => $"({ColorVector.GetComponent(ModelType, 2).Symbol}) {ColorVector.GetComponent(ModelType, 2).Name}";
+
+    [Hidden]
+    public string UnitX => $"{ColorVector.GetComponent(ModelType, 0).Unit}";
+
+    [Hidden]
+    public string UnitY => $"{ColorVector.GetComponent(ModelType, 1).Unit}";
+
+    [Hidden]
+    public string UnitZ => $"{ColorVector.GetComponent(ModelType, 2).Unit}";
 
     //...
 
@@ -174,9 +243,9 @@ public class ObservableColor : Base
 
     #endregion
 
-    #region ObservableColor
+    #region ColorModel
 
-    public ObservableColor(Color defaultColor, Action<Color> onChanged = null) : base()
+    public ColorModel(Color defaultColor, Action<Color> onChanged = null) : base()
     {
         ActualColor = defaultColor; OnChanged = onChanged;
     }
@@ -184,6 +253,21 @@ public class ObservableColor : Base
     #endregion
 
     #region Methods
+
+    ColorVector GetColor()
+    {
+        Vector3<double> result = default;
+        if (Component == Components.X)
+            result = new(z, x, y);
+
+        if (Component == Components.Y)
+            result = new(x, z, y);
+
+        if (Component == Components.Z)
+            result = new(x, y, z);
+
+        return ColorVector.New(ModelType, result);
+    }
 
     string GetDisplayValue(int index)
     {
@@ -260,18 +344,8 @@ public class ObservableColor : Base
     {
         handle.SafeInvoke(() =>
         {
-            Vector3<double> result = default;
-            if (Component == Components.X)
-                result = new(z, x, y);
-
-            if (Component == Components.Y)
-                result = new(x, z, y);
-
-            if (Component == Components.Z)
-                result = new(x, y, z);
-
-            var xyz = ColorVector.New(ModelType, result);
-            var rgb = xyz.ToRGB(WorkingProfile.Default.sRGB);
+            var xyz = GetColor();
+            var rgb = xyz.ToRGB(profile);
 
             ActualColor = XColor.Convert(rgb);
         });
@@ -300,11 +374,35 @@ public class ObservableColor : Base
 
     //...
 
+    void OnProfileChanged(Value<WorkingProfile> input)
+    {
+        if (input.Old != input.New)
+        {
+            var xyz = GetColor();
+            xyz.Adapt(input.Old, input.New);
+
+            //Now what...?
+        }
+    }
+
     public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
         base.OnPropertyChanged(propertyName);
         switch (propertyName)
         {
+            case nameof(ActualColor):
+                //OnChanged?.Invoke(ActualColor);
+                //ConvertFrom();
+                break;
+
+            case nameof(Compress):
+            case nameof(PrimaryRed):
+            case nameof(PrimaryGreen):
+            case nameof(PrimaryBlue):
+            case nameof(White):
+                Profile = new WorkingProfile(PrimaryRed, PrimaryGreen, PrimaryBlue, White, Compress);
+                break;
+
             case nameof(Component):
                 this.Changed(() => DisplayX);
                 this.Changed(() => DisplayY);
@@ -313,11 +411,18 @@ public class ObservableColor : Base
                 this.Changed(() => NameX);
                 this.Changed(() => NameY);
                 this.Changed(() => NameZ);
+
+                this.Changed(() => UnitX);
+                this.Changed(() => UnitY);
+                this.Changed(() => UnitZ);
                 break;
 
             case nameof(Model):
                 this.Changed(() => ModelType);
                 goto case nameof(Component);
+
+            case nameof(Profile):
+                break;
 
             case nameof(X):
                 switch (Component)
@@ -326,7 +431,7 @@ public class ObservableColor : Base
                     case Components.Y: this.Changed(() => DisplayX); break;
                     case Components.Z: this.Changed(() => DisplayX); break;
                 }
-                //ConvertTo();
+                ConvertTo();
                 break;
 
             case nameof(Y):
@@ -336,7 +441,7 @@ public class ObservableColor : Base
                     case Components.Y: this.Changed(() => DisplayZ); break;
                     case Components.Z: this.Changed(() => DisplayY); break;
                 }
-                //ConvertTo();
+                ConvertTo();
                 break;
 
             case nameof(Z):
@@ -346,15 +451,7 @@ public class ObservableColor : Base
                     case Components.Y: this.Changed(() => DisplayY); break;
                     case Components.Z: this.Changed(() => DisplayZ); break;
                 }
-                //ConvertTo();
-                break;
-
-            case nameof(ActualColor):
-                //OnChanged?.Invoke(ActualColor);
-                //ConvertFrom();
-                break;
-
-            case nameof(Profile):
+                ConvertTo();
                 break;
         }
     }

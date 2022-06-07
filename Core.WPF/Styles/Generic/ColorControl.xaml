@@ -8,8 +8,8 @@
     xmlns:Colors="clr-namespace:Imagin.Core.Colors;assembly=Imagin.Core.Color"
     xmlns:Converters="clr-namespace:Imagin.Core.Converters"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
-    xmlns:Effects="clr-namespace:Imagin.Core.Effects"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
+    xmlns:Markup="clr-namespace:Imagin.Core.Markup"
     xmlns:Media="clr-namespace:Imagin.Core.Media"
     xmlns:Models="clr-namespace:Imagin.Core.Models">
     <ResourceDictionary.MergedDictionaries>
@@ -51,12 +51,6 @@
                                         <DataTrigger Binding="{Binding Data.ActiveDocument, Source={StaticResource ColorControl}}" Value="{x:Null}">
                                             <Setter TargetName="ComponentSlider" Property="Visibility" Value="Collapsed"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Data.AlphaPanel.IsVisible, Source={StaticResource ColorControl}}" Value="True">
-                                            <Setter TargetName="ComponentSlider" Property="Alpha" Value="{Binding ActiveDocument.Alpha}"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Data.AlphaPanel.IsVisible, Source={StaticResource ColorControl}}" Value="False">
-                                            <Setter TargetName="ComponentSlider" Property="Alpha" Value="255"/>
-                                        </DataTrigger>
                                     </DataTemplate.Triggers>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type Models:OptionsPanel}">
@@ -65,42 +59,44 @@
                                         GroupName="Category"/>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type Models:PropertiesPanel}">
-                                    <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*,Auto">
-                                        <StackPanel DataContext="{Binding Data.ActiveDocument, Source={StaticResource ColorControl}}"
-                                            Margin="2"
-                                            Visibility="{Data:VisibilityBinding}">
-                                            <Border 
-                                                Background="{x:Static Media:CheckerBrush.Default}"
-                                                Height="32"
-                                                Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
-                                                ToolTip="{Binding OldColor}">
-                                                <Border.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem Header="{l:Loc Save}"
-                                                            Command="{Binding Data.SaveOldColorCommand, Source={StaticResource ColorControl}}"/>
-                                                    </ContextMenu>
-                                                </Border.ContextMenu>
-                                                <Grid Background="{Binding OldColor, Converter={x:Static Converters:ColorToSolidColorBrushConverter.Default}, ConverterParameter=0}"/>
+                                    <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*,Auto"
+                                        Visibility="{Data:VisibilityBinding}">
+                                        <Border BorderBrush="Black" BorderThickness="1" Margin="2">
+                                            <Border BorderBrush="White" BorderThickness="1">
+                                                <StackPanel DataContext="{Binding Data.ActiveDocument, Source={StaticResource ColorControl}}">
+                                                    <Border 
+                                                        Background="{x:Static Media:CheckerBrush.Default}"
+                                                        Height="32"
+                                                        Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
+                                                        ToolTip="{Binding OldColor}">
+                                                        <Border.ContextMenu>
+                                                            <ContextMenu>
+                                                                <MenuItem Header="{l:Loc Save}"
+                                                                    Command="{Binding Data.SaveOldColorCommand, Source={StaticResource ColorControl}}"/>
+                                                            </ContextMenu>
+                                                        </Border.ContextMenu>
+                                                        <Grid Background="{Binding OldColor, Converter={x:Static Converters:ColorToSolidColorBrushConverter.Default}, ConverterParameter=0}"/>
+                                                    </Border>
+                                                    <Border 
+                                                        Background="{x:Static Media:CheckerBrush.Default}"
+                                                        Height="32"
+                                                        Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
+                                                        ToolTip="{Binding Color.ActualColor}">
+                                                        <Border.ContextMenu>
+                                                            <ContextMenu>
+                                                                <MenuItem Header="{l:Loc Save}"
+                                                                    Command="{Binding Data.SaveNewColorCommand, Source={StaticResource ColorControl}}"/>
+                                                            </ContextMenu>
+                                                        </Border.ContextMenu>
+                                                        <Grid x:Name="Grid"/>
+                                                    </Border>
+                                                </StackPanel>
                                             </Border>
-                                            <Border 
-                                                Background="{x:Static Media:CheckerBrush.Default}"
-                                                Height="32"
-                                                Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
-                                                ToolTip="{Binding Color.ActualColor}">
-                                                <Border.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem Header="{l:Loc Save}"
-                                                            Command="{Binding Data.SaveNewColorCommand, Source={StaticResource ColorControl}}"/>
-                                                    </ContextMenu>
-                                                </Border.ContextMenu>
-                                                <Grid x:Name="Grid"/>
-                                            </Border>
-                                        </StackPanel>
+                                        </Border>
                                         <local:PropertyGrid x:Name="PropertyGrid"
                                             BorderThickness="0"
-                                            GroupName="None"
+                                            GroupName="Category"
                                             HeaderVisibility="Collapsed"
-                                            MemberOptionsVisibility="Collapsed"
                                             Source="{Binding Data.ActiveDocument.Color, Source={StaticResource ColorControl}}">
                                             <local:PropertyGrid.OverrideTemplates>
                                                 <local:KeyTemplate DataKey="{x:Type Colors:Components}">
@@ -113,7 +109,7 @@
                                                                     <TextBlock.Text>
                                                                         <MultiBinding Converter="{x:Static Converters:ComponentMultiConverter.Default}">
                                                                             <Binding/>
-                                                                            <Binding Path="Data.ActiveDocument.Color.Model" Source="{StaticResource ColorControl}"/>
+                                                                            <Binding Path="Data.ActiveDocument.Color.ModelType" Source="{StaticResource ColorControl}"/>
                                                                         </MultiBinding>
                                                                     </TextBlock.Text>
                                                                 </TextBlock>
@@ -127,13 +123,21 @@
                                                 </local:KeyTemplate>
                                             </local:PropertyGrid.OverrideTemplates>
                                         </local:PropertyGrid>
-                                        <local:TopBorder Padding="2">
-                                            <StackPanel Linq:XPanel.Spacing="0,0,0,2">
-                                                <Button Content="{l:Loc Save}"
-                                                     Command="{Binding Data.ActiveDocument.SaveCommand, Source={StaticResource ColorControl}}"/>
-                                                <Button Content="{l:Loc Revert}"
-                                                     Command="{Binding Data.ActiveDocument.RevertCommand, Source={StaticResource ColorControl}}"/>
-                                            </StackPanel>
+                                        <local:TopBorder Background="#11000000" Padding="2">
+                                            <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,*">
+                                                <Button
+                                                    Command="{Binding Data.ActiveDocument.SelectCommand, Source={StaticResource ColorControl}}"
+                                                    IsDefault="True"
+                                                    Margin="0,0,2,0"
+                                                    ToolTip="{l:Loc Select}">
+                                                    <local:ImageElement Source="{Markup:InternalImage Image=Checkmark}"/>
+                                                </Button>
+                                                <Button
+                                                    Command="{Binding Data.ActiveDocument.RevertCommand, Source={StaticResource ColorControl}}"
+                                                    ToolTip="{l:Loc Revert}">
+                                                    <local:ImageElement Source="{Markup:InternalImage Image=Revert}"/>
+                                                </Button>
+                                            </Grid>
                                         </local:TopBorder>
                                     </Grid>
                                     <DataTemplate.Triggers>
@@ -160,21 +164,30 @@
                             PanelTemplateSelector="{StaticResource {x:Static local:ColorControl.PanelTemplateSelectorKey}}">
                             <local:DockControl.DocumentTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorDocument}">
-                                    <local:ComponentSelector x:Name="ComponentSelector"
-                                        Component="{Binding Color.Component}"
-                                        Model="{Binding Color.ModelType}"
-                                        Profile="{Binding Color.Profile}"
-                                        X="{Binding Color.X, Mode=TwoWay}"
-                                        Y="{Binding Color.Y, Mode=TwoWay}"
-                                        Z="{Binding Color.Z}"/>
-                                    <DataTemplate.Triggers>
-                                        <DataTrigger Binding="{Binding Data.AlphaPanel.IsVisible, Source={StaticResource ColorControl}}" Value="True">
-                                            <Setter TargetName="ComponentSelector" Property="Alpha" Value="{Binding Alpha}"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Data.AlphaPanel.IsVisible, Source={StaticResource ColorControl}}" Value="False">
-                                            <Setter TargetName="ComponentSelector" Property="Alpha" Value="255"/>
-                                        </DataTrigger>
-                                    </DataTemplate.Triggers>
+                                    <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,Auto">
+                                        <local:ComponentSelector x:Name="ComponentSelector"
+                                            Component="{Binding Color.Component}"
+                                            Dimension="{Binding Dimension}"
+                                            Model="{Binding Color.ModelType}"
+                                            Profile="{Binding Color.Profile}"
+                                            RotateX="{Binding RotateX}"
+                                            RotateY="{Binding RotateY}"
+                                            RotateZ="{Binding RotateZ}"
+                                            Shape="{Binding Shape}"
+                                            X="{Binding Color.X, Mode=TwoWay}"
+                                            Y="{Binding Color.Y, Mode=TwoWay}"
+                                            Z="{Binding Color.Z}"
+                                            Zoom="{Binding Zoom}"/>
+                                        <local:TopBorder x:Name="Border2" Height="32">
+                                            <local:PropertyGrid
+                                                BorderThickness="0"
+                                                GroupName="None"
+                                                HeaderVisibility="Collapsed"
+                                                Margin="2"
+                                                Orientation="Horizontal"
+                                                Source="{Binding}"/>
+                                        </local:TopBorder>
+                                    </Grid>
                                 </DataTemplate>
                             </local:DockControl.DocumentTemplate>
                             <local:DockControl.DocumentIconTemplate>
@@ -207,7 +220,7 @@
                                         Orientation="Horizontal">
                                         <TextBlock Text="{Binding Title}"/>
                                         <local:AccentLabel Shade="Light"
-                                            Content="{Binding Color.Model, Converter={x:Static Effects:ColorModelConverter.Default}}"/>
+                                            Content="{Binding Color.Model, Converter={x:Static Converters:ColorModelConverter.Default}}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </local:DockControl.DocumentTitleTemplate>

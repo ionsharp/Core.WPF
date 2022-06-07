@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="Imagin.Core.Controls">
+  <Top/>
+  <Left/>
+  <Right>
+    <Panel Name="OptionsPanel"/>
+    <Panel Name="ThemePanel"/>
+  </Right>
+  <Bottom/>
   <Root xsi:type="DockLayoutGroup" Orientation="Horizontal">
     <Elements>
       <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="60*">
@@ -12,22 +19,24 @@
           </Element>
         </Elements>
       </Element>
-      <Element xsi:type="DockLayoutPanelGroup" Width="5*">
+      <Element xsi:type="DockLayoutPanelGroup" Width="4*">
         <Panels>
           <DockLayoutPanel IsSelected="true" Name="ComponentPanel"/>
         </Panels>
       </Element>
-      <Element xsi:type="DockLayoutPanelGroup" Width="5*">
-        <Panels>
-          <DockLayoutPanel IsSelected="true" Name="AlphaPanel"/>
-        </Panels>
-      </Element>
-      <Element xsi:type="DockLayoutPanelGroup" Width="30*">
-        <Panels>
-          <DockLayoutPanel IsSelected="true" Name="PropertiesPanel"/>
-          <DockLayoutPanel Name="ColorsPanel"/>
-          <DockLayoutPanel Name="OptionsPanel"/>
-        </Panels>
+      <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="36*">
+        <Elements>
+          <Element xsi:type="DockLayoutPanelGroup" Height="8*">
+            <Panels>
+              <DockLayoutPanel IsSelected="true" Name="PropertiesPanel"/>
+            </Panels>
+          </Element>
+          <Element xsi:type="DockLayoutPanelGroup" Height="2*">
+            <Panels>
+              <DockLayoutPanel IsSelected="true" Name="ColorsPanel"/>
+            </Panels>
+          </Element>
+        </Elements>
       </Element>
     </Elements>
   </Root>

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -205,7 +206,7 @@ namespace Imagin.Core.Controls
             }
         }
 
-        protected virtual object OnColumnsCoerced(int columns) => columns.Clamp(int.MaxValue, 1);
+        protected virtual object OnColumnsCoerced(int columns) => Clamp(columns, int.MaxValue, 1);
 
         #endregion
 

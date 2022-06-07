@@ -137,11 +137,13 @@
   <ItemGroup>
     <Compile Include="Analytics\LogWriter.cs" />
     <Compile Include="Analytics\Warnings\MemberMissingAttribute.cs" />
+    <Compile Include="Converters\Multi\Visibility\AandBorCMultiConverter.cs" />
+    <Compile Include="Core\Attribute\Clear.cs" />
     <Compile Include="Linq\Core\ColorMatrix.cs" />
     <Compile Include="Linq\Core\RGB.cs" />
     <Compile Include="Linq\Core\Vector3.cs" />
     <Compile Include="Linq\Core\Vector4.cs" />
-    <Compile Include="Media\ObservableColor.cs" />
+    <Compile Include="Media\ColorModel.cs" />
     <Compile Include="Controls\ColorSelector\BaseComponentSlider.cs" />
     <Compile Include="Converters\Multi\String\Component.cs" />
     <Compile Include="Media\StringColor.cs" />
@@ -151,7 +153,6 @@
     <Compile Include="Core\Attribute\Height.cs" />
     <Compile Include="Core\Attribute\Icon.cs" />
     <Compile Include="Core\Attribute\ItemType.cs" />
-    <Compile Include="Core\Attribute\Label.cs" />
     <Compile Include="Core\Attribute\Option.cs" />
     <Compile Include="Reflection\PropertyTrigger.cs" />
     <Compile Include="Core\Attribute\Tool.cs" />
@@ -457,7 +458,6 @@
     <Compile Include="Controls\PropertyGrid\MemberSortComparer.cs" />
     <Compile Include="Controls\PropertyGrid\MemberCrumb.cs" />
     <Compile Include="Controls\PropertyGrid\MemberCrumbSeparator.cs" />
-    <Compile Include="Controls\PropertyGrid\Constants.cs" />
     <Compile Include="Controls\PropertyGrid\MemberGroupConverterSelector.cs" />
     <Compile Include="Controls\Table\Cell.cs" />
     <Compile Include="Controls\Table\CellConverter.cs" />
@@ -1736,12 +1736,5 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.HLSL.CSharpVB.1.0.2\build\Microsoft.HLSL.CSharpVB.targets" Condition="Exists('..\packages\Microsoft.HLSL.CSharpVB.1.0.2\build\Microsoft.HLSL.CSharpVB.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.HLSL.CSharpVB.1.0.2\build\Microsoft.HLSL.CSharpVB.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.HLSL.CSharpVB.1.0.2\build\Microsoft.HLSL.CSharpVB.targets'))" />
-    <Error Condition="!Exists('..\..\Core\packages\Microsoft.HLSL.CSharpVB.1.0.2\build\Microsoft.HLSL.CSharpVB.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Core\packages\Microsoft.HLSL.CSharpVB.1.0.2\build\Microsoft.HLSL.CSharpVB.targets'))" />
-  </Target>
   <Import Project="..\..\Core\packages\Microsoft.HLSL.CSharpVB.1.0.2\build\Microsoft.HLSL.CSharpVB.targets" Condition="Exists('..\..\Core\packages\Microsoft.HLSL.CSharpVB.1.0.2\build\Microsoft.HLSL.CSharpVB.targets')" />
 </Project>

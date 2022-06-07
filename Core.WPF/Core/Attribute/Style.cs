@@ -52,7 +52,7 @@ namespace Imagin.Core.Data
     public enum ObjectStyle
     {
         Button,
-        Expander
+        Default
     }
 
     public enum StringStyle

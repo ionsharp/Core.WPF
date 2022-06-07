@@ -50,7 +50,7 @@ namespace Imagin.Core.Controls
 
         void CreateItem(int index, object i)
         {
-            ListItemModel result = new(this, new(Collection, new(new MemberRouteSource(i), null), null, new(null)));
+            ListItemModel result = new(this, new(Collection, new(new MemberRouteSource(i)), null, new(null)));
             if (index == -1)
                 Items.Add(result);
 

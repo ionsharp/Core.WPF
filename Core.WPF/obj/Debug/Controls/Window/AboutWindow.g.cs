@@ -9,26 +9,12 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using Imagin.Core;
-using Imagin.Core.Behavior;
-using Imagin.Core.Collections.ObjectModel;
-using Imagin.Core.Configuration;
 using Imagin.Core.Controls;
-using Imagin.Core.Converters;
 using Imagin.Core.Data;
 using Imagin.Core.Linq;
-using Imagin.Core.Local.Extensions;
 using Imagin.Core.Markup;
-using Imagin.Core.Media;
-using Imagin.Core.Models;
-using Imagin.Core.Numerics;
-using Imagin.Core.Text;
 using System;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Drawing;
-using System.Net;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -37,7 +23,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Input;
-using System.Windows.Interactivity;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Animation;

@@ -160,7 +160,7 @@ namespace Imagin.Core.Text
             var fi = action.Target.HasFlag(Action.Targets.FileNames);
             var fo = action.Target.HasFlag(Action.Targets.FolderNames);
 
-            var pieces = uriTail.Split(Array<char>.New('\\'), StringSplitOptions.RemoveEmptyEntries);
+            var pieces = uriTail.Split(XArray.New<char>('\\'), StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0, Count = pieces.Length; i < Count; i++)
             {
                 var piece = pieces[i];

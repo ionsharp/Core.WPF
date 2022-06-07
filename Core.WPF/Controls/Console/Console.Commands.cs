@@ -55,9 +55,9 @@ public partial class Console
 
         //...
 
-        string[] Parse(string line, char separator) => line.Split(Array<char>.New(separator), 2, StringSplitOptions.RemoveEmptyEntries);
+        string[] Parse(string line, char separator) => line.Split(XArray.New<char>(separator), 2, StringSplitOptions.RemoveEmptyEntries);
 
-        protected virtual string[] Parse(string line) => line.NullOrEmpty() ? null : Array<string>.New(line);
+        protected virtual string[] Parse(string line) => line.NullOrEmpty() ? null : XArray.New<string>(line);
 
         //...
 
@@ -117,7 +117,7 @@ public partial class Console
                     throw new NotSupportedException($"The flag '{i}' is not supported.");
             }
 
-            Execute(name, Parse(arguments) ?? Array<string>.New(), flags.ToArray());
+            Execute(name, Parse(arguments) ?? XArray.New<string>(), flags.ToArray());
         }
     }
 
@@ -125,7 +125,7 @@ public partial class Console
     {
         protected virtual char Separator => '|';
 
-        protected override string[] Parse(string line) => line?.Split(Array<char>.New(Separator), StringSplitOptions.RemoveEmptyEntries);
+        protected override string[] Parse(string line) => line?.Split(XArray.New<char>(Separator), StringSplitOptions.RemoveEmptyEntries);
     }
 
     //...
@@ -634,7 +634,7 @@ public partial class Console
                 else if (arguments[0].StartsWith("."))
                 {
                     folderPath = Path;
-                    extensions = Array<string>.New(arguments[0]);
+                    extensions = XArray.New<string>(arguments[0]);
                 }
                 else if (Storage.Folder.Long.Exists(arguments[0]))
                 {

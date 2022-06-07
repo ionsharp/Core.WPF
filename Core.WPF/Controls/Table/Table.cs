@@ -185,7 +185,7 @@ namespace Imagin.Core.Controls
         public static string[] ParseColumns(string input)
         {
             string[] result = null;
-            Try.Invoke(() => result = input.Split(Array<char>.New(';'), StringSplitOptions.RemoveEmptyEntries));
+            Try.Invoke(() => result = input.Split(XArray.New<char>(';'), StringSplitOptions.RemoveEmptyEntries));
             return result ?? new string[0];
         }
     }

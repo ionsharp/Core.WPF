@@ -1,30 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+public class MemberAttributeHandler : Dictionary<Type, Action<MemberModel, Attribute, IEnumerable<Attribute>>> { }
+
+public sealed class MemberAttributes : Dictionary<Type, List<Attribute>>
 {
-    public sealed class MemberAttributes : Dictionary<Type, Attribute>
+    public bool Hidden => GetFirst<HiddenAttribute>()?.Hidden == true || GetFirst<System.ComponentModel.BrowsableAttribute>()?.Browsable == false || GetFirst<VisibleAttribute>()?.Visible == false;
+
+    public MemberAttributes(MemberInfo member) : base()
     {
-        public bool Hidden => Get<HiddenAttribute>()?.Hidden == true || Get<System.ComponentModel.BrowsableAttribute>()?.Browsable == false || Get<VisibleAttribute>()?.Visible == false;
-
-        public MemberAttributes(MemberInfo member) : base()
+        if (member != null)
         {
-            if (member != null)
+            foreach (Attribute i in member.GetCustomAttributes(true))
             {
-                foreach (Attribute attribute in member.GetCustomAttributes(true))
-                {
-                    var type = attribute.GetType();
-                    if (ContainsKey(type))
-                        this[type] = attribute;
+                var type = i.GetType();
+                if (!ContainsKey(type))
+                    Add(type, new());
 
-                    else Add(type, attribute);
-                }
+                this[type].Add(i);
             }
         }
+    }
 
-        public Attribute Get<Attribute>() where Attribute : System.Attribute => ContainsKey(typeof(Attribute)) ? (Attribute)this[typeof(Attribute)] : default;
+    public IEnumerable<T> GetAll<T>() where T : Attribute => GetAll(typeof(T))?.Cast<T>();
 
-        public void Set<Attribute>(Attribute input) where Attribute : System.Attribute => this[typeof(Attribute)] = input;
+    public IEnumerable<Attribute> GetAll(Type type) => this.ContainsKey(type) ? this[type] : default;
+
+    public T GetFirst<T>() where T : Attribute => GetAll<T>()?.FirstOrDefault();
+
+    public void Apply(MemberModel input, MemberAttributeHandler handler)
+    {
+        foreach (var i in handler)
+        {
+            var j = GetAll(i.Key);
+            if (j?.Count() > 0)
+                i.Value(input, j.FirstOrDefault(), j);
+        }
     }
 }

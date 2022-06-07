@@ -28,7 +28,6 @@
         BorderThickness="0"
         GroupName="None"
         HeaderVisibility="Collapsed"
-        MemberOptionsVisibility="Collapsed"
         NameColumnVisibility="Collapsed"
         Source="{Data:Ancestor Value, local:GradientWindow}"/>
 </local:PickerWindow>

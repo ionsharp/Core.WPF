@@ -218,10 +218,36 @@
 
     <!-- ... -->
 
+    <Collections:DataTemplateCollection x:Key="LeftTextTemplate">
+        <DataTemplate>
+            <Border>
+                <Border.Resources>
+                    <Data:Reference x:Key="Member" Data="{Data:Ancestor DataContext, {x:Type TextBoxBase}}"/>
+                </Border.Resources>
+                <TextBlock Margin="2.5,0" Text="{Binding Data.LeftText, Source={StaticResource Member}}"/>
+            </Border>
+        </DataTemplate>
+    </Collections:DataTemplateCollection>
+
+    <Collections:DataTemplateCollection x:Key="RightTextTemplate">
+        <DataTemplate>
+            <Border>
+                <Border.Resources>
+                    <Data:Reference x:Key="Member" Data="{Data:Ancestor DataContext, {x:Type TextBoxBase}}"/>
+                </Border.Resources>
+                <TextBlock Margin="2.5,0" Text="{Binding Data.RightText, Source={StaticResource Member}}"/>
+            </Border>
+        </DataTemplate>
+    </Collections:DataTemplateCollection>
+
+    <!-- ... -->
+
     <DataTemplate x:Key="{x:Static local:PropertyGrid.ByteUpDownKey}">
         <local:ByteUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -236,6 +262,8 @@
     <DataTemplate x:Key="{x:Static local:PropertyGrid.DateTimeUpDownKey}">
         <local:DateTimeUpDown x:Name="DateTimeUpDown"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}">
@@ -250,6 +278,8 @@
         <local:DecimalUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -260,11 +290,13 @@
             </e:Interaction.Behaviors>
         </local:DecimalUpDown>
     </DataTemplate>
-
+    
     <DataTemplate x:Key="{x:Static local:PropertyGrid.DoubleUpDownKey}">
         <local:DoubleUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -280,6 +312,8 @@
         <local:Int16UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -295,6 +329,8 @@
         <local:Int32UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -310,6 +346,8 @@
         <local:Int64UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -325,6 +363,8 @@
         <local:SingleUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -341,6 +381,8 @@
             CanUpDown="{Data:Self IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}">
@@ -355,6 +397,8 @@
         <local:UDoubleUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -370,6 +414,8 @@
         <local:UInt16UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -385,6 +431,8 @@
         <local:UInt32UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -400,6 +448,8 @@
         <local:UInt64UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
+            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
             Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
             Maximum="{Binding Maximum}"
             Minimum="{Binding Minimum}"
@@ -634,76 +684,65 @@
     <!-- ... -->
 
     <DataTemplate x:Key="{x:Static local:PropertyGrid.ObjectTemplateKey}">
-        <Expander>
-            <Expander.Header>
-                <TextBlock Text="{local:ObjectNameBinding Value}"/>
-            </Expander.Header>
-            <local:LeftBorder Margin="8,5,0,5" Padding="12,0,0,0">
-                <TreeView ItemsSource="{Binding Members}">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="TreeViewItem">
-                            <Setter Property="Margin" Value="0,0,0,5"/>
-                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="TreeViewItem">
-                                        <Expander x:Name="Expander" Header="{TemplateBinding Header}"
-                                            HeaderTemplate="{TemplateBinding HeaderTemplate}"
-                                            HeaderTemplateSelector="{TemplateBinding HeaderTemplateSelector}">
-                                            <local:LeftBorder Margin="8,5,0,5" Padding="12,0,0,0">
-                                                <ItemsPresenter x:Name="ItemsPresenter"/>
-                                            </local:LeftBorder>
-                                        </Expander>
-                                        <ControlTemplate.Triggers>
-                                            <DataTrigger Binding="{Data:Self DataContext.Members}" Value="{x:Null}">
-                                                <Setter TargetName="Expander" Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="Expander">
-                                                            <ContentPresenter ContentSource="Header"/>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type local:MemberModel}" ItemsSource="{Binding Members}">
-                            <StackPanel>
-                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
-                                    <local:BulletElement Bullet="Square"
-                                        Margin="0,0,5,0"/>
-                                    <local:MemberNamePresenter Content="{Binding}"
-                                        HorizontalAlignment="Left"/>
-                                </Grid>
-                                <local:MemberValuePresenter x:Name="MemberValuePresenter" Content="{Binding}"
-                                    Margin="0,5,0,0"/>
-                            </StackPanel>
-                            <HierarchicalDataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding Members.IsNotEmpty}" Value="True">
-                                    <Setter TargetName="MemberValuePresenter" Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </HierarchicalDataTemplate.Triggers>
-                        </HierarchicalDataTemplate>
-                    </TreeView.Resources>
-                    <TreeView.Style>
-                        <Style TargetType="TreeView">
-                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="TreeView">
-                                        <ItemsPresenter/>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </TreeView.Style>
-                </TreeView>
-            </local:LeftBorder>
-        </Expander>
+        <TreeView ItemsSource="{Binding Members}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TreeViewItem">
+                                <Expander x:Name="Expander" Header="{TemplateBinding Header}"
+                                    HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                    HeaderTemplateSelector="{TemplateBinding HeaderTemplateSelector}">
+                                    <local:LeftBorder Margin="8,5,0,5" Padding="12,0,0,0">
+                                        <ItemsPresenter x:Name="ItemsPresenter"/>
+                                    </local:LeftBorder>
+                                </Expander>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Data:Self DataContext.Members}" Value="{x:Null}">
+                                        <Setter TargetName="Expander" Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Expander">
+                                                    <ContentPresenter ContentSource="Header"/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type local:MemberModel}" ItemsSource="{Binding Members}">
+                    <Grid x:Name="Grid" Margin="0,2,0,0" Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
+                        <local:MemberNamePresenter Content="{Binding}" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                        <local:MemberValuePresenter Content="{Binding}"/>
+                    </Grid>
+                    <HierarchicalDataTemplate.Triggers>
+                        <DataTrigger Binding="{Data:PreviousData}" Value="{x:Null}">
+                            <Setter TargetName="Grid" Property="Margin" Value="0"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Members.IsNotEmpty}" Value="True">
+                            <Setter TargetName="Grid" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </HierarchicalDataTemplate.Triggers>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+            <TreeView.Style>
+                <Style TargetType="TreeView">
+                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TreeView">
+                                <ItemsPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TreeView.Style>
+        </TreeView>
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static local:PropertyGrid.ObjectButtonTemplateKey}">
@@ -1418,7 +1457,7 @@
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding Depth}" Value="0"/>
-                        <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Expander}"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Default}"/>
                     </MultiDataTrigger.Conditions>
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ObjectTemplateKey}}"/>
                 </MultiDataTrigger>
@@ -1432,8 +1471,10 @@
                 <ContentPresenter.ContentTemplate>
                     <DataTemplate>
                         <TextBox x:Name="TextBox"
-                            Linq:XTextBox.ClearButtonVisibility="Visible"
+                            Linq:XTextBox.ClearButtonVisibility="{Data:VisibilityBinding ClearText}"
                             Linq:XTextBox.EnterCommand="{Binding Command}"
+                            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
+                            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
                             Linq:XTextBoxBase.Suggestions="{Binding Suggestions}"
                             Linq:XTextBoxBase.SuggestionCommand="{Binding SuggestionCommand}"
                             Style="{DynamicResource {x:Static local:PropertyGrid.TextBoxStyleKey}}">

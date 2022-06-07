@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -135,8 +136,8 @@ namespace Imagin.Core.Controls
         double RadiansFromPoint(Point point)
         {
             var center = new Point(ActualWidth / 2, ActualHeight / 2);
-            point.X = point.X.Clamp(ActualWidth);
-            point.Y = point.Y.Clamp(ActualHeight);
+            point.X = Clamp(point.X, ActualWidth);
+            point.Y = Clamp(point.Y, ActualHeight);
             return Math.Atan2(point.Y - center.Y, point.X - center.X);
         }
 

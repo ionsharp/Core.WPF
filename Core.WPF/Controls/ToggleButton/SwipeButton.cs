@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -151,12 +152,12 @@ namespace Imagin.Core.Controls
             {
                 if (button.IsLeftSwiping)
                 {
-                    button.LeftSwipeProgress = (button.ContentX / (button.ActualWidth / 2d)).Clamp(1);
+                    button.LeftSwipeProgress = Clamp(button.ContentX / (button.ActualWidth / 2d), 1);
                     button.RightSwipeProgress = 1;
                 }
                 if (button.IsRightSwiping)
                 {
-                    button.RightSwipeProgress = (button.ContentX.Absolute() / (button.ActualWidth / 2d)).Clamp(1);
+                    button.RightSwipeProgress = Clamp(button.ContentX.Abs() / (button.ActualWidth / 2d), 1);
                     button.LeftSwipeProgress = 1;
                 }
             }
@@ -174,12 +175,12 @@ namespace Imagin.Core.Controls
             {
                 if (button.IsDownSwiping)
                 {
-                    button.LeftSwipeProgress = (button.ContentY / (button.ActualHeight / 2d)).Clamp(1);
+                    button.LeftSwipeProgress = Clamp(button.ContentY / (button.ActualHeight / 2d), 1);
                     button.RightSwipeProgress = 1;
                 }
                 if (button.IsUpSwiping)
                 {
-                    button.RightSwipeProgress = (button.ContentY / (button.ActualHeight / 2d)).Clamp(1);
+                    button.RightSwipeProgress = Clamp(button.ContentY / (button.ActualHeight / 2d), 1);
                     button.LeftSwipeProgress = 1;
                 }
             }
@@ -537,13 +538,13 @@ namespace Imagin.Core.Controls
                 switch (SwipeDirection)
                 {
                     case SwipeButtonDirection.Horizontal:
-                        if ((aPoint.X - bPoint.X).Absolute() >= SwipeStartLength)
+                        if ((aPoint.X - bPoint.X).Abs() >= SwipeStartLength)
                             goto default;
 
                         break;
 
                     case SwipeButtonDirection.Vertical:
-                        if ((aPoint.Y - bPoint.Y).Absolute() >= SwipeStartLength)
+                        if ((aPoint.Y - bPoint.Y).Abs() >= SwipeStartLength)
                             goto default;
 
                         break;

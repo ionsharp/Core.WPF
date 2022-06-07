@@ -1,5 +1,6 @@
 ﻿using System;
 using Imagin.Core.Linq;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -27,11 +28,11 @@ namespace Imagin.Core.Controls
 
         protected override bool CanDecrease() => Value > Minimum;
 
-        protected override object OnMaximumCoerced(object input) => input.As<ushort>().Clamp(AbsoluteMaximum, Value);
+        protected override object OnMaximumCoerced(object input) => Clamp((ushort)input, AbsoluteMaximum, Value);
 
-        protected override object OnMinimumCoerced(object input) => input.As<ushort>().Clamp(Value, AbsoluteMinimum);
+        protected override object OnMinimumCoerced(object input) => Clamp((ushort)input, Value, AbsoluteMinimum);
 
-        protected override object OnValueCoerced(object input) => input.As<ushort>().Clamp(Maximum, Minimum);
+        protected override object OnValueCoerced(object input) => Clamp((ushort)input, Maximum, Minimum);
 
         public override void Increase() => SetCurrentValue(ValueProperty.Property, Convert.ToUInt16(Value + Increment));
 

@@ -11,7 +11,7 @@ namespace Imagin.Core.Data
     {
         public override IEnumerable<string> Tokenize(string input, char delimiter)
         {
-            var result = input.Split(Array<char>.New(delimiter), StringSplitOptions.RemoveEmptyEntries);
+            var result = input.Split(XArray.New<char>(delimiter), StringSplitOptions.RemoveEmptyEntries);
             foreach (var i in result)
                 yield return i;
         }

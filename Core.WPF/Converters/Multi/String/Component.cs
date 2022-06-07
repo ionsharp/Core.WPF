@@ -13,16 +13,20 @@ namespace Imagin.Core.Converters
 
         public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values?.Length == 2)
+            if (values?.Length > 0)
             {
-                if (values[0] is Components component)
+                if (values.Length > 1)
                 {
-                    if (values[1] is Type model)
+                    if (values[0] is Components component)
                     {
-                        var result = ColorVector.GetComponent(model, (int)component);
-                        return $"({result.Symbol}) {result.Name}";
+                        if (values[1] is Type model)
+                        {
+                            var result = ColorVector.GetComponent(model, (int)component);
+                            return $"({result.Symbol}) {result.Name}";
+                        }
                     }
                 }
+                return $"{values[0]}";
             }
             return Binding.DoNothing;
         }

@@ -164,7 +164,7 @@ namespace Imagin.Core.Converters
 
         protected override ConverterValue<Visibility> ConvertTo(ConverterData<string> input)
         {
-            var result = input.Value.NullOrEmpty().Invert().Visibility();
+            var result = (!input.Value.NullOrEmpty()).Visibility();
             return input.Parameter == 0 ? result : input.Parameter == 1 ? result.Invert() : throw input.InvalidParameter;
         }
 

@@ -283,6 +283,9 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+
+                                <!-- ... -->
+                                
                                 <!-- ... Placeholder -->
                                 <ContentPresenter Grid.Column="1"
                                     Content="{Data:TemplatedParent Path=(Linq:XTextBoxBase.Placeholder)}" 
@@ -302,6 +305,7 @@
                                     Margin="{TemplateBinding Padding}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     Visibility="{Data:TemplatedParent Path=(Linq:XTextBox.IsEditable), Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                                
                                 <!-- ... Text (trim) -->
                                 <ContentControl Grid.Column="1"
                                     Content="{TemplateBinding Text}"
@@ -326,13 +330,16 @@
                                     Style="{Data:TemplatedParent Path=(Linq:XTextBoxBase.ScrollViewerStyle)}"
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
                                     <ScrollViewer.Visibility>
-                                        <MultiBinding Converter="{x:Static Converters:BooleanToVisibilityMultiConverter.Default}" ConverterParameter="1,(1|1)">
+                                        <MultiBinding Converter="{x:Static Converters:AandBorCMultiConverter.Default}">
                                             <Data:TemplatedParent Path="(Linq:XTextBox.IsEditable)"/>
                                             <Data:TemplatedParent Path="(Linq:XTextBoxBase.TextTrimming)" Converter="{x:Static Converters:ValueEqualsParameterConverter.Default}" ConverterParameter="{x:Static TextTrimming.None}"/>
                                             <Data:TemplatedParent Path="IsKeyboardFocused"/>
                                         </MultiBinding>
                                     </ScrollViewer.Visibility>
                                 </ScrollViewer>
+
+                                <!-- ... -->
+
                                 <!-- ... Buttons -->
                                 <ContentControl Grid.Column="2"
                                     AllowDrop="False"
@@ -368,6 +375,7 @@
                                         </MultiBinding>
                                     </ContentControl.Visibility>
                                 </ContentControl>
+                                
                                 <!-- ... Content (right) -->
                                 <ItemsControl Grid.Column="5"
                                     AllowDrop="False"

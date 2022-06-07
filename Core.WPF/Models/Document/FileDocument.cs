@@ -53,7 +53,7 @@ namespace Imagin.Core.Models
         public virtual string Extension => System.IO.Path.GetExtension(path);
 
         [Hidden, XmlIgnore]
-        public virtual string[] Extensions => Array<string>.New(Extension);
+        public virtual string[] Extensions => XArray.New<string>(Extension);
 
         [Category(Category.File)]
         [DisplayName("Extension")]

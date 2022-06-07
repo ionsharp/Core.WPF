@@ -1,5 +1,6 @@
 ﻿using Imagin.Core.Linq;
 using System.Windows.Input;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -27,9 +28,9 @@ namespace Imagin.Core.Controls
 
         protected override bool CanDecrease() => Value > Minimum;
 
-        protected override object OnMaximumCoerced(object input) => input.As<byte>().Clamp(AbsoluteMaximum, this.Value);
+        protected override object OnMaximumCoerced(object input) => Clamp((byte)input, AbsoluteMaximum, Value);
 
-        protected override object OnMinimumCoerced(object input) => input.As<byte>().Clamp(this.Value, AbsoluteMinimum);
+        protected override object OnMinimumCoerced(object input) => Clamp((byte)input, Value, AbsoluteMinimum);
 
         protected override void OnPreviewTextInput(TextCompositionEventArgs e)
         {
@@ -37,7 +38,7 @@ namespace Imagin.Core.Controls
             e.Handled = CaretIndex > 0 && e.Text == "-" ? true : e.Handled;
         }
 
-        protected override object OnValueCoerced(object input) => input.As<byte>().Clamp(Maximum, Minimum);
+        protected override object OnValueCoerced(object input) => Clamp((byte)input, Maximum, Minimum);
 
         public override void Increase() => SetCurrentValue(ValueProperty.Property, (Value + Increment).Byte());
 

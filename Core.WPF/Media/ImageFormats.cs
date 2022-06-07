@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Imagin.Core.Linq;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Imagin.Core.Media
@@ -47,7 +48,7 @@ namespace Imagin.Core.Media
         {
             get
             {
-                formats = formats ?? Array<FileFormat>.New
+                formats = formats ?? XArray.New<FileFormat>
                 (
                     new FileFormat("image", true, true),
                     //...

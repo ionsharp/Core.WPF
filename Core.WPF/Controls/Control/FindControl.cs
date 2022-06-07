@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Controls
 {
@@ -560,7 +561,7 @@ namespace Imagin.Core.Controls
 
                         lineText = nextLineIndex == null
                         ? targetText.Substring(lineIndex)
-                        : targetText.Substring(lineIndex, (nextLineIndex.Value - lineIndex).Clamp(int.MaxValue));
+                        : targetText.Substring(lineIndex, Clamp(nextLineIndex.Value - lineIndex, int.MaxValue));
                     }
                     else lineText = targetText;
 

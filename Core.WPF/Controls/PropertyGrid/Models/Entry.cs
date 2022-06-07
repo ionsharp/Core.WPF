@@ -24,8 +24,6 @@ namespace Imagin.Core.Controls
 
         //...
 
-        protected override void Apply(MemberAttributes input) { }
-
         protected override object GetValue(object input) => (input as IDictionary)[Name];
 
         protected override void SetValue(object input, object value) => (input as IDictionary)[Name] = value;

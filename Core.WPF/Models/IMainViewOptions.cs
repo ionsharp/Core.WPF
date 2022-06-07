@@ -4,6 +4,8 @@
     {
         bool LogEnabled { get; }
 
+        bool LogClearOnExit { get; }
+        
         bool SaveWithDialog { get; }
 
         void Save();

@@ -81,6 +81,7 @@ namespace Imagin.Core.Controls
                 new DocumentCollection());
 
             var panels = new PanelCollection();
+
             SetCurrentValue(AlphaPanelProperty, new AlphaPanel());
 
             panels.Add

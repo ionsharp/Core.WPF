@@ -49,7 +49,7 @@ namespace Imagin.Core.Controls
 
                                         if (values[2] is string fileExtensions)
                                         {
-                                            var e = fileExtensions.Split(Array<char>.New(';'), StringSplitOptions.RemoveEmptyEntries).Select(i => i.TrimExtension());
+                                            var e = fileExtensions.Split(XArray.New<char>(';'), StringSplitOptions.RemoveEmptyEntries).Select(i => i.TrimExtension());
                                             if (!e.Any() || e.Contains(Path.GetExtension(file.Path).TrimExtension()))
                                                 return Visibility.Visible;
 

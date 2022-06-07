@@ -5,6 +5,7 @@
     xmlns:Converters="clr-namespace:Imagin.Core.Converters"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Effects="clr-namespace:Imagin.Core.Effects"
+    xmlns:Markup="clr-namespace:Imagin.Core.Markup"
     xmlns:Media="clr-namespace:Imagin.Core.Media">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="{local:StyleKey Key=Control}"/>
@@ -19,41 +20,311 @@
 
     <!-- ... ComponentSelector : ColorSelector -->
 
+    <DataTemplate x:Key="ComponentSelectorTemplate">
+        <local:FillElement Fill="White"
+            DataContext="{Binding Data}"
+            Height="1" Width="1">
+            <local:FillElement.Effect>
+                <Effects:ColorModelEffect
+                    Component="{Binding Component}"
+                    Mode="XY"
+                    Model="{Binding Model}"
+                    Profile="{Binding Profile}"
+                    Shape="{Binding Shape}"
+                    Z="{Binding Z, Converter={x:Static Converters:OneToDoubleConverter.Default}}"/>
+            </local:FillElement.Effect>
+        </local:FillElement>
+    </DataTemplate>
+
+    <RadialGradientBrush x:Key="ComponentSelector.3DBackground" Center="0.5,0.5">
+        <GradientStop Color="#55FFFFFF" Offset="0"/>
+        <GradientStop Color="#00000000" Offset="1"/>
+    </RadialGradientBrush>
+    
+    <ControlTemplate x:Key="ComponentSelector.ControlTemplate" TargetType="{x:Type local:ComponentSelector}">
+        <Border
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding Background}"
+            BorderThickness="{TemplateBinding Background}"
+            CornerRadius="{TemplateBinding Border.CornerRadius}">
+            <Border.Resources>
+                <Data:Reference x:Key="ComponentSelector" Data="{Data:TemplatedParent}"/>
+
+                <Model3DGroup x:Key="ComponentSelector.3DVisual">
+                    <Model3DGroup.Children>
+                        <!-- Front -->
+                        <GeometryModel3D>
+                            <GeometryModel3D.Geometry>
+                                <MeshGeometry3D 
+                                    Positions="-1 -1 1  1 -1 1  -1 1 1  1 1 1"
+                                    TextureCoordinates="0 0  -1 0  0 -1  -1 -1"
+                                    TriangleIndices="0 1 2  1 3 2"/>
+                            </GeometryModel3D.Geometry>
+                            <GeometryModel3D.Material>
+                                <DiffuseMaterial>
+                                    <DiffuseMaterial.Brush>
+                                        <VisualBrush>
+                                            <VisualBrush.Visual>
+                                                <local:FillElement Fill="White"
+                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
+                                                    Height="1" Width="1">
+                                                    <local:FillElement.Effect>
+                                                        <Effects:ColorModelEffect
+                                                            Component="Y"
+                                                            Mode="XY"
+                                                            Model="{Binding Model}"
+                                                            Profile="{Binding Profile}"
+                                                            Shape="Square"
+                                                            Z="1"/>
+                                                    </local:FillElement.Effect>
+                                                </local:FillElement>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </DiffuseMaterial.Brush>
+                                </DiffuseMaterial>
+                            </GeometryModel3D.Material>
+                        </GeometryModel3D>
+                        <!-- Back -->
+                        <GeometryModel3D>
+                            <GeometryModel3D.Geometry>
+                                <MeshGeometry3D 
+                                    Positions="-1 -1 -1  1 -1 -1  -1 1 -1  1 1 -1"
+                                    TextureCoordinates="0 0  -1 0  0 -1  -1 -1"
+                                    TriangleIndices="2 1 0  2 3 1"/>
+                            </GeometryModel3D.Geometry>
+                            <GeometryModel3D.Material>
+                                <DiffuseMaterial>
+                                    <DiffuseMaterial.Brush>
+                                        <VisualBrush>
+                                            <VisualBrush.Visual>
+                                                <local:FillElement Fill="White"
+                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
+                                                    Height="1" Width="1">
+                                                    <local:FillElement.Effect>
+                                                        <Effects:ColorModelEffect
+                                                            Component="Y"
+                                                            Mode="XY"
+                                                            Model="{Binding Model}"
+                                                            Profile="{Binding Profile}"
+                                                            Shape="Square"
+                                                            Z="0"/>
+                                                    </local:FillElement.Effect>
+                                                </local:FillElement>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </DiffuseMaterial.Brush>
+                                </DiffuseMaterial>
+                            </GeometryModel3D.Material>
+                        </GeometryModel3D>
+                        <!-- Left -->
+                        <GeometryModel3D>
+                            <GeometryModel3D.Geometry>
+                                <MeshGeometry3D 
+                                    Positions="-1 -1 -1  -1 -1 1  -1 1 -1  -1 1 1"
+                                    TextureCoordinates="-1 0  0 0  -1 -1  0 -1"
+                                    TriangleIndices="0 1 2  1 3 2"/>
+                            </GeometryModel3D.Geometry>
+                            <GeometryModel3D.Material>
+                                <DiffuseMaterial>
+                                    <DiffuseMaterial.Brush>
+                                        <VisualBrush>
+                                            <VisualBrush.Visual>
+                                                <local:FillElement Fill="White"
+                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
+                                                    Height="1" Width="1">
+                                                    <local:FillElement.Effect>
+                                                        <Effects:ColorModelEffect
+                                                            Component="X"
+                                                            Mode="XY"
+                                                            Model="{Binding Model}"
+                                                            Profile="{Binding Profile}"
+                                                            Shape="Square"
+                                                            Z="1"/>
+                                                    </local:FillElement.Effect>
+                                                </local:FillElement>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </DiffuseMaterial.Brush>
+                                </DiffuseMaterial>
+                            </GeometryModel3D.Material>
+                        </GeometryModel3D>
+                        <!-- Right -->
+                        <GeometryModel3D>
+                            <GeometryModel3D.Geometry>
+                                <MeshGeometry3D 
+                                    Positions="1 -1 -1  1 -1 1  1 1 -1  1 1 1"
+                                    TextureCoordinates="-1 0  0 0  -1 -1  0 -1"
+                                    TriangleIndices="2 1 0  2 3 1"/>
+                            </GeometryModel3D.Geometry>
+                            <GeometryModel3D.Material>
+                                <DiffuseMaterial>
+                                    <DiffuseMaterial.Brush>
+                                        <VisualBrush>
+                                            <VisualBrush.Visual>
+                                                <local:FillElement Fill="White"
+                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
+                                                    Height="1" Width="1">
+                                                    <local:FillElement.Effect>
+                                                        <Effects:ColorModelEffect
+                                                            Component="X"
+                                                            Mode="XY"
+                                                            Model="{Binding Model}"
+                                                            Profile="{Binding Profile}"
+                                                            Shape="Square"
+                                                            Z="0"/>
+                                                    </local:FillElement.Effect>
+                                                </local:FillElement>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </DiffuseMaterial.Brush>
+                                </DiffuseMaterial>
+                            </GeometryModel3D.Material>
+                        </GeometryModel3D>
+                        <!-- Top -->
+                        <GeometryModel3D>
+                            <GeometryModel3D.Geometry>
+                                <MeshGeometry3D 
+                                    Positions="-1 1 1  1 1 1  -1 1 -1  1 1 -1"
+                                    TextureCoordinates="1 0  0 0  1 1  0 1"
+                                    TriangleIndices="0 1 2  1 3 2"/>
+                            </GeometryModel3D.Geometry>
+                            <GeometryModel3D.Material>
+                                <DiffuseMaterial>
+                                    <DiffuseMaterial.Brush>
+                                        <VisualBrush>
+                                            <VisualBrush.Visual>
+                                                <local:FillElement Fill="White"
+                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
+                                                    Height="1" Width="1">
+                                                    <local:FillElement.Effect>
+                                                        <Effects:ColorModelEffect
+                                                            Component="Z"
+                                                            Mode="XY"
+                                                            Model="{Binding Model}"
+                                                            Profile="{Binding Profile}"
+                                                            Shape="Square"
+                                                            Z="1"/>
+                                                    </local:FillElement.Effect>
+                                                </local:FillElement>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </DiffuseMaterial.Brush>
+                                </DiffuseMaterial>
+                            </GeometryModel3D.Material>
+                        </GeometryModel3D>
+                        <!-- Bottom -->
+                        <GeometryModel3D>
+                            <GeometryModel3D.Geometry>
+                                <MeshGeometry3D 
+                                    Positions="-1 -1 1  1 -1 1  -1 -1 -1  1 -1 -1"
+                                    TextureCoordinates="1 0  0 0  1 1  0 1"
+                                    TriangleIndices="2 1 0  2 3 1"/>
+                            </GeometryModel3D.Geometry>
+                            <GeometryModel3D.Material>
+                                <DiffuseMaterial>
+                                    <DiffuseMaterial.Brush>
+                                        <VisualBrush>
+                                            <VisualBrush.Visual>
+                                                <local:FillElement Fill="White"
+                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
+                                                    Height="1" Width="1">
+                                                    <local:FillElement.Effect>
+                                                        <Effects:ColorModelEffect
+                                                            Component="Z"
+                                                            Mode="XY"
+                                                            Model="{Binding Model}"
+                                                            Profile="{Binding Profile}"
+                                                            Shape="Square"
+                                                            Z="0"/>
+                                                    </local:FillElement.Effect>
+                                                </local:FillElement>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </DiffuseMaterial.Brush>
+                                </DiffuseMaterial>
+                            </GeometryModel3D.Material>
+                        </GeometryModel3D>
+                    </Model3DGroup.Children>
+                </Model3DGroup>
+
+                <DataTemplate x:Key="ComponentSelector.3DTemplate">
+                    <Border Background="Black">
+                        <Border Background="{StaticResource ComponentSelector.3DBackground}">
+                            <Viewport3D>
+                                <Viewport3D.Camera>
+                                    <PerspectiveCamera Position="0 0 10" LookDirection="0 0 -1"/>
+                                </Viewport3D.Camera>
+                                <ModelVisual3D>
+                                    <ModelVisual3D>
+                                        <ModelVisual3D.Content>
+                                            <AmbientLight Color="White" />
+                                        </ModelVisual3D.Content>
+                                    </ModelVisual3D>
+                                </ModelVisual3D>
+                                <ModelVisual3D Content="{StaticResource ComponentSelector.3DVisual}">
+                                    <ModelVisual3D.Transform>
+                                        <Transform3DGroup>
+                                            <Transform3DGroup.Children>
+                                                <ScaleTransform3D CenterX="0" CenterY="0" CenterZ="0" ScaleX="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}" ScaleY="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}" ScaleZ="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}"/>
+                                                <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
+                                                    <RotateTransform3D.Rotation>
+                                                        <AxisAngleRotation3D Angle="{Binding Data.RotateX, Source={StaticResource ComponentSelector}}" Axis="1 0 0"/>
+                                                    </RotateTransform3D.Rotation>
+                                                </RotateTransform3D>
+                                                <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
+                                                    <RotateTransform3D.Rotation>
+                                                        <AxisAngleRotation3D Angle="{Binding Data.RotateY, Source={StaticResource ComponentSelector}}" Axis="0 1 0"/>
+                                                    </RotateTransform3D.Rotation>
+                                                </RotateTransform3D>
+                                                <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
+                                                    <RotateTransform3D.Rotation>
+                                                        <AxisAngleRotation3D Angle="{Binding Data.RotateZ, Source={StaticResource ComponentSelector}}" Axis="0 0 1"/>
+                                                    </RotateTransform3D.Rotation>
+                                                </RotateTransform3D>
+                                            </Transform3DGroup.Children>
+                                        </Transform3DGroup>
+                                    </ModelVisual3D.Transform>
+                                </ModelVisual3D>
+                            </Viewport3D>
+                        </Border>
+                    </Border>
+                </DataTemplate>
+            </Border.Resources>
+            <ContentPresenter>
+                <ContentPresenter.ContentTemplate>
+                    <DataTemplate>
+                        <Grid DataContext="{Binding Source={StaticResource ComponentSelector}}">
+                            <Viewbox x:Name="Viewbox" Stretch="Fill">
+                                <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ComponentSelectorTemplate}"/>
+                            </Viewbox>
+                            <local:ComponentSelectorEllipse x:Name="Ellipse" Diameter="{Binding Data.EllipseDiameter}"
+                                X="{Binding Data.EllipsePosition.X}" 
+                                Y="{Binding Data.EllipsePosition.Y}"/>
+
+                            <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+                        </Grid>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Data.Dimension, Source={StaticResource ComponentSelector}}" Value="Three">
+                                <Setter TargetName="Ellipse" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="Viewbox" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource ComponentSelector.3DTemplate}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Data.Dimension, Source={StaticResource ComponentSelector}}" Value="Two">
+                                <Setter TargetName="Ellipse" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="Viewbox" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{Markup:EmptyTemplate}"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ContentPresenter.ContentTemplate>
+            </ContentPresenter>
+        </Border>
+    </ControlTemplate>
+
     <Style x:Key="{x:Type local:ComponentSelector}" TargetType="{x:Type local:ComponentSelector}" BasedOn="{StaticResource {x:Type local:ColorSelector}}">
         <Setter Property="ClipToBounds" Value="True"/>
         <Setter Property="EllipseDiameter" Value="12"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:ComponentSelector}">
-                    <Grid>
-                        <Border
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding Background}"
-                            BorderThickness="{TemplateBinding Background}"
-                            CornerRadius="{TemplateBinding Border.CornerRadius}">
-                            <Viewbox Stretch="Fill">
-                                <local:FillElement x:Name="FillElement" Fill="White"
-                                    DataContext="{Data:TemplatedParent}"
-                                    Height="1" Width="1"
-                                    Opacity="{Binding Alpha, Converter={x:Static Converters:ByteToDoubleConverter.Default}}">
-                                    <local:FillElement.Effect>
-                                        <Effects:ColorModelEffect
-                                            Component="{Binding Component}"
-                                            Mode="XY"
-                                            Model="{Binding Model}"
-                                            ProfileIndex="{Binding Profile}"
-                                            Z="{Binding Z, Converter={x:Static Converters:OneToDoubleConverter.Default}}"/>
-                                    </local:FillElement.Effect>
-                                </local:FillElement>
-                            </Viewbox>
-                        </Border>
-                        <local:ComponentSelectorEllipse Diameter="{Data:TemplatedParent EllipseDiameter}"
-                            X="{Data:TemplatedParent EllipsePosition.X}" 
-                            Y="{Data:TemplatedParent EllipsePosition.Y}"/>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Template" Value="{StaticResource ComponentSelector.ControlTemplate}"/>
     </Style>
 
     <!-- ... (base) BaseComponentSlider : ColorSelector -->
@@ -94,14 +365,13 @@
                             <Viewbox Stretch="Fill">
                                 <local:FillElement x:Name="PART_Fill" Fill="White"
                                     DataContext="{Data:TemplatedParent}"
-                                    Height="1" Width="1"
-                                    Opacity="{Binding Alpha, Converter={x:Static Converters:ByteToDoubleConverter.Default}}">
+                                    Height="1" Width="1">
                                     <local:FillElement.Effect>
                                         <Effects:ColorModelEffect
                                             Component="{Binding Component}"
                                             Mode="Z"
                                             Model="{Binding Model}"
-                                            ProfileIndex="{Binding Profile}"
+                                            Profile="{Binding Profile}"
                                             X="{Binding X, Converter={x:Static Converters:OneToDoubleConverter.Default}}"
                                             Y="{Binding Y, Converter={x:Static Converters:OneToDoubleConverter.Default}}"/>
                                     </local:FillElement.Effect>

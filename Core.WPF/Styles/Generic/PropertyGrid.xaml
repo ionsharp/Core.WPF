@@ -207,34 +207,41 @@
                             Margin="1,0,0,0"
                             ToolTip="{l:Loc Options}"
                             VerticalAlignment="Center"
-                            Visibility="{Data:Ancestor MemberOptionsVisibility, local:PropertyGrid}">
+                            Visibility="{Data:VisibilityBinding Assignable}">
                             <local:ImageButton.Menu>
                                 <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}">
-                                    <MenuItem Header="{l:Loc New}" ItemsSource="{Binding AssignableTypes}"
-                                        Visibility="{Data:VisibilityBinding AssignableTypes.Count}">
-                                        <MenuItem.ItemContainerStyle>
-                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                                                <Setter Property="Command" Value="{Binding Data.MemberNewCommand, Source={StaticResource PropertyGrid}}"/>
-                                                <Setter Property="CommandParameter">
-                                                    <Setter.Value>
-                                                        <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding}"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Setter Property="Header" Value="{Binding Name}"/>
-                                            </Style>
-                                        </MenuItem.ItemContainerStyle>
-                                    </MenuItem>
-                                    <Separator Visibility="{Data:VisibilityBinding AssignableTypes.Count}"/>
-                                    <MenuItem Header="{l:Loc Default}"
-                                        Command="{Binding Data.MemberDefaultCommand, Source={StaticResource PropertyGrid}}"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem Header="{l:Loc Null}"
-                                        Command="{Binding Data.MemberNullCommand, Source={StaticResource PropertyGrid}}"
-                                        CommandParameter="{Binding}"/>
-                                    <Separator/>
-                                    <MenuItem Header="{l:Loc Reset}"
-                                        Command="{Binding Data.MemberResetCommand, Source={StaticResource PropertyGrid}}"
-                                        CommandParameter="{Binding}"/>
+                                    <ContextMenu.Resources>
+                                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                            <Style.Triggers>
+                                                <Trigger Property="Tag" Value="{x:Null}">
+                                                    <Setter Property="Command" Value="{Binding Data.MemberCreateCommand, Source={StaticResource PropertyGrid}}"/>
+                                                    <Setter Property="CommandParameter">
+                                                        <Setter.Value>
+                                                            <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding}"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Header" Value="{Data:DisplayNameBinding}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContextMenu.Resources>
+                                    <ContextMenu.ItemsSource>
+                                        <CompositeCollection>
+                                            <MenuItem Tag="0" Header="{l:Loc Default}"
+                                                Command="{Binding Data.MemberDefaultCommand, Source={StaticResource PropertyGrid}}"
+                                                CommandParameter="{Binding}"/>
+                                            <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableTypes.Count}"/>
+                                            <CollectionContainer Collection="{Binding Data.AssignableTypes, Source={StaticResource Member}}"/>
+                                            <Separator/>
+                                            <MenuItem Tag="0" Header="{l:Loc Reset}"
+                                                Command="{Binding Data.MemberResetCommand, Source={StaticResource PropertyGrid}}"
+                                                CommandParameter="{Binding}"/>
+                                            <MenuItem Tag="0" Header="{l:Loc Clear}"
+                                                Command="{Binding Data.MemberClearCommand, Source={StaticResource PropertyGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Visibility="{Data:VisibilityBinding IsEnabled, Relative=Self}"/>
+                                        </CompositeCollection>
+                                    </ContextMenu.ItemsSource>
                                 </ContextMenu>
                             </local:ImageButton.Menu>
                         </local:ImageButton>
@@ -499,6 +506,7 @@
                         </local:BottomBorder.Visibility>
                         <Grid Linq:XGrid.Columns="Auto,*,Auto,Auto"
                             Linq:XPanel.VerticalContentAlignment="Center"
+                            Height="28"
                             Margin="0,2">
                             <local:ImageToggleButton Grid.Column="0"
                                 IsChecked="{Data:VisibilityBinding SearchVisibility, Mode=TwoWay, Relative=TemplatedParent}"
@@ -548,6 +556,11 @@
 
                             <!-- ... Buttons (Custom) -->
                             <ItemsControl Grid.Column="2" ItemsSource="{TemplateBinding HeaderButtons}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <ContentPresenter Content="{Binding}"/>
@@ -559,7 +572,8 @@
                             <local:ImageToggleButton Grid.Column="3"
                                 Margin="1,0"
                                 Source="{Markup:InternalImage TriangleDown.png}"
-                                ToolTip="{l:Loc Options}">
+                                ToolTip="{l:Loc Options}"
+                                Visibility="{TemplateBinding OptionsButtonVisibility}">
                                 <local:ImageToggleButton.Menu>
                                     <ContextMenu DataContext="{Binding Data, Source={StaticResource PropertyGrid}}">
                                         <ContextMenu.ItemsSource>
@@ -1103,7 +1117,6 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Margin" Value="0"/>
-        <Setter Property="MemberOptionsVisibility" Value="Visible"/>
         <Setter Property="NameColumnHeader" Value="{l:Loc Name}"/>
         <Setter Property="NameColumnVisibility" Value="Visible"/>
         <Setter Property="NameColumnWidth" Value="3*"/>

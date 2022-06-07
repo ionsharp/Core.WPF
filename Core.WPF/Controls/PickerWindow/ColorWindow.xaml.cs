@@ -46,7 +46,7 @@ namespace Imagin.Core.Controls
 
             SetCurrentValue(ActiveDocumentProperty, document);
 
-            this.Bind(ValueProperty, $"{nameof(ActiveDocument)}.{nameof(ColorDocument.Color)}.{nameof(ObservableColor.ActualColor)}", this, System.Windows.Data.BindingMode.TwoWay, ColorToSolidColorBrushConverter.Default);
+            this.Bind(ValueProperty, $"{nameof(ActiveDocument)}.{nameof(ColorDocument.Color)}.{nameof(ColorModel.ActualColor)}", this, System.Windows.Data.BindingMode.TwoWay, ColorToSolidColorBrushConverter.Default);
             InitializeComponent();
         }
 

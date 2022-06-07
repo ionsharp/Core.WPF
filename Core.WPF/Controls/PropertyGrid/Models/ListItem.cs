@@ -19,9 +19,9 @@ namespace Imagin.Core.Controls
 
         public override MemberInfo Member => Parent.Member;
 
-        public override object Format => Parent.Attributes.Get<ItemFormatAttribute>()?.Format;
+        public override object Format => Parent.Attributes.GetFirst<ItemFormatAttribute>()?.Format;
 
-        public override object Style => Parent.Attributes.Get<ItemStyleAttribute>()?.Style;
+        public override object Style => Parent.Attributes.GetFirst<ItemStyleAttribute>()?.Style;
 
         public override Type Type => Parent?.ItemType;
 
@@ -33,8 +33,6 @@ namespace Imagin.Core.Controls
         }
 
         //...
-
-        protected override void Apply(MemberAttributes input) { }
 
         protected override void SetValue(object source, object value) 
             => ParentIndex.If(i => i > -1 && Parent.ActualValue?.Count > i, i => Parent.ActualValue[i] = value);

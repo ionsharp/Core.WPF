@@ -1,6 +1,7 @@
-﻿using Imagin.Core.Linq;
-using Imagin.Core.Numerics;
+﻿using Imagin.Core.Colors;
+using Imagin.Core.Linq;
 using Imagin.Core.Media;
+using Imagin.Core.Numerics;
 using System;
 using System.Collections;
 using System.Linq;
@@ -9,6 +10,17 @@ using System.Windows.Media;
 
 namespace Imagin.Core.Converters
 {
+    [ValueConversion(typeof(int), typeof(string))]
+    public class ColorModelConverter : Converter<int, string>
+    {
+        public static ColorModelConverter Default { get; private set; } = new();
+        public ColorModelConverter() : base() { }
+
+        protected override ConverterValue<string> ConvertTo(ConverterData<int> input) => ColorVector.Type[input.Value].Name;
+
+        protected override ConverterValue<int> ConvertBack(ConverterData<string> input) => Nothing.Do;
+    }
+
     [ValueConversion(typeof(IList), typeof(string))]
     public class ListToStringConverter : Converter<IList, string>
     {

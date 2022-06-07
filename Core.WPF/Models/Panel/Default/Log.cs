@@ -85,14 +85,6 @@ namespace Imagin.Core.Models
 
         #region Properties
 
-        bool clearOnApplicationExit = true;
-        [Option]
-        public bool ClearOnApplicationExit
-        {
-            get => clearOnApplicationExit;
-            set => this.Change(ref clearOnApplicationExit, value);
-        }
-
         [Hidden]
         public int ErrorCount 
             => Data.Count<LogEntry>(i => i.Result is Error);

@@ -1,3 +1,14 @@
+// There is a limitation with increasing the size of the arrays {Maximum} and {Minimum}: 
+// "error X4505: maximum temp register index exceeded". 
+// 
+// The shader has presumably exhausted all available memory. This suggests no more color models (and, by extension, variables) can be defined. 
+// To support additional color spaces, additional shaders are required. I haven't done this yet to avoid redundancy (copy/paste). 
+//  
+// [Labk], [HSBk], and [HSLk] are omitted temporarily to overcome this limitation. The conversion for the latter two color spaces are 
+//  not yet defined anyway. 
+// 
+// Assess alternatives...
+
 sampler2D input				: register(S0);
 
 //...
@@ -6,6 +17,7 @@ float Model				: register(C0);
 float Component			: register(C1);
 
 float Mode				: register(C2);
+float View				: register(C22);
 
 float X					: register(C3);
 float Y					: register(C4);
@@ -35,174 +47,229 @@ float3 XYZ_RGB_z		: register(C21);
 
 //...
 
-float HighlightAmount	: register(C22);
-float HighlightRange	: register(C23);
+float3 LABk_LMSk_x		: register(C23);
+float3 LABk_LMSk_y		: register(C24);
+float3 LABk_LMSk_z		: register(C25);
 
-float MidtoneAmount		: register(C24);
-float MidtoneRange		: register(C25);
+float3 LMSk_LABk_x		: register(C26);
+float3 LMSk_LABk_y		: register(C27);
+float3 LMSk_LABk_z		: register(C28);
 
-float ShadowAmount		: register(C26);
-float ShadowRange		: register(C27);
+float3 LMSk_XYZk_x		: register(C29);
+float3 LMSk_XYZk_y		: register(C30);
+float3 LMSk_XYZk_z		: register(C31);
 
-//(Index)
-
-static float INDEX_RGB		= 0;
-static float INDEX_CMY		= 1;
-static float INDEX_HCV		= 2;
-static float INDEX_HCY		= 3;
-static float INDEX_HPLuv	= 4;
-static float INDEX_HSB		= 5;
-static float INDEX_HSBok	= 6;
-static float INDEX_HSL		= 7;
-static float INDEX_HSLok	= 8;
-static float INDEX_HSLuv	= 9;
-static float INDEX_HSM		= 10;
-static float INDEX_HSP		= 11;
-static float INDEX_HUVab	= 12;
-static float INDEX_HUVabh	= 13;
-static float INDEX_HUVuv	= 14;
-static float INDEX_HzUzVz	= 15;
-static float INDEX_HWB		= 16;
-static float INDEX_ICtCp	= 17;
-static float INDEX_JPEG		= 18;
-static float INDEX_JzAzBz	= 19;
-static float INDEX_JzCzHz	= 20;
-static float INDEX_LAB		= 21;
-static float INDEX_LABh		= 22;
-static float INDEX_LCHab	= 23;
-static float INDEX_LCHabh	= 24;
-static float INDEX_LCHuv	= 25;
-static float INDEX_LMS		= 26;
-static float INDEX_LUV		= 27;
-static float INDEX_OKLab	= 28;
-static float INDEX_TSL		= 29;
-static float INDEX_UCS		= 30;
-static float INDEX_UVW		= 31;
-static float INDEX_xvYCC	= 32;
-static float INDEX_xyY		= 33;
-static float INDEX_XYZ		= 34;
-static float INDEX_YCbCr	= 35;
-static float INDEX_YCoCg	= 36;
-static float INDEX_YDbDr	= 37;
-static float INDEX_YES		= 38;
-static float INDEX_YIQ		= 39;
-static float INDEX_YPbPr	= 40;
-static float INDEX_YUV		= 41;
-
-//(Constants)
-
-static float pi			= 3.14159265359;
-static float pi2		= pi * 2;
-static float pi3		= pi * 3;
-
-static float Epsilon	= 216.0 / 24389.0;
-static float Kappa		= 24389.0 / 27.0;
-
-//(Helpers)
-
-static float Cbrt(float input)
-{
-	return pow(input, 1 / 3);
-}
+float3 XYZk_LMSk_x		: register(C32);
+float3 XYZk_LMSk_y		: register(C33);
+float3 XYZk_LMSk_z		: register(C34);
 
 //...
 
-static float FLerp(float norm, float min, float max)
-{
-	return (max - min) * norm + min;
-}
-
-static float3 FLerp(float3 xyz, float3 max, float3 min, float3 scale)
-{
-	return float3
-	(
-		xyz[0] + ((max[0] + abs(min[0])) - (xyz[0] + abs(min[0]))) * scale[0],
-		xyz[1] + ((max[1] + abs(min[1])) - (xyz[1] + abs(min[1]))) * scale[1],
-		xyz[2] + ((max[2] + abs(min[2])) - (xyz[2] + abs(min[2]))) * scale[2]
-	);
-}
+float3  xyYC_exy		: register(C35);
 
 //...
 
-static float GetBrightness(float3 input)
+float HighlightAmount	: register(C36);
+float HighlightRange	: register(C37);
+
+float MidtoneAmount		: register(C38);
+float MidtoneRange		: register(C39);
+
+float ShadowAmount		: register(C40);
+float ShadowRange		: register(C41);
+
+//[Constants]
+
+static float pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062;
+static float pi2 = pi * 2;
+static float pi3 = pi * 3;
+
+static float Epsilon = 216.0 / 24389.0;
+static float Kappa = 24389.0 / 27.0;
+
+static float MaxValue = 3.40282347E+38;
+
+static float3 Maximum[43] =
 {
-	float maximum = max(max(input[0], input[1]), input[2]);
-	float minimum = min(min(input[0], input[1]), input[2]);
-	return (maximum + minimum) / 2.0;
-}
+	//RGB
+	float3(1, 1, 1),
+	//CMY
+	float3(1, 1, 1),
+	//HCV
+	float3(360, 100, 100),
+	//HCY
+	float3(360, 100, 255),
+	//HPLuv
+	float3(360, 100, 100),
+	//HSB
+	float3(360, 100, 100),
+	//HSBk
+	float3(360, 100, 100),
+	//HSL
+	float3(360, 100, 100),
+	//HSLk
+	float3(360, 100, 100),
+	//HSLuv
+	float3(360, 100, 100),
+	//HSM
+	float3(360, 100, 255),
+	//HSP
+	float3(360, 100, 255),
+	//HWB
+	float3(360, 100, 100),
+	//HWBk
+	float3(360, 100, 100),
+	//ICtCp
+	float3(1, 1, 1),
+	//IPT
+	float3(1, 1, 1),
+	//JPEG
+	float3(255, 255, 255),
+	//Lab
+	float3(100, 100, 100),
+	//Labh
+	float3(100, 128, 128),
+	//Labi
+	float3(8, 12, 6),
+	//Labj
+	float3(1, 1, 1),
+	//Labk
+	float3(1, 1, 1),
+	//LCHab
+	float3(100, 100, 360),
+	//LCHabh
+	float3(100, 100, 360),
+	//LCHabj
+	float3(1, 1, 360),
+	//LCHuv
+	float3(100, 100, 360),
+	//LMS
+	float3(1, 1, 1),
+	//Luv
+	float3(100, 224, 122),
+	//TSL
+	float3(1, 1, 1),
+	//UCS
+	float3(1, 1, 1),
+	//UVW
+	float3(224, 122, 100),
+	//xvYCC
+	float3(255, 255, 255),
+	//xyY
+	float3(1, 1, 1),
+	//xyYC
+	float3(76, 100, 100),
+	//XYZ
+	float3(1, 1, 1),
+	//YCbCr
+	float3(235, 240, 240),
+	//YCoCg
+	float3(1, 0.5, 0.5),
+	//YCwCm
+	float3(1, 1, 1),
+	//YDbDr
+	float3(1, 1.333, 1.333),
+	//YES
+	float3(1, 1, 1),
+	//YIQ
+	float3(1, 0.5957, 0.5226),
+	//YPbPr
+	float3(1, 0.5, 0.5),
+	//YUV
+	float3(1, 0.5, 0.5)
+};
 
-//...
-
-/*
-static IList<float[]> GetBounds(float L)
+static float3 Minimum[43] =
 {
-	var result = new List<float[]>();
+	//RGB
+	float3(0, 0, 0),
+	//CMY
+	float3(0, 0, 0),
+	//HCV
+	float3(0, 0, 0),
+	//HCY
+	float3(0, 0, 0),
+	//HPLuv
+	float3(0, 0, 0),
+	//HSB
+	float3(0, 0, 0),
+	//HSBk
+	float3(0, 0, 0),
+	//HSL
+	float3(0, 0, 0),
+	//HSLk
+	float3(0, 0, 0),
+	//HSLuv
+	float3(0, 0, 0),
+	//HSM
+	float3(0, 0, 0),
+	//HSP
+	float3(0, 0, 0),
+	//HWB
+	float3(0, 0, 0),
+	//HWBk
+	float3(0, 0, 0),
+	//ICtCp
+	float3(0, -1, -1),
+	//IPT
+	float3(0, 0, 0),
+	//JPEG
+	float3(0, 0, 0),
+	//Lab
+	float3(0, 0, 0),
+	//Labh
+	float3(0, -128, -128),
+	//Labi
+	float3(-10, -6, -10),
+	//Labj
+	float3(0, -1, -1),
+	//Labk
+	float3(0, 0, 0),
+	//LCHab
+	float3(0, 0, 0),
+	//LCHabh
+	float3(0, 0, 0),
+	//LCHabj
+	float3(0, 0, 0),
+	//LCHuv
+	float3(0, 0, 0),
+	//LMS
+	float3(0, 0, 0),
+	//Luv
+	float3(0, -134, -140),
+	//TSL
+	float3(0, 0, 0),
+	//UCS
+	float3(0, 0, 0),
+	//UVW
+	float3(-134, -140, 0),
+	//xvYCC
+	float3(0, 0, 0),
+	//xyY
+	float3(0, 0, 0),
+	//xyYC
+	float3(10, 0, 0),
+	//XYZ
+	float3(0, 0, 0),
+	//YCbCr
+	float3(16, 16, 16),
+	//YCoCg
+	float3(0, -0.5, -0.5),
+	//YCwCm
+	float3(0, 0, 0),
+	//YDbDr
+	float3(0, -1.333, -1.333),
+	//YES
+	float3(0, 0, 0),
+	//YIQ
+	float3(0, -0.5957, -0.5226),
+	//YPbPr
+	float3(0, -0.5, -0.5),
+	//YUV
+	float3(0, -0.5, -0.5)
+};
 
-	float sub1 = pow(L + 16, 3) / 1560896;
-	float sub2 = sub1 > Epsilon ? sub1 : L / Kappa;
-
-	for (int c = 0; c < 3; ++c)
-	{
-		float m1 = M[c][0];
-		float m2 = M[c][1];
-		float m3 = M[c][2];
-		for (int t = 0; t < 2; ++t)
-		{
-			float m = (284517 * m1 - 94839 * m3) * sub2;
-			float n = (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L;
-			float bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t;
-			result.Add(new float[] { m / bottom, n / bottom });
-		}
-	}
-	return result;
-}
-
-static float GetDistance(IList<float> input)
-{
-	return sqrt(pow(input[0], 2) + pow(input[1], 2));
-}
-
-static float GetChroma(float L)
-{
-	var bounds = GetBounds(L);
-	float result = MaxValue;
-
-	for (int i = 0; i < 2; ++i)
-	{
-		float m1 = bounds[i][0];
-		float b1 = bounds[i][1];
-		float2 line = float2 { m1, b1 };
-
-		float x = GetIntersection(line, new float[] { -1 / m1, 0 });
-		float length = GetDistance(new float[] { x, b1 + x * m1 });
-
-		result = min(result, length);
-	}
-
-	return result;
-}
-
-static float GetChroma(float L, float H)
-{
-	float hrad = H / 360 * pi2;
-
-	float bounds = GetBounds(L);
-	float result = MaxValue;
-	foreach(float bound in bounds)
-	{
-		float length = GetRayLength(bound, hrad);
-		if (length >= 0)
-			result = min(result, length);
-	}
-
-	return result;
-}
-
-static float GetRayLength(IList<float> input, float theta)
-{
-	return input[1] / (sin(theta) - input[0] * cos(theta));
-}
-*/
+//[Methods]
 
 static bool AB(float input, float a, float b)
 {
@@ -219,51 +286,172 @@ static bool aB(float input, float a, float b)
 	return input > a && input <= b;
 }
 
+static float Cbrt(float input) { return pow(input, 1 / 3); }
+
+static float ConvertRange(float value, float minimum, float maximum) { return (value * (maximum - minimum)) + minimum; }
+
+static float3 ConvertRange(float3 value, float3 minimum, float3 maximum)
+{
+	value[0] = ConvertRange(value[0], minimum[0], maximum[0]);
+	value[1] = ConvertRange(value[1], minimum[1], maximum[1]);
+	value[2] = ConvertRange(value[2], minimum[2], maximum[2]);
+	return value;
+}
+
+static float3 FLerp(float3 xyz, float3 max, float3 min, float3 scale)
+{
+	return float3
+	(
+		xyz[0] + ((max[0] + abs(min[0])) - (xyz[0] + abs(min[0]))) * scale[0],
+		xyz[1] + ((max[1] + abs(min[1])) - (xyz[1] + abs(min[1]))) * scale[1],
+		xyz[2] + ((max[2] + abs(min[2])) - (xyz[2] + abs(min[2]))) * scale[2]
+	);
+}
+
+//* Used by [HSLuv] and [HPLuv]
+
+static float GetDistance(float2 input)
+{
+	return sqrt(pow(input.x, 2) + pow(input.y, 2));
+}
+
+static float GetIntersection(float2 a, float2 b)
+{
+	return (a.y - b.y) / (b.x - a.x);
+}
+
+static float2 GetBounds2(int t, float L, float m1, float m2, float m3, float s2)
+{
+	float x = (284517 * m1 - 948390 * m3) * s2;
+	float y = (838422 * m3 + 769860 * m2  + 731718 * m1) * L * s2 - 769860 * t * L;
+	float z = (632260 * m3 - 126452 * m2) * s2 + 126452 * t;
+	return float2(x / z, y / z);
+}
+
+static float2x2 GetBounds1(int c, float L)
+{
+	float3x3 M = float3x3
+	(
+		float3( 3.240969941904521, -1.537383177570093, -0.498610760293),
+		float3(-0.96924363628087,   1.87596750150772,   0.041555057407175),
+		float3( 0.055630079696993, -0.20397695888897,   1.056971514242878)
+	);
+
+	float s1 = pow(L + 16, 3) / 1560896;
+	float s2 = s1 > Epsilon ? s1 : L / Kappa;
+
+	float m1 = M[c][0]; float m2 = M[c][1]; float m3 = M[c][2];
+	return float2x2(GetBounds2(0, L, m1, m2, m3, s2), GetBounds2(1, L, m1, m2, m3, s2));
+}
+
+static float GetChroma2(int i, float L, float result)
+{
+	float2x2 xB = GetBounds1(0, L);
+
+	float m1 = xB[i][0];
+	float b1 = xB[i][1];
+
+	float x = GetIntersection(float2(m1, b1), float2(-1 / m1, 0));
+	float length = GetDistance(float2(x, b1 + x * m1));
+
+	result = min(result, length);
+	return result;
+}
+
+static float GetChroma1(float L)
+{
+	float result = MaxValue;
+	result = GetChroma2(0, L, result);
+	result = GetChroma2(1, L, result);
+	return result;
+}
+
+static float GetChroma4(float2 xy, float hrad, float result)
+{
+	float length = xy.y / (sin(hrad) - xy.x * cos(hrad));
+	if (length >= 0)
+		result = min(result, length);
+
+	return result;
+}
+
+static float GetChroma3(float L, float H)
+{
+	float hrad = H / 360 * pi2;
+
+	float2x2 x = GetBounds1(0, L);
+	float2x2 y = GetBounds1(1, L);
+	float2x2 z = GetBounds1(2, L);
+
+	float result = MaxValue;
+
+	result = GetChroma4(x[0], hrad, result);
+	result = GetChroma4(x[1], hrad, result);
+
+	result = GetChroma4(y[0], hrad, result);
+	result = GetChroma4(y[1], hrad, result);
+
+	result = GetChroma4(z[0], hrad, result);
+	result = GetChroma4(z[1], hrad, result);
+	return result;
+}
+
 //...
 
-static float Pow2(float input)
-{
-	return pow(input, 2);
-}
+static float GetDegree(float radian) { return radian * (180 / pi); }
 
-static float Pow3(float input)
-{
-	return pow(input, 3);
-}
+static float GetDistance(float x1, float y1, float x2, float y2) { return sqrt(pow(abs(x1 - x2), 2) + pow(abs(y1 - y2), 2)); }
 
-//...
+static float GetDistance(float x, float y) { return GetDistance(0.5, 0.5, x, y); }
 
-static float GetDegree(float radian)
-{
-	return radian * (180 / pi);
-}
+static float3x3 GetMatrix(float3 r, float3 g, float3 b) { return float3x3(float3(r.x, r.y, r.z), float3(g.x, g.y, g.z), float3(b.x, b.y, b.z)); }
 
-static float GetDistance(float x1, float y1, float x2, float y2)
-{
-	return sqrt(pow(abs(x1 - x2), 2) + pow(abs(y1 - y2), 2));
-}
+static float GetMaximum(float3 input) { return max(input[0], max(input[1], input[2])); }
 
-static float GetRadian(float degree)
-{
-	return (pi / 180) * degree;
-}
+static float GetMinimum(float3 input) { return min(input[0], min(input[1], input[2])); }
 
-static float GetSum(float3 input)
-{
-	return input[0] + input[1] + input[2];
-}
+static float GetRadian(float degree) { return (pi / 180) * degree; }
 
-//...
+static float GetSum(float3 input) { return input[0] + input[1] + input[2]; }
 
 static float3 GetWhite(float x, float y)
 {
 	return float3((1 / y) * x, 1, (1 / y) * (1 - x - y));
 }
 
-static float3 GetWhite(float2 input)
+static float3 GetWhite(float2 input) { return GetWhite(input.x, input.y); }
+
+static float3 Multiply(float3x3 a, float3 b)
 {
-	return GetWhite(input.x, input.y);
+	float x = b[0] * a[0][0] + b[1] * a[1][0] + b[2] * a[2][0];
+	float y = b[0] * a[0][1] + b[1] * a[1][1] + b[2] * a[2][1];
+	float z = b[0] * a[0][2] + b[1] * a[1][2] + b[2] * a[2][2];
+	return float3(x, y, z);
 }
+
+static float NormalizeDegree(float degree)
+{
+	float result = degree % 360.0;
+	return result >= 0 ? result : (result + 360.0);
+}
+
+static float PerceptualQuantizer(float x)
+{
+	float xx = pow(x * 1e-4, 0.1593017578125);
+	float result = pow((0.8359375 + 18.8515625 * xx) / (1 + 18.6875 * xx), 134.034375);
+	return result;
+}
+
+static float PerceptualQuantizerInverse(float X)
+{
+	float XX = pow(X, 7.460772656268214e-03);
+	float result = 1e4 * pow((0.8359375 - XX) / (18.6875 * XX - 18.8515625), 6.277394636015326);
+	return result;
+}
+
+static float Pow2(float input) { return pow(input, 2); }
+
+static float Pow3(float input) { return pow(input, 3); }
 
 //...
 
@@ -299,418 +487,26 @@ static float ComputeKv(float3 i)
 
 //...
 
-static float3 Multiply(float3x3 a, float3 b)
+//[Conversion] (from|to) += Done, -= Not done
+
+//(+|+) [HWb]
+float3 ToHWb(float3 input)
 {
-	float x = b[0] * a[0][0] + b[1] * a[1][0] + b[2] * a[2][0];
-	float y = b[0] * a[0][1] + b[1] * a[1][1] + b[2] * a[2][1];
-	float z = b[0] * a[0][2] + b[1] * a[1][2] + b[2] * a[2][2];
-	return float3(x, y, z);
+	float h = input[0];
+	float w = (1 - input[1]) * input[2];
+	float b = 1 - input[2];
+	return float3(h, w, b);
+}
+float3 FromHWb(float3 input)
+{
+	float h = input[0];
+	float s = 1 - (input[1] / (1 - input[2]));
+	float b = 1 - input[2];
+	return float3(h, s, b);
 }
 
-static float NormalizeDegree(float degree)
-{
-	float result = degree % 360.0;
-	return result >= 0 ? result : (result + 360.0);
-}
-
-static float PerceptualQuantizer(float x)
-{
-	float xx = pow(x * 1e-4, 0.1593017578125);
-	float result = pow((0.8359375 + 18.8515625 * xx) / (1 + 18.6875 * xx), 134.034375);
-	return result;
-}
-
-static float PerceptualQuantizerInverse(float X)
-{
-	float XX = pow(X, 7.460772656268214e-03);
-	float result = 1e4 * pow((0.8359375 - XX) / (18.6875 * XX - 18.8515625), 6.277394636015326);
-	return result;
-}
-
-//...
-
-static float3x3 GetMatrix(float3 r, float3 g, float3 b)
-{
-	return float3x3(float3(r.x, r.y, r.z), float3(g.x, g.y, g.z), float3(b.x, b.y, b.z));
-}
-
-//(Range)
-
-static float ConvertRange(float value, float minimum, float maximum)
-{
-	return (value * (maximum - minimum)) + minimum;
-}
-
-static float3 ConvertRange(float3 value, float3 minimum, float3 maximum)
-{
-	value[0] = ConvertRange(value[0], minimum[0], maximum[0]);
-	value[1] = ConvertRange(value[1], minimum[1], maximum[1]);
-	value[2] = ConvertRange(value[2], minimum[2], maximum[2]);
-	return value;
-}
-
-//...
-
-static float GetMaximum(float3 input)
-{
-	return max(input[0], max(input[1], input[2]));
-}
-
-static float3 GetMaximum(float m)
-{
-	if (m == INDEX_RGB)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_CMY)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_HCV)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HCY)
-	{
-		return float3(360, 100, 255);
-	}
-	if (m == INDEX_HPLuv)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HSB)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HSBok)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HSL)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HSLok)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HSLuv)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HSM)
-	{
-		return float3(360, 100, 255);
-	}
-	if (m == INDEX_HSP)
-	{
-		return float3(360, 100, 255);
-	}
-	if (m == INDEX_HUVab)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HUVabh)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HUVuv)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HzUzVz)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_HWB)
-	{
-		return float3(360, 100, 100);
-	}
-	if (m == INDEX_ICtCp)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_JPEG)
-	{
-		return float3(255, 255, 255);
-	}
-	if (m == INDEX_JzAzBz)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_JzCzHz)
-	{
-		return float3(1, 1, 360);
-	}
-	if (m == INDEX_LAB)
-	{
-		return float3(100, 100, 100);
-	}
-	if (m == INDEX_LABh)
-	{
-		return float3(100, 128, 128);
-	}
-	if (m == INDEX_LCHab)
-	{
-		return float3(100, 100, 360);
-	}
-	if (m == INDEX_LCHabh)
-	{
-		return float3(100, 100, 360);
-	}
-	if (m == INDEX_LCHuv)
-	{
-		return float3(100, 100, 360);
-	}
-	if (m == INDEX_LMS)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_LUV)
-	{
-		return float3(100, 224, 122);
-	}
-	if (m == INDEX_OKLab)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_TSL)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_UCS)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_UVW)
-	{
-		return float3(224, 122, 100);
-	}
-	if (m == INDEX_xvYCC)
-	{
-		return float3(255, 255, 255);
-	}
-	if (m == INDEX_xyY)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_XYZ)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_YCbCr)
-	{
-		return float3(235, 240, 240);
-	}
-	if (m == INDEX_YCoCg)
-	{
-		return float3(1, 0.5, 0.5);
-	}
-	if (m == INDEX_YDbDr)
-	{
-		return float3(1, 1.333, 1.333);
-	}
-	if (m == INDEX_YES)
-	{
-		return float3(1, 1, 1);
-	}
-	if (m == INDEX_YIQ)
-	{
-		return float3(1, 0.5957, 0.5226);
-	}
-	if (m == INDEX_YPbPr)
-	{
-		return float3(1, 0.5, 0.5);
-	}
-	if (m == INDEX_YUV)
-	{
-		return float3(1, 0.5, 0.5);
-	}
-	return float3(0, 0, 0);
-}
-
-static float GetMinimum(float3 input)
-{
-	return min(input[0], min(input[1], input[2]));
-}
-
-static float3 GetMinimum(float m)
-{
-	if (m == INDEX_RGB)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_CMY)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HCV)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HCY)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HPLuv)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HSB)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HSBok)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HSL)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HSLok)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HSLuv)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HSM)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HSP)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HUVab)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HUVabh)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HUVuv)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HzUzVz)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_HWB)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_ICtCp)
-	{
-		return float3(0, -1, -1);
-	}
-	if (m == INDEX_JPEG)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_JzAzBz)
-	{
-		return float3(0, -1, -1);
-	}
-	if (m == INDEX_JzCzHz)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_LAB)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_LABh)
-	{
-		return float3(0, -128, -128);
-	}
-	if (m == INDEX_LCHab)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_LCHabh)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_LCHuv)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_LMS)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_LUV)
-	{
-		return float3(0, -134, -140);
-	}
-	if (m == INDEX_OKLab)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_TSL)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_UCS)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_UVW)
-	{
-		return float3(-134, -140, 0);
-	}
-	if (m == INDEX_xvYCC)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_xyY)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_XYZ)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_YCbCr)
-	{
-		return float3(16, 16, 16);
-	}
-	if (m == INDEX_YCoCg)
-	{
-		return float3(0, -0.5, -0.5);
-	}
-	if (m == INDEX_YDbDr)
-	{
-		return float3(0, -1.333, -1.333);
-	}
-	if (m == INDEX_YES)
-	{
-		return float3(0, 0, 0);
-	}
-	if (m == INDEX_YIQ)
-	{
-		return float3(0, -0.5957, -0.5226);
-	}
-	if (m == INDEX_YPbPr)
-	{
-		return float3(0, -0.5, -0.5);
-	}
-	if (m == INDEX_YUV)
-	{
-		return float3(0, -0.5, -0.5);
-	}
-	return float3(0, 0, 0);
-}
-
-//(Conversion)
-
-//[LCH] > [*]
-static float3 FromLCH(float3 input)
+//(+|+) [LCh]
+static float3 FromLCh(float3 input)
 {
 	float c = input[1], h = input[2];
 	h = GetRadian(h);
@@ -719,8 +515,7 @@ static float3 FromLCH(float3 input)
 	float b = c * sin(h);
 	return float3(input[0], a, b);
 }
-//[*] > [LCH]
-static float3 ToLCH(float3 input)
+static float3 ToLCh(float3 input)
 {
 	float a = input[1], b = input[2];
 	float c = sqrt(a * a + b * b);
@@ -730,34 +525,55 @@ static float3 ToLCH(float3 input)
 	return float3(input[0], c, h);
 }
 
-//[HUV] > [*]
-float2 FromHUV(float3 huv)
+//(+|-) [LCh(x)]
+float3 FromLChx(float3 i)
 {
-	float m = GetDistance(0.5, 0.5, 1, 1);
-	float n = min(GetDistance(0.5, 0.5, huv[0] / 360, huv[2] / 100) / m, 1);
-	float t = n * pi2;
-
-	float u = huv[1] * cos(t);
-	float v = huv[1] * sin(t);
-	return float2(u, v);
+	float u = GetDistance(0.5, 0.5, i[2] / 360, i[1] / 100);
+	float v = GetDistance(0.5, 0.5, i[2] / 360, i[0] / 100);
+	return float3(i[0], i[1], clamp(i[2] * u / v, 0, 359));
 }
-//[*] > [HUV]
-float3 ToHUV(float3 lab)
+float3 ToLChx(float3 i)
 {
-	float t = atan2(lab[2], lab[1]);
-
-	float m = GetDistance(0.5, 0.5, 1, 1);
-	float n = t / 2 / pi;
-
-	float h = (sqrt(pow((n * m) / pi2, 2) - pow(abs(0.5 - lab[0]), 2)) - 0.5) / -1;
-	float u = sqrt(lab[1] * lab[1] + lab[2] * lab[2]);
-	float v = lab[0];
-	return float3(h, u, v);
+	float h = i[2]; //?
+	return float3(i[0], i[1], h);
 }
 
-//(+) = Done, (-) = Not done
+//(+|-) [LCh(y)]
+float3 FromLChy(float3 i)
+{
+	float w = GetDistance(0.5, 0.5, i[1] / 100, i[0] / 100);
+	return float3(i[0], i[1], i[2] * w);
+}
+float3 ToLChy(float3 i)
+{
+	float h = i[2]; //?
+	return float3(i[0], i[1], h);
+}
 
-//(+) [CMY]
+//(+|-) [LCh(z)]
+float3 FromLChz(float3 i)
+{
+	float l = i[0] / 100;
+	float c = i[1] / 100;
+	float h = i[2] / 360;
+
+	float u = GetDistance(h, c);
+	float v = GetDistance(h, l);
+
+	float x = GetDistance(c, c);
+	float y = GetDistance(c, l);
+
+	return float3(i[0], clamp(i[1] * x / y, 0, 100), clamp(i[2] * u / v, 0, 359));
+}
+float3 ToLChz(float3 i)
+{
+	float h = i[2]; //?
+	return float3(i[0], i[1], h);
+}
+
+//...
+
+//(+|+) [CMY]
 float3 CMY_Lrgb(float3 input)
 {
 	return float3(1 - input[0], 1 - input[1], 1 - input[2]);
@@ -767,7 +583,7 @@ float3 Lrgb_CMY(float3 input)
 	return float3(1 - input[0], 1 - input[1], 1 - input[2]);
 }
 
-//(+) [HCV]
+//(+|+) [HCV]
 float3 HCV_Lrgb(float3 input)
 {
 	float3 result = { 0, 0, 0 };
@@ -861,12 +677,12 @@ float3 Lrgb_HCV(float3 input)
 	return float3(h * 360.0, c * 100.0, v * 100.0);
 }
 
-//(+) [HCY]
+//(+|+) [HCY]
 float3 HCY_Lrgb(float3 input)
 {
 	float h = (input[0] < 0 ? (input[0] % 360) + 360 : (input[0] % 360)) * pi / 180;
-	float s = max(0, min(input[1], 100)) / 100;
-	float i = max(0, min(input[2], 255)) / 255;
+	float s = input[1] / 100;
+	float i = input[2] / 255;
 
 	float pi3 = pi / 3;
 
@@ -912,7 +728,7 @@ float3 Lrgb_HCY(float3 input)
 	return float3(h * 180 / pi, s * 100, i);
 }
 
-//(+) [HSB]
+//(+|+) [HSB]
 float3 HSB_Lrgb(float3 input)
 {
 	float3 result = { 0, 0, 0 };
@@ -1019,7 +835,55 @@ float3 Lrgb_HSB(float3 input)
 	return float3(_h, _s * 100, _b * 100);
 }
 
-//(+) [HSL]
+//(+|+) [HSB] > [HWB]
+float3 HWB_Lrgb(float3 input)
+{	
+	//HWB > HSB
+	float3 hsb = FromHWb(input);
+
+	//HSB > *
+	return HSB_Lrgb(hsb);
+	/*
+	float3 result = { 0, 0, 0 };
+
+	float white = input[1] / 100;
+	float black = input[2] / 100;
+
+	if (white + black >= 1)
+	{
+		float gray = white / (white + black);
+		return float3(gray, gray, gray);
+	}
+
+	float3 hsl = float3(input[0], 100, 50);
+	float3 rgb = HSL_Lrgb(hsl);
+
+	rgb[0] *= (1 - white - black);
+	rgb[0] += white;
+
+	rgb[1] *= (1 - white - black);
+	rgb[1] += white;
+
+	rgb[2] *= (1 - white - black);
+	rgb[2] += white;
+	*/
+}
+float3 Lrgb_HWB(float3 input)
+{	
+	//* > HSB
+	input = Lrgb_HSB(input);
+
+	//HSB > HWB
+	return ToHWb(input);
+	/*
+	float3 hsl = Lrgb_HSL(input);
+	float white = min(input[0], min(input[1], input[2]));
+	float black = 1 - max(input[0], max(input[1], input[2]));
+	return float3(hsl[0], white * 100, black * 100);
+	*/
+}
+
+//(+|+) [HSL]
 float3 HSL_Lrgb(float3 input)
 {
 	float h = input[0], s = input[1] / 100, l = input[2] / 100;
@@ -1114,10 +978,10 @@ float3 Lrgb_HSL(float3 input)
 	return float3(h, s * 100, l * 100);
 }
 
-//(-) [HSM]
+//(-|-) [HSM]
 float3 HSM_Lrgb(float3 input)
 {
-	float3 max = GetMaximum(INDEX_HSM);
+	float3 max = Maximum[Model];
 
 	float h = input[0] / max[0], s = input[1] / max[1], m = input[2] / max[2];
 	float r, g, b;
@@ -1134,7 +998,7 @@ float3 HSM_Lrgb(float3 input)
 }
 float3 Lrgb_HSM(float3 input)
 {
-	float3 max = GetMaximum(INDEX_HSM);
+	float3 max = Maximum[Model];
 
 	float m = ((4 * input[0]) + (2 * input[1]) + input[2]) / 7;
 
@@ -1182,7 +1046,7 @@ float3 Lrgb_HSM(float3 input)
 	return float3(h * max[0], s * max[1], m * max[2]);
 }
 
-//(+) [HSP]
+//(+|+) [HSP]
 float3 HSP_Lrgb(float3 input)
 {
 	float3 result = { 0, 0, 0 };
@@ -1373,42 +1237,7 @@ float3 Lrgb_HSP(float3 input)
 	return float3(round(h * 360.0), s * 100.0, round(p));
 }
 
-//(+) [HWB]
-float3 HWB_Lrgb(float3 input)
-{
-	float3 result = { 0, 0, 0 };
-
-	float white = input[1] / 100;
-	float black = input[2] / 100;
-
-	if (white + black >= 1)
-	{
-		float gray = white / (white + black);
-		return float3(gray, gray, gray);
-	}
-
-	float3 hsl = float3(input[0], 100, 50);
-	float3 rgb = HSL_Lrgb(hsl);
-
-	rgb[0] *= (1 - white - black);
-	rgb[0] += white;
-
-	rgb[1] *= (1 - white - black);
-	rgb[1] += white;
-
-	rgb[2] *= (1 - white - black);
-	rgb[2] += white;
-	return rgb;
-}
-float3 Lrgb_HWB(float3 input)
-{
-	float3 hsl = Lrgb_HSL(input);
-	float white = min(input[0], min(input[1], input[2]));
-	float black = 1 - max(input[0], max(input[1], input[2]));
-	return float3(hsl[0], white * 100, black * 100);
-}
-
-//(-) [ICtCp]
+//(-|-) [ICtCp]
 float3 ICtCp_Lrgb(float3 input)
 {
 	return float3(input[0], (input[1] + 1) / 2, (input[2] + 1) / 2);
@@ -1418,7 +1247,17 @@ float3 Lrgb_ICtCp(float3 input)
 	return float3(input[0], (input[1] * 2) - 1, (input[2] * 2) - 1);
 }
 
-//(+) [TSL]
+//(-|-) [IPT]
+float3 IPT_Lrgb(float3 input)
+{
+	return input;
+}
+float3 Lrgb_IPT(float3 input)
+{
+	return input;
+}
+
+//(+|+) [TSL]
 float3 TSL_Lrgb(float3 input)
 {
 	float T = input[0] / 4, S = input[1], L = input[2];
@@ -1450,7 +1289,7 @@ float3 Lrgb_TSL(float3 input)
 	return tsl;
 }
  
-//(+) [XYZ]
+//(+|+) [XYZ]
 float3 XYZ_Lrgb(float3 input)
 {
 	float3x3 m = GetMatrix(XYZ_RGB_x, XYZ_RGB_y, XYZ_RGB_z);
@@ -1462,76 +1301,8 @@ float3 Lrgb_XYZ(float3 input)
 	return Multiply(m, input);
 }
 
-//(+) [JzAzBz]
-float3 JzAzBz_Lrgb(float3 input)
-{
-	float Jz = input[0]; float az = input[1]; float bz = input[2];
-
-	Jz = Jz + 1.6295499532821566e-11;
-	float Iz = Jz / (0.44 + 0.56 * Jz);
-
-	float L = PerceptualQuantizerInverse(Iz + 1.386050432715393e-1 * az + 5.804731615611869e-2 * bz);
-	float M = PerceptualQuantizerInverse(Iz - 1.386050432715393e-1 * az - 5.804731615611891e-2 * bz);
-	float S = PerceptualQuantizerInverse(Iz - 9.601924202631895e-2 * az - 8.118918960560390e-1 * bz);
-
-	float X = +1.661373055774069e+00 * L - 9.145230923250668e-01 * M + 2.313620767186147e-01 * S;
-	float Y = -3.250758740427037e-01 * L + 1.571847038366936e+00 * M - 2.182538318672940e-01 * S;
-	float Z = -9.098281098284756e-02 * L - 3.127282905230740e-01 * M + 1.522766561305260e+00 * S;
-
-	float3 xyz = float3(X / 10000, Y / 10000, Z / 10000);
-	return XYZ_Lrgb(xyz);
-}
-float3 Lrgb_JzAzBz(float3 input)
-{
-	float3 xyz = Lrgb_XYZ(input);
-
-	float X = xyz[0] * 10000; float Y = xyz[1] * 10000; float Z = xyz[2] * 10000;
-
-	float Lp = PerceptualQuantizer(0.674207838 * X + 0.382799340 * Y - 0.047570458 * Z);
-	float Mp = PerceptualQuantizer(0.149284160 * X + 0.739628340 * Y + 0.083327300 * Z);
-	float Sp = PerceptualQuantizer(0.070941080 * X + 0.174768000 * Y + 0.670970020 * Z);
-
-	float Iz = 0.5 * (Lp + Mp);
-
-	float az = 3.524000 * Lp - 4.066708 * Mp + 0.542708 * Sp;
-	float bz = 0.199076 * Lp + 1.096799 * Mp - 1.295875 * Sp;
-	float Jz = 0.44 * Iz / (1 - 0.56 * Iz) - 1.6295499532821566e-11;
-
-	return float3(Jz, az, bz);
-}
-
-//(+) [JzAzBz] > [HzUzVz]
-float3 HzUzVz_Lrgb(float3 input)
-{
-	//HzUzVz > JzAzBz
-	float2 azbz = FromHUV(input);
-
-	//JzAzBz > RGB
-	return JzAzBz_Lrgb(float3(input[2] / 100, azbz[0] / 100, azbz[1] / 100));
-}
-float3 Lrgb_HzUzVz(float3 input)
-{
-	//RGB > JzAzBz
-	float3 jzazbz = Lrgb_JzAzBz(input) * 100;
-
-	//JzAzBz > HzUzVz
-	return ToHUV(jzazbz);
-}
-
-//(+) [JzAzBz] > [JzCzHz]
-float3 JzCzHz_Lrgb(float3 input)
-{
-	float3 jzazbz = FromLCH(input);
-	return JzAzBz_Lrgb(jzazbz);
-}
-float3 Lrgb_JzCzHz(float3 input)
-{
-	float3 jzazbz = Lrgb_JzAzBz(input);
-	return ToLCH(jzazbz);
-}
-
-//(-) [LAB]
-float3 LAB_Lrgb(float3 input)
+//(+|+) [Lab]
+float3 Lab_Lrgb(float3 input)
 {
 	float L = input[0], a = input[1], b = input[2];
 
@@ -1549,7 +1320,7 @@ float3 LAB_Lrgb(float3 input)
 	float3 w = GetWhite(WhiteX, WhiteY);
 	return float3(xr * w[0], yr * w[1], zr * w[2]);
 }
-float3 Lrgb_LAB(float3 input)
+float3 Lrgb_Lab(float3 input)
 {
 	float3 w = GetWhite(WhiteX, WhiteY);
 	float Xr = w[0], Yr = w[1], Zr = w[2];
@@ -1566,38 +1337,20 @@ float3 Lrgb_LAB(float3 input)
 	return float3(l, a, b);
 }
 
-//(+) [LAB] > [LCHab]
+//(+|+) [Lab] > [LCHab]
 float3 LCHab_Lrgb(float3 input)
 {
-	float3 lab = FromLCH(input);
-	return LAB_Lrgb(lab);
+	float3 lab = FromLCh(input);
+	return Lab_Lrgb(lab);
 }
 float3 Lrgb_LCHab(float3 input)
 {
-	float3 lab = Lrgb_LAB(input);
-	return ToLCH(lab);
+	float3 lab = Lrgb_Lab(input);
+	return ToLCh(lab);
 }
 
-//(+) [LAB] > [HUV] > [HUVab]
-float3 HUVab_Lrgb(float3 input)
-{
-	//HUVab > LAB
-	float2 ab = FromHUV(input);
-
-	//LAB > RGB
-	return LAB_Lrgb(float3(input[2], ab[0], ab[1]));
-}
-float3 Lrgb_HUVab(float3 input)
-{
-	//RGB > LAB
-	float3 lab = Lrgb_LAB(input);
-
-	//LAB > HUVab
-	return ToHUV(lab);
-}
-
-//(+) [LABh]
-float3 LABh_Lrgb(float3 input)
+//(+|+) [Labh]
+float3 Labh_Lrgb(float3 input)
 {
 	float3 white = GetWhite(WhiteX, WhiteY);
 
@@ -1613,7 +1366,7 @@ float3 LABh_Lrgb(float3 input)
 
 	return XYZ_Lrgb(float3(X, Y, Z));
 }
-float3 Lrgb_LABh(float3 input)
+float3 Lrgb_Labh(float3 input)
 {
 	float3 white = GetWhite(WhiteX, WhiteY);
 
@@ -1632,38 +1385,149 @@ float3 Lrgb_LABh(float3 input)
 	return float3(L, a, b);
 }
 
-//(+) [LABh] > [LCHabh]
+//(+|+) [Labh] > [LCHabh]
 float3 LCHabh_Lrgb(float3 input)
 {
-	float3 labh = FromLCH(input);
-	return LABh_Lrgb(labh);
+	float3 labh = FromLCh(input);
+	return Labh_Lrgb(labh);
 }
 float3 Lrgb_LCHabh(float3 input)
 {
-	float3 labh = Lrgb_LABh(input);
-	return ToLCH(labh);
+	float3 labh = Lrgb_Labh(input);
+	return ToLCh(labh);
 }
 
-//(+) [LABh] > [HUV] > [HUVabh]
-float3 HUVabh_Lrgb(float3 input)
+//(+|-) [Labi]
+float3 Labi_Lrgb(float3 input) { return input; }
+float3 Lrgb_Labi(float3 input) { return input; }
+
+//(+|+) [Labj]
+float3 Labj_Lrgb(float3 input)
 {
-	//HUVabh > LABh
-	float2 lab = FromHUV(input);
+	float Jz = input[0]; float az = input[1]; float bz = input[2];
 
-	//LABh > RGB
-	return LABh_Lrgb(float3(input[2], lab[0], lab[1]));
+	Jz = Jz + 1.6295499532821566e-11;
+	float Iz = Jz / (0.44 + 0.56 * Jz);
+
+	float L = PerceptualQuantizerInverse(Iz + 1.386050432715393e-1 * az + 5.804731615611869e-2 * bz);
+	float M = PerceptualQuantizerInverse(Iz - 1.386050432715393e-1 * az - 5.804731615611891e-2 * bz);
+	float S = PerceptualQuantizerInverse(Iz - 9.601924202631895e-2 * az - 8.118918960560390e-1 * bz);
+
+	float X = +1.661373055774069e+00 * L - 9.145230923250668e-01 * M + 2.313620767186147e-01 * S;
+	float Y = -3.250758740427037e-01 * L + 1.571847038366936e+00 * M - 2.182538318672940e-01 * S;
+	float Z = -9.098281098284756e-02 * L - 3.127282905230740e-01 * M + 1.522766561305260e+00 * S;
+
+	float3 xyz = float3(X / 10000, Y / 10000, Z / 10000);
+	return XYZ_Lrgb(xyz);
 }
-float3 Lrgb_HUVabh(float3 input)
+float3 Lrgb_Labj(float3 input)
 {
-	// RGB > LABh
-	float3 labh = Lrgb_LABh(input);
+	float3 xyz = Lrgb_XYZ(input);
 
-	//LABh > HUVabh
-	return ToHUV(labh);
+	float X = xyz[0] * 10000; float Y = xyz[1] * 10000; float Z = xyz[2] * 10000;
+
+	float Lp = PerceptualQuantizer(0.674207838 * X + 0.382799340 * Y - 0.047570458 * Z);
+	float Mp = PerceptualQuantizer(0.149284160 * X + 0.739628340 * Y + 0.083327300 * Z);
+	float Sp = PerceptualQuantizer(0.070941080 * X + 0.174768000 * Y + 0.670970020 * Z);
+
+	float Iz = 0.5 * (Lp + Mp);
+
+	float az = 3.524000 * Lp - 4.066708 * Mp + 0.542708 * Sp;
+	float bz = 0.199076 * Lp + 1.096799 * Mp - 1.295875 * Sp;
+	float Jz = 0.44 * Iz / (1 - 0.56 * Iz) - 1.6295499532821566e-11;
+
+	return float3(Jz, az, bz);
 }
 
-//(+) [LUV]
-float3 LUV_Lrgb(float3 input)
+//(+|+) [Labj] > [LCHabj]
+float3 LCHabj_Lrgb(float3 input)
+{
+	float3 jzazbz = FromLCh(input);
+	return Labj_Lrgb(jzazbz);
+}
+float3 Lrgb_LCHabj(float3 input)
+{
+	float3 jzazbz = Lrgb_Labj(input);
+	return ToLCh(jzazbz);
+}
+
+//(+|+) [Labk]
+float3 Labk_Lrgb(float3 input)
+{
+	float3 white = GetWhite(WhiteX, WhiteY);
+
+	float3x3 m = GetMatrix(LABk_LMSk_x, LABk_LMSk_y, LABk_LMSk_z);
+	float3x3 n = GetMatrix(LMSk_XYZk_x, LMSk_XYZk_y, LMSk_XYZk_z);
+
+	//Labk > LMS
+	float3 u = Multiply(m, input);
+	float3 v = float3(Pow3(u[0]), Pow3(u[1]), Pow3(u[2]));
+
+	//LMS > XYZ
+	float3 xyz = Multiply(n, v) * white;
+
+	//XYZ > Lrgb
+	return XYZ_Lrgb(xyz);
+}
+float3 Lrgb_Labk(float3 input)
+{
+	float3 white = GetWhite(WhiteX, WhiteY);
+
+	float3x3 m = GetMatrix(XYZk_LMSk_x, XYZk_LMSk_y, XYZk_LMSk_z);
+	float3x3 n = GetMatrix(LMSk_LABk_x, LMSk_LABk_y, LMSk_LABk_z);
+
+	//Lrgb > XYZ
+	float3 xyz = Lrgb_XYZ(input);
+	xyz /= white;
+
+	//XYZ > LMS
+	float3 u = Multiply(m, xyz);
+	float3 v = float3(Cbrt(u[0]), Cbrt(u[1]), Cbrt(u[2]));
+
+	//LMS > Labk
+	return Multiply(n, v);
+}
+
+//(-|-) [Labk] > [HSBk]
+float3 HSBk_Lrgb(float3 input)
+{
+	return HSB_Lrgb(input);
+}
+float3 Lrgb_HSBk(float3 input)
+{
+	return Lrgb_HSB(input);
+}
+
+//(+|+) [Labk] > [HSBk] > [HWBk]
+float3 HWBk_Lrgb(float3 input)
+{
+	//HWBk > HSBk
+	float3 hsb = FromHWb(input);
+
+	//HSBk > *
+	return HSBk_Lrgb(hsb);
+}
+float3 Lrgb_HWBk(float3 input)
+{
+	//* > HSBk
+	input = Lrgb_HSBk(input);
+
+	//HSBk > HWBk
+	return ToHWb(input);
+}
+
+//(-|-) [Labk] > [HSLk]
+float3 HSLk_Lrgb(float3 input)
+{
+	return HSL_Lrgb(input);
+}
+float3 Lrgb_HSLk(float3 input)
+{
+	return Lrgb_HSL(input);
+}
+
+//(+|+) [Luv]
+float3 Luv_Lrgb(float3 input)
 {
 	float3 white = GetWhite(WhiteX, WhiteY);
 
@@ -1693,7 +1557,7 @@ float3 LUV_Lrgb(float3 input)
 
 	return XYZ_Lrgb(float3(X, Y, Z));
 }
-float3 Lrgb_LUV(float3 input)
+float3 Lrgb_Luv(float3 input)
 {
 	float3 white = GetWhite(WhiteX, WhiteY);
 
@@ -1720,41 +1584,21 @@ float3 Lrgb_LUV(float3 input)
 	return float3(L, u, v);
 }
 
-//(+) [LUV] > [HUVuv]
-float3 HUVuv_Lrgb(float3 input)
-{
-	//HUVuv > LUV
-	float2 luv = FromHUV(input);
-
-	//LUV > RGB
-	return LUV_Lrgb(float3(input[2], luv[0], luv[1]));
-}
-float3 Lrgb_HUVuv(float3 input)
-{
-	//RGB > LUV
-	float3 luv = Lrgb_LUV(input);
-	
-	//LUV > HUVuv
-	return ToHUV(luv);
-}
-
-//(+) [LUV] > [LCHuv]
+//(+|+) [Luv] > [LCHuv]
 float3 LCHuv_Lrgb(float3 input)
 {
-	float3 luv = FromLCH(input);
-	return LUV_Lrgb(luv);
+	float3 luv = FromLCh(input);
+	return Luv_Lrgb(luv);
 }
 float3 Lrgb_LCHuv(float3 input)
 {
-	float3 luv = Lrgb_LUV(input);
-	return ToLCH(luv);
+	float3 luv = Lrgb_Luv(input);
+	return ToLCh(luv);
 }
 
-//(-) [LUV] > [LCHuv] > [HPLuv]
+//(+|-) [Luv] > [LCHuv] > [HPLuv]
 float3 HPLuv_Lrgb(float3 input)
 {
-	return HSL_Lrgb(input);
-	/*
 	//HPLuv > LCHuv
 	float H = input[0], S = input[1], L = input[2];
 
@@ -1764,12 +1608,12 @@ float3 HPLuv_Lrgb(float3 input)
 	if (L < 0.00000001)
 		return float3(0, 0, H);
 
-	float max = GetChroma(L);
+	float max = GetChroma1(L);
 	float C = max / 100 * S;
 
 	//LCHuv > Lrgb
-	float3 lch = new(L, C, H);
-	*/
+	float3 lch = float3(L, C, H);
+	return LCHuv_Lrgb(lch);
 }
 float3 Lrgb_HPLuv(float3 input)
 {
@@ -1797,27 +1641,24 @@ float3 Lrgb_HPLuv(float3 input)
 	*/
 }
 
-//(-) [LUV] > [LCHuv] > [HSLuv]
+//(+|-) [Luv] > [LCHuv] > [HSLuv]
 float3 HSLuv_Lrgb(float3 input)
 {
-	return HSL_Lrgb(input);
-	/*
 	//HSLuv > LCHuv
 	float H = input[0], S = input[1], L = input[2];
 
 	if (L > 99.9999999)
-		return new(100, 0, H);
+		return float3(100, 0, H);
 
 	if (L < 0.00000001)
-		return new (0, 0, H);
+		return float3(0, 0, H);
 
-	float max = GetChroma(L, H);
+	float max = GetChroma3(L, H);
 	float C = max / 100 * S;
 
 	//LCHuv > Lrgb
 	float3 lch = float3(L, C, H);
 	return LCHuv_Lrgb(lch);
-	*/
 }
 float3 Lrgb_HSLuv(float3 input)
 {
@@ -1845,7 +1686,7 @@ float3 Lrgb_HSLuv(float3 input)
 	*/
 }
 
-//(+) [LMS]
+//(+|+) [LMS]
 float3 LMS_Lrgb(float3 input)
 {
 	float3x3 m = GetMatrix(LMS_XYZ_x, LMS_XYZ_y, LMS_XYZ_z);
@@ -1861,37 +1702,7 @@ float3 Lrgb_LMS(float3 input)
 	return Multiply(m, xyz);
 }
 
-//(-) [LMS] > [OKLab]
-float3 OKLab_Lrgb(float3 input)
-{
-	return input;
-}
-float3 Lrgb_OKLab(float3 input)
-{
-	return input;
-}
-
-//(-) [LMS] > [OKLab] > [HSBok]
-float3 HSBok_Lrgb(float3 input)
-{
-	return HSB_Lrgb(input);
-}
-float3 Lrgb_HSBok(float3 input)
-{
-	return Lrgb_HSB(input);
-}
-
-//(-) [LMS] > [OKLab] > [HSLok]
-float3 HSLok_Lrgb(float3 input)
-{
-	return HSL_Lrgb(input);
-}
-float3 Lrgb_HSLok(float3 input)
-{
-	return Lrgb_HSL(input);
-}
-
-//(+) [UCS]
+//(+|+) [UCS]
 float3 UCS_Lrgb(float3 input)
 {
 	float u = input[0], v = input[1], w = input[2];
@@ -1904,7 +1715,7 @@ float3 Lrgb_UCS(float3 input)
 	return float3(x * 2 / 3, y, 0.5 * (-x + 3 * y + z));
 }
 
-//(+) [UVW]
+//(+|+) [UVW]
 float3 UVW_Lrgb(float3 input)
 {
 	float3 white = GetWhite(WhiteX, WhiteY);
@@ -1952,7 +1763,7 @@ float3 Lrgb_UVW(float3 input)
 	return float3(u, v, w);
 }
 
-//(+) [xyY]
+//(+|+) [xyY]
 float3 xyY_Lrgb(float3 input)
 {
 	float x = input[0]; float y = input[1]; float Y = input[2];
@@ -1976,7 +1787,43 @@ float3 Lrgb_xyY(float3 input)
 	return float3(X / sum, Y / sum, Y);
 }
 
-//(+) [YCoCg]
+//(-|-) [xyY] > [xyYC]
+float3 xyYC_Lrgb(float3 input)
+{
+	//xyYC > xyY
+	float A = input[0], T = input[1], V = input[2];
+
+	float3 white = GetWhite(WhiteX, WhiteY);
+	float Xn = white.x, Yn = white.y, Zn = white.z;
+
+	float yM = Xn / (Xn + Yn + Zn);
+	float xM = Yn / (Xn + Yn + Zn);
+	float zM = (Xn + Yn + Zn) / 100;
+
+	float xL = xyYC_exy.z, yL = xyYC_exy.x, zL = xyYC_exy.y;
+
+	float Y = V * V / 100;
+
+	float xyL = xL * yL * 100;
+
+	float x = (100 * Y * xM * zM + 100 * zL * yL * T - xyL * T * xM * zM) / (100 * T * yL - xyL * T * zM + 100 * Y * zM);
+	float y = (100 * Y + 100 * T * xL * yL - xyL * T) / (Y * zM * 100 + T * 100 * yL - T * xyL * zM);
+
+	float3 xyy = float3(x, y, Y);
+
+	//xyY > *
+	return xyY_Lrgb(xyy);
+}
+float3 Lrgb_xyYC(float3 input)
+{
+	//* > xyY
+	float3 xyy = Lrgb_xyY(input);
+
+	//xyY > xyYC
+	return xyy; //To do...
+}
+
+//(+|+) [YCoCg]
 float3 YCoCg_Lrgb(float3 input)
 {
 	float y = input[0], cg = input[1], co = input[2];
@@ -1990,7 +1837,17 @@ float3 Lrgb_YCoCg(float3 input)
 	return float3(0.25 * r + 0.5 * g + 0.25 * b, -0.25 * r + 0.5 * g - 0.25 * b, 0.5 * r - 0.5 * b);
 }
 
-//(+) [YDbDr]
+//(-|-) [YCwCm]
+float3 YCwCm_Lrgb(float3 input)
+{
+	return input;
+}
+float3 Lrgb_YCwCm(float3 input)
+{
+	return input;
+}
+
+//(+|+) [YDbDr]
 float3 YDbDr_Lrgb(float3 input)
 {
 	float y = input[0], db = input[1], dr = input[2];
@@ -2011,7 +1868,7 @@ float3 Lrgb_YDbDr(float3 input)
 	);
 }
 
-//(+) [YES]
+//(+|+) [YES]
 float3 YES_Lrgb(float3 input)
 {
 	float y = input[0], e = input[1], s = input[2];
@@ -2044,7 +1901,7 @@ float3 Lrgb_YES(float3 input)
 	return float3(r * m[0][0] + g * m[0][1] + b * m[0][2], r * m[1][0] + g * m[1][1] + b * m[1][2], r * m[2][0] + g * m[2][1] + b * m[2][2]);
 }
 
-//(+) [YIQ]
+//(+|+) [YIQ]
 float3 YIQ_Lrgb(float3 input)
 {
 	float y = input[0], i = input[1], q = input[2], r, g, b;
@@ -2072,7 +1929,7 @@ float3 Lrgb_YIQ(float3 input)
 	return float3(y, i, q);
 }
 
-//(+) [YPbPr]
+//(+|+) [YPbPr]
 float3 YPbPr_Lrgb(float3 input)
 {
 	float y = input[0], pb = input[1], pr = input[2];
@@ -2100,7 +1957,7 @@ float3 Lrgb_YPbPr(float3 input)
 	return float3(y, pb, pr);
 }
 
-//(+) [YPbPr] > [xvYCC]
+//(+|+) [YPbPr] > [xvYCC]
 float3 xvYCC_Lrgb(float3 input)
 {
 	//xvYCC > YPbPr
@@ -2120,7 +1977,7 @@ float3 Lrgb_xvYCC(float3 input)
 	return float3(16 + 219 * y, 128 + 224 * pb, 128 + 224 * pr);
 }
 
-//(+) [YPbPr] > [YCbCr]
+//(+|+) [YPbPr] > [YCbCr]
 float3 YCbCr_Lrgb(float3 input)
 {
 	//YCbCr > YPbPr
@@ -2140,7 +1997,7 @@ float3 Lrgb_YCbCr(float3 input)
 	return float3(16 + 219 * y, 128 + 224 * pb, 128 + 224 * pr);
 }
 
-//(+) [YPbPr] > [YCbCr] > [JPEG]
+//(+|+) [YPbPr] > [YCbCr] > [JPEG]
 float3 JPEG_Lrgb(float3 input)
 {
 	//JPEG > YCbCr
@@ -2160,7 +2017,7 @@ float3 Lrgb_JPEG(float3 input)
 	return float3(0.299 * r + 0.587 * g + 0.114 * b, 128 - 0.168736 * r - 0.331264 * g + 0.5 * b, 128 + 0.5 * r - 0.418688 * g - 0.081312 * b);
 }
 
-//(+) [YUV]
+//(+|+) [YUV]
 float3 YUV_Lrgb(float3 input)
 {
 	float
@@ -2205,7 +2062,7 @@ float3 Lrgb_YUV(float3 input)
 	return float3(y, u, v);
 }
 
-//[RGB] > [Lrgb] (Non Linear > Linear)
+//[RGB] > [Lrgb] = [Non-Linear] > [Linear]
 
 float CompandInverse(float channel)
 {
@@ -2256,7 +2113,7 @@ float3 RGB_Lrgb(float3 input)
 	return float3(CompandInverse(input[0]), CompandInverse(input[1]), CompandInverse(input[2]));
 }
 
-//[Lrgb] > [RGB] (Linear > Non Linear)
+//[Lrgb] > [RGB] = [Linear] > [Non-Linear]
 
 float Compand(float channel)
 {
@@ -2311,174 +2168,48 @@ float3 Lrgb_RGB(float3 input)
 
 float3 FLrgb(float m, float3 input)
 {
-	if (m == INDEX_RGB)
-	{
-		return input;
-	}
-	if (m == INDEX_CMY)
-	{
-		return Lrgb_CMY(input);
-	}
-	if (m == INDEX_HCV)
-	{
-		return Lrgb_HCV(input);
-	}
-	if (m == INDEX_HCY)
-	{
-		return Lrgb_HCY(input);
-	}
-	if (m == INDEX_HPLuv)
-	{
-		return Lrgb_HPLuv(input);
-	}
-	if (m == INDEX_HSB)
-	{
-		return Lrgb_HSB(input);
-	}
-	if (m == INDEX_HSBok)
-	{
-		return Lrgb_HSBok(input);
-	}
-	if (m == INDEX_HSL)
-	{
-		return Lrgb_HSL(input);
-	}
-	if (m == INDEX_HSLok)
-	{
-		return Lrgb_HSLok(input);
-	}
-	if (m == INDEX_HSLuv)
-	{
-		return Lrgb_HSLuv(input);
-	}
-	if (m == INDEX_HSM)
-	{
-		return Lrgb_HSM(input);
-	}
-	if (m == INDEX_HSP)
-	{
-		return Lrgb_HSP(input);
-	}
-	if (m == INDEX_HUVab)
-	{
-		return Lrgb_HUVab(input);
-	}
-	if (m == INDEX_HUVabh)
-	{
-		return Lrgb_HUVabh(input);
-	}
-	if (m == INDEX_HUVuv)
-	{
-		return Lrgb_HUVuv(input);
-	}
-	if (m == INDEX_HzUzVz)
-	{
-		return Lrgb_HzUzVz(input);
-	}
-	if (m == INDEX_HWB)
-	{
-		return Lrgb_HWB(input);
-	}
-	if (m == INDEX_ICtCp)
-	{
-		return Lrgb_ICtCp(input);
-	}
-	if (m == INDEX_JPEG)
-	{
-		return Lrgb_JPEG(input);
-	}
-	if (m == INDEX_JzAzBz)
-	{
-		return Lrgb_JzAzBz(input);
-	}
-	if (m == INDEX_JzCzHz)
-	{
-		return Lrgb_JzCzHz(input);
-	}
-	if (m == INDEX_LAB)
-	{
-		return Lrgb_LAB(input);
-	}
-	if (m == INDEX_LABh)
-	{
-		return Lrgb_LABh(input);
-	}
-	if (m == INDEX_LCHab)
-	{
-		return Lrgb_LCHab(input);
-	}
-	if (m == INDEX_LCHabh)
-	{
-		return Lrgb_LCHabh(input);
-	}
-	if (m == INDEX_LCHuv)
-	{
-		return Lrgb_LCHuv(input);
-	}
-	if (m == INDEX_LMS)
-	{
-		return Lrgb_LMS(input);
-	}
-	if (m == INDEX_LUV)
-	{
-		return Lrgb_LUV(input);
-	}
-	if (m == INDEX_OKLab)
-	{
-		return Lrgb_OKLab(input);
-	}
-	if (m == INDEX_TSL)
-	{
-		return Lrgb_TSL(input);
-	}
-	if (m == INDEX_UCS)
-	{
-		return Lrgb_UCS(input);
-	}
-	if (m == INDEX_UVW)
-	{
-		return Lrgb_UVW(input);
-	}
-	if (m == INDEX_xvYCC)
-	{
-		return Lrgb_xvYCC(input);
-	}
-	if (m == INDEX_xyY)
-	{
-		return Lrgb_xyY(input);
-	}
-	if (m == INDEX_XYZ)
-	{
-		return Lrgb_XYZ(input);
-	}
-	if (m == INDEX_YCbCr)
-	{
-		return Lrgb_YCbCr(input);
-	}
-	if (m == INDEX_YCoCg)
-	{
-		return Lrgb_YCoCg(input);
-	}
-	if (m == INDEX_YDbDr)
-	{
-		return Lrgb_YDbDr(input);
-	}
-	if (m == INDEX_YES)
-	{
-		return Lrgb_YES(input);
-	}
-	if (m == INDEX_YIQ)
-	{
-		return Lrgb_YIQ(input);
-	}
-	if (m == INDEX_YPbPr)
-	{
-		return Lrgb_YPbPr(input);
-	}
-	if (m == INDEX_YUV)
-	{
-		return Lrgb_YUV(input);
-	}
+	if (m == 1)  { return Lrgb_CMY(input); }
+	if (m == 2)  { return Lrgb_HCV(input); }
+	if (m == 3)  { return Lrgb_HCY(input); }
+	if (m == 4)  { return Lrgb_HPLuv(input); }
+	if (m == 5)  { return Lrgb_HSB(input); }
+	if (m == 6)  { return Lrgb_HSBk(input); }
+	if (m == 7)  { return Lrgb_HSL(input); }
+	if (m == 8)  { return Lrgb_HSLk(input); }
+	if (m == 9)  { return Lrgb_HSLuv(input); }
+	if (m == 10) { return Lrgb_HSM(input); }
+	if (m == 11) { return Lrgb_HSP(input); }
+	if (m == 12) { return Lrgb_HWB(input); }
+	if (m == 13) { return Lrgb_HWBk(input); }
+	if (m == 14) { return Lrgb_ICtCp(input); }
+	if (m == 15) { return Lrgb_IPT(input); }
+	if (m == 16) { return Lrgb_JPEG(input); }
+	if (m == 17) { return Lrgb_Lab(input); }
+	if (m == 18) { return Lrgb_Labh(input); }
+	if (m == 19) { return Lrgb_Labi(input); }
+	if (m == 20) { return Lrgb_Labj(input); }
+	if (m == 21) { return Lrgb_Labk(input); }
+	if (m == 22) { return Lrgb_LCHab(input); }
+	if (m == 23) { return Lrgb_LCHabh(input); }
+	if (m == 24) { return Lrgb_LCHabj(input); }
+	if (m == 25) { return Lrgb_LCHuv(input); }
+	if (m == 26) { return Lrgb_LMS(input); }
+	if (m == 27) { return Lrgb_Luv(input); }
+	if (m == 28) { return Lrgb_TSL(input); }
+	if (m == 29) { return Lrgb_UCS(input); }
+	if (m == 30) { return Lrgb_UVW(input); }
+	if (m == 31) { return Lrgb_xvYCC(input); }
+	if (m == 32) { return Lrgb_xyY(input); }
+	if (m == 33) { return Lrgb_xyYC(input); }
+	if (m == 34) { return Lrgb_XYZ(input); }
+	if (m == 35) { return Lrgb_YCbCr(input); }
+	if (m == 36) { return Lrgb_YCoCg(input); }
+	if (m == 37) { return Lrgb_YCwCm(input); }
+	if (m == 38) { return Lrgb_YDbDr(input); }
+	if (m == 39) { return Lrgb_YES(input); }
+	if (m == 40) { return Lrgb_YIQ(input); }
+	if (m == 41) { return Lrgb_YPbPr(input); }
+	if (m == 42) { return Lrgb_YUV(input); }
 	return input;
 }
 
@@ -2486,174 +2217,48 @@ float3 FLrgb(float m, float3 input)
 
 float3 TLrgb(float m, float3 input)
 {
-	if (m == INDEX_RGB)
-	{
-		return input;
-	}
-	if (m == INDEX_CMY)
-	{
-		return CMY_Lrgb(input);
-	}
-	if (m == INDEX_HCV)
-	{
-		return HCV_Lrgb(input);
-	}
-	if (m == INDEX_HCY)
-	{
-		return HCY_Lrgb(input);
-	}
-	if (m == INDEX_HPLuv)
-	{
-		return HPLuv_Lrgb(input);
-	}
-	if (m == INDEX_HSB)
-	{
-		return HSB_Lrgb(input);
-	}
-	if (m == INDEX_HSBok)
-	{
-		return HSBok_Lrgb(input);
-	}
-	if (m == INDEX_HSL)
-	{
-		return HSL_Lrgb(input);
-	}
-	if (m == INDEX_HSLok)
-	{
-		return HSLok_Lrgb(input);
-	}
-	if (m == INDEX_HSLuv)
-	{
-		return HSLuv_Lrgb(input);
-	}
-	if (m == INDEX_HSM)
-	{
-		return HSM_Lrgb(input);
-	}
-	if (m == INDEX_HSP)
-	{
-		return HSP_Lrgb(input);
-	}
-	if (m == INDEX_HUVab)
-	{
-		return HUVab_Lrgb(input);
-	}
-	if (m == INDEX_HUVabh)
-	{
-		return HUVabh_Lrgb(input);
-	}
-	if (m == INDEX_HUVuv)
-	{
-		return HUVuv_Lrgb(input);
-	}
-	if (m == INDEX_HzUzVz)
-	{
-		return HzUzVz_Lrgb(input);
-	}
-	if (m == INDEX_HWB)
-	{
-		return HWB_Lrgb(input);
-	}
-	if (m == INDEX_ICtCp)
-	{
-		return ICtCp_Lrgb(input);
-	}
-	if (m == INDEX_JPEG)
-	{
-		return JPEG_Lrgb(input);
-	}
-	if (m == INDEX_JzAzBz)
-	{
-		return JzAzBz_Lrgb(input);
-	}
-	if (m == INDEX_JzCzHz)
-	{
-		return JzCzHz_Lrgb(input);
-	}
-	if (m == INDEX_LAB)
-	{
-		return LAB_Lrgb(input);
-	}
-	if (m == INDEX_LABh)
-	{
-		return LABh_Lrgb(input);
-	}
-	if (m == INDEX_LCHab)
-	{
-		return LCHab_Lrgb(input);
-	}
-	if (m == INDEX_LCHabh)
-	{
-		return LCHabh_Lrgb(input);
-	}
-	if (m == INDEX_LCHuv)
-	{
-		return LCHuv_Lrgb(input);
-	}
-	if (m == INDEX_LMS)
-	{
-		return LMS_Lrgb(input);
-	}
-	if (m == INDEX_LUV)
-	{
-		return LUV_Lrgb(input);
-	}
-	if (m == INDEX_OKLab)
-	{
-		return OKLab_Lrgb(input);
-	}
-	if (m == INDEX_TSL)
-	{
-		return TSL_Lrgb(input);
-	}
-	if (m == INDEX_UCS)
-	{
-		return UCS_Lrgb(input);
-	}
-	if (m == INDEX_UVW)
-	{
-		return UVW_Lrgb(input);
-	}
-	if (m == INDEX_xvYCC)
-	{
-		return xvYCC_Lrgb(input);
-	}
-	if (m == INDEX_xyY)
-	{
-		return xyY_Lrgb(input);
-	}
-	if (m == INDEX_XYZ)
-	{
-		return XYZ_Lrgb(input);
-	}
-	if (m == INDEX_YCbCr)
-	{
-		return YCbCr_Lrgb(input);
-	}
-	if (m == INDEX_YCoCg)
-	{
-		return YCoCg_Lrgb(input);
-	}
-	if (m == INDEX_YDbDr)
-	{
-		return YDbDr_Lrgb(input);
-	}
-	if (m == INDEX_YES)
-	{
-		return YES_Lrgb(input);
-	}
-	if (m == INDEX_YIQ)
-	{
-		return YIQ_Lrgb(input);
-	}
-	if (m == INDEX_YPbPr)
-	{
-		return YPbPr_Lrgb(input);
-	}
-	if (m == INDEX_YUV)
-	{
-		return YUV_Lrgb(input);
-	}
+	if (m == 1)  { return CMY_Lrgb(input); }
+	if (m == 2)  { return HCV_Lrgb(input); }
+	if (m == 3)  { return HCY_Lrgb(input); }
+	if (m == 4)  { return HPLuv_Lrgb(input); }
+	if (m == 5)  { return HSB_Lrgb(input); }
+	if (m == 6)  { return HSBk_Lrgb(input); }
+	if (m == 7)  { return HSL_Lrgb(input); }
+	if (m == 8)  { return HSLk_Lrgb(input); }
+	if (m == 9)  { return HSLuv_Lrgb(input); }
+	if (m == 10) { return HSM_Lrgb(input); }
+	if (m == 11) { return HSP_Lrgb(input); }
+	if (m == 12) { return HWB_Lrgb(input); }
+	if (m == 13) { return HWBk_Lrgb(input); }
+	if (m == 14) { return ICtCp_Lrgb(input); }
+	if (m == 15) { return IPT_Lrgb(input); }
+	if (m == 16) { return JPEG_Lrgb(input); }
+	if (m == 17) { return Lab_Lrgb(input); }
+	if (m == 18) { return Labh_Lrgb(input); }
+	if (m == 19) { return Labi_Lrgb(input); }
+	if (m == 20) { return Labj_Lrgb(input); }
+	if (m == 21) { return Labk_Lrgb(input); }
+	if (m == 22) { return LCHab_Lrgb(input); }
+	if (m == 23) { return LCHabh_Lrgb(input); }
+	if (m == 24) { return LCHabj_Lrgb(input); }
+	if (m == 25) { return LCHuv_Lrgb(input); }
+	if (m == 26) { return LMS_Lrgb(input); }
+	if (m == 27) { return Luv_Lrgb(input); }
+	if (m == 28) { return TSL_Lrgb(input); }
+	if (m == 29) { return UCS_Lrgb(input); }
+	if (m == 30) { return UVW_Lrgb(input); }
+	if (m == 31) { return xvYCC_Lrgb(input); }
+	if (m == 32) { return xyY_Lrgb(input); }
+	if (m == 33) { return xyYC_Lrgb(input); }
+	if (m == 34) { return XYZ_Lrgb(input); }
+	if (m == 35) { return YCbCr_Lrgb(input); }
+	if (m == 36) { return YCoCg_Lrgb(input); }
+	if (m == 37) { return YCwCm_Lrgb(input); }
+	if (m == 38) { return YDbDr_Lrgb(input); }
+	if (m == 39) { return YES_Lrgb(input); }
+	if (m == 40) { return YIQ_Lrgb(input); }
+	if (m == 41) { return YPbPr_Lrgb(input); }
+	if (m == 42) { return YUV_Lrgb(input); }
 	return input;
 }
 
@@ -2693,8 +2298,7 @@ float4 main(float2 uv : TEXCOORD) : COLOR
 	float c = Component;
 	float m = Model;
 
-	float3 min = GetMinimum(m);
-	float3 max = GetMaximum(m);
+	float3 min = Minimum[Model], max = Maximum[Model];
 
 	//XYZ
 	if (Mode == 0)
@@ -2704,7 +2308,7 @@ float4 main(float2 uv : TEXCOORD) : COLOR
 		float3 xyz = ToXYZ(m, rgb);
 
 		//(2) Increase (current value) of each component
-		float l = GetBrightness(rgb);
+		float l = Lrgb_HSB(rgb)[2] / 100;
 
 		float tx, ty, tz;
 		//S = Shadow
@@ -2741,6 +2345,22 @@ float4 main(float2 uv : TEXCOORD) : COLOR
 	if (Mode == 1)
 	{
 		x = uv.xy.x; y = 1 - uv.xy.y; z = Z;
+
+		//Square
+		if (View == 0) { }
+
+		//Circle
+		if (View == 1)
+		{
+			float xN = 1 - GetDistance(0.5, 0.5, x, y) / GetDistance(0.5, 0.5, 1, 1);
+			float yN = atan2(y - 0.5, x - 0.5) + GetRadian(270/*Replace with variable later...*/);
+			yN = yN + pi;
+			yN = yN > pi2 ? yN - pi2 : yN;
+			yN /= pi2;
+
+			x = xN;
+			y = yN;
+		}
 	}
 	//Z
 	if (Mode == 2)
