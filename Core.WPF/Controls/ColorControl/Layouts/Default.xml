@@ -9,7 +9,7 @@
   <Bottom/>
   <Root xsi:type="DockLayoutGroup" Orientation="Horizontal">
     <Elements>
-      <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="60*">
+      <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="6*">
         <Elements>
           <Element xsi:type="DockLayoutDocumentGroup" Height="75*"/>
           <Element xsi:type="DockLayoutPanelGroup" Height="25*">
@@ -19,22 +19,26 @@
           </Element>
         </Elements>
       </Element>
-      <Element xsi:type="DockLayoutPanelGroup" Width="4*">
+      <Element xsi:type="DockLayoutGroup" Orientation="Horizontal" Width="4*">
+        <Elements>
+          <Element xsi:type="DockLayoutPanelGroup" Width="12*">
         <Panels>
           <DockLayoutPanel IsSelected="true" Name="ComponentPanel"/>
         </Panels>
       </Element>
-      <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="36*">
-        <Elements>
-          <Element xsi:type="DockLayoutPanelGroup" Height="8*">
-            <Panels>
-              <DockLayoutPanel IsSelected="true" Name="PropertiesPanel"/>
-            </Panels>
-          </Element>
-          <Element xsi:type="DockLayoutPanelGroup" Height="2*">
-            <Panels>
-              <DockLayoutPanel IsSelected="true" Name="ColorsPanel"/>
-            </Panels>
+          <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="88*">
+            <Elements>
+              <Element xsi:type="DockLayoutPanelGroup" Height="8*">
+                <Panels>
+                  <DockLayoutPanel IsSelected="true" Name="PropertiesPanel"/>
+                </Panels>
+              </Element>
+              <Element xsi:type="DockLayoutPanelGroup" Height="2*">
+                <Panels>
+                  <DockLayoutPanel IsSelected="true" Name="ColorsPanel"/>
+                </Panels>
+              </Element>
+            </Elements>
           </Element>
         </Elements>
       </Element>

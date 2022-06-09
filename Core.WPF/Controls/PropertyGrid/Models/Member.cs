@@ -40,11 +40,20 @@ public abstract class MemberModel : BaseNamable, IComparable
             new((i, j, k) =>
             {
                 i.Assignable = true;
-                i.AssignableTypes
-                    = j.As<AssignableAttribute>()?.Types is Type[] m && m.Length > 0 ? new(m)
-                    : i.Type != null && PropertyGrid.AssignableTypes.ContainsKey(i.Type)
-                        ? new(PropertyGrid.AssignableTypes[i.Type]) : new();
 
+                var a = j.As<AssignableAttribute>();
+                if (a.Types is Type[] m && m.Length > 0)
+                {
+                    i.AssignableTypes = new(m);
+                    return;
+                }
+                if (i.Type != null && PropertyGrid.AssignableTypes.ContainsKey(i.Type))
+                {
+                    i.AssignableTypes = new(PropertyGrid.AssignableTypes[i.Type]);
+                    return;
+                }
+                if (a.Values != null)
+                    Try.Invoke(() => i.AssignableValues = i.Source.First.GetPropertyValue(a.Values), e => Log.Write<MemberModel>(e));
             })
         },
         { typeof(CategoryAttribute),
@@ -356,12 +365,19 @@ public abstract class MemberModel : BaseNamable, IComparable
         get => assignable;
         private set => this.Change(ref assignable, value);
     }
-
-    ObservableCollection<Type> assignableTypes = null;
+    
+    ObservableCollection<Type> assignableTypes = new();
     public ObservableCollection<Type> AssignableTypes
     {
         get => assignableTypes;
         private set => this.Change(ref assignableTypes, value);
+    }
+
+    object assignableValues = null;
+    public object AssignableValues
+    {
+        get => assignableValues;
+        private set => this.Change(ref assignableValues, value);
     }
 
     string category = null;

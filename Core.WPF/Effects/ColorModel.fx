@@ -115,9 +115,9 @@ static float3 Maximum[43] =
 	float3(360, 100, 255),
 	//HSP
 	float3(360, 100, 255),
-	//HWB
+	//HWBsb
 	float3(360, 100, 100),
-	//HWBk
+	//HWBsbk
 	float3(360, 100, 100),
 	//ICtCp
 	float3(1, 1, 1),
@@ -205,9 +205,9 @@ static float3 Minimum[43] =
 	float3(0, 0, 0),
 	//HSP
 	float3(0, 0, 0),
-	//HWB
+	//HWBsb
 	float3(0, 0, 0),
-	//HWBk
+	//HWBsbk
 	float3(0, 0, 0),
 	//ICtCp
 	float3(0, -1, -1),
@@ -835,10 +835,10 @@ float3 Lrgb_HSB(float3 input)
 	return float3(_h, _s * 100, _b * 100);
 }
 
-//(+|+) [HSB] > [HWB]
+//(+|+) [HSB] > [HWBsb]
 float3 HWB_Lrgb(float3 input)
 {	
-	//HWB > HSB
+	//HWBsb > HSB
 	float3 hsb = FromHWb(input);
 
 	//HSB > *
@@ -873,7 +873,7 @@ float3 Lrgb_HWB(float3 input)
 	//* > HSB
 	input = Lrgb_HSB(input);
 
-	//HSB > HWB
+	//HSB > HWBsb
 	return ToHWb(input);
 	/*
 	float3 hsl = Lrgb_HSL(input);
@@ -1498,21 +1498,21 @@ float3 Lrgb_HSBk(float3 input)
 	return Lrgb_HSB(input);
 }
 
-//(+|+) [Labk] > [HSBk] > [HWBk]
-float3 HWBk_Lrgb(float3 input)
+//(+|+) [Labk] > [HSBk] > [HWBsbk]
+float3 HWBsbk_Lrgb(float3 input)
 {
-	//HWBk > HSBk
+	//HWBsbk > HSBk
 	float3 hsb = FromHWb(input);
 
 	//HSBk > *
 	return HSBk_Lrgb(hsb);
 }
-float3 Lrgb_HWBk(float3 input)
+float3 Lrgb_HWBsbk(float3 input)
 {
 	//* > HSBk
 	input = Lrgb_HSBk(input);
 
-	//HSBk > HWBk
+	//HSBk > HWBsbk
 	return ToHWb(input);
 }
 
@@ -2064,104 +2064,156 @@ float3 Lrgb_YUV(float3 input)
 
 //[RGB] > [Lrgb] = [Non-Linear] > [Linear]
 
-float CompandInverse(float channel)
+float TransferInverse(float input)
 {
 	//(0) Gamma
 	if (Companding == 0)
 	{
-		float v = channel;
+		float v = input;
 		float V = pow(v, 1 / Gamma);
 		return V;
 	}
 
-	//(1) L
+	//(1) LGamma
 	if (Companding == 1)
 	{
-		float v = channel;
+		float a = 0.17883277;
+		float b = 1 - 4 * a;
+		float c = 0.5 - a * log(4 * a);
+
+		if (input >= 0 && input <= 1 / 12)
+			return sqrt(3 * input);
+
+		return a * log(12 * input - b) + c; //1 / 12 < input <= 1
+	}
+
+	//(2) Linear
+	if (Companding == 2)
+	{
+		float v = input;
 		float V = v <= Epsilon ? v * Kappa / 100 : pow(1.16 * v, 1 / 3) - 0.16;
 		return V;
 	}
 
-	//(2) Rec709
-	if (Companding == 2)
+	//(3) PQ
+	if (Companding == 3)
 	{
-		float V = channel;
+		float c2 = 18.8515625;
+		float c3 = 18.6875;
+		float c1 = c3 - c2 + 1;
+
+		float m1 = 0.1593017578125;
+		float m2 = 78.84375;
+
+		return pow(c1 + c2 * pow(input, m1) / (1 + c3 * pow(input, m1)), m2);
+	}
+
+	//(4) Rec709
+	if (Companding == 4)
+	{
+		float V = input;
 		float L = V < 0.081 ? V / 4.5 : pow((V + 0.099) / 1.099, 1 / 0.45);
 		return L;
 	}
 
-	//(3) Rec2020
-	if (Companding == 3)
+	//(5) Rec2020
+	if (Companding == 5)
 	{
-		float V = channel;
+		float V = input;
 		float L = V < 0.08145 ? V / 4.5 : pow((V + 0.0993) / 1.0993, 1 / 0.45);
 		return L;
 	}
 
-	//(4) sRGB
-	if (Companding == 4)
+	//(6) sRGB
+	if (Companding == 6)
 	{
-		float V = channel;
+		float V = input;
 		float v = V <= 0.04045 ? V / 12.92 : pow((V + 0.055) / 1.055, 2.4);
 		return v;
 	}
-	return channel;
+	return input;
 }
 
 float3 RGB_Lrgb(float3 input)
 {
-	return float3(CompandInverse(input[0]), CompandInverse(input[1]), CompandInverse(input[2]));
+	return float3(TransferInverse(input[0]), TransferInverse(input[1]), TransferInverse(input[2]));
 }
 
 //[Lrgb] > [RGB] = [Linear] > [Non-Linear]
 
-float Compand(float channel)
+float Transfer(float input)
 {
 	//(0) Gamma
 	if (Companding == 0)
 	{
-		float V = channel;
+		float V = input;
 		float v = pow(V, Gamma);
 		return v;
 	}
 
-	//(1) L
+	//(1) LGamma
 	if (Companding == 1)
 	{
-		float V = channel;
+		float r = 0.5;
+
+		float a = 0.17883277;
+		float b = 1 - 4 * a;
+		float c = 0.5 - a * log(4 * a);
+
+		if (input >= 0 && input <= 1)
+			return r * sqrt(input);
+
+		return a * log(input - b) + c; //1 < input
+	}
+
+	//(2) Linear
+	if (Companding == 2)
+	{
+		float V = input;
 		float v = V <= 0.08 ? 100 * V / Kappa : pow((V + 0.16) / 1.16, 3);
 		return v;
 	}
 
-	//(2) Rec709
-	if (Companding == 2)
-	{
-		float L = channel;
-		float V = L < 0.018 ? 4500 * L : 1.099 * L - 0.099;
-		return V;
-	}
-
-	//(3) Rec2020
+	//(3) PQ
 	if (Companding == 3)
 	{
-		float L = channel;
-		float V = L < 0.0181 ? 4500 * L : 1.0993 * L - 0.0993;
+		float c2 = 18.8515625;
+		float c3 = 18.6875;
+		float c1 = c3 - c2 + 1;
+
+		float m2 = 78.84375;
+		return 10000 * max(pow(input, 1 / m2) - c1, 0) / (c2 - c3 * pow(input, 1 / m2));
+	}
+
+	//(4) Rec709
+	if (Companding == 4)
+	{
+		float L = input;
+		float V = L < 0.018 ? 4500 * L : 1.099 * pow(L, 0.45) - 0.099;
 		return V;
 	}
 
-	//(4) sRGB
-	if (Companding == 4)
+	//(5) Rec2020
+	if (Companding == 5)
 	{
-		float v = channel;
+		float L = input;
+		float V = L < 0.0181 ? 4500 * L : 1.0993 * pow(L, 0.45) - 0.0993;
+		return V;
+	}
+
+	//(6) sRGB
+	if (Companding == 6)
+	{
+		float v = input;
 		float V = v <= 0.0031308 ? 12.92 * v : 1.055 * pow(v, 1 / 2.4) - 0.055;
 		return V;
 	}
-	return channel;
+	return input;
 }
 
 float3 Lrgb_RGB(float3 input)
 {
-	return float3(Compand(input[0]), Compand(input[1]), Compand(input[2]));
+	return float3(Transfer(input[0]), Transfer(input[1]), Transfer(input[2]));
 }
 
 //[Lrgb] > [*]
@@ -2180,7 +2232,7 @@ float3 FLrgb(float m, float3 input)
 	if (m == 10) { return Lrgb_HSM(input); }
 	if (m == 11) { return Lrgb_HSP(input); }
 	if (m == 12) { return Lrgb_HWB(input); }
-	if (m == 13) { return Lrgb_HWBk(input); }
+	if (m == 13) { return Lrgb_HWBsbk(input); }
 	if (m == 14) { return Lrgb_ICtCp(input); }
 	if (m == 15) { return Lrgb_IPT(input); }
 	if (m == 16) { return Lrgb_JPEG(input); }
@@ -2229,7 +2281,7 @@ float3 TLrgb(float m, float3 input)
 	if (m == 10) { return HSM_Lrgb(input); }
 	if (m == 11) { return HSP_Lrgb(input); }
 	if (m == 12) { return HWB_Lrgb(input); }
-	if (m == 13) { return HWBk_Lrgb(input); }
+	if (m == 13) { return HWBsbk_Lrgb(input); }
 	if (m == 14) { return ICtCp_Lrgb(input); }
 	if (m == 15) { return IPT_Lrgb(input); }
 	if (m == 16) { return JPEG_Lrgb(input); }

@@ -6,5 +6,5 @@ namespace Imagin.Core.Linq;
 public static class Xrgb
 { 
     public static RGB Convert(this Color input)
-        => new(input.R.Double() / 255, input.G.Double() / 255, input.B.Double() / 255);
+        => new(input.R.Double(), input.G.Double(), input.B.Double());
 }

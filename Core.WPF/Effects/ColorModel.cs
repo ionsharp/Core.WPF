@@ -468,7 +468,7 @@ public class ColorModelEffect : BaseEffect
         this.Bind(ActualComponentProperty,
             $"{nameof(Component)}", this, BindingMode.OneWay, new SimpleConverter<Components, double>(i => (int)i));
         this.Bind(ActualModelProperty,
-            $"{nameof(Model)}", this, BindingMode.OneWay, new SimpleConverter<Type, double>(i => ColorVector.Index[i]));
+            $"{nameof(Model)}", this, BindingMode.OneWay, new SimpleConverter<Type, double>(i => ColorModel.GetIndex(i)));
         this.Bind(ActualModeProperty,
             $"{nameof(Mode)}", this, BindingMode.OneWay, new SimpleConverter<Modes, double>(i => (int)i));
         this.Bind(ActualShapeProperty,
@@ -563,11 +563,11 @@ public class ColorModelEffect : BaseEffect
     protected virtual void OnProfileChanged(Value<WorkingProfile> input)
     {
         SetCurrentValue(CompandingProperty,
-            input.New.Compression.GetAttribute<IndexAttribute>().Index.Double());
+            input.New.Transfer.GetAttribute<IndexAttribute>().Index.Double());
         SetCurrentValue(GammaProperty, 
-            input.New.Compression is GammaCompression gammaCompanding ? gammaCompanding.Gamma : 0.0);
+            input.New.Transfer is GammaTransfer transfer ? transfer.Gamma : 0.0);
 
-        var white = Illuminant.GetChromacity(input.New.White);
+        var white = Illuminant.GetChroma2(input.New.White);
         SetCurrentValue(WhiteXProperty, white.X);
         SetCurrentValue(WhiteYProperty, white.Y);
 
@@ -575,8 +575,8 @@ public class ColorModelEffect : BaseEffect
 
         var m_RGB_XYZ 
             = WorkingProfile.GetRxGyBz(input.New.Primary, input.New.White);
-        var m_XYZ_LMS 
-            = LMS.Transform.VonKriesHPEAdjusted;
+        var m_XYZ_LMS
+            = input.New.Transform;
 
         var m_LMS_XYZ 
             = m_XYZ_LMS.Invert3By3();

@@ -1,11 +1,14 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Collections.Serialization;
+using Imagin.Core.Colors;
+using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using Imagin.Core.Models;
 using Imagin.Core.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Windows;
+using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace Imagin.Core.Controls
 {
@@ -13,10 +16,12 @@ namespace Imagin.Core.Controls
     [Serializable]
     public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISerialize
     {
+        enum Category { Component, Layouts, Window }
+
         #region Properties
 
         bool autoSaveLayout = true;
-        [Category(nameof(Layouts))]
+        [Category(Category.Layouts)]
         [DisplayName("AutoSave")]
         public bool AutoSaveLayout
         {
@@ -38,6 +43,15 @@ namespace Imagin.Core.Controls
             set => this.Change(ref colors, value);
         }
 
+        int componentPrecision = 2;
+        [Category(Category.Component)]
+        [DisplayName("Precision")]
+        public int ComponentPrecision
+        {
+            get => componentPrecision;
+            set => this.Change(ref componentPrecision, value);
+        }
+
         [Hidden]
         public string FilePath { get; private set; }
 
@@ -51,7 +65,7 @@ namespace Imagin.Core.Controls
 
         [NonSerialized]
         Layouts layouts = null;
-        [Category(nameof(Layouts))]
+        [Category(Category.Layouts)]
         [DisplayName("Layout")]
         public virtual Layouts Layouts
         {
@@ -59,7 +73,17 @@ namespace Imagin.Core.Controls
             set => this.Change(ref layouts, value);
         }
 
-        [Category(nameof(Window))]
+        ObservableCollection<Namable<WorkingProfile>> IColorControlOptions.Profiles => profiles;
+        [field: NonSerialized]
+        ObservableCollection<Namable<WorkingProfile>> profiles = new();
+        [Hidden]
+        public ObservableCollection<Namable<WorkingProfile>> Profiles
+        {
+            get => profiles;
+            set => this.Change(ref profiles, value);
+        }
+
+        [Category(Category.Window)]
         [DisplayName("Panels")]
         public PanelCollection Panels => ColorControl?.Panels;
 
@@ -67,7 +91,8 @@ namespace Imagin.Core.Controls
 
         #region ColorControlOptions
 
-        public ColorControlOptions() : base() { }
+        public ColorControlOptions() : base() 
+            => XList.ForEach<PropertyInfo>(typeof(WorkingProfile.Default).GetProperties(BindingFlags.Public | BindingFlags.Static), i => profiles.Add(new(i.GetDisplayName(), (WorkingProfile)i.GetValue(null))));
 
         public ColorControlOptions(string filePath) : this() => FilePath = filePath;
 

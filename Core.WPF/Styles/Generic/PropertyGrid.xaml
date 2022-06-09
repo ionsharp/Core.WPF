@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Behavior="clr-namespace:Imagin.Core.Behavior"
-    xmlns:Common="clr-namespace:Imagin.Core"
+    xmlns:Core="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=System"
     xmlns:Converters="clr-namespace:Imagin.Core.Converters"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
@@ -214,14 +214,24 @@
                                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                                             <Style.Triggers>
                                                 <Trigger Property="Tag" Value="{x:Null}">
-                                                    <Setter Property="Command" Value="{Binding Data.MemberCreateCommand, Source={StaticResource PropertyGrid}}"/>
+                                                    <Setter Property="Command" Value="{Binding Data.MemberNewCommand, Source={StaticResource PropertyGrid}}"/>
+                                                </Trigger>
+                                                <DataTrigger Binding="{Data:IsBinding Type={x:Type Core:BaseNamable}}" Value="True">
+                                                    <Setter Property="CommandParameter">
+                                                        <Setter.Value>
+                                                            <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding Value}"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Header" Value="{Binding Name}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Data:IsBinding Type={x:Type System:Type}}" Value="True">
                                                     <Setter Property="CommandParameter">
                                                         <Setter.Value>
                                                             <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding}"/>
                                                         </Setter.Value>
                                                     </Setter>
                                                     <Setter Property="Header" Value="{Data:DisplayNameBinding}"/>
-                                                </Trigger>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </ContextMenu.Resources>
@@ -232,6 +242,8 @@
                                                 CommandParameter="{Binding}"/>
                                             <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableTypes.Count}"/>
                                             <CollectionContainer Collection="{Binding Data.AssignableTypes, Source={StaticResource Member}}"/>
+                                            <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableValues.Count}"/>
+                                            <CollectionContainer Collection="{Binding Data.AssignableValues, Source={StaticResource Member}}"/>
                                             <Separator/>
                                             <MenuItem Tag="0" Header="{l:Loc Reset}"
                                                 Command="{Binding Data.MemberResetCommand, Source={StaticResource PropertyGrid}}"

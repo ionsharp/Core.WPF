@@ -20,8 +20,8 @@ namespace Demo
     {
         #region Properties
 
-        ColorModel color;
-        public ColorModel Color
+        ColorViewModel color;
+        public ColorViewModel Color
         {
             get => color;
             set => this.Change(ref color, value);

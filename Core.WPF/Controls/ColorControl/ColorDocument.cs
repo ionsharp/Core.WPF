@@ -42,8 +42,8 @@ public class ColorDocument : Document
     }
 
     [field: NonSerialized]
-    ColorModel color = null;
-    public ColorModel Color
+    ColorViewModel color = null;
+    public ColorViewModel Color
     {
         get => color;
         set => this.Change(ref color, value);
@@ -189,7 +189,7 @@ public class ColorDocument : Document
 
     [field: NonSerialized]
     ICommand selectCommand;
-    new public ICommand SelectCommand => selectCommand ??= new RelayCommand(() => OldColor = Color.ActualColor, () => true);
+    public ICommand SelectCommand => selectCommand ??= new RelayCommand(() => OldColor = Color.ActualColor, () => true);
 
     [field: NonSerialized]
     ICommand saveColorCommand;

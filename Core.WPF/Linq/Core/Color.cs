@@ -54,8 +54,8 @@ public static partial class XColor
 
     public static Color Convert(RGB input)
     {
-        var result = input.Value.Transform(i => M.Denormalize(i));
-        return Color.FromArgb(byte.MaxValue, result[0], result[1], result[2]);
+        var result = input.Value.Transform(i => M.Clamp(i, 255).Byte());
+        return Color.FromArgb(255, result[0], result[1], result[2]);
     }
 
     //...
@@ -91,45 +91,45 @@ public static partial class XColor
         return col;
     }
 
-    public static int Encode(this Color input, System.Windows.Media.PixelFormat format)
+    public static int Encode(this Color input, PixelFormat format)
     {
         var result = 0;
-        if (format == System.Windows.Media.PixelFormats.BlackWhite)
+        if (format == PixelFormats.BlackWhite)
         {
 
         }
-        else if (format == System.Windows.Media.PixelFormats.Cmyk32)
+        else if (format == PixelFormats.Cmyk32)
         {
 
         }
-        else if (format == System.Windows.Media.PixelFormats.Rgba128Float)
+        else if (format == PixelFormats.Rgba128Float)
         {
             result = input.A << 96;
             result |= input.B << 64;
             result |= input.G << 32;
             result |= input.R << 0;
         }
-        else if (format == System.Windows.Media.PixelFormats.Rgba64)
+        else if (format == PixelFormats.Rgba64)
         {
             result = input.A << 48;
             result |= input.B << 32;
             result |= input.G << 16;
             result |= input.R << 0;
         }
-        else if (format == System.Windows.Media.PixelFormats.Bgra32)
+        else if (format == PixelFormats.Bgra32)
         {
             result = input.A << 24;
             result |= input.R << 16;
             result |= input.G << 8;
             result |= input.B << 0;
         }
-        else if (format == System.Windows.Media.PixelFormats.Gray32Float)
+        else if (format == PixelFormats.Gray32Float)
         {
         }
-        else if (format == System.Windows.Media.PixelFormats.Gray16)
+        else if (format == PixelFormats.Gray16)
         {
         }
-        else if (format == System.Windows.Media.PixelFormats.Gray8)
+        else if (format == PixelFormats.Gray8)
         {
         }
         return result;

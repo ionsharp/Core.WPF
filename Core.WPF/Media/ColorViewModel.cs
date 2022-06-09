@@ -7,15 +7,16 @@ using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Imagin.Core.Media;
 
-/// <summary>A normalized <see cref="ColorVector"/> used to convert between color spaces via user interface.</summary>
+/// <summary>A normalized <see cref="ColorModel"/> used to convert between color spaces via user interface.</summary>
 [DisplayName("Color")]
-public class ColorModel : ViewModel
+public class ColorViewModel : ViewModel
 {
     enum Category { Component, Profile }
 
@@ -36,15 +37,6 @@ public class ColorModel : ViewModel
         set => this.Change(ref actualColor, value);
     }
 
-    IAdapt adapt = new VonKriesAdaptation();
-    [Assignable(typeof(VonKriesAdaptation))]
-    [Category(Category.Profile), Index(-1), Style(ObjectStyle.Default), Visible]
-    public IAdapt Adapt
-    {
-        get => adapt;
-        set => this.Change(ref adapt, value);
-    }
-
     Components component = Components.X;
     [Index(1), Label(false), Tool]
     public Components Component
@@ -53,24 +45,12 @@ public class ColorModel : ViewModel
         set => this.Change(ref component, value);
     }
 
-    ICompress compress = WorkingProfile.DefaultCompression;
-    [Assignable(typeof(GammaCompression), typeof(LCompression), typeof(Rec601Compression), typeof(Rec709Compression), typeof(Rec2100Compression), typeof(Rec2020Compression), typeof(sRGBCompression))]
-    [Category(Category.Profile), Index(0), Style(ObjectStyle.Default), Visible]
-    public ICompress Compress
-    {
-        get => compress;
-        set => this.Change(ref compress, value);
-    }
-
+    int componentPrecision = 2;
     [Hidden]
-    public IList Models
+    public int ComponentPrecision
     {
-        get
-        {
-            var result = new ObservableCollection<Type>();
-            ColorVector.Type.ForEach(i => result.Add(i.Value));
-            return result;
-        }
+        get => componentPrecision;
+        set => this.Change(ref componentPrecision, value);
     }
 
     int model = 0;
@@ -85,6 +65,9 @@ public class ColorModel : ViewModel
         get => model;
         set => this.Change(ref model, value);
     }
+
+    [Hidden]
+    public IList Models => ColorModel.Types;
 
     [Hidden]
     public Type ModelType
@@ -124,35 +107,119 @@ public class ColorModel : ViewModel
     }
 
     Vector2 primaryRed = WorkingProfile.DefaultPrimary.X;
-    [Category(Category.Profile), DisplayName("Primary (R)"), Index(1), Style(ObjectStyle.Default), Visible]
+    [Assignable(nameof(RedPrimaries))]
+    [Category(Category.Profile), DisplayName("Primary (R)"), Index(0), Style(ObjectStyle.Default), Visible]
     public Vector2 PrimaryRed
     {
         get => primaryRed;
         set => this.Change(ref primaryRed, value);
     }
 
+    [Hidden]
+    public object RedPrimaries
+    {
+        get
+        {
+            var result = new ObservableCollection<Namable<Vector2>>();
+            typeof(WorkingProfile.Default).GetProperties(BindingFlags.Public | BindingFlags.Static).ForEach(i => result.Add(new(i.GetDisplayName(), i.GetValue(null).As<WorkingProfile>().Primary.R)));
+            return result;
+        }
+    }
+
     Vector2 primaryGreen = WorkingProfile.DefaultPrimary.Y;
-    [Category(Category.Profile), DisplayName("Primary (G)"), Index(2), Style(ObjectStyle.Default), Visible]
+    [Assignable(nameof(GreenPrimaries))]
+    [Category(Category.Profile), DisplayName("Primary (G)"), Index(1), Style(ObjectStyle.Default), Visible]
     public Vector2 PrimaryGreen
     {
         get => primaryGreen;
         set => this.Change(ref primaryGreen, value);
     }
 
+    [Hidden]
+    public object GreenPrimaries
+    {
+        get
+        {
+            var result = new ObservableCollection<Namable<Vector2>>();
+            typeof(WorkingProfile.Default).GetProperties(BindingFlags.Public | BindingFlags.Static).ForEach(i => result.Add(new(i.GetDisplayName(), i.GetValue(null).As<WorkingProfile>().Primary.G)));
+            return result;
+        }
+    }
+
     Vector2 primaryBlue = WorkingProfile.DefaultPrimary.Z;
-    [Category(Category.Profile), DisplayName("Primary (B)"), Index(3), Style(ObjectStyle.Default), Visible]
+    [Assignable(nameof(BluePrimaries))]
+    [Category(Category.Profile), DisplayName("Primary (B)"), Index(2), Style(ObjectStyle.Default), Visible]
     public Vector2 PrimaryBlue
     {
         get => primaryBlue;
         set => this.Change(ref primaryBlue, value);
     }
 
+    [Hidden]
+    public object BluePrimaries
+    {
+        get
+        {
+            var result = new ObservableCollection<Namable<Vector2>>();
+            typeof(WorkingProfile.Default).GetProperties(BindingFlags.Public | BindingFlags.Static).ForEach(i => result.Add(new(i.GetDisplayName(), i.GetValue(null).As<WorkingProfile>().Primary.B)));
+            return result;
+        }
+    }
+
+    ITransfer transfer = WorkingProfile.DefaultTransfer;
+    [Assignable(typeof(GammaTransfer), typeof(LGammaTransfer), typeof(LinearTransfer), typeof(PQTransfer), typeof(Rec709Transfer), typeof(Rec2020Transfer), typeof(sRGBTransfer))]
+    [Category(Category.Profile), Index(3), Style(ObjectStyle.Default), Visible]
+    public ITransfer Transfer
+    {
+        get => transfer;
+        set => this.Change(ref transfer, value);
+    }
+
+    DoubleMatrix transform = new(LMS.Transform.Bradford.As<IMatrix>().Values);
+    [Assignable(nameof(Transforms))]
+    [Category(Category.Profile), Index(4), Visible]
+    public DoubleMatrix Transform
+    {
+        get => transform;
+        set => this.Change(ref transform, value);
+    }
+
+    [Hidden]
+    public object Transforms
+    {
+        get
+        {
+            var result = new ObservableCollection<Namable<DoubleMatrix>>();
+            foreach (var i in typeof(LMS.Transform).GetProperties(BindingFlags.Public | BindingFlags.Static))
+                result.Add(new(i.Name, new DoubleMatrix(i.GetValue(null).As<IMatrix>().Values)));
+
+            return result;
+        }
+    }
+
     Vector2 white = WorkingProfile.DefaultWhite;
-    [Category(Category.Profile), Index(4), Style(ObjectStyle.Default), Visible]
+    [Assignable(nameof(Whites))]
+    [Category(Category.Profile), DisplayName("Illuminant"), Index(-1), Style(ObjectStyle.Default), Visible]
     public Vector2 White
     {
         get => white;
         set => this.Change(ref white, value);
+    }
+
+    [Hidden]
+    public object Whites
+    {
+        get
+        {
+            var result = new ObservableCollection<Namable<Vector2>>();
+            foreach (var i in typeof(Illuminant2).GetProperties(BindingFlags.Public | BindingFlags.Static))
+                result.Add(new(i.Name + " (2°)", (Vector2)i.GetValue(null)));
+
+            foreach (var i in typeof(Illuminant10).GetProperties(BindingFlags.Public | BindingFlags.Static))
+                result.Add(new(i.Name + " (10°)", (Vector2)i.GetValue(null)));
+
+            return result;
+        }
     }
 
     //...
@@ -187,30 +254,30 @@ public class ColorModel : ViewModel
     //...
 
     [Hidden]
-    public string NameX => $"({ColorVector.GetComponent(ModelType, 0).Symbol}) {ColorVector.GetComponent(ModelType, 0).Name}";
+    public string NameX => $"({ColorModel.GetComponent(ModelType, 0).Symbol}) {ColorModel.GetComponent(ModelType, 0).Name}";
 
     [Hidden]
-    public string NameY => $"({ColorVector.GetComponent(ModelType, 1).Symbol}) {ColorVector.GetComponent(ModelType, 1).Name}";
+    public string NameY => $"({ColorModel.GetComponent(ModelType, 1).Symbol}) {ColorModel.GetComponent(ModelType, 1).Name}";
 
     [Hidden]
-    public string NameZ => $"({ColorVector.GetComponent(ModelType, 2).Symbol}) {ColorVector.GetComponent(ModelType, 2).Name}";
+    public string NameZ => $"({ColorModel.GetComponent(ModelType, 2).Symbol}) {ColorModel.GetComponent(ModelType, 2).Name}";
 
     [Hidden]
-    public string UnitX => $"{ColorVector.GetComponent(ModelType, 0).Unit}";
+    public string UnitX => $"{ColorModel.GetComponent(ModelType, 0).Unit}";
 
     [Hidden]
-    public string UnitY => $"{ColorVector.GetComponent(ModelType, 1).Unit}";
+    public string UnitY => $"{ColorModel.GetComponent(ModelType, 1).Unit}";
 
     [Hidden]
-    public string UnitZ => $"{ColorVector.GetComponent(ModelType, 2).Unit}";
+    public string UnitZ => $"{ColorModel.GetComponent(ModelType, 2).Unit}";
 
     //...
 
     [Hidden]
-    public Vector Maximum => new(ColorVector.GetComponent(ModelType, 0).Maximum, ColorVector.GetComponent(ModelType, 1).Maximum, ColorVector.GetComponent(ModelType, 2).Maximum);
+    public Vector Maximum => new(ColorModel.GetComponent(ModelType, 0).Maximum, ColorModel.GetComponent(ModelType, 1).Maximum, ColorModel.GetComponent(ModelType, 2).Maximum);
 
     [Hidden]
-    public Vector Minimum => new(ColorVector.GetComponent(ModelType, 0).Minimum, ColorVector.GetComponent(ModelType, 1).Minimum, ColorVector.GetComponent(ModelType, 2).Minimum);
+    public Vector Minimum => new(ColorModel.GetComponent(ModelType, 0).Minimum, ColorModel.GetComponent(ModelType, 1).Minimum, ColorModel.GetComponent(ModelType, 2).Minimum);
 
     [Hidden]
     public Vector Value => new(x, y, z);
@@ -245,7 +312,7 @@ public class ColorModel : ViewModel
 
     #region ColorModel
 
-    public ColorModel(Color defaultColor, Action<Color> onChanged = null) : base()
+    public ColorViewModel(Color defaultColor, Action<Color> onChanged = null) : base()
     {
         ActualColor = defaultColor; OnChanged = onChanged;
     }
@@ -254,9 +321,9 @@ public class ColorModel : ViewModel
 
     #region Methods
 
-    ColorVector GetColor()
+    ColorModel GetColor()
     {
-        Vector3<double> result = default;
+        Vector3 result = default;
         if (Component == Components.X)
             result = new(z, x, y);
 
@@ -266,7 +333,7 @@ public class ColorModel : ViewModel
         if (Component == Components.Z)
             result = new(x, y, z);
 
-        return ColorVector.New(ModelType, result);
+        return ColorModel.New(ModelType, result);
     }
 
     string GetDisplayValue(int index)
@@ -290,7 +357,7 @@ public class ColorModel : ViewModel
 
         var aRange = new DoubleRange(0, 1);
         var bRange = new DoubleRange(Minimum[index], Maximum[index]);
-        return aRange.Convert(bRange.Minimum, bRange.Maximum, result).Round(2).ToString();
+        return aRange.Convert(bRange.Minimum, bRange.Maximum, result).Round(ComponentPrecision).ToString();
     }
 
     void SetDisplayValue(string input, int index)
@@ -358,9 +425,10 @@ public class ColorModel : ViewModel
     {
         handle.SafeInvoke((Action)(() =>
         {
+            return;
             var rgb = Xrgb.Convert(ActualColor);
 
-            var result = ColorVector.New(ModelType, rgb, WorkingProfile.Default.sRGB).Value;
+            var result = ColorModel.New(ModelType, rgb, WorkingProfile.Default.sRGB).Value;
             var xyz = new Vector3<double>(result[(int)0] / 255, result[(int)1] / 255, result[(int)2] / 255);
 
             switch (Component)
@@ -392,15 +460,22 @@ public class ColorModel : ViewModel
         {
             case nameof(ActualColor):
                 //OnChanged?.Invoke(ActualColor);
-                //ConvertFrom();
+                ConvertFrom();
                 break;
 
-            case nameof(Compress):
+            case nameof(ComponentPrecision):
+                this.Changed(() => DisplayX);
+                this.Changed(() => DisplayY);
+                this.Changed(() => DisplayZ);
+                break;
+
             case nameof(PrimaryRed):
             case nameof(PrimaryGreen):
             case nameof(PrimaryBlue):
+            case nameof(Transfer):
+            case nameof(Transform):
             case nameof(White):
-                Profile = new WorkingProfile(PrimaryRed, PrimaryGreen, PrimaryBlue, White, Compress);
+                Profile = new WorkingProfile(PrimaryRed, PrimaryGreen, PrimaryBlue, White, Transfer, new(Transform));
                 break;
 
             case nameof(Component):

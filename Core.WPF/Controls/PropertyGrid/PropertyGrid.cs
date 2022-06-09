@@ -1491,17 +1491,24 @@ namespace Imagin.Core.Controls
 
         #region Commands
 
-        ICommand memberCreateCommand;
-        public ICommand MemberCreateCommand => memberCreateCommand
+        ICommand memberNewCommand;
+        public ICommand MemberNewCommand => memberNewCommand
             ??= new RelayCommand<DoubleReference>(i =>
             {
                 if (i.First is MemberModel j)
                 {
-                    if (i.Second is Type k)
-                        Try.Invoke(() => j.Value = k.Create<object>(), e => Log.Write<PropertyGrid>(e));
+                    Try.Invoke(() =>
+                    {
+                        if (i.Second is Type n)
+                            j.Value = n.Create<object>();
+
+                        if (i.Second is object m)
+                            j.Value = m;
+                    }, 
+                    e => Log.Write<PropertyGrid>(e));
                 }
             },
-            i => i?.First is MemberModel j && !j.IsReadOnly && i.Second is Type k && j.AssignableTypes?.Contains(k) == true);
+            i => i?.First is MemberModel j && !j.IsReadOnly);
 
         ICommand memberClearCommand;
         public ICommand MemberClearCommand => memberClearCommand

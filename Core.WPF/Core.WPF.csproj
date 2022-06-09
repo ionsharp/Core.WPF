@@ -143,7 +143,7 @@
     <Compile Include="Linq\Core\RGB.cs" />
     <Compile Include="Linq\Core\Vector3.cs" />
     <Compile Include="Linq\Core\Vector4.cs" />
-    <Compile Include="Media\ColorModel.cs" />
+    <Compile Include="Media\ColorViewModel.cs" />
     <Compile Include="Controls\ColorSelector\BaseComponentSlider.cs" />
     <Compile Include="Converters\Multi\String\Component.cs" />
     <Compile Include="Media\StringColor.cs" />

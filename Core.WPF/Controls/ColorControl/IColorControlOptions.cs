@@ -1,4 +1,6 @@
 ﻿using Imagin.Core.Collections.Serialization;
+using Imagin.Core.Colors;
+using System.Collections.ObjectModel;
 
 namespace Imagin.Core.Controls
 {
@@ -8,6 +10,8 @@ namespace Imagin.Core.Controls
 
         IGroupWriter Colors { get; }
 
+        ObservableCollection<Namable<WorkingProfile>> Profiles { get; }
+        
         //...
 
         Layouts Layouts { get; }

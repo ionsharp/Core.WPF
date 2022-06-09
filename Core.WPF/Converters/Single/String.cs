@@ -16,7 +16,7 @@ namespace Imagin.Core.Converters
         public static ColorModelConverter Default { get; private set; } = new();
         public ColorModelConverter() : base() { }
 
-        protected override ConverterValue<string> ConvertTo(ConverterData<int> input) => ColorVector.Type[input.Value].Name;
+        protected override ConverterValue<string> ConvertTo(ConverterData<int> input) => ColorModel.GetType(input.Value).Name;
 
         protected override ConverterValue<int> ConvertBack(ConverterData<string> input) => Nothing.Do;
     }

@@ -21,7 +21,7 @@ namespace Imagin.Core.Converters
                     {
                         if (values[1] is Type model)
                         {
-                            var result = ColorVector.GetComponent(model, (int)component);
+                            var result = ColorModel.GetComponent(model, (int)component);
                             return $"({result.Symbol}) {result.Name}";
                         }
                     }

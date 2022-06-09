@@ -25,12 +25,12 @@ namespace Imagin.Core.Controls
 
         public AlphaSlider() : base() { }
 
-        protected override void Mark() => ArrowPosition.Y = ((1 - (Value.Double() / 255)) * ActualHeight) - 8;
+        protected override void Mark() => ArrowPosition.Y = ((1 - M.Normalize(Value)) * ActualHeight) - 8;
 
         protected override void OnMouseChanged(Vector2<One> input)
         {
             base.OnMouseChanged(input);
-            SetCurrentValue(ValueProperty, Clamp(input.Y.Value * 255, 255).Byte());
+            SetCurrentValue(ValueProperty, Denormalize(input.Y.Value));
         }
 
         protected virtual void OnValueChanged(Value<byte> input) => Mark();
