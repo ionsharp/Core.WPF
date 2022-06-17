@@ -2,7 +2,7 @@
 {
     public interface IMainViewOptions
     {
-        bool LogEnabled { get; }
+        bool LogEnable { get; }
 
         bool LogClearOnExit { get; }
         

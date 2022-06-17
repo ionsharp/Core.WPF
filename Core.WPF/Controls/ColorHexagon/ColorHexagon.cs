@@ -1,7 +1,7 @@
-﻿using Imagin.Core.Converters;
+﻿using Imagin.Core.Colors;
+using Imagin.Core.Converters;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
-using Imagin.Core.Colors;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -160,9 +160,9 @@ namespace Imagin.Core.Controls
                                     {
                                         if (j.Values[2] is double b)
                                         {
-                                            var hsb = new HSL(oldColor.Int32().GetHue(), s, b);
-                                            var rgb = hsb.ToRGB(WorkingProfile.Default.sRGB);
-                                            return new(XColor.Convert(rgb));
+                                            var hsb = Colors.Colour.New<HSL>(oldColor.Int32().GetHue(), s, b);
+                                            hsb.To(out RGB rgb, WorkingProfile.Default);
+                                            return new(Linq.XColor.Convert(rgb));
                                         }
                                     }
                                     return new(oldColor);

@@ -18,316 +18,936 @@
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
 
-    <!-- ... ComponentSelector : ColorSelector -->
+    <!-- ... ComponentSelector2D -->
 
-    <DataTemplate x:Key="ComponentSelectorTemplate">
+    <DataTemplate x:Key="ComponentSelector2DTemplate">
         <local:FillElement Fill="White"
             DataContext="{Binding Data}"
             Height="1" Width="1">
             <local:FillElement.Effect>
                 <Effects:ColorModelEffect
-                    Component="{Binding Component}"
+                    XComponent="{Binding XComponent, Converter={x:Static Converters:Component4ToDoubleConverter.Default}}"
+                    YComponent="{Binding YComponent, Converter={x:Static Converters:Component4ToDoubleConverter.Default}}"
+                    Depth="{Binding Depth}"
                     Mode="XY"
                     Model="{Binding Model}"
                     Profile="{Binding Profile}"
                     Shape="{Binding Shape}"
-                    Z="{Binding Z, Converter={x:Static Converters:OneToDoubleConverter.Default}}"/>
+                    X="{Binding X, Converter={x:Static Converters:OneToDoubleConverter.Default}}"
+                    Y="{Binding Y, Converter={x:Static Converters:OneToDoubleConverter.Default}}"
+                    Z="{Binding Z, Converter={x:Static Converters:OneToDoubleConverter.Default}}"
+                    W="{Binding W, Converter={x:Static Converters:OneToDoubleConverter.Default}}"/>
             </local:FillElement.Effect>
         </local:FillElement>
     </DataTemplate>
 
-    <RadialGradientBrush x:Key="ComponentSelector.3DBackground" Center="0.5,0.5">
+    <Style x:Key="{x:Type local:ComponentSelector2D}" TargetType="{x:Type local:ComponentSelector2D}" BasedOn="{StaticResource {x:Type local:ColorSelector}}">
+        <Setter Property="ClipToBounds" Value="True"/>
+        <Setter Property="EllipseDiameter" Value="12"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:ComponentSelector2D}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding Border.CornerRadius}">
+                        <Border.Resources>
+                            <Data:Reference x:Key="ComponentSelector" Data="{Data:TemplatedParent}"/>
+                        </Border.Resources>
+                        <ContentPresenter>
+                            <ContentPresenter.ContentTemplate>
+                                <DataTemplate>
+                                    <Grid DataContext="{Binding Source={StaticResource ComponentSelector}}">
+                                        <Viewbox x:Name="Viewbox" Stretch="Fill">
+                                            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ComponentSelector2DTemplate}"/>
+                                        </Viewbox>
+                                        <local:ComponentSelectorEllipse x:Name="Ellipse" Diameter="{Binding Data.EllipseDiameter}"
+                                            X="{Binding Data.EllipsePosition.X}" 
+                                            Y="{Binding Data.EllipsePosition.Y}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ContentPresenter.ContentTemplate>
+                        </ContentPresenter>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ... ComponentSelector3D -->
+
+    <RadialGradientBrush x:Key="ComponentSelector3D.Background" Center="0.5,0.5">
         <GradientStop Color="#55FFFFFF" Offset="0"/>
         <GradientStop Color="#00000000" Offset="1"/>
     </RadialGradientBrush>
-    
-    <ControlTemplate x:Key="ComponentSelector.ControlTemplate" TargetType="{x:Type local:ComponentSelector}">
-        <Border
-            Background="{TemplateBinding Background}"
-            BorderBrush="{TemplateBinding Background}"
-            BorderThickness="{TemplateBinding Background}"
-            CornerRadius="{TemplateBinding Border.CornerRadius}">
-            <Border.Resources>
-                <Data:Reference x:Key="ComponentSelector" Data="{Data:TemplatedParent}"/>
 
-                <Model3DGroup x:Key="ComponentSelector.3DVisual">
-                    <Model3DGroup.Children>
-                        <!-- Front -->
-                        <GeometryModel3D>
-                            <GeometryModel3D.Geometry>
-                                <MeshGeometry3D 
-                                    Positions="-1 -1 1  1 -1 1  -1 1 1  1 1 1"
-                                    TextureCoordinates="0 0  -1 0  0 -1  -1 -1"
-                                    TriangleIndices="0 1 2  1 3 2"/>
-                            </GeometryModel3D.Geometry>
-                            <GeometryModel3D.Material>
-                                <DiffuseMaterial>
-                                    <DiffuseMaterial.Brush>
-                                        <VisualBrush>
-                                            <VisualBrush.Visual>
-                                                <local:FillElement Fill="White"
-                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
-                                                    Height="1" Width="1">
-                                                    <local:FillElement.Effect>
-                                                        <Effects:ColorModelEffect
-                                                            Component="Y"
-                                                            Mode="XY"
-                                                            Model="{Binding Model}"
-                                                            Profile="{Binding Profile}"
-                                                            Shape="Square"
-                                                            Z="1"/>
-                                                    </local:FillElement.Effect>
-                                                </local:FillElement>
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </DiffuseMaterial.Brush>
-                                </DiffuseMaterial>
-                            </GeometryModel3D.Material>
-                        </GeometryModel3D>
-                        <!-- Back -->
-                        <GeometryModel3D>
-                            <GeometryModel3D.Geometry>
-                                <MeshGeometry3D 
-                                    Positions="-1 -1 -1  1 -1 -1  -1 1 -1  1 1 -1"
-                                    TextureCoordinates="0 0  -1 0  0 -1  -1 -1"
-                                    TriangleIndices="2 1 0  2 3 1"/>
-                            </GeometryModel3D.Geometry>
-                            <GeometryModel3D.Material>
-                                <DiffuseMaterial>
-                                    <DiffuseMaterial.Brush>
-                                        <VisualBrush>
-                                            <VisualBrush.Visual>
-                                                <local:FillElement Fill="White"
-                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
-                                                    Height="1" Width="1">
-                                                    <local:FillElement.Effect>
-                                                        <Effects:ColorModelEffect
-                                                            Component="Y"
-                                                            Mode="XY"
-                                                            Model="{Binding Model}"
-                                                            Profile="{Binding Profile}"
-                                                            Shape="Square"
-                                                            Z="0"/>
-                                                    </local:FillElement.Effect>
-                                                </local:FillElement>
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </DiffuseMaterial.Brush>
-                                </DiffuseMaterial>
-                            </GeometryModel3D.Material>
-                        </GeometryModel3D>
-                        <!-- Left -->
-                        <GeometryModel3D>
-                            <GeometryModel3D.Geometry>
-                                <MeshGeometry3D 
-                                    Positions="-1 -1 -1  -1 -1 1  -1 1 -1  -1 1 1"
-                                    TextureCoordinates="-1 0  0 0  -1 -1  0 -1"
-                                    TriangleIndices="0 1 2  1 3 2"/>
-                            </GeometryModel3D.Geometry>
-                            <GeometryModel3D.Material>
-                                <DiffuseMaterial>
-                                    <DiffuseMaterial.Brush>
-                                        <VisualBrush>
-                                            <VisualBrush.Visual>
-                                                <local:FillElement Fill="White"
-                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
-                                                    Height="1" Width="1">
-                                                    <local:FillElement.Effect>
-                                                        <Effects:ColorModelEffect
-                                                            Component="X"
-                                                            Mode="XY"
-                                                            Model="{Binding Model}"
-                                                            Profile="{Binding Profile}"
-                                                            Shape="Square"
-                                                            Z="1"/>
-                                                    </local:FillElement.Effect>
-                                                </local:FillElement>
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </DiffuseMaterial.Brush>
-                                </DiffuseMaterial>
-                            </GeometryModel3D.Material>
-                        </GeometryModel3D>
-                        <!-- Right -->
-                        <GeometryModel3D>
-                            <GeometryModel3D.Geometry>
-                                <MeshGeometry3D 
-                                    Positions="1 -1 -1  1 -1 1  1 1 -1  1 1 1"
-                                    TextureCoordinates="-1 0  0 0  -1 -1  0 -1"
-                                    TriangleIndices="2 1 0  2 3 1"/>
-                            </GeometryModel3D.Geometry>
-                            <GeometryModel3D.Material>
-                                <DiffuseMaterial>
-                                    <DiffuseMaterial.Brush>
-                                        <VisualBrush>
-                                            <VisualBrush.Visual>
-                                                <local:FillElement Fill="White"
-                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
-                                                    Height="1" Width="1">
-                                                    <local:FillElement.Effect>
-                                                        <Effects:ColorModelEffect
-                                                            Component="X"
-                                                            Mode="XY"
-                                                            Model="{Binding Model}"
-                                                            Profile="{Binding Profile}"
-                                                            Shape="Square"
-                                                            Z="0"/>
-                                                    </local:FillElement.Effect>
-                                                </local:FillElement>
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </DiffuseMaterial.Brush>
-                                </DiffuseMaterial>
-                            </GeometryModel3D.Material>
-                        </GeometryModel3D>
-                        <!-- Top -->
-                        <GeometryModel3D>
-                            <GeometryModel3D.Geometry>
-                                <MeshGeometry3D 
-                                    Positions="-1 1 1  1 1 1  -1 1 -1  1 1 -1"
-                                    TextureCoordinates="1 0  0 0  1 1  0 1"
-                                    TriangleIndices="0 1 2  1 3 2"/>
-                            </GeometryModel3D.Geometry>
-                            <GeometryModel3D.Material>
-                                <DiffuseMaterial>
-                                    <DiffuseMaterial.Brush>
-                                        <VisualBrush>
-                                            <VisualBrush.Visual>
-                                                <local:FillElement Fill="White"
-                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
-                                                    Height="1" Width="1">
-                                                    <local:FillElement.Effect>
-                                                        <Effects:ColorModelEffect
-                                                            Component="Z"
-                                                            Mode="XY"
-                                                            Model="{Binding Model}"
-                                                            Profile="{Binding Profile}"
-                                                            Shape="Square"
-                                                            Z="1"/>
-                                                    </local:FillElement.Effect>
-                                                </local:FillElement>
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </DiffuseMaterial.Brush>
-                                </DiffuseMaterial>
-                            </GeometryModel3D.Material>
-                        </GeometryModel3D>
-                        <!-- Bottom -->
-                        <GeometryModel3D>
-                            <GeometryModel3D.Geometry>
-                                <MeshGeometry3D 
-                                    Positions="-1 -1 1  1 -1 1  -1 -1 -1  1 -1 -1"
-                                    TextureCoordinates="1 0  0 0  1 1  0 1"
-                                    TriangleIndices="2 1 0  2 3 1"/>
-                            </GeometryModel3D.Geometry>
-                            <GeometryModel3D.Material>
-                                <DiffuseMaterial>
-                                    <DiffuseMaterial.Brush>
-                                        <VisualBrush>
-                                            <VisualBrush.Visual>
-                                                <local:FillElement Fill="White"
-                                                    DataContext="{Binding Data, Source={StaticResource ComponentSelector}}"
-                                                    Height="1" Width="1">
-                                                    <local:FillElement.Effect>
-                                                        <Effects:ColorModelEffect
-                                                            Component="Z"
-                                                            Mode="XY"
-                                                            Model="{Binding Model}"
-                                                            Profile="{Binding Profile}"
-                                                            Shape="Square"
-                                                            Z="0"/>
-                                                    </local:FillElement.Effect>
-                                                </local:FillElement>
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </DiffuseMaterial.Brush>
-                                </DiffuseMaterial>
-                            </GeometryModel3D.Material>
-                        </GeometryModel3D>
-                    </Model3DGroup.Children>
-                </Model3DGroup>
+    <!-- Front -->
+    <DataTemplate x:Key="ComponentSelector3D.Front" DataType="{x:Type Data:Reference}">
+        <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Data.Is4}" Value="False">
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement x:Name="FillElement" Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="1"
+                                        X="1"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="X"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="1"
+                                        W="1" X="{Data:OneToDoubleBinding X}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Y"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="3"
+                                        X="1" Y="{Data:OneToDoubleBinding Y}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="3" YComponent="1"
+                                        X="1" Z="{Data:OneToDoubleBinding Z}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="1"
+                                        X="1" W="{Data:OneToDoubleBinding W}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
 
-                <DataTemplate x:Key="ComponentSelector.3DTemplate">
-                    <Border Background="Black">
-                        <Border Background="{StaticResource ComponentSelector.3DBackground}">
-                            <Viewport3D>
-                                <Viewport3D.Camera>
-                                    <PerspectiveCamera Position="0 0 10" LookDirection="0 0 -1"/>
-                                </Viewport3D.Camera>
-                                <ModelVisual3D>
+    <!-- Back -->
+    <DataTemplate x:Key="ComponentSelector3D.Back" DataType="{x:Type Data:Reference}">
+        <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Data.Is4}" Value="False">
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement x:Name="FillElement" Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="1"
+                                        X="0"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="X"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="1"
+                                        W="0" X="{Data:OneToDoubleBinding X}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Y"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="3"
+                                        X="0" Y="{Data:OneToDoubleBinding Y}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="3" YComponent="1"
+                                        X="0" Z="{Data:OneToDoubleBinding Z}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="1"
+                                        X="0" W="{Data:OneToDoubleBinding W}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- Left -->
+    <DataTemplate x:Key="ComponentSelector3D.Left" DataType="{x:Type Data:Reference}">
+        <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Data.Is4}" Value="False">
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement x:Name="FillElement" Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="0" YComponent="1"
+                                        Z="1"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="X"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="3" YComponent="1"
+                                        Z="1" X="{Data:OneToDoubleBinding X}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Y"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="0" YComponent="3"
+                                        Z="1" Y="{Data:OneToDoubleBinding Y}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="0" YComponent="1"
+                                        W="1" Z="{Data:OneToDoubleBinding Z}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="0" YComponent="1"
+                                        Z="1" W="{Data:OneToDoubleBinding W}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- Right -->
+    <DataTemplate x:Key="ComponentSelector3D.Right" DataType="{x:Type Data:Reference}">
+        <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Data.Is4}" Value="False">
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement x:Name="FillElement" Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="0" YComponent="1"
+                                        Z="0"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="X"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="3" YComponent="1"
+                                        Z="0" X="{Data:OneToDoubleBinding X}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Y"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="0" YComponent="3"
+                                        Z="0" Y="{Data:OneToDoubleBinding Y}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="0" YComponent="1"
+                                        W="0" Z="{Data:OneToDoubleBinding Z}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="0" YComponent="1"
+                                        Z="0" W="{Data:OneToDoubleBinding W}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- Top -->
+    <DataTemplate x:Key="ComponentSelector3D.Top" DataType="{x:Type Data:Reference}">
+        <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Data.Is4}" Value="False">
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement x:Name="FillElement" Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="0"
+                                        Y="1"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="X"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="3"
+                                        Y="1" X="{Data:OneToDoubleBinding X}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Y"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="0"
+                                        W="1" Y="{Data:OneToDoubleBinding Y}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="3" YComponent="0"
+                                        Y="1" Z="{Data:OneToDoubleBinding Z}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="0"
+                                        Y="1" W="{Data:OneToDoubleBinding W}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- Bottom -->
+    <DataTemplate x:Key="ComponentSelector3D.Bottom" DataType="{x:Type Data:Reference}">
+        <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Data.Is4}" Value="False">
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="0"
+                                        Y="0"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="X"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="3"
+                                        Y="0" X="{Data:OneToDoubleBinding X}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Y"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="0"
+                                        W="0" Y="{Data:OneToDoubleBinding Y}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="3" YComponent="0"
+                                        Y="0" Z="{Data:OneToDoubleBinding Z}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Data.Is4}" Value="True"/>
+                    <Condition Binding="{Binding Data.Component}" Value="Z"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:FillElement Fill="White"
+                                DataContext="{Binding Data}"
+                                Height="1" Width="1">
+                                <local:FillElement.Effect>
+                                    <Effects:ColorModelEffect
+                                        XComponent="2" YComponent="0"
+                                        Y="0" W="{Data:OneToDoubleBinding W}"
+                                        Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
+                                </local:FillElement.Effect>
+                            </local:FillElement>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- ... -->
+
+    <Style x:Key="{x:Type local:ComponentSelector3D}" TargetType="{x:Type local:ComponentSelector3D}" BasedOn="{StaticResource {x:Type local:ColorSelector}}">
+        <Setter Property="ClipToBounds" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:ComponentSelector3D}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding Border.CornerRadius}">
+                        <Border.Resources>
+                            <Data:Reference x:Key="ComponentSelector" Data="{Data:TemplatedParent}"/>
+                        </Border.Resources>
+                        <Border DataContext="{Data:TemplatedParent}" Background="Black">
+                            <Border Background="{StaticResource ComponentSelector3D.Background}">
+                                <Viewport3D>
+                                    <Viewport3D.Camera>
+                                        <PerspectiveCamera Position="0 0 10" LookDirection="0 0 -1"/>
+                                    </Viewport3D.Camera>
+                                    <ModelVisual3D>
+                                        <ModelVisual3D>
+                                            <ModelVisual3D.Content>
+                                                <AmbientLight Color="White" />
+                                            </ModelVisual3D.Content>
+                                        </ModelVisual3D>
+                                    </ModelVisual3D>
                                     <ModelVisual3D>
                                         <ModelVisual3D.Content>
-                                            <AmbientLight Color="White" />
+                                            <Model3DGroup>
+                                                <Model3DGroup.Children>
+                                                    <!-- Front -->
+                                                    <GeometryModel3D>
+                                                        <GeometryModel3D.Geometry>
+                                                            <MeshGeometry3D 
+                                                                Positions="-1 -1 1  1 -1 1  -1 1 1  1 1 1"
+                                                                TextureCoordinates="0 0  -1 0  0 -1  -1 -1"
+                                                                TriangleIndices="0 1 2  1 3 2"/>
+                                                        </GeometryModel3D.Geometry>
+                                                        <GeometryModel3D.Material>
+                                                            <DiffuseMaterial>
+                                                                <DiffuseMaterial.Brush>
+                                                                    <VisualBrush>
+                                                                        <VisualBrush.Visual>
+                                                                            <ContentPresenter Content="{Binding Source={StaticResource ComponentSelector}}" ContentTemplate="{StaticResource ComponentSelector3D.Front}"/>
+                                                                        </VisualBrush.Visual>
+                                                                    </VisualBrush>
+                                                                </DiffuseMaterial.Brush>
+                                                            </DiffuseMaterial>
+                                                        </GeometryModel3D.Material>
+                                                    </GeometryModel3D>
+                                                    <!-- Back -->
+                                                    <GeometryModel3D>
+                                                        <GeometryModel3D.Geometry>
+                                                            <MeshGeometry3D 
+                                                                Positions="-1 -1 -1  1 -1 -1  -1 1 -1  1 1 -1"
+                                                                TextureCoordinates="0 0  -1 0  0 -1  -1 -1"
+                                                                TriangleIndices="2 1 0  2 3 1"/>
+                                                        </GeometryModel3D.Geometry>
+                                                        <GeometryModel3D.Material>
+                                                            <DiffuseMaterial>
+                                                                <DiffuseMaterial.Brush>
+                                                                    <VisualBrush>
+                                                                        <VisualBrush.Visual>
+                                                                            <ContentPresenter Content="{Binding Source={StaticResource ComponentSelector}}" ContentTemplate="{StaticResource ComponentSelector3D.Back}"/>
+                                                                        </VisualBrush.Visual>
+                                                                    </VisualBrush>
+                                                                </DiffuseMaterial.Brush>
+                                                            </DiffuseMaterial>
+                                                        </GeometryModel3D.Material>
+                                                    </GeometryModel3D>
+                                                    <!-- Left -->
+                                                    <GeometryModel3D>
+                                                        <GeometryModel3D.Geometry>
+                                                            <MeshGeometry3D 
+                                                                Positions="-1 -1 -1  -1 -1 1  -1 1 -1  -1 1 1"
+                                                                TextureCoordinates="-1 0  0 0  -1 -1  0 -1"
+                                                                TriangleIndices="0 1 2  1 3 2"/>
+                                                        </GeometryModel3D.Geometry>
+                                                        <GeometryModel3D.Material>
+                                                            <DiffuseMaterial>
+                                                                <DiffuseMaterial.Brush>
+                                                                    <VisualBrush>
+                                                                        <VisualBrush.Visual>
+                                                                            <ContentPresenter Content="{Binding Source={StaticResource ComponentSelector}}" ContentTemplate="{StaticResource ComponentSelector3D.Left}"/>
+                                                                        </VisualBrush.Visual>
+                                                                    </VisualBrush>
+                                                                </DiffuseMaterial.Brush>
+                                                            </DiffuseMaterial>
+                                                        </GeometryModel3D.Material>
+                                                    </GeometryModel3D>
+                                                    <!-- Right -->
+                                                    <GeometryModel3D>
+                                                        <GeometryModel3D.Geometry>
+                                                            <MeshGeometry3D 
+                                                                Positions="1 -1 -1  1 -1 1  1 1 -1  1 1 1"
+                                                                TextureCoordinates="-1 0  0 0  -1 -1  0 -1"
+                                                                TriangleIndices="2 1 0  2 3 1"/>
+                                                        </GeometryModel3D.Geometry>
+                                                        <GeometryModel3D.Material>
+                                                            <DiffuseMaterial>
+                                                                <DiffuseMaterial.Brush>
+                                                                    <VisualBrush>
+                                                                        <VisualBrush.Visual>
+                                                                            <ContentPresenter Content="{Binding Source={StaticResource ComponentSelector}}" ContentTemplate="{StaticResource ComponentSelector3D.Right}"/>
+                                                                        </VisualBrush.Visual>
+                                                                    </VisualBrush>
+                                                                </DiffuseMaterial.Brush>
+                                                            </DiffuseMaterial>
+                                                        </GeometryModel3D.Material>
+                                                    </GeometryModel3D>
+                                                    <!-- Top -->
+                                                    <GeometryModel3D>
+                                                        <GeometryModel3D.Geometry>
+                                                            <MeshGeometry3D 
+                                                                Positions="-1 1 1  1 1 1  -1 1 -1  1 1 -1"
+                                                                TextureCoordinates="1 0  0 0  1 1  0 1"
+                                                                TriangleIndices="0 1 2  1 3 2"/>
+                                                        </GeometryModel3D.Geometry>
+                                                        <GeometryModel3D.Material>
+                                                            <DiffuseMaterial>
+                                                                <DiffuseMaterial.Brush>
+                                                                    <VisualBrush>
+                                                                        <VisualBrush.Visual>
+                                                                            <ContentPresenter Content="{Binding Source={StaticResource ComponentSelector}}" ContentTemplate="{StaticResource ComponentSelector3D.Top}"/>
+                                                                        </VisualBrush.Visual>
+                                                                    </VisualBrush>
+                                                                </DiffuseMaterial.Brush>
+                                                            </DiffuseMaterial>
+                                                        </GeometryModel3D.Material>
+                                                    </GeometryModel3D>
+                                                    <!-- Bottom -->
+                                                    <GeometryModel3D>
+                                                        <GeometryModel3D.Geometry>
+                                                            <MeshGeometry3D 
+                                                                Positions="-1 -1 1  1 -1 1  -1 -1 -1  1 -1 -1"
+                                                                TextureCoordinates="1 0  0 0  1 1  0 1"
+                                                                TriangleIndices="2 1 0  2 3 1"/>
+                                                        </GeometryModel3D.Geometry>
+                                                        <GeometryModel3D.Material>
+                                                            <DiffuseMaterial>
+                                                                <DiffuseMaterial.Brush>
+                                                                    <VisualBrush>
+                                                                        <VisualBrush.Visual>
+                                                                            <ContentPresenter Content="{Binding Source={StaticResource ComponentSelector}}" ContentTemplate="{StaticResource ComponentSelector3D.Bottom}"/>
+                                                                        </VisualBrush.Visual>
+                                                                    </VisualBrush>
+                                                                </DiffuseMaterial.Brush>
+                                                            </DiffuseMaterial>
+                                                        </GeometryModel3D.Material>
+                                                    </GeometryModel3D>
+                                                </Model3DGroup.Children>
+                                            </Model3DGroup>
                                         </ModelVisual3D.Content>
+                                        <ModelVisual3D.Transform>
+                                            <Transform3DGroup>
+                                                <Transform3DGroup.Children>
+                                                    <ScaleTransform3D CenterX="0" CenterY="0" CenterZ="0" ScaleX="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}" ScaleY="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}" ScaleZ="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}"/>
+                                                    <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
+                                                        <RotateTransform3D.Rotation>
+                                                            <AxisAngleRotation3D Angle="{Binding Data.RotateX, Source={StaticResource ComponentSelector}}" Axis="1 0 0"/>
+                                                        </RotateTransform3D.Rotation>
+                                                    </RotateTransform3D>
+                                                    <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
+                                                        <RotateTransform3D.Rotation>
+                                                            <AxisAngleRotation3D Angle="{Binding Data.RotateY, Source={StaticResource ComponentSelector}}" Axis="0 1 0"/>
+                                                        </RotateTransform3D.Rotation>
+                                                    </RotateTransform3D>
+                                                    <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
+                                                        <RotateTransform3D.Rotation>
+                                                            <AxisAngleRotation3D Angle="{Binding Data.RotateZ, Source={StaticResource ComponentSelector}}" Axis="0 0 1"/>
+                                                        </RotateTransform3D.Rotation>
+                                                    </RotateTransform3D>
+                                                </Transform3DGroup.Children>
+                                            </Transform3DGroup>
+                                        </ModelVisual3D.Transform>
                                     </ModelVisual3D>
-                                </ModelVisual3D>
-                                <ModelVisual3D Content="{StaticResource ComponentSelector.3DVisual}">
-                                    <ModelVisual3D.Transform>
-                                        <Transform3DGroup>
-                                            <Transform3DGroup.Children>
-                                                <ScaleTransform3D CenterX="0" CenterY="0" CenterZ="0" ScaleX="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}" ScaleY="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}" ScaleZ="{Binding Data.Zoom, Source={StaticResource ComponentSelector}}"/>
-                                                <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
-                                                    <RotateTransform3D.Rotation>
-                                                        <AxisAngleRotation3D Angle="{Binding Data.RotateX, Source={StaticResource ComponentSelector}}" Axis="1 0 0"/>
-                                                    </RotateTransform3D.Rotation>
-                                                </RotateTransform3D>
-                                                <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
-                                                    <RotateTransform3D.Rotation>
-                                                        <AxisAngleRotation3D Angle="{Binding Data.RotateY, Source={StaticResource ComponentSelector}}" Axis="0 1 0"/>
-                                                    </RotateTransform3D.Rotation>
-                                                </RotateTransform3D>
-                                                <RotateTransform3D CenterX="0" CenterY="0" CenterZ="0">
-                                                    <RotateTransform3D.Rotation>
-                                                        <AxisAngleRotation3D Angle="{Binding Data.RotateZ, Source={StaticResource ComponentSelector}}" Axis="0 0 1"/>
-                                                    </RotateTransform3D.Rotation>
-                                                </RotateTransform3D>
-                                            </Transform3DGroup.Children>
-                                        </Transform3DGroup>
-                                    </ModelVisual3D.Transform>
-                                </ModelVisual3D>
-                            </Viewport3D>
+                                </Viewport3D>
+                            </Border>
                         </Border>
                     </Border>
-                </DataTemplate>
-            </Border.Resources>
-            <ContentPresenter>
-                <ContentPresenter.ContentTemplate>
-                    <DataTemplate>
-                        <Grid DataContext="{Binding Source={StaticResource ComponentSelector}}">
-                            <Viewbox x:Name="Viewbox" Stretch="Fill">
-                                <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ComponentSelectorTemplate}"/>
-                            </Viewbox>
-                            <local:ComponentSelectorEllipse x:Name="Ellipse" Diameter="{Binding Data.EllipseDiameter}"
-                                X="{Binding Data.EllipsePosition.X}" 
-                                Y="{Binding Data.EllipsePosition.Y}"/>
-
-                            <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
-                        </Grid>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Data.Dimension, Source={StaticResource ComponentSelector}}" Value="Three">
-                                <Setter TargetName="Ellipse" Property="Visibility" Value="Collapsed"/>
-                                <Setter TargetName="Viewbox" Property="Visibility" Value="Collapsed"/>
-                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource ComponentSelector.3DTemplate}"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Data.Dimension, Source={StaticResource ComponentSelector}}" Value="Two">
-                                <Setter TargetName="Ellipse" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="Viewbox" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{Markup:EmptyTemplate}"/>
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </ContentPresenter.ContentTemplate>
-            </ContentPresenter>
-        </Border>
-    </ControlTemplate>
-
-    <Style x:Key="{x:Type local:ComponentSelector}" TargetType="{x:Type local:ComponentSelector}" BasedOn="{StaticResource {x:Type local:ColorSelector}}">
-        <Setter Property="ClipToBounds" Value="True"/>
-        <Setter Property="EllipseDiameter" Value="12"/>
-        <Setter Property="Template" Value="{StaticResource ComponentSelector.ControlTemplate}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
-    <!-- ... (base) BaseComponentSlider : ColorSelector -->
+    <!-- ... (base) BaseComponentSlider -->
 
     <Style x:Key="{x:Type local:BaseComponentSlider}" TargetType="{x:Type local:BaseComponentSlider}" BasedOn="{StaticResource {x:Type local:ColorSelector}}">
         <Setter Property="ArrowForeground" Value="#AA000000"/>
@@ -350,7 +970,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- ... ComponentSlider : BaseComponentSlider -->
+    <!-- ... ComponentSlider -->
     
     <Style x:Key="{x:Type local:ComponentSlider}" TargetType="{x:Type local:ComponentSlider}" BasedOn="{StaticResource {x:Type local:BaseComponentSlider}}">
         <Setter Property="Template">
@@ -368,30 +988,55 @@
                                     Height="1" Width="1">
                                     <local:FillElement.Effect>
                                         <Effects:ColorModelEffect
-                                            Component="{Binding Component}"
+                                            XComponent="{Binding Component, Converter={x:Static Converters:Component4ToDoubleConverter.Default}}"
+                                            Depth="{Binding Depth}"
                                             Mode="Z"
                                             Model="{Binding Model}"
                                             Profile="{Binding Profile}"
-                                            X="{Binding X, Converter={x:Static Converters:OneToDoubleConverter.Default}}"
-                                            Y="{Binding Y, Converter={x:Static Converters:OneToDoubleConverter.Default}}"/>
+                                            Shape="{Binding Shape}"
+                                            X="{Data:OneToDoubleBinding X}"
+                                            Y="{Data:OneToDoubleBinding Y}"
+                                            Z="{Data:OneToDoubleBinding Z}"
+                                            W="{Data:OneToDoubleBinding W}"/>
                                     </local:FillElement.Effect>
                                 </local:FillElement>
                             </Viewbox>
                         </Border>
-                        <Canvas x:Name="PART_Canvas">
-                            <ContentPresenter
-                                Canvas.Left="{Data:TemplatedParent ArrowPosition.X}"
-                                Canvas.Top="{Data:TemplatedParent ArrowPosition.Y}"
-                                Content="{TemplateBinding ArrowForeground}"
-                                ContentTemplate="{TemplateBinding ArrowTemplate}"/>
-                        </Canvas>
+                        <ContentPresenter x:Name="ContentPresenter" Content="{Data:TemplatedParent ArrowPosition}"/>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Shape" Value="Circle">
+                            <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <local:ComponentSelectorEllipse Diameter="12"
+                                            X="{Binding X}" 
+                                            Y="{Binding Y}"/>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="Shape" Value="Square">
+                            <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <Canvas>
+                                            <ContentPresenter Content="{Data:Ancestor ArrowForeground, local:ComponentSlider}"
+                                                ContentTemplate="{Data:Ancestor ArrowTemplate, local:ComponentSlider}"
+                                                Canvas.Left="{Data:Ancestor ArrowPosition.X}"
+                                                Canvas.Top="{Data:Ancestor ArrowPosition.Y}"/>
+                                        </Canvas>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- ... AlphaSlider : BaseComponentSlider -->
+    <!-- ... AlphaSlider -->
 
     <Style x:Key="{x:Type local:AlphaSlider}" TargetType="{x:Type local:AlphaSlider}" BasedOn="{StaticResource {x:Type local:BaseComponentSlider}}">
         <Setter Property="Template">

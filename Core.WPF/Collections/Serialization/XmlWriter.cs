@@ -33,20 +33,6 @@ namespace Imagin.Core.Collections.Serialization
             set => this.Change(ref encoding, value);
         }
 
-        bool encrypt = false;
-        public bool Encrypt
-        {
-            get => encrypt;
-            set => this.Change(ref encrypt, value);
-        }
-
-        Encryption encryption = new();
-        public Encryption Encryption
-        {
-            get => encryption;
-            set => this.Change(ref encryption, value);
-        }
-
         //...
 
         public XmlWriter(string root, string folderPath, string fileName, string fileExtension, string singleFileExtension, Limit limit = default, params Type[] types) : base(folderPath, fileName, fileExtension, singleFileExtension, limit)
@@ -72,16 +58,6 @@ namespace Imagin.Core.Collections.Serialization
             {
                 //1. Get an XML string from the file
                 string text = Storage.File.Long.ReadAllText(filePath, encoding.Convert());
-
-                if (encrypt)
-                {
-                    if (!encryption.Password.NullOrEmpty())
-                    {
-                        //2a. Decrypt the XML string
-                        text = encryption.Decrypt(text);
-                    }
-                }
-
                 reader = new StringReader(text);
 
                 //2b. Deserialize the XML string
@@ -115,14 +91,6 @@ namespace Imagin.Core.Collections.Serialization
                 Serializer.Serialize(writer, data);
 
                 string text = writer.ToString();
-                if (encrypt)
-                {
-                    if (!encryption.Password.NullOrEmpty())
-                    {
-                        //2a. Encrypt the XML string
-                        text = encryption.Encrypt(text);
-                    }
-                }
 
                 //2b. Write the XML string to the file
                 Storage.File.Long.WriteAllText(filePath, text, encoding.Convert());

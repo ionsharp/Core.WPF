@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
 
@@ -38,7 +37,7 @@ namespace Imagin.Core.Controls
 
         public event LayoutSavedEventHandler Saved;
 
-        static readonly XmlSerializer Serializer = new(typeof(DockLayout), new XmlAttributeOverrides(), XArray.New<Type>(typeof(DoubleSize), typeof(ControlLength), typeof(ControlLengthUnit), typeof(DockLayout), typeof(DockLayoutDocumentGroup), typeof(DockLayoutElement), typeof(DockLayoutGroup), typeof(DockLayoutPanel), typeof(DockLayoutPanelGroup), typeof(DockLayoutWindow), typeof(Point2D)), new XmlRootAttribute(nameof(Layout)), $"{nameof(Imagin)}.{nameof(Core)}.{nameof(Controls)}");
+        static readonly XmlSerializer Serializer = new(typeof(DockLayout), new XmlAttributeOverrides(), XArray.New<Type>(typeof(DoubleSize), typeof(ControlLength), typeof(ControlLengthUnit), typeof(DockLayout), typeof(DockLayoutDocumentGroup), typeof(DockLayoutElement), typeof(DockLayoutGroup), typeof(DockLayoutPanel), typeof(DockLayoutPanelGroup), typeof(DockLayoutWindow), typeof(Point2)), new XmlRootAttribute(nameof(Layout)), $"{nameof(Imagin)}.{nameof(Core)}.{nameof(Controls)}");
 
         //...
 

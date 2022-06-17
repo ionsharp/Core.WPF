@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Analytics="clr-namespace:Imagin.Core.Analytics"
-    xmlns:Common="clr-namespace:Imagin.Core"
     xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Core="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -67,7 +67,7 @@
             BorderThickness="0"
             GroupName="Category"
             HeaderVisibility="Visible"
-            Source="{local:SourceFilterBinding DataContext, Common:OptionAttribute, Relative=FindAncestor, RelativeType=HeaderedContentControl}"
+            Source="{local:SourceFilterBinding DataContext, Core:OptionAttribute, Relative=FindAncestor, RelativeType=HeaderedContentControl}"
             ToolVisibility="Collapsed"/>
     </DataTemplate>
 
@@ -79,7 +79,7 @@
                 HeaderVisibility="Collapsed"
                 Margin="4"
                 Orientation="Horizontal"
-                Source="{local:SourceFilterBinding Common:ToolAttribute}"/>
+                Source="{local:SourceFilterBinding Core:ToolAttribute}"/>
         </Border>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding ToolBarPlacement}" Value="Bottom">
@@ -121,7 +121,7 @@
                         HeaderVisibility="Collapsed"
                         Margin="10,2"
                         Orientation="Horizontal"
-                        Source="{local:SourceFilterBinding ActiveDocument.Status, local:StatusAttribute}"/>
+                        Source="{local:SourceFilterBinding ActiveDocument.Status, Core:StatusAttribute}"/>
                 </Grid>
             </Border>
         </Grid>
@@ -129,7 +129,7 @@
             <DataTrigger Binding="{Data:Ancestor DockControl.ActiveDocument.Status, local:DockRootControl}" Value="{x:Null}">
                 <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
             </DataTrigger>
-            <DataTrigger Binding="{Data:Ancestor DockControl.ActiveDocument.Status, local:DockRootControl, Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type local:StatusAttribute}}" Value="False">
+            <DataTrigger Binding="{Data:Ancestor DockControl.ActiveDocument.Status, local:DockRootControl, Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:StatusAttribute}}" Value="False">
                 <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
             </DataTrigger>
         </DataTemplate.Triggers>
@@ -254,7 +254,7 @@
                 IsChecked="{Data:TwoWay IsOptionsVisible}"
                 Padding="5,2"
                 Source="{Markup:InternalImage Options.png}"
-                Visibility="{Binding Converter={x:Static local:AnyMemberHasAttributeVisibilityConverter.Default}, ConverterParameter={x:Type Common:OptionAttribute}}"/>
+                Visibility="{Binding Converter={x:Static local:AnyMemberHasAttributeVisibilityConverter.Default}, ConverterParameter={x:Type Core:OptionAttribute}}"/>
             <local:ImageToggleButton Grid.Column="5"
                 Menu="{StaticResource {x:Static local:DockControl.PanelMenuKey}}"
                 Padding="5,2"
@@ -300,7 +300,7 @@
                                 ContentTemplate="{StaticResource {x:Static local:DockControl.FindTemplateKey}}"/>
                         </Grid>
                         <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Common:ToolAttribute}}" Value="True">
+                            <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:ToolAttribute}}" Value="True">
                                 <Setter TargetName="HeaderedContentControl" Property="Header" Value="{Binding}"/>
                                 <Setter TargetName="HeaderedContentControl" Property="HeaderTemplate" Value="{StaticResource {x:Static local:DockControl.PanelToolsTemplateKey}}"/>
                                 <Setter TargetName="HeaderedContentControl" Property="Linq:XHeaderedContentControl.HeaderVisibility" Value="Visible"/>
@@ -458,10 +458,7 @@
             FileOpenedCommand="{Binding OpenedFileCommand}"
             History="{Binding ExplorerOptions.History, Mode=OneWay}"
             Linq:XExplorer.Path="{Binding ExplorerOptions.Path, Mode=TwoWay}"
-            NavigatorOptions="{Binding ExplorerOptions.NavigatorOptions}"
             Padding="0"
-            Panel1Length="{Binding ExplorerOptions.Panel1Length, Mode=TwoWay}"
-            Panel2Length="{Binding ExplorerOptions.Panel2Length, Mode=TwoWay}"
             ShowFavoriteBar="{Binding ExplorerOptions.ShowFavoriteBar}"/>
     </DataTemplate>
 
@@ -825,22 +822,6 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static Models:MarkDownPanel.TemplateKey}">
-        <local:MarkDownBox
-            BorderThickness="0"
-            BulletOrdered="{Binding BulletOrdered}"
-            BulletUnordered="{Binding BulletUnordered}"
-            FontFamily="{Binding FontFamily}"
-            FontScale="{Data:TwoWay FontScale}"
-            Linq:XElement.Wheel="True"
-            Linq:XElement.WheelIncrement="{x:Static Models:MarkDownPanel.FontScaleIncrement}"
-            Linq:XElement.WheelMaximum="{x:Static Models:MarkDownPanel.FontScaleMaximum}"
-            Linq:XElement.WheelMinimum="{x:Static Models:MarkDownPanel.FontScaleMinimum}"
-            Linq:XElement.WheelValue="{Data:Self FontScale, Mode=TwoWay}"
-            Source="{Binding Text, Mode=TwoWay}"
-            TextWrap="{Binding TextWrap, Converter={x:Static Converters:TextWrappingConverter.Default}}"/>
-    </DataTemplate>
-
     <DataTemplate x:Key="{x:Static Models:NotificationsPanel.TemplateKey}">
         <ItemsControl
             ItemsSource="{Binding Data}"
@@ -1096,9 +1077,6 @@
                     </local:KeyTemplate>
                     <local:KeyTemplate DataType="{x:Type Models:LogPanel}">
                         <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static Models:LogPanel.TemplateKey}}"/>
-                    </local:KeyTemplate>
-                    <local:KeyTemplate DataType="{x:Type Models:MarkDownPanel}">
-                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static Models:MarkDownPanel.TemplateKey}}"/>
                     </local:KeyTemplate>
                     <local:KeyTemplate DataType="{x:Type Models:NotificationsPanel}">
                         <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static Models:NotificationsPanel.TemplateKey}}"/>

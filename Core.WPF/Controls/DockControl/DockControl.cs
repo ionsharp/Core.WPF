@@ -948,7 +948,7 @@ public class DockControl : Control
             var window = new DockLayoutWindow
             {
                 Root = Convert(i.Root.Child),
-                Position = new Point2D(i.Left, i.Top),
+                Position = new Point2(i.Left, i.Top),
                 Size = new DoubleSize(i.ActualHeight, i.ActualWidth),
                 State = i.WindowState
             };
@@ -1957,7 +1957,7 @@ public class DockControl : Control
     {
         if (content?.Length > 0)
         {
-            var result = new DockLayoutWindow { Position = position };
+            var result = new DockLayoutWindow { Position = new(position.Value.X, position.Value.Y) };
             result.Root = content.Contains<Document>()
                 ? new DockLayoutDocumentGroup(content)
                 : new DockLayoutPanelGroup(content.Cast<Models.Panel>());

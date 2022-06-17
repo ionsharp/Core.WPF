@@ -1,5 +1,6 @@
 ﻿using Imagin.Core.Converters;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using System.Windows;
 using System.Windows.Data;
 

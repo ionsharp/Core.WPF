@@ -374,49 +374,25 @@
                                 </local:FavoriteBar.Style>
                             </local:FavoriteBar>
                             <local:TopBorder Grid.Row="2">
-                                <local:SplitGrid
-                                    Panel1Length="{Data:TemplatedParent Panel1Length, Mode=TwoWay}"
-                                    Panel2Length="{Data:TemplatedParent Panel2Length, Mode=TwoWay}"
-                                    ShowPanel1="{Data:TemplatedParent NavigatorOptions.Visibility, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}">
-                                    <local:SplitGrid.Panel1>
-                                        <local:Navigator Linq:XElement.Name="{x:Static local:Explorer.NavigatorKey}"
-                                            BorderThickness="0"
-                                            Favorites="{TemplateBinding Favorites}"
-                                            FileAttributes="{Data:TemplatedParent NavigatorOptions.FileAttributes}"
-                                            FileExtensions="{Data:TemplatedParent NavigatorOptions.FileExtensions}"
-                                            FolderAttributes="{Data:TemplatedParent NavigatorOptions.FolderAttributes}"
-                                            Linq:XExplorer.Path="{Data:TemplatedParent Path=(Linq:XExplorer.Path), Mode=TwoWay}"
-                                            Mode="{Data:TemplatedParent NavigatorOptions.Mode}"
-                                            PresentationTraceSources.TraceLevel="High" 
-                                            SelectionMode="Single"
-                                            SortDirection="{Data:TemplatedParent NavigatorOptions.SortDirection, Converter={x:Static Converters:SortDirectionConverter.Default}}"
-                                            SortName="{Data:TemplatedParent NavigatorOptions.SortName}"
-                                            ViewCheckBoxes="{Data:TemplatedParent NavigatorOptions.ViewCheckBoxes}"
-                                            ViewFiles="{Data:TemplatedParent NavigatorOptions.ViewFiles}"
-                                            ViewFileExtensions="{Data:TemplatedParent NavigatorOptions.ViewFileExtensions}"/>
-                                    </local:SplitGrid.Panel1>
-                                    <local:SplitGrid.Panel2>
-                                        <local:Browser Linq:XElement.Name="{x:Static local:Explorer.BrowserKey}"
-                                            FileAttributes="{Data:TemplatedParent BrowserOptions.FileAttributes}"
-                                            FileExtensions="{TemplateBinding FileExtensions}"
-                                            FolderAttributes="{Data:TemplatedParent BrowserOptions.FolderAttributes}"
-                                            FooterVisibility="Visible"
-                                            GroupDirection="{Data:TemplatedParent BrowserOptions.GroupDirection, Converter={x:Static Converters:SortDirectionConverter.Default}, Mode=TwoWay}"
-                                            GroupName="{Data:TemplatedParent BrowserOptions.GroupName, Mode=TwoWay}"
-                                            History="{Data:TemplatedParent History, Mode=TwoWay}"
-                                            Linq:XExplorer.Path="{Data:TemplatedParent Path=(Linq:XExplorer.Path), Mode=TwoWay}"
-                                            OpenFilesOnClick="False"
-                                            PresentationTraceSources.TraceLevel="High"
-                                            SelectionMode="{TemplateBinding SelectionMode, Converter={x:Static Converters:SelectionModeConverter.Default}}"
-                                            SortDirection="{Data:TemplatedParent BrowserOptions.SortDirection, Converter={x:Static Converters:SortDirectionConverter.Default}, Mode=TwoWay}"
-                                            SortName="{Data:TemplatedParent BrowserOptions.SortName, Mode=TwoWay}"
-                                            View="{Data:TemplatedParent BrowserOptions.View}"
-                                            ViewCheckBoxes="{Data:TemplatedParent BrowserOptions.ViewCheckBoxes}"
-                                            ViewFileExtensions="{Data:TemplatedParent BrowserOptions.ViewFileExtensions}"
-                                            ViewFiles="{TemplateBinding ViewFiles}"
-                                            ViewSize="{Data:TemplatedParent BrowserOptions.ViewSize}"/>
-                                    </local:SplitGrid.Panel2>
-                                </local:SplitGrid>
+                                <local:Browser Linq:XElement.Name="{x:Static local:Explorer.BrowserKey}"
+                                    FileAttributes="{Data:TemplatedParent BrowserOptions.FileAttributes}"
+                                    FileExtensions="{TemplateBinding FileExtensions}"
+                                    FolderAttributes="{Data:TemplatedParent BrowserOptions.FolderAttributes}"
+                                    FooterVisibility="Visible"
+                                    GroupDirection="{Data:TemplatedParent BrowserOptions.GroupDirection, Converter={x:Static Converters:SortDirectionConverter.Default}, Mode=TwoWay}"
+                                    GroupName="{Data:TemplatedParent BrowserOptions.GroupName, Mode=TwoWay}"
+                                    History="{Data:TemplatedParent History, Mode=TwoWay}"
+                                    Linq:XExplorer.Path="{Data:TemplatedParent Path=(Linq:XExplorer.Path), Mode=TwoWay}"
+                                    OpenFilesOnClick="False"
+                                    PresentationTraceSources.TraceLevel="High"
+                                    SelectionMode="{TemplateBinding SelectionMode, Converter={x:Static Converters:SelectionModeConverter.Default}}"
+                                    SortDirection="{Data:TemplatedParent BrowserOptions.SortDirection, Converter={x:Static Converters:SortDirectionConverter.Default}, Mode=TwoWay}"
+                                    SortName="{Data:TemplatedParent BrowserOptions.SortName, Mode=TwoWay}"
+                                    View="{Data:TemplatedParent BrowserOptions.View}"
+                                    ViewCheckBoxes="{Data:TemplatedParent BrowserOptions.ViewCheckBoxes}"
+                                    ViewFileExtensions="{Data:TemplatedParent BrowserOptions.ViewFileExtensions}"
+                                    ViewFiles="{TemplateBinding ViewFiles}"
+                                    ViewSize="{Data:TemplatedParent BrowserOptions.ViewSize}"/>
                             </local:TopBorder>
                         </Grid>
                     </Border>

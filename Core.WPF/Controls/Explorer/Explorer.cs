@@ -21,8 +21,6 @@ namespace Imagin.Core.Controls
 
         public static readonly ReferenceKey<FavoriteBar> FavoriteBarKey = new();
 
-        public static readonly ReferenceKey<Navigator> NavigatorKey = new();
-
         //...
 
         public static readonly Limit DefaultLimit = new(50);
@@ -92,27 +90,6 @@ namespace Imagin.Core.Controls
             set => SetValue(HistoryProperty, value);
         }
 
-        public static readonly DependencyProperty NavigatorOptionsProperty = DependencyProperty.Register(nameof(NavigatorOptions), typeof(NavigatorOptions), typeof(Explorer), new FrameworkPropertyMetadata(null));
-        public NavigatorOptions NavigatorOptions
-        {
-            get => (NavigatorOptions)GetValue(NavigatorOptionsProperty);
-            set => SetValue(NavigatorOptionsProperty, value);
-        }
-
-        public static readonly DependencyProperty Panel1LengthProperty = DependencyProperty.Register(nameof(Panel1Length), typeof(GridLength), typeof(Explorer), new FrameworkPropertyMetadata(new GridLength(30, GridUnitType.Star)));
-        public GridLength Panel1Length
-        {
-            get => (GridLength)GetValue(Panel1LengthProperty);
-            set => SetValue(Panel1LengthProperty, value);
-        }
-
-        public static readonly DependencyProperty Panel2LengthProperty = DependencyProperty.Register(nameof(Panel2Length), typeof(GridLength), typeof(Explorer), new FrameworkPropertyMetadata(new GridLength(70, GridUnitType.Star)));
-        public GridLength Panel2Length
-        {
-            get => (GridLength)GetValue(Panel2LengthProperty);
-            set => SetValue(Panel2LengthProperty, value);
-        }
-
         public string Path
         {
             get => XExplorer.GetPath(this);
@@ -168,9 +145,6 @@ namespace Imagin.Core.Controls
 
                 this.GetChild(FavoriteBarKey).Clicked
                     += OnFavoriteClicked;
-
-                this.GetChild(NavigatorKey).FileOpened
-                    += OnFileOpened;
             },
             i =>
             {
@@ -184,9 +158,6 @@ namespace Imagin.Core.Controls
 
                 this.GetChild(FavoriteBarKey).Clicked
                     -= OnFavoriteClicked;
-
-                this.GetChild(NavigatorKey).FileOpened
-                    -= OnFileOpened;
             });
         }
 

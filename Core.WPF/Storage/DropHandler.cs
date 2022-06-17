@@ -253,13 +253,4 @@ namespace Imagin.Core.Storage
     }
 
     #endregion
-
-    #region Navigator
-
-    public class NavigatorDropHandler : ExplorerDropHandler<Navigator>
-    {
-        public NavigatorDropHandler(Navigator parent) : base(parent) { }
-    }
-
-    #endregion
 }

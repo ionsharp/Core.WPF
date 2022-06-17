@@ -1,6 +1,6 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Collections.Serialization;
-using Imagin.Core.Configuration;
+using Imagin.Core.Config;
 using Imagin.Core.Controls;
 using Imagin.Core.Data;
 using Imagin.Core.Input;
@@ -23,19 +23,7 @@ namespace Imagin.Core.Models
     [Serializable]
     public abstract class MainViewOptions : Base, IMainViewOptions
     {
-        #region (enum) Category
-
-        enum Category
-        {
-            General,
-            Log,
-            Notifications,
-            Theme,
-            Update,
-            Window
-        }
-
-        #endregion
+        enum Category { General, Log, Notifications, Save, Theme, Update, Window }
 
         #region Events
 
@@ -45,26 +33,6 @@ namespace Imagin.Core.Models
         #endregion
 
         #region Properties
-
-        #region General
-
-        bool autoSave = false;
-        [Featured, Style(BooleanStyle.Switch)]
-        public bool AutoSave
-        {
-            get => autoSave;
-            set => this.Change(ref autoSave, value);
-        }
-
-        bool saveWithDialog = true;
-        [Category(Category.General)]
-        public bool SaveWithDialog
-        {
-            get => saveWithDialog;
-            set => this.Change(ref saveWithDialog, value);
-        }
-
-        #endregion
 
         #region Language
 
@@ -82,13 +50,13 @@ namespace Imagin.Core.Models
 
         #region Log
 
-        bool logEnabled = true;
+        bool logEnable = true;
         [Category(Category.Log)]
-        [DisplayName("Enabled")]
-        public bool LogEnabled
+        [DisplayName("Enable")]
+        public bool LogEnable
         {
-            get => logEnabled;
-            set => this.Change(ref logEnabled, value);
+            get => logEnable;
+            set => this.Change(ref logEnable, value);
         }
 
         bool logClearOnExit = true;
@@ -98,6 +66,26 @@ namespace Imagin.Core.Models
         {
             get => logClearOnExit;
             set => this.Change(ref logClearOnExit, value);
+        }
+
+        #endregion
+
+        #region Save
+
+        bool autoSave = false;
+        [DisplayName("Auto save"), Featured, Style(BooleanStyle.Switch)]
+        public bool AutoSave
+        {
+            get => autoSave;
+            set => this.Change(ref autoSave, value);
+        }
+
+        bool saveWithDialog = true;
+        [Category(Category.Save), DisplayName("With dialog")]
+        public bool SaveWithDialog
+        {
+            get => saveWithDialog;
+            set => this.Change(ref saveWithDialog, value);
         }
 
         #endregion
@@ -124,35 +112,13 @@ namespace Imagin.Core.Models
 
         bool autoSaveTheme = true;
         [Category(Category.Theme)]
-        [DisplayName("AutoSave")]
+        [DisplayName("Auto save")]
         [Index(0)]
         public bool AutoSaveTheme
         {
             get => autoSaveTheme;
             set => this.Change(ref autoSaveTheme, value);
         }
-
-        #endregion
-
-        #region Update
-
-        [field: NonSerialized]
-        ICommand updateCheckCommand;
-        [Category(Category.Update)]
-        [DisplayName("Check")]
-        public virtual ICommand UpdateCheckCommand => updateCheckCommand ??= new RelayCommand(() =>
-        {
-
-        }, false);
-
-        [field: NonSerialized]
-        ICommand updateCommand;
-        [Category(Category.Update)]
-        [DisplayName("Update")]
-        public virtual ICommand UpdateCommand => updateCommand ??= new RelayCommand(() =>
-        {
-
-        }, false);
 
         #endregion
 
@@ -163,7 +129,7 @@ namespace Imagin.Core.Models
 
         bool windowShowInTaskBar = false;
         [Category(Category.Window)]
-        [DisplayName("ShowInTaskbar")]
+        [DisplayName("Show in taskbar")]
         public virtual bool WindowShowInTaskBar
         {
             get => windowShowInTaskBar;

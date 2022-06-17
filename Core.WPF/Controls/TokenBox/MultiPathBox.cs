@@ -74,13 +74,6 @@ namespace Imagin.Core.Controls
             set => SetValue(BrowseTitleProperty, value);
         }
 
-        public static readonly DependencyProperty BrowseTypeProperty = DependencyProperty.Register(nameof(BrowseType), typeof(StorageWindowTypes), typeof(MultiPathBox), new FrameworkPropertyMetadata(StorageWindowTypes.Explorer));
-        public StorageWindowTypes BrowseType
-        {
-            get => (StorageWindowTypes)GetValue(BrowseTypeProperty);
-            set => SetValue(BrowseTypeProperty, value);
-        }
-
         public static readonly DependencyProperty CanBrowseProperty = DependencyProperty.Register(nameof(CanBrowse), typeof(bool), typeof(MultiPathBox), new FrameworkPropertyMetadata(true));
         public bool CanBrowse
         {
@@ -147,7 +140,7 @@ namespace Imagin.Core.Controls
         public void Browse()
         {
             Focus();
-            if (StorageWindow.Show(out string[] paths, BrowseTitle, BrowseMode, BrowseFileExtensions.Values, Source.Split(';')?.Last<string>(), BrowseFilterMode, BrowseType))
+            if (StorageWindow.Show(out string[] paths, BrowseTitle, BrowseMode, BrowseFileExtensions.Values, Source.Split(';')?.Last<string>(), BrowseFilterMode))
                 SetCurrentValue(SourceProperty, $"{Source};{paths.ToString<string>(";")}");
 
             MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));

@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Configuration;
+﻿using Imagin.Core.Config;
 using Imagin.Core.Controls;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;

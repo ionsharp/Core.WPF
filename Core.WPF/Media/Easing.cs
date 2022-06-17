@@ -121,10 +121,8 @@ namespace Imagin.Core.Media
             if (type == Ease.EaseInOutCirc)
                 return EaseInOutCirc;
 
-            if (type == Ease.Linear)
-            {
+            //if (type == Ease.Linear)
                 //return Linear;
-            }
 
             if (type == Ease.Spring)
                 return Spring;

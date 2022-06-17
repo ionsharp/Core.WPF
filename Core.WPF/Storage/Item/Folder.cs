@@ -1,6 +1,6 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Linq;
-using Imagin.Core.Native;
+using Imagin.Core.Imports;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

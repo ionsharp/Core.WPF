@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Configuration;
+﻿using Imagin.Core.Config;
 using System.Runtime.InteropServices;
 using System.Windows;
 

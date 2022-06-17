@@ -1,4 +1,5 @@
-﻿using Imagin.Core.Linq;
+﻿using Imagin.Core.Colors;
+using Imagin.Core.Linq;
 using Imagin.Core.Numerics;
 using System;
 using System.Windows.Data;
@@ -25,7 +26,18 @@ namespace Imagin.Core.Converters
 
         protected override ConverterValue<long> ConvertBack(ConverterData<double> input) => Nothing.Do;
     }
-    
+
+    [ValueConversion(typeof(Component4), typeof(double))]
+    public class Component4ToDoubleConverter : Converter<Component4, double>
+    {
+        public static Component4ToDoubleConverter Default { get; private set; } = new();
+        public Component4ToDoubleConverter() { }
+
+        protected override ConverterValue<double> ConvertTo(ConverterData<Component4> input) => (int)input.Value;
+
+        protected override ConverterValue<Component4> ConvertBack(ConverterData<double> input) => (Component4)(int)input.Value;
+    }
+
     [ValueConversion(typeof(double), typeof(double))]
     public class InverseDoubleConverter : Converter<double, double>
     {
@@ -163,7 +175,7 @@ namespace Imagin.Core.Converters
 
         protected override ConverterValue<One> ConvertBack(ConverterData<double> input) => (One)input.Value;
     }
-    
+
     [ValueConversion(typeof(float), typeof(double))]
     public class SingleToDoubleConverter : Converter<float, double>
     {

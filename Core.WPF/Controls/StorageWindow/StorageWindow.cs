@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Collections;
-using Imagin.Core.Configuration;
+using Imagin.Core.Config;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Storage;
@@ -591,9 +591,7 @@ namespace Imagin.Core.Controls
             string defaultPath
                 = "",
             StorageWindowFilterModes filterMode
-                = StorageWindowFilterModes.Single,
-            StorageWindowTypes storageWindowType
-                = StorageWindowTypes.Explorer
+                = StorageWindowFilterModes.Single
         )
         #endregion
         #region <body>
@@ -603,12 +601,7 @@ namespace Imagin.Core.Controls
 
             paths = new string[0];
             StorageWindow result = null;
-
-            if (storageWindowType == StorageWindowTypes.Explorer)
-                result = New<ExplorerWindow>(title, mode, SelectionMode.Multiple, filterMode, fileExtensions, defaultPath);
-
-            if (storageWindowType == StorageWindowTypes.Navigator)
-                result = New<NavigatorWindow>(title, mode, SelectionMode.Multiple, filterMode, fileExtensions, defaultPath);
+            result = New<ExplorerWindow>(title, mode, SelectionMode.Multiple, filterMode, fileExtensions, defaultPath);
 
             result.ShowDialog();
             if (result.Paths.Count > 0)
@@ -633,21 +626,14 @@ namespace Imagin.Core.Controls
             string defaultPath
                 = "",
             StorageWindowFilterModes filterMode
-                = StorageWindowFilterModes.Single,
-            StorageWindowTypes storageWindowType
-                = StorageWindowTypes.Explorer
+                = StorageWindowFilterModes.Single
         )
         #endregion
         #region <body>
         {
             path = string.Empty;
             StorageWindow result = null;
-
-            if (storageWindowType == StorageWindowTypes.Explorer)
-                result = New<ExplorerWindow>(title, mode, SelectionMode.Single, filterMode, fileExtensions, defaultPath);
-
-            if (storageWindowType == StorageWindowTypes.Navigator)
-                result = New<NavigatorWindow>(title, mode, SelectionMode.Single, filterMode, fileExtensions, defaultPath);
+            result = New<ExplorerWindow>(title, mode, SelectionMode.Single, filterMode, fileExtensions, defaultPath);
 
             result.ShowDialog();
             if (result.Paths.Count > 0)

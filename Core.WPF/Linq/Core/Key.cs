@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Native;
+﻿using Imagin.Core.Imports;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Input;

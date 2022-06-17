@@ -6,6 +6,7 @@
     xmlns:Analytics="clr-namespace:Imagin.Core.Analytics"
     xmlns:Common="clr-namespace:Imagin.Core"
     xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Core="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -422,10 +423,10 @@
                         HeaderVisibility="Collapsed"
                         Margin="10,2"
                         Orientation="Horizontal"
-                        Source="{local:SourceFilterBinding Common:ToolAttribute}"
+                        Source="{local:SourceFilterBinding Core:ToolAttribute}"
                         VerticalAlignment="Center"/>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Common:ToolAttribute}}" Value="False">
+                        <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:ToolAttribute}}" Value="False">
                             <Setter TargetName="PropertyGrid" Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                     </DataTemplate.Triggers>
@@ -649,8 +650,6 @@
     </Style>
 
     <Style x:Key="{x:Type local:ExplorerWindow}" TargetType="{x:Type local:ExplorerWindow}" BasedOn="{StaticResource {x:Type local:StorageWindow}}"/>
-
-    <Style x:Key="{x:Type local:NavigatorWindow}" TargetType="{x:Type local:NavigatorWindow}" BasedOn="{StaticResource {x:Type local:StorageWindow}}"/>
 
     <!-- ... -->
 

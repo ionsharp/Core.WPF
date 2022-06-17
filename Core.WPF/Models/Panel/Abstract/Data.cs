@@ -1,8 +1,10 @@
 ﻿using Imagin.Core.Collections;
 using Imagin.Core.Collections.Generic;
+using Imagin.Core.Controls;
 using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using Imagin.Core.Text;
 using System;
 using System.Collections;
@@ -39,9 +41,9 @@ namespace Imagin.Core.Models
             set => this.Change(ref bullet, value);
         }
 
-        BooleanList columns = new();
+        List<bool> columns = new();
         [Hidden]
-        public BooleanList Columns
+        public List<bool> Columns
         {
             get => columns;
             set => this.Change(ref columns, value);
@@ -94,7 +96,7 @@ namespace Imagin.Core.Models
         int groupNameIndex = 0;
         [Category(Category.Group), Option]
         [DisplayName(nameof(GroupName))]
-        [Source(nameof(GroupNames))]
+        [MemberTrigger(nameof(MemberModel.ItemSource), nameof(GroupNames))]
         [Style(Int32Style.Index)]
         public virtual int GroupNameIndex
         {
@@ -136,7 +138,7 @@ namespace Imagin.Core.Models
         int sortNameIndex = 0;
         [Category(Category.Sort), Option]
         [DisplayName(nameof(SortName))]
-        [Source(nameof(SortNames))]
+        [MemberTrigger(nameof(MemberModel.ItemSource), nameof(SortNames))]
         [Style(Int32Style.Index)]
         public virtual int SortNameIndex
         {

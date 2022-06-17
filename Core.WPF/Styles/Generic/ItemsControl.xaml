@@ -12,40 +12,21 @@
     <!-- ... -->
 
     <DataTemplate x:Key="{x:Static Linq:XItemsControl.EmptyHorizontalTemplateKey}">
-        <StackPanel
+        <local:ImageElement
             HorizontalAlignment="Center"
-            Linq:XPanel.VerticalContentAlignment="Center"
-            Orientation="Horizontal"
-            VerticalAlignment="Center">
-            <local:ImageElement
-                Margin="0,0,5,0"
-                Opacity="0.3"
-                Source="{Markup:InternalImage OpenBox.png}"
-                SourceSize="32,32"/>
-            <TextBlock Text="{l:Loc WowSuchEmpty, Suffix=...}"
-                FontSize="14"
-                FontStyle="Italic" 
-                Foreground="{local:ThemeKey ActualKey=Text}" 
-                Opacity="0.5"/>
-        </StackPanel>
+            Opacity="0.3"
+            Source="{Markup:InternalImage OpenBox.png}"
+            SourceSize="32,32"
+            VerticalAlignment="Center"/>
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Linq:XItemsControl.EmptyVerticalTemplateKey}">
-        <StackPanel 
+        <local:ImageElement
             HorizontalAlignment="Center"
-            Linq:XPanel.VerticalContentAlignment="Center"
-            VerticalAlignment="Center">
-            <local:ImageElement
-                Margin="0,0,0,5"
-                Opacity="0.3"
-                Source="{Markup:InternalImage OpenBox.png}"
-                SourceSize="42,42"/>
-            <TextBlock Text="{l:Loc WowSuchEmpty, Suffix=...}"
-                FontSize="14"
-                FontStyle="Italic" 
-                Foreground="{local:ThemeKey ActualKey=Text}" 
-                Opacity="0.5"/>
-        </StackPanel>
+            Opacity="0.3"
+            Source="{Markup:InternalImage OpenBox.png}"
+            SourceSize="42,42"
+            VerticalAlignment="Center"/>
     </DataTemplate>
 
     <!-- ... -->

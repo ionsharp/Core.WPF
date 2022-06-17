@@ -10,13 +10,13 @@ namespace Imagin.Core.Linq
             return source switch
             {
                 RemoteBindingSource.Application 
-                    => Get.Where<Configuration.BaseApplication>(),
+                    => Get.Where<Config.BaseApplication>(),
                 RemoteBindingSource.MainViewModel 
                     => Get.Where<IMainViewModel>(),
                 RemoteBindingSource.Options 
                     => Get.Where<IMainViewOptions>(),
                 RemoteBindingSource.Resources 
-                    => Get.Current<Configuration.ApplicationResources>(),
+                    => Get.Current<Config.ApplicationResources>(),
                 _ => null,
             };
         }

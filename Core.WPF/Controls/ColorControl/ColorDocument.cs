@@ -4,6 +4,7 @@ using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using Imagin.Core.Models;
 using Imagin.Core.Numerics;
+using Imagin.Core.Reflection;
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -49,7 +50,15 @@ public class ColorDocument : Document
         set => this.Change(ref color, value);
     }
 
-    Dimensions dimension = Dimensions.Three;
+    double depth = 0;
+    [Featured(AboveBelow.Below), Format(RangeFormat.Both), Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
+    public double Depth
+    {
+        get => depth;
+        set => this.Change(ref depth, value);
+    }
+
+    Dimensions dimension = Dimensions.One;
     [Featured(AboveBelow.Above), Index(0), Label(false), Localize(false), Visible]
     public Dimensions Dimension
     {
@@ -59,6 +68,12 @@ public class ColorDocument : Document
 
     public override object Icon => Color.ActualColor;
 
+    [Hidden]
+    public bool Is3D => Dimension == Dimensions.Three;
+
+    [Hidden]
+    public bool IsNot3D => !Is3D;
+
     StringColor oldColor = DefaultOldColor;
     public System.Windows.Media.Color OldColor
     {
@@ -66,18 +81,12 @@ public class ColorDocument : Document
         set => this.Change(ref oldColor, new StringColor(value));
     }
 
-    Shapes2 shape = Shapes2.Square;
-    [Featured(AboveBelow.Above), Index(1), Label(false), Localize(false), Visible]
-    public Shapes2 Shape
-    {
-        get => shape;
-        set => this.Change(ref shape, value);
-    }
-
-    //...
+    [Hidden]
+    public readonly ColorControlOptions Options;
 
     double rotateX = 45;
-    [DisplayName("X°"), Format(RangeFormat.Slider), Index(0), Localize(false), Range(0.0, 360.0, 1.0), Visible, Width(86)]
+    [DisplayName("X°"), Format(RangeFormat.Both), Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Is3D))]
     public double RotateX
     {
         get => rotateX;
@@ -85,7 +94,8 @@ public class ColorDocument : Document
     }
 
     double rotateY = 45;
-    [DisplayName("Y°"), Format(RangeFormat.Slider), Index(1), Localize(false), Range(0.0, 360.0, 1.0), Visible, Width(86)]
+    [DisplayName("Y°"), Format(RangeFormat.Both), Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Is3D))]
     public double RotateY
     {
         get => rotateY;
@@ -93,36 +103,45 @@ public class ColorDocument : Document
     }
 
     double rotateZ = 0;
-    [DisplayName("Z°"), Format(RangeFormat.Slider), Index(2), Localize(false), Range(0.0, 360.0, 1.0), Visible, Width(86)]
+    [DisplayName("Z°"), Format(RangeFormat.Both), Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Is3D))]
     public double RotateZ
     {
         get => rotateZ;
         set => this.Change(ref rotateZ, value);
     }
 
-    //...
-
-    double zoom = 2.0;
-    [Featured(AboveBelow.Below), Format(RangeFormat.Slider), Index(0), Range(0.0, 5.0, 0.01), Visible, Width(86)]
-    public double Zoom
+    Shapes2 shape = Shapes2.Square;
+    [Featured(AboveBelow.Above), Index(1), Label(false), Localize(false), Visible]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(IsNot3D))]
+    public Shapes2 Shape
     {
-        get => zoom;
-        set => this.Change(ref zoom, value);
+        get => shape;
+        set => this.Change(ref shape, value);
     }
 
     public override string Title => $"#{Color.ActualColor.Hexadecimal()}";
 
     public override object ToolTip => Color.ActualColor;
 
+    double zoom = 1.8;
+    [Format(RangeFormat.Both), Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Is3D))]
+    public double Zoom
+    {
+        get => zoom;
+        set => this.Change(ref zoom, value);
+    }
+
     #endregion
 
     #region ColorDocument
 
-    public ColorDocument() : this(DefaultNewColor, DefaultModel) { }
+    public ColorDocument(ColorControlOptions options) : this(DefaultNewColor, DefaultModel, options) { }
 
-    public ColorDocument(System.Windows.Media.Color color, Type model) : base()
+    public ColorDocument(System.Windows.Media.Color color, Type model, ColorControlOptions options) : base()
     {
-        Color = new(color);
+        Color = new(color, options);
         Color.ModelType = model;
         Color.ActualColor = color;
     }
@@ -164,6 +183,11 @@ public class ColorDocument : Document
             case nameof(Color):
                 this.Changed(() => Title);
                 this.Changed(() => ToolTip);
+                break;
+
+            case nameof(Dimension):
+                this.Changed(() => Is3D);
+                this.Changed(() => IsNot3D);
                 break;
         }
     }

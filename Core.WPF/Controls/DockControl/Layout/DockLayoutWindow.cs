@@ -7,8 +7,8 @@ namespace Imagin.Core.Controls
     [Serializable]
     public class DockLayoutWindow : DockLayoutRoot
     {
-        Point2D position;
-        public Point2D Position
+        Point2 position;
+        public Point2 Position
         {
             get => position;
             set => this.Change(ref position, value);

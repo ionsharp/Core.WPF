@@ -47,10 +47,10 @@ namespace Imagin.Core.Controls
 
         #region ColumnVisibility
 
-        public static readonly DependencyProperty ColumnVisibilityProperty = DependencyProperty.Register(nameof(ColumnVisibility), typeof(BooleanList), typeof(Browser), new FrameworkPropertyMetadata(null));
-        public BooleanList ColumnVisibility
+        public static readonly DependencyProperty ColumnVisibilityProperty = DependencyProperty.Register(nameof(ColumnVisibility), typeof(List<bool>), typeof(Browser), new FrameworkPropertyMetadata(null));
+        public List<bool> ColumnVisibility
         {
-            get => (BooleanList)GetValue(ColumnVisibilityProperty);
+            get => (List<bool>)GetValue(ColumnVisibilityProperty);
             private set => SetValue(ColumnVisibilityProperty, value);
         }
 

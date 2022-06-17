@@ -1,4 +1,5 @@
 ﻿using Imagin.Core.Converters;
+using Imagin.Core.Reflection;
 using System.Windows.Data;
 
 namespace Imagin.Core.Controls

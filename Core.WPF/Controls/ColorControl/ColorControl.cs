@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Collections.Generic;
-using Imagin.Core.Configuration;
+using Imagin.Core.Config;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
@@ -84,24 +84,17 @@ namespace Imagin.Core.Controls
 
             SetCurrentValue(AlphaPanelProperty, new AlphaPanel());
 
-            panels.Add
-                (AlphaPanel);
+            panels.Add(AlphaPanel);
 
             colorsPanel = new ColorsPanel(defaultOptions.Colors, () => ActiveDocument?.OldColor ?? System.Windows.Media.Colors.White, () => ActiveDocument?.Color.ActualColor ?? System.Windows.Media.Colors.White);
-            panels.Add
-                (colorsPanel);
-            panels.Add
-                (new ComponentPanel());
+            panels.Add(colorsPanel);
 
             SetCurrentValue(OptionsPanelProperty, new OptionsPanel());
 
-            panels.Add
-                (OptionsPanel);
-            panels.Add
-                (new PropertiesPanel());
+            panels.Add(OptionsPanel);
+            panels.Add(new PropertiesPanel());
 
             Panels = panels;
-
             SetCurrentValue(OptionsProperty, defaultOptions);
         }
 
@@ -145,7 +138,7 @@ namespace Imagin.Core.Controls
             }
         }
 
-        void OnColorSelected(object sender, EventArgs<Media.StringColor> e)
+        void OnColorSelected(object sender, EventArgs<StringColor> e)
             => ActiveDocument.If(i => i.Color.ActualColor = e.Value);
 
         ICommand saveOldColorCommand;

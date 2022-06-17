@@ -192,9 +192,9 @@ namespace Imagin.Core.Linq
         /// <summary>
         /// This is incomplete...
         /// </summary>
-        public static readonly DependencyProperty ColumnLengthProperty = DependencyProperty.RegisterAttached("ColumnLength", typeof(ControlLengthList), typeof(XItemsControl), new FrameworkPropertyMetadata(null, OnColumnLengthChanged));
-        public static ControlLengthList GetColumnLength(ItemsControl i) => (ControlLengthList)i.GetValue(ColumnLengthProperty);
-        public static void SetColumnLength(ItemsControl i, ControlLengthList input) => i.SetValue(ColumnLengthProperty, input);
+        public static readonly DependencyProperty ColumnLengthProperty = DependencyProperty.RegisterAttached("ColumnLength", typeof(List<ControlLength>), typeof(XItemsControl), new FrameworkPropertyMetadata(null, OnColumnLengthChanged));
+        public static List<ControlLength> GetColumnLength(ItemsControl i) => (List<ControlLength>)i.GetValue(ColumnLengthProperty);
+        public static void SetColumnLength(ItemsControl i, List<ControlLength> input) => i.SetValue(ColumnLengthProperty, input);
         static void OnColumnLengthChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (sender is ItemsControl control)
@@ -237,9 +237,9 @@ namespace Imagin.Core.Linq
 
         #region ColumnVisibility
 
-        public static readonly DependencyProperty ColumnVisibilityProperty = DependencyProperty.RegisterAttached("ColumnVisibility", typeof(BooleanList), typeof(XItemsControl), new FrameworkPropertyMetadata(null, OnColumnVisibilityChanged));
-        public static BooleanList GetColumnVisibility(ItemsControl i) => (BooleanList)i.GetValue(ColumnVisibilityProperty);
-        public static void SetColumnVisibility(ItemsControl i, BooleanList input) => i.SetValue(ColumnVisibilityProperty, input);
+        public static readonly DependencyProperty ColumnVisibilityProperty = DependencyProperty.RegisterAttached("ColumnVisibility", typeof(List<bool>), typeof(XItemsControl), new FrameworkPropertyMetadata(null, OnColumnVisibilityChanged));
+        public static List<bool> GetColumnVisibility(ItemsControl i) => (List<bool>)i.GetValue(ColumnVisibilityProperty);
+        public static void SetColumnVisibility(ItemsControl i, List<bool> input) => i.SetValue(ColumnVisibilityProperty, input);
         static void OnColumnVisibilityChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (sender is ItemsControl control)
@@ -558,7 +558,7 @@ namespace Imagin.Core.Linq
         {
             if (GetColumnMenu(control) is ContextMenu menu)
             {
-                if (GetColumnLength(control) is ControlLengthList list)
+                if (GetColumnLength(control) is List<ControlLength> list)
                 {
                     var a = menu.Items.Count;
                     var b = list.Count;
@@ -595,7 +595,7 @@ namespace Imagin.Core.Linq
         {
             if (GetColumnMenu(control) is ContextMenu menu)
             {
-                if (GetColumnVisibility(control) is BooleanList list)
+                if (GetColumnVisibility(control) is List<bool> list)
                 {
                     var a = menu.Items.Count;
                     var b = list.Count;
@@ -630,7 +630,7 @@ namespace Imagin.Core.Linq
             if (sender is MenuItem item)
             {
                 var control = GetColumnMenuItemParent(item);
-                if (GetColumnVisibility(control) is BooleanList list)
+                if (GetColumnVisibility(control) is List<bool> list)
                     list[GetColumnMenuItemIndex(item)] = true;
 
                 if (control is ListView listView)
@@ -661,7 +661,7 @@ namespace Imagin.Core.Linq
             if (sender is MenuItem item)
             {
                 var control = GetColumnMenuItemParent(item);
-                if (GetColumnVisibility(control) is BooleanList list)
+                if (GetColumnVisibility(control) is List<bool> list)
                     list[GetColumnMenuItemIndex(item)] = false;
 
                 if (control is ListView listView)

@@ -2,6 +2,7 @@
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Models;
+using Imagin.Core.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -290,11 +291,11 @@ namespace Imagin.Core.Controls
 
         #region SecondaryMarkerPosition
 
-        static readonly DependencyPropertyKey SecondaryMarkerPositionKey = DependencyProperty.RegisterReadOnly(nameof(SecondaryMarkerPosition), typeof(Point2D), typeof(DockRootControl), new FrameworkPropertyMetadata(null));
+        static readonly DependencyPropertyKey SecondaryMarkerPositionKey = DependencyProperty.RegisterReadOnly(nameof(SecondaryMarkerPosition), typeof(Point2), typeof(DockRootControl), new FrameworkPropertyMetadata(null));
         public static readonly DependencyProperty SecondaryMarkerPositionProperty = SecondaryMarkerPositionKey.DependencyProperty;
-        public Point2D SecondaryMarkerPosition
+        public Point2 SecondaryMarkerPosition
         {
-            get => (Point2D)GetValue(SecondaryMarkerPositionProperty);
+            get => (Point2)GetValue(SecondaryMarkerPositionProperty);
             private set => SetValue(SecondaryMarkerPositionKey, value);
         }
 

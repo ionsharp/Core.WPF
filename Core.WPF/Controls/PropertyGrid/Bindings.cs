@@ -1,6 +1,7 @@
 ﻿using Imagin.Core.Converters;
 using Imagin.Core.Linq;
 using Imagin.Core.Models;
+using Imagin.Core.Reflection;
 using System.Windows.Data;
 
 namespace Imagin.Core.Controls

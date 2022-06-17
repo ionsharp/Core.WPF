@@ -7,7 +7,7 @@
     xmlns:Behavior="clr-namespace:Imagin.Core.Behavior"
     xmlns:Collections="clr-namespace:Imagin.Core.Collections.ObjectModel"
     xmlns:Common="clr-namespace:Imagin.Core"
-    xmlns:Configuration="clr-namespace:Imagin.Core.Configuration"
+    xmlns:Configuration="clr-namespace:Imagin.Core.Config"
     xmlns:Converters="clr-namespace:Imagin.Core.Converters"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
@@ -18,13 +18,14 @@
     xmlns:MsCollectionsSpecialized="clr-namespace:System.Collections.Specialized;assembly=System"
     xmlns:MsSystem="clr-namespace:System;assembly=mscorlib"
     xmlns:Numerics="clr-namespace:Imagin.Core.Numerics;assembly=Imagin.Core"
+    xmlns:Reflection="clr-namespace:Imagin.Core.Reflection"
     xmlns:SharedCommon="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:SharedMath="clr-namespace:Imagin.Core.Numerics;assembly=Imagin.Core"
     xmlns:System="clr-namespace:System;assembly=System"
     xmlns:SystemDrawing="clr-namespace:System.Drawing;assembly=System.Drawing"
     xmlns:SystemInput="clr-namespace:System.Windows.Input;assembly=System"
     xmlns:SystemNet="clr-namespace:System.Net;assembly=System"
-    xmlns:Text="clr-namespace:Imagin.Core.Text">
+    xmlns:Text="clr-namespace:Imagin.Core.Text;assembly=Imagin.Core">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="{local:StyleKey Key=Button}"/>
         <ResourceDictionary Source="{local:StyleKey Key=ComboBox}"/>
@@ -54,7 +55,6 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Linq:XComboBox.Placeholder" Value="{local:MemberPlaceholder}"/>
-        <Setter Property="Tag" Value="This is a member combobox"/>
     </Style>
 
     <Style x:Key="{x:Static local:PropertyGrid.PasswordBoxStyleKey}" TargetType="{x:Type PasswordBox}" BasedOn="{StaticResource {x:Type PasswordBox}}">
@@ -564,7 +564,7 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type local:ListItemModel}">
+                    <DataTemplate DataType="{x:Type Reflection:ListItemModel}">
                         <!--
                         <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
                             <local:BulletElement Bullet="NumberParenthesis"
@@ -691,15 +691,14 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="TreeViewItem">
-                                <Expander x:Name="Expander" Header="{TemplateBinding Header}"
+                                <Expander x:Name="Expander" Header="{Binding DisplayName}"
                                     HeaderTemplate="{TemplateBinding HeaderTemplate}"
                                     HeaderTemplateSelector="{TemplateBinding HeaderTemplateSelector}">
-                                    <local:LeftBorder Margin="8,5,0,5" Padding="12,0,0,0">
-                                        <ItemsPresenter x:Name="ItemsPresenter"/>
-                                    </local:LeftBorder>
+                                    <ItemsPresenter x:Name="ItemsPresenter" Margin="0,5"/>
                                 </Expander>
                                 <ControlTemplate.Triggers>
                                     <DataTrigger Binding="{Data:Self DataContext.Members}" Value="{x:Null}">
+                                        <Setter TargetName="Expander" Property="Header" Value="{Data:TemplatedParent Header}"/>
                                         <Setter TargetName="Expander" Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="Expander">
@@ -715,7 +714,7 @@
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type local:MemberModel}" ItemsSource="{Binding Members}">
+                <HierarchicalDataTemplate DataType="{x:Type Reflection:MemberModel}" ItemsSource="{Binding Members}">
                     <Grid x:Name="Grid" Margin="0,2,0,0" Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
                         <local:MemberNamePresenter Content="{Binding}" Margin="0,0,5,0" VerticalAlignment="Center"/>
                         <local:MemberValuePresenter Content="{Binding}"/>
@@ -918,7 +917,7 @@
 
     <local:MemberTemplateSelector x:Key="MemberTemplateSelector">
         <!-- ... Imagin.Core -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Common:Alignment}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Common:Alignment}">
             <StackPanel>
                 <ComboBox
                     ItemsSource="{Data:EnumerateBinding Value.Horizontal}"
@@ -941,7 +940,7 @@
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core (Shared) -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SharedCommon:CardinalDirection}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedCommon:CardinalDirection}">
             <local:DirectionControl HorizontalAlignment="Left">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static local:DirectionControl.DirectionProperty}" 
@@ -949,12 +948,12 @@
                 </e:Interaction.Behaviors>
             </local:DirectionControl>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SharedCommon:UDouble}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedCommon:UDouble}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Configuration -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Configuration:ApplicationResources}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Configuration:ApplicationResources}">
             <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto,Auto"
                 Linq:XPanel.Spacing="0,0,5,0"
                 Linq:XPanel.SpacingExcept="Last">
@@ -989,7 +988,7 @@
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Controls -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type local:Layouts}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type local:Layouts}">
             <Grid
                 Linq:XGrid.Columns="*,Auto,Auto"
                 Linq:XPanel.Spacing="0,0,5,0"
@@ -1030,7 +1029,7 @@
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Numerics -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SharedMath:DoubleMatrix}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:DoubleMatrix}">
             <StackPanel Margin="5">
                 <Slider
                     Margin="0,0,0,5"
@@ -1043,10 +1042,10 @@
                     Zoom="128"/>
             </StackPanel>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SharedMath:Hexadecimal}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:Hexadecimal}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SharedMath:Int32Pattern}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:Int32Pattern}">
             <local:PatternControl
                 BorderThickness="0"
                 CanvasLength="180"
@@ -1061,7 +1060,7 @@
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Media -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Numerics:Unit}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Numerics:Unit}">
             <local:UnitControl
                 IsEnabled="{Data:InvertBinding IsReadOnly}"
                 Unit="{Binding Format}">
@@ -1073,7 +1072,7 @@
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Media (Shared) -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Media:Gradient}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Media:Gradient}">
             <local:GradientBox
                 HorizontalAlignment="Stretch"
                 IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
@@ -1084,16 +1083,16 @@
                 </e:Interaction.Behaviors>
             </local:GradientBox>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Media:GradientStepCollection}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Media:GradientStepCollection}">
             <local:GradientControl Gradient="{Binding Value}"/>
         </local:KeyTemplate>
 
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Media:StringColor}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Media:StringColor}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Models -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Models:PanelCollection}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Models:PanelCollection}">
             <ItemsControl ItemsSource="{Binding Value}" Margin="0,5,0,0">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type Models:Panel}">
@@ -1114,7 +1113,7 @@
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Text -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Text:Bullets}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Text:Bullets}">
             <ComboBox
                 ItemsSource="{Data:EnumerateBinding Value}"
                 Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
@@ -1136,7 +1135,7 @@
         </local:KeyTemplate>
 
         <!-- ... Sytem -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Array}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Array}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1150,7 +1149,7 @@
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Boolean}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Boolean}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1205,16 +1204,16 @@
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Byte}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Byte}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:DateTime}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:DateTime}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Decimal}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Decimal}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Double}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Double}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1282,7 +1281,7 @@
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Enum}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Enum}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1305,7 +1304,7 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumStyle.FlagCheck}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
-                            <DataTemplate DataType="{x:Type local:MemberModel}">
+                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                                 <local:FlagGroup
                                     Type="{Data:TypeBinding Value}"
                                     TypeVisibility="Visible">
@@ -1327,7 +1326,7 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumStyle.FlagSelect}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
-                            <DataTemplate DataType="{x:Type local:MemberModel}">
+                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                                 <ComboBox
                                     ItemsSource="{Data:EnumerateBinding Value}"
                                     ItemTemplate="{DynamicResource {x:Static local:PropertyGrid.EnumItemTemplateKey}}"
@@ -1350,7 +1349,7 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumStyle.FlagSwitch}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
-                            <DataTemplate DataType="{x:Type local:MemberModel}">
+                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                                 <local:FlagGroup
                                     Type="{Data:TypeBinding Value}"
                                     TypeVisibility="Visible">
@@ -1372,7 +1371,7 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumStyle.FlagToggle}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
-                            <DataTemplate DataType="{x:Type local:MemberModel}">
+                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                                 <local:FlagGroup
                                     Type="{Data:TypeBinding Value}"
                                     TypeVisibility="Visible">
@@ -1393,7 +1392,7 @@
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Guid}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Guid}">
             <TextBox x:Name="TextBox"
                 Linq:XTextBoxBase.Regex="{x:Static Text:Expressions.Guid}"
                 Style="{DynamicResource {x:Static local:PropertyGrid.TextBoxStyleKey}}">
@@ -1403,10 +1402,10 @@
                 </e:Interaction.Behaviors>
             </TextBox>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Int16}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Int16}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Int32}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Int32}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1442,10 +1441,10 @@
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Int64}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Int64}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Object}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Object}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}" ContentTemplate="{Markup:EmptyTemplate}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1456,22 +1455,29 @@
                 </DataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Depth}" Value="0"/>
-                        <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Default}"/>
+                        <Condition Binding="{Binding DepthIndex}" Value="0"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Shallow}"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ObjectTemplateKey}}"/>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding DepthIndex}" Value="0"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Deep}"/>
                     </MultiDataTrigger.Conditions>
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ObjectTemplateKey}}"/>
                 </MultiDataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Single}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Single}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:String}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:String}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}">
                 <ContentPresenter.ContentTemplate>
                     <DataTemplate>
                         <TextBox x:Name="TextBox"
-                            Linq:XTextBox.ClearButtonVisibility="{Data:VisibilityBinding ClearText}"
+                            Linq:XTextBox.ClearButtonVisibility="Collapsed"
                             Linq:XTextBox.EnterCommand="{Binding Command}"
                             Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
                             Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
@@ -1488,6 +1494,13 @@
                                 <Setter TargetName="TextBox" Property="Linq:XTextBox.EnterButtonSource" Value="{Binding Icon}"/>
                                 <Setter TargetName="TextBox" Property="Linq:XTextBox.EnterButtonVisibility" Value="Visible"/>
                             </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ClearText}"/>
+                                    <Condition Binding="{Data:InvertBinding IsReadOnly}"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="TextBox" Property="Linq:XTextBox.ClearButtonVisibility" Value="Visible"/>
+                            </MultiDataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
                 </ContentPresenter.ContentTemplate>
@@ -1665,10 +1678,10 @@
                 </DataTrigger> 
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:TimeSpan}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:TimeSpan}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:TimeZoneInfo}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:TimeZoneInfo}">
             <local:TimeZoneBox
                 IsEnabled="{Data:InvertBinding IsReadOnly}"
                 Linq:XComboBox.Placeholder="{local:MemberPlaceholder}">
@@ -1678,19 +1691,19 @@
                 </e:Interaction.Behaviors>
             </local:TimeZoneBox>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Type}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Type}">
             <TextBox IsReadOnly="True" Text="{Binding Value.FullName}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:UInt16}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:UInt16}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:UInt32}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:UInt32}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:UInt64}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:UInt64}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsSystem:Version}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Version}">
             <local:VersionBox x:Name="VersionBox"
                 HorizontalAlignment="Stretch"
                 IsReadOnly="{Binding IsReadOnly}"
@@ -1703,7 +1716,7 @@
         </local:KeyTemplate>
 
         <!-- ... System -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type System:Uri}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type System:Uri}">
             <local:UriBox
                 IsReadOnly="{Binding IsReadOnly}"
                 Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}">
@@ -1715,7 +1728,7 @@
         </local:KeyTemplate>
 
         <!-- ... System.Collections -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsCollections:IEnumerable}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsCollections:IEnumerable}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1729,7 +1742,7 @@
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsCollections:IList}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsCollections:IList}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1743,7 +1756,7 @@
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type MsCollectionsSpecialized:INotifyCollectionChanged}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsCollectionsSpecialized:INotifyCollectionChanged}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1768,12 +1781,12 @@
         </local:KeyTemplate>
 
         <!-- ... System.Drawing -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SystemDrawing:Color}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SystemDrawing:Color}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
 
         <!-- ... System.Net -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SystemNet:NetworkCredential}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SystemNet:NetworkCredential}">
             <StackPanel>
                 <TextBox x:Name="TextBox"
                     Linq:XTextBoxBase.Placeholder="{l:Loc Username}"
@@ -1796,10 +1809,10 @@
         </local:KeyTemplate>
 
         <!-- ... System.Windows -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Color}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Color}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type FontFamily}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type FontFamily}">
             <local:FontFamilyBox
                 IsEnabled="{Data:InvertBinding IsReadOnly}"
                 Linq:XComboBox.Placeholder="{local:MemberPlaceholder}">
@@ -1809,7 +1822,7 @@
                 </e:Interaction.Behaviors>
             </local:FontFamilyBox>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type FontStyle}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type FontStyle}">
             <local:FontStyleBox
                 IsEnabled="{Data:InvertBinding IsReadOnly}"
                 Linq:XComboBox.Placeholder="{local:MemberPlaceholder}">
@@ -1819,7 +1832,7 @@
                 </e:Interaction.Behaviors>
             </local:FontStyleBox>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type FontWeight}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type FontWeight}">
             <local:FontWeightBox
                 IsEnabled="{Data:InvertBinding IsReadOnly}"
                 Linq:XComboBox.Placeholder="{local:MemberPlaceholder}">
@@ -1829,7 +1842,7 @@
                 </e:Interaction.Behaviors>
             </local:FontWeightBox>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type LinearGradientBrush}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type LinearGradientBrush}">
             <local:GradientBox 
                 HorizontalAlignment="Stretch"
                 IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
@@ -1840,7 +1853,7 @@
                 </e:Interaction.Behaviors>
             </local:GradientBox>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type ListCollectionView}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type ListCollectionView}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
@@ -1871,7 +1884,7 @@
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type PointCollection}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type PointCollection}">
             <StackPanel Margin="5">
                 <Slider
                     Margin="0,0,0,5"
@@ -1884,7 +1897,7 @@
                     Zoom="128"/>
             </StackPanel>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type RadialGradientBrush}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type RadialGradientBrush}">
             <local:GradientBox 
                 HorizontalAlignment="Stretch"
                 IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
@@ -1895,10 +1908,10 @@
                 </e:Interaction.Behaviors>
             </local:GradientBox>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SolidColorBrush}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SolidColorBrush}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type Thickness}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Thickness}">
             <local:ThicknessControl
                 HorizontalAlignment="Stretch"
                 IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}">
@@ -1910,7 +1923,7 @@
         </local:KeyTemplate>
 
         <!-- ... System.Windows.Input -->
-        <local:KeyTemplate DataType="{x:Type local:MemberModel}" DataKey="{x:Type SystemInput:ICommand}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SystemInput:ICommand}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Data:IsNullBinding Icon}" Value="True">

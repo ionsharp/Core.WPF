@@ -12,6 +12,7 @@
     xmlns:Input="clr-namespace:System.Windows.Input;assembly=System"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
+    xmlns:Reflection="clr-namespace:Imagin.Core.Reflection"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:SystemInput="clr-namespace:System.Windows.Input;assembly=System">
     <ResourceDictionary.MergedDictionaries>
@@ -81,7 +82,7 @@
                 <Setter TargetName="TextBlock0" Property="Text" Value="{local:ObjectNameBinding Element.Value}"/>
                 <Setter TargetName="TextBlock1" Property="Text" Value="{local:ObjectDescriptionBinding Element.Value}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Data:IsBinding local:MemberModel}" Value="True">
+            <DataTrigger Binding="{Data:IsBinding Reflection:MemberModel}" Value="True">
                 <Setter TargetName="TextBlock0" Property="Text" Value="{local:MemberNameBinding}"/>
                 <Setter TargetName="TextBlock1" Property="Text" Value="{local:MemberDescriptionBinding}"/>
             </DataTrigger>
@@ -93,7 +94,7 @@
     <Style x:Key="{x:Type local:MemberNamePresenter}" TargetType="{x:Type local:MemberNamePresenter}">
         <Setter Property="ContentTemplate">
             <Setter.Value>
-                <DataTemplate DataType="{x:Type local:MemberModel}">
+                <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                     <TextBlock x:Name="TextBlock"
                         Linq:XTextBlock.SplitText="{Binding DisplayName}"
                         Linq:XTextBlock.SplitTextMode="StartsWith"
@@ -144,7 +145,7 @@
     <Style x:Key="{x:Type local:MemberValuePresenter}" TargetType="{x:Type local:MemberValuePresenter}">
         <Setter Property="ContentTemplate">
             <Setter.Value>
-                <DataTemplate DataType="{x:Type local:MemberModel}">
+                <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                     <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto">
                         <Grid.Resources>
                             <Data:Reference x:Key="Member" 
@@ -382,7 +383,7 @@
                 Margin="0,0,0,10"
                 SelectedItem="{Data:TemplatedParent ViewMember, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type local:MemberModel}">
+                    <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                         <TextBlock Text="{Binding DisplayName}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -440,6 +441,11 @@
                 BorderThickness="{TemplateBinding BorderThickness}"
                 ItemTemplate="{StaticResource ToolBarItemTemplate}"
                 Padding="{TemplateBinding Padding}">
+                <ToolBar.ItemContainerStyle>
+                    <Style TargetType="FrameworkElement">
+                        <Setter Property="Visibility" Value="{Data:VisibilityBinding IsVisible}"/>
+                    </Style>
+                </ToolBar.ItemContainerStyle>
                 <ToolBar.GroupStyle>
                     <GroupStyle ContainerStyle="{StaticResource ToolBarGroupStyle}">
                         <GroupStyle.Panel>
@@ -594,7 +600,7 @@
                                                 <local:FlagMenuItem Header="{l:Loc Filter}"
                                                     Icon="{Markup:InternalImage Filter.png}"
                                                     InputGestureText="{Binding Data.Filter, Source={StaticResource PropertyGrid}}"
-                                                    Type="local:MemberFilter"
+                                                    Type="Reflection:MemberFilter"
                                                     TypeVisibility="Visible"
                                                     Value="{Binding Data.Filter, Mode=TwoWay, Source={StaticResource PropertyGrid}}">
                                                     <Linq:XMenuItem.InputGestureTextTemplate>
@@ -810,7 +816,7 @@
                             </GroupStyle>
                         </Linq:XItemsControl.GroupStyle>
                         <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type local:MemberModel}">
+                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                                 <TextBlock Text="{Binding DisplayName}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -1015,6 +1021,7 @@
                         <Setter.Value>
                             <MultiBinding Converter="{x:Static local:MemberVisibilityConverter.Default}">
                                 <Binding Path="."/>
+                                <Binding Path="IsVisible"/>
                                 <Data:Ancestor Path="SearchName" 
                                     Type="{x:Type local:PropertyGrid}"/>
                                 <Data:Ancestor Path="Search"
@@ -1134,7 +1141,7 @@
         <Setter Property="NameColumnWidth" Value="3*"/>
         <Setter Property="NameTemplate">
             <Setter.Value>
-                <DataTemplate DataType="{x:Type local:MemberModel}">
+                <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                     <local:MemberNamePresenter Content="{Binding}"/>
                 </DataTemplate>
             </Setter.Value>
@@ -1154,7 +1161,7 @@
                         <ToolBar.ItemTemplateSelector>
                             <local:TypeTemplateSelector Strict="True">
                                 <local:TypeTemplateSelector.Default>
-                                    <DataTemplate DataType="{x:Type local:MemberCrumb}">
+                                    <DataTemplate DataType="{x:Type Reflection:MemberCrumb}">
                                         <local:ImageButton x:Name="Button"
                                             ButtonVisibility="Collapsed"
                                             Command="{Data:Ancestor EditCommand, {x:Type local:PropertyGrid}}"
@@ -1182,28 +1189,28 @@
                                             <DataTrigger Binding="{Data:IconBinding Element.Value}" Value="{x:Null}">
                                                 <Setter TargetName="ContentPresenter0" Property="ContentTemplate" Value="{Markup:EmptyTemplate}"/>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type local:MemberCrumbChild}">
+                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberCrumbChild}">
                                                 <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
                                                     <Setter.Value>
-                                                        <DataTemplate DataType="{x:Type local:MemberRouteChild}">
+                                                        <DataTemplate DataType="{x:Type Reflection:MemberRouteChild}">
                                                             <TextBlock Text="{Binding Name}"/>
                                                         </DataTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type local:MemberCrumbItem}">
+                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberCrumbItem}">
                                                 <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
                                                     <Setter.Value>
-                                                        <DataTemplate DataType="{x:Type local:MemberRouteItem}">
+                                                        <DataTemplate DataType="{x:Type Reflection:MemberRouteItem}">
                                                             <TextBlock Text="{Data:DisplayNameBinding Value}"/>
                                                         </DataTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type local:MemberCrumbSource}">
+                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberCrumbSource}">
                                                 <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
                                                     <Setter.Value>
-                                                        <DataTemplate DataType="{x:Type local:MemberRouteSource}">
+                                                        <DataTemplate DataType="{x:Type Reflection:MemberRouteSource}">
                                                             <TextBlock Text="{Data:DisplayNameBinding Value}"/>
                                                         </DataTemplate>
                                                     </Setter.Value>
@@ -1212,7 +1219,7 @@
                                         </DataTemplate.Triggers>
                                     </DataTemplate>
                                 </local:TypeTemplateSelector.Default>
-                                <DataTemplate DataType="{x:Type local:MemberCrumbSeparator}">
+                                <DataTemplate DataType="{x:Type Reflection:MemberCrumbSeparator}">
                                     <TextBlock FontSize="10" Text="●" Margin="0,0,2,0"/>
                                 </DataTemplate>
                             </local:TypeTemplateSelector>
@@ -1228,7 +1235,7 @@
         <Setter Property="ValueColumnWidth" Value="7*"/>
         <Setter Property="ValueTemplate">
             <Setter.Value>
-                <DataTemplate DataType="{x:Type local:MemberModel}">
+                <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                     <local:MemberValuePresenter Content="{Binding}"
                         VerticalAlignment="Center"/>
                 </DataTemplate>
@@ -1256,8 +1263,13 @@
                                 Linq:XItemsControl.SortName="Index"
                                 Linq:XItemsControl.SortDirection="Ascending"
                                 ItemsSource="{Binding}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="FrameworkElement">
+                                        <Setter Property="Visibility" Value="{Data:VisibilityBinding IsVisible}"/>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:MemberModel}">
+                                    <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                                         <Grid Linq:XGrid.Columns="Auto,*"
                                             Linq:XPanel.VerticalContentAlignment="Center"
                                             Margin="2,0">
@@ -1297,8 +1309,13 @@
                                 Linq:XItemsControl.SortDirection="Ascending"
                                 ItemsSource="{Binding}"
                                 Margin="2,2,2,0">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="FrameworkElement">
+                                        <Setter Property="Visibility" Value="{Data:VisibilityBinding IsVisible}"/>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:MemberModel}">
+                                    <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                                         <Grid Linq:XGrid.Columns="Auto,*"
                                             Linq:XPanel.VerticalContentAlignment="Center"
                                             Margin="0,0,0,2">

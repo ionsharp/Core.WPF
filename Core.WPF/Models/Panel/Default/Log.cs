@@ -1,4 +1,6 @@
 ﻿using Imagin.Core.Analytics;
+using Imagin.Core.Controls;
+using Imagin.Core.Reflection;
 using Imagin.Core.Collections;
 using Imagin.Core.Converters;
 using Imagin.Core.Data;
@@ -86,20 +88,20 @@ namespace Imagin.Core.Models
         #region Properties
 
         [Hidden]
-        public int ErrorCount 
-            => Data.Count<LogEntry>(i => i.Result is Error);
+        public string ErrorCount 
+            => $"Errors ({Data.Count<LogEntry>(i => i.Result is Error)})";
 
         [Hidden]
-        public int MessageCount 
-            => Data.Count<LogEntry>(i => i.Result is Message);
+        public string MessageCount 
+            => $"Messages ({Data.Count<LogEntry>(i => i.Result is Message)})";
 
         [Hidden]
-        public int SuccessCount 
-            => Data.Count<LogEntry>(i => i.Result is Success);
+        public string SuccessCount 
+            => $"Success ({Data.Count<LogEntry>(i => i.Result is Success)})";
 
         [Hidden]
-        public int WarningCount 
-            => Data.Count<LogEntry>(i => i.Result is Warning);
+        public string WarningCount 
+            => $"Warnings ({Data.Count<LogEntry>(i => i.Result is Warning)})";
 
         //...
 
@@ -127,11 +129,10 @@ namespace Imagin.Core.Models
 
         bool filterError = true;
         [Category(Category.Filter)]
-        [Content("Errors")]
-        [ContentTrigger(nameof(ErrorCount), "Errors ({0})")]
         [Label(false)]
         [Icon(Images.XRound, ThemeKeys.ResultError)]
         [Index(-5)]
+        [MemberTrigger(nameof(MemberModel.Content), nameof(ErrorCount))]
         [Tool]
         [Style(BooleanStyle.Image)]
         public bool FilterError
@@ -142,11 +143,10 @@ namespace Imagin.Core.Models
 
         bool filterMessage = true;
         [Category(Category.Filter)]
-        [Content("Messages")]
-        [ContentTrigger(nameof(MessageCount), "Messages ({0})")]
         [Label(false)]
         [Icon(Images.Info, ThemeKeys.ResultMessage)]
         [Index(-4)]
+        [MemberTrigger(nameof(MemberModel.Content), nameof(MessageCount))]
         [Tool]
         [Style(BooleanStyle.Image)]
         public bool FilterMessage
@@ -157,11 +157,10 @@ namespace Imagin.Core.Models
 
         bool filterSuccess = true;
         [Category(Category.Filter)]
-        [Content("Success")]
-        [ContentTrigger(nameof(SuccessCount), "Success ({0})")]
         [Label(false)]
         [Icon(Images.CheckmarkRound, ThemeKeys.ResultSuccess)]
         [Index(-3)]
+        [MemberTrigger(nameof(MemberModel.Content), nameof(SuccessCount))]
         [Tool]
         [Style(BooleanStyle.Image)]
         public bool FilterSuccess
@@ -172,11 +171,10 @@ namespace Imagin.Core.Models
 
         bool filterWarning = true;
         [Category(Category.Filter)]
-        [Content("Warnings")]
-        [ContentTrigger(nameof(WarningCount), "Warnings ({0})")]
         [Label(false)]
         [Icon(Images.Warning, ThemeKeys.ResultWarning)]
         [Index(-2)]
+        [MemberTrigger(nameof(MemberModel.Content), nameof(WarningCount))]
         [Tool]
         [Style(BooleanStyle.Image)]
         public bool FilterWarning
@@ -217,8 +215,8 @@ namespace Imagin.Core.Models
         [Featured(AboveBelow.Below)]
         [Icon(Images.Search)]
         [Index(int.MaxValue)]
+        [MemberSetter(nameof(MemberModel.Placeholder), "Search...")]
         [Tool]
-        [Placeholder("Search...")]
         [Style(StringStyle.Search)]
         [Suggestions(nameof(SearchHistory), nameof(SearchSuggestionCommand))]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]

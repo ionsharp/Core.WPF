@@ -4,7 +4,7 @@
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Converters="clr-namespace:Imagin.Core.Converters"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
-    xmlns:Text="clr-namespace:Imagin.Core.Text">
+    xmlns:Text="clr-namespace:Imagin.Core.Text;assembly=Imagin.Core">
     <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}">
         <!--<Setter Property="FontFamily" Value="{Markup:DefaultFont Swis721.ttf#Swis721 Cn BT}"/>-->
         <!--<Setter Property="FontFamily" Value="{Markup:DefaultFont Lucida.ttf#Lucida Grande}"/>-->
@@ -22,44 +22,23 @@
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.Dash1}">
-                <Setter Property="Text" Value="▰"/>
-            </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.Dash2}">
-                <Setter Property="Text" Value="▱"/>
-            </Trigger>
             <Trigger Property="Bullet" Value="{x:Static Text:Bullets.Diamond}">
                 <Setter Property="Text" Value="◆"/>
             </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.DiamondOutline1}">
+            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.DiamondOutline}">
                 <Setter Property="Text" Value="◇"/>
-            </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.DiamondOutline2}">
-                <Setter Property="Text" Value="◈"/>
-            </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.RightTriangle1}">
-                <Setter Property="Text" Value="►"/>
-            </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.RightTriangle2}">
-                <Setter Property="Text" Value="▶"/>
             </Trigger>
             <Trigger Property="Bullet" Value="{x:Static Text:Bullets.Square}">
                 <Setter Property="Text" Value="■"/>
             </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.SquareOutline1}">
+            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.SquareOutline}">
                 <Setter Property="Text" Value="□"/>
-            </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.SquareOutline2}">
-                <Setter Property="Text" Value="▣"/>
             </Trigger>
             <Trigger Property="Bullet" Value="{x:Static Text:Bullets.Circle}">
                 <Setter Property="Text" Value="●"/>
             </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.CircleOutline1}">
+            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.CircleOutline}">
                 <Setter Property="Text" Value="○"/>
-            </Trigger>
-            <Trigger Property="Bullet" Value="{x:Static Text:Bullets.CircleOutline2}">
-                <Setter Property="Text" Value="◉"/>
             </Trigger>
         </Style.Triggers>
     </Style>

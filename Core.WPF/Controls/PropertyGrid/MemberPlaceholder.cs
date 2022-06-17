@@ -2,6 +2,7 @@
 using Imagin.Core.Data;
 using Imagin.Core.Linq;
 using Imagin.Core.Models;
+using Imagin.Core.Reflection;
 using System.Globalization;
 using System.Windows.Data;
 

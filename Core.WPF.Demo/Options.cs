@@ -1,7 +1,7 @@
 ﻿using Imagin.Core;
 using Imagin.Core.Collections;
 using Imagin.Core.Collections.Serialization;
-using Imagin.Core.Configuration;
+using Imagin.Core.Config;
 using Imagin.Core.Controls;
 using Imagin.Core.Models;
 using Imagin.Core.Storage;

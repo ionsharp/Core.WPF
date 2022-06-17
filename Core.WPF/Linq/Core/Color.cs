@@ -11,10 +11,7 @@ public static partial class XColor
 
     #region System.Drawing
 
-    public static Color Double(this System.Drawing.Color color)
-    {
-        return Color.FromArgb(color.A, color.R, color.G, color.B);
-    }
+    public static Color Double(this System.Drawing.Color color) => Color.FromArgb(color.A, color.R, color.G, color.B);
 
     #endregion
 
@@ -171,10 +168,7 @@ public static partial class XColor
 
     //...
 
-    public static System.Drawing.Color Int32(this Color color)
-    {
-        return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
-    }
+    public static System.Drawing.Color Int32(this Color color) => System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
 
     public static Hexadecimal Hexadecimal(this Color color, bool alpha = true)
         => new(color.R, color.G, color.B, alpha ? color.A : (byte)255);

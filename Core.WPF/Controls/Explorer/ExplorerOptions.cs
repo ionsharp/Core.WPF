@@ -15,8 +15,7 @@ namespace Imagin.Core.Controls
         {
             Browser,
             Favorites,
-            General,
-            Navigator,
+            General
         }
 
         #region Browser
@@ -102,34 +101,6 @@ namespace Imagin.Core.Controls
 
                 this.Change(ref path, value);
             }
-        }
-
-        ControlLength panel1Length = new(30, ControlLengthUnit.Star);
-        [Hidden]
-        public GridLength Panel1Length
-        {
-            get => panel1Length;
-            set => this.Change(ref panel1Length, value);
-        }
-
-        ControlLength panel2Length = new(70, ControlLengthUnit.Star);
-        [Hidden]
-        public GridLength Panel2Length
-        {
-            get => panel2Length;
-            set => this.Change(ref panel2Length, value);
-        }
-
-        #endregion
-
-        #region Navigator
-
-        NavigatorOptions navigatorOptions = new();
-        [Category(Category.Navigator)]
-        public NavigatorOptions NavigatorOptions
-        {
-            get => navigatorOptions;
-            set => this.Change(ref navigatorOptions, value);
         }
 
         #endregion

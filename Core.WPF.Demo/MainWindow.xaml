@@ -187,8 +187,8 @@
                                     Value="1"
                                     Width="32"/>
                             </local:Element>
-                            <local:Element Category="ColorSelector" Type="i:ComponentSelector">
-                                <i:ComponentSelector
+                            <local:Element Category="ColorSelector" Type="i:ComponentSelector2D">
+                                <i:ComponentSelector2D
                                     Model="{i:RemoteBinding RemoteSource=MainViewModel, Path=ColorConverter.VisualModel}"
                                     X="{i:RemoteBinding RemoteSource=MainViewModel, Path=Color.X, Mode=TwoWay}"
                                     Y="{i:RemoteBinding RemoteSource=MainViewModel, Path=Color.Y, Mode=TwoWay}"
@@ -432,9 +432,6 @@
                                     Favorites="{i:Options ExplorerOptions.Favorites, Mode=OneWay}"
                                     FavoriteSortDirection="{i:Options ExplorerOptions.FavoriteSortDirection, Mode=OneWay}"
                                     FavoriteSortName="{i:Options ExplorerOptions.FavoriteSortName, Mode=OneWay}"
-                                    NavigatorOptions="{i:Options ExplorerOptions.NavigatorOptions}"
-                                    Panel1Length="{i:Options ExplorerOptions.Panel1Length, Mode=TwoWay}"
-                                    Panel2Length="{i:Options ExplorerOptions.Panel2Length, Mode=TwoWay}"
                                     i:XExplorer.Path="{Binding Path, Mode=TwoWay}"
                                     ShowFavoriteBar="True"/>
                             </local:Element>
@@ -455,22 +452,6 @@
                                         <ScaleTransform ScaleX="{i:RemoteBinding RemoteSource=MainViewModel, Path=GridLineZoom, Mode=OneWay}" ScaleY="{i:RemoteBinding RemoteSource=MainViewModel, Path=GridLineZoom, Mode=OneWay}"/>
                                     </i:GridLines.LayoutTransform>
                                 </i:GridLines>
-                            </local:Element>
-                            <local:Element Category="Control" Type="i:Navigator">
-                                <i:Navigator DataContext="{i:Options ExplorerOptions}"
-                                    BorderThickness="0"
-                                    Favorites="{Binding Favorites}"
-                                    FileAttributes="{Binding NavigatorOptions.FileAttributes}"
-                                    FileExtensions="{Binding NavigatorOptions.FileExtensions}"
-                                    FolderAttributes="{Binding NavigatorOptions.FolderAttributes}"
-                                    Mode="{Binding NavigatorOptions.Mode}"
-                                    i:XExplorer.Path="{Binding Path, Mode=TwoWay}"
-                                    SelectionMode="Single"
-                                    SortDirection="{Binding NavigatorOptions.SortDirection, Converter={x:Static i:SortDirectionConverter.Default}}"
-                                    SortName="{Binding NavigatorOptions.SortName}"
-                                    ViewCheckBoxes="{Binding NavigatorOptions.ViewCheckBoxes}"
-                                    ViewFiles="{Binding NavigatorOptions.ViewFiles}"
-                                    ViewFileExtensions="{Binding NavigatorOptions.ViewFileExtensions}"/>
                             </local:Element>
                             <local:Element Category="Control" Type="PasswordBox">
                                 <PasswordBox
@@ -592,12 +573,6 @@
                                     HeadersVisibility="Column"
                                     Margin="-10"
                                     Source="{i:RemoteBinding RemoteSource=MainViewModel, Path=PropertyGridSource}"/>
-                            </local:Element>
-                            <local:Element Category="DataGrid" Type="i:Table">
-                                <i:Table
-                                    i:XDataGrid.DisplayRowNumberBullet="NumberParenthesis"
-                                    ItemsSource="{i:RemoteBinding RemoteSource=MainViewModel, Path=TableData}"
-                                    TextColumns="{i:RemoteBinding RemoteSource=MainViewModel, Path=TableData.Columns}"/>
                             </local:Element>
                             <!-- ... FrameworkElement -->
                             <local:Element Category="FrameworkElement" Type="i:FillElement">
@@ -859,13 +834,9 @@
                                     Value="0.75"/>
                             </local:Element>
                             <!-- ... RichTextBox -->
-                            <local:Element Category="RichTextBox" Type="i:MarkDownBox">
-                                <i:MarkDownBox/>
-                            </local:Element>
                             <local:Element Category="RichTextBox" Type="i:MultiPathBox">
                                 <i:MultiPathBox
                                     BrowseMode="OpenFolder"
-                                    BrowseType="Explorer"
                                     i:XTextBoxBase.Placeholder="Drop item(s) here..."
                                     VerticalAlignment="Top"/>
                             </local:Element>
@@ -904,14 +875,6 @@
                                         VerticalAlignment="Top"/>
                                 </local:Element.Options>
                             </local:Element>
-                            <local:Element Category="StorageWindow" Type="i:NavigatorWindow">
-                                <local:Element.Options>
-                                    <Button Content="Show"
-                                        Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=ShowNavigatorWindowCommand}"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"/>
-                                </local:Element.Options>
-                            </local:Element>
                             <!-- ... TabControl -->
                             <local:Element Category="TabControl" Type="TabControl">
                                 <TabControl>
@@ -924,7 +887,6 @@
                             <local:Element Category="TextBox" Type="i:PathBox">
                                 <i:PathBox
                                     BrowseMode="OpenFolder"
-                                    BrowseType="Explorer"
                                     i:XTextBoxBase.Placeholder="Drop an item here..."
                                     VerticalAlignment="Top"/>
                             </local:Element>

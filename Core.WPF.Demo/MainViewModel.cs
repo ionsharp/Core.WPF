@@ -89,13 +89,6 @@ namespace Demo
             get => textBoxSuggestions;
             set => this.Change(ref textBoxSuggestions, value);
         }
-        
-       TableData tableData = new();
-        public TableData TableData
-        {
-            get => tableData;
-            set => this.Change(ref tableData, value);
-        }
 
         #endregion
 
@@ -103,7 +96,7 @@ namespace Demo
 
         public MainViewModel() : base()
         {
-            Color = new(Colors.White);
+            Color = new(Colors.White, new ColorControlOptions());
 
             if (Get.Current<App>().Notifications.Count == 0)
             {
@@ -238,7 +231,7 @@ namespace Demo
         
         ICommand showExplorerWindowCommand;
         public ICommand ShowExplorerWindowCommand => showExplorerWindowCommand
-            ??= new RelayCommand(() => StorageWindow.Show(out string path, "Select something", StorageWindowModes.Open, null, null, StorageWindowFilterModes.Single, StorageWindowTypes.Explorer));
+            ??= new RelayCommand(() => StorageWindow.Show(out string path, "Select something", StorageWindowModes.Open, null, null, StorageWindowFilterModes.Single));
 
         ICommand showGradientWindowCommand;
         public ICommand ShowGradientWindowCommand => showGradientWindowCommand
@@ -251,10 +244,6 @@ namespace Demo
         ICommand showLoadWindowCommand;
         public ICommand ShowLoadWindowCommand => showLoadWindowCommand 
             ??= new RelayCommand(() => new LoadWindow().ShowDialog());
-
-        ICommand showNavigatorWindowCommand;
-        public ICommand ShowNavigatorWindowCommand => showNavigatorWindowCommand 
-            ??= new RelayCommand(() => StorageWindow.Show(out string path, "Select something", StorageWindowModes.Open, null, null, StorageWindowFilterModes.Single, StorageWindowTypes.Navigator));
 
         ICommand showPropertyWindowCommand;
         public ICommand ShowPropertyWindowCommand => showPropertyWindowCommand 

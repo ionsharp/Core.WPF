@@ -1,9 +1,11 @@
 ﻿using Imagin.Core.Collections.Generic;
 using Imagin.Core.Collections.ObjectModel;
+using Imagin.Core.Controls;
 using Imagin.Core.Converters;
 using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using System;
 using System.Collections;
 using System.Text;
@@ -164,8 +166,8 @@ namespace Imagin.Core.Models
         [Featured(AboveBelow.Below)]
         [Icon(Images.Search)]
         [Index(int.MaxValue)]
+        [MemberSetter(nameof(MemberModel.Placeholder), "Search...")]
         [Tool]
-        [Placeholder("Search...")]
         [Style(StringStyle.Search)]
         [Suggestions(nameof(SearchHistory), nameof(SearchSuggestionCommand))]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]

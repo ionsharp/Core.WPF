@@ -1,8 +1,10 @@
 ﻿using Imagin.Core.Collections.Generic;
 using Imagin.Core.Collections.Serialization;
+using Imagin.Core.Controls;
 using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using System;
 using System.Windows.Input;
 
@@ -24,7 +26,8 @@ namespace Imagin.Core.Models
         int selectedGroupIndex = -1;
         [Featured, Index(2)]
         [Label(false)]
-        [Source(nameof(Groups), nameof(GroupCollection<T>.Name))]
+        [MemberSetter(nameof(MemberModel.ItemPath), nameof(GroupCollection<T>.Name))]
+        [MemberTrigger(nameof(MemberModel.ItemSource), nameof(Groups))]
         [Style(Int32Style.Index)]
         [Tool, Visible]
         public int SelectedGroupIndex

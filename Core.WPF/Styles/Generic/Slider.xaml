@@ -102,12 +102,12 @@
                     </Track>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Orientation" Value="Vertical">
-                            <Setter TargetName="PART_DecreaseRepeatButton" Property="Width" Value="3" />
-                            <Setter TargetName="PART_IncreaseRepeatButton" Property="Width" Value="3" />
+                            <Setter TargetName="PART_DecreaseRepeatButton" Property="Width" Value="6" />
+                            <Setter TargetName="PART_IncreaseRepeatButton" Property="Width" Value="6" />
                         </Trigger>
                         <Trigger Property="Orientation" Value="Horizontal">
-                            <Setter TargetName="PART_DecreaseRepeatButton" Property="Height" Value="3" />
-                            <Setter TargetName="PART_IncreaseRepeatButton" Property="Height" Value="3" />
+                            <Setter TargetName="PART_DecreaseRepeatButton" Property="Height" Value="6" />
+                            <Setter TargetName="PART_IncreaseRepeatButton" Property="Height" Value="6" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

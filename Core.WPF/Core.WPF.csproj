@@ -136,72 +136,55 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analytics\LogWriter.cs" />
-    <Compile Include="Analytics\Warnings\MemberMissingAttribute.cs" />
+    <Compile Include="Controls\ColorSelector\Selector\ComponentSelector.cs" />
+    <Compile Include="Controls\ColorSelector\Selector\ComponentSelector3D.cs" />
+    <Compile Include="Controls\ColorSelector\Selector\ComponentSelectorEllipse.cs" />
+    <Compile Include="Core\FormatAttribute.cs" />
+    <Compile Include="Core\IconAttribute.cs" />
+    <Compile Include="Core\StyleAttribute.cs" />
+    <Compile Include="Core\UpdateSourceTriggerAttribute.cs" />
     <Compile Include="Converters\Multi\Visibility\AandBorCMultiConverter.cs" />
-    <Compile Include="Core\Attribute\Clear.cs" />
+    <Compile Include="Converters\Single\One.cs" />
+    <Compile Include="Data\Binding\Local\Convert\DoubleToOne.cs" />
+    <Compile Include="Data\Binding\Local\Convert\OneToDouble.cs" />
     <Compile Include="Linq\Core\ColorMatrix.cs" />
     <Compile Include="Linq\Core\RGB.cs" />
     <Compile Include="Linq\Core\Vector3.cs" />
     <Compile Include="Linq\Core\Vector4.cs" />
-    <Compile Include="Media\ColorViewModel.cs" />
-    <Compile Include="Controls\ColorSelector\BaseComponentSlider.cs" />
-    <Compile Include="Converters\Multi\String\Component.cs" />
+    <Compile Include="Controls\ColorControl\ColorViewModel.cs" />
+    <Compile Include="Controls\ColorSelector\Slider\BaseComponentSlider.cs" />
     <Compile Include="Media\StringColor.cs" />
-    <Compile Include="Reflection\ContentTrigger.cs" />
-    <Compile Include="Core\Attribute\Convert.cs" />
-    <Compile Include="Reflection\EnableTrigger.cs" />
-    <Compile Include="Core\Attribute\Height.cs" />
-    <Compile Include="Core\Attribute\Icon.cs" />
-    <Compile Include="Core\Attribute\ItemType.cs" />
-    <Compile Include="Core\Attribute\Option.cs" />
-    <Compile Include="Reflection\PropertyTrigger.cs" />
-    <Compile Include="Core\Attribute\Tool.cs" />
-    <Compile Include="Core\Attribute\Source.cs" />
-    <Compile Include="Core\Attribute\StringFormat.cs" />
-    <Compile Include="Core\Attribute\Suggestions.cs" />
-    <Compile Include="Core\Attribute\Placeholder.cs" />
-    <Compile Include="Core\Attribute\Command.cs" />
-    <Compile Include="Core\Attribute\Extends.cs" />
-    <Compile Include="Core\Attribute\Format.cs" />
-    <Compile Include="Core\Attribute\Update.cs" />
-    <Compile Include="Core\Attribute\UpdateSourceTrigger.cs" />
-    <Compile Include="Core\Attribute\Width.cs" />
-    <Compile Include="Core\Attribute\Status.cs" />
+    <Compile Include="Reflection\MemberDepth.cs" />
+    <Compile Include="Reflection\MemberSetter.cs" />
+    <Compile Include="Reflection\MemberTrigger.cs" />
     <Compile Include="Behavior\Binding.cs" />
     <Compile Include="Behavior\DynamicResource.cs" />
     <Compile Include="Behavior\Index.cs" />
     <Compile Include="Behavior\ManualBinding.cs" />
     <Compile Include="Behavior\UpdateTemplate.cs" />
     <Compile Include="Behavior\Trigger.cs" />
-    <Compile Include="Collections\Generic\ControlLengthList.cs" />
     <Compile Include="Collections\Serialization\BinaryWriter.cs" />
     <Compile Include="Collections\Serialization\GroupWriter.cs" />
     <Compile Include="Collections\Serialization\IGroupWriter.cs" />
     <Compile Include="Collections\Serialization\IWriter.cs" />
-    <Compile Include="Core\Enum\Alignment.cs" />
-    <Compile Include="Core\Other\CommonFonts.cs" />
-    <Compile Include="Core\Enum\Images.cs" />
-    <Compile Include="Core\Other\KeyTemplateSelector.cs" />
-    <Compile Include="Analytics\Errors\ChildNotFound.cs" />
-    <Compile Include="Analytics\Errors\InvalidAncestor.cs" />
-    <Compile Include="Core\Other\DependencyValue.cs" />
-    <Compile Include="Core\Other\Dispatch.cs" />
-    <Compile Include="Core\Other\DropHandler.cs" />
-    <Compile Include="Analytics\Errors\ExternalChange.cs" />
-    <Compile Include="Core\Other\FrameworkEventHandler.cs" />
+    <Compile Include="Core\Alignment.cs" />
+    <Compile Include="Core\CommonFonts.cs" />
+    <Compile Include="Core\Images.cs" />
+    <Compile Include="Core\KeyTemplateSelector.cs" />
+    <Compile Include="Core\DependencyValue.cs" />
+    <Compile Include="Core\Dispatch.cs" />
+    <Compile Include="Core\DropHandler.cs" />
+    <Compile Include="Core\FrameworkEventHandler.cs" />
     <Compile Include="Controls\ControlOptions.cs" />
     <Compile Include="Controls\IControlOptions.cs" />
-    <Compile Include="Core\Interface\IFrameworkReference.cs" />
-    <Compile Include="Core\Interface\IFrameworkKey.cs" />
-    <Compile Include="Analytics\Warnings\NotSerializable.cs" />
-    <Compile Include="Analytics\Errors\ParentNotFound.cs" />
-    <Compile Include="Core\Other\FrameworkKey.cs" />
-    <Compile Include="Core\Other\KeyTemplateCollection.cs" />
-    <Compile Include="Core\Other\WindowPlacements.cs" />
-    <Compile Include="Configuration\ManifestTokenException.cs" />
+    <Compile Include="Core\IFrameworkReference.cs" />
+    <Compile Include="Core\IFrameworkKey.cs" />
+    <Compile Include="Core\FrameworkKey.cs" />
+    <Compile Include="Core\KeyTemplateCollection.cs" />
+    <Compile Include="Core\WindowPlacements.cs" />
     <Compile Include="Analytics\Notification.cs" />
     <Compile Include="Analytics\NotificationWriter.cs" />
-    <Compile Include="Configuration\ExitMethod.cs" />
+    <Compile Include="Config\ExitMethod.cs" />
     <Compile Include="Controls\Adorner\Adorner.cs" />
     <Compile Include="Controls\Adorner\RotateAdorner.cs" />
     <Compile Include="Controls\Adorner\SelectionAdorner.cs" />
@@ -215,8 +198,7 @@
     <Compile Include="Controls\ComboBox\FontWeightBox.cs" />
     <Compile Include="Controls\ComboBox\FontFamilyBox.cs" />
     <Compile Include="Controls\ComboBox\FolderBox.cs" />
-    <Compile Include="Core\Other\Dialog.cs" />
-    <Compile Include="Core\Enum\TopBottom.cs" />
+    <Compile Include="Core\Dialog.cs" />
     <Compile Include="Controls\Console\ConsoleOptions.cs" />
     <Compile Include="Controls\ContentControl\ContentControl.cs" />
     <Compile Include="Controls\ContentControl\DialogContentControl.cs" />
@@ -230,7 +212,7 @@
     <Compile Include="Controls\Control\Other\GridLines.xaml.cs">
       <DependentUpon>GridLines.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Other\DialogReference.cs" />
+    <Compile Include="Core\DialogReference.cs" />
     <Compile Include="Controls\Control\PointControl.cs" />
     <Compile Include="Controls\Control\ThicknessControl.cs" />
     <Compile Include="Controls\Control\UnitControl.cs" />
@@ -252,7 +234,6 @@
     <Compile Include="Controls\Label\ShadeLabel.cs" />
     <Compile Include="Controls\Menu\EnumMenuItem.cs" />
     <Compile Include="Controls\Menu\FlagMenuItem.cs" />
-    <Compile Include="Controls\Navigator\Navigator.cs" />
     <Compile Include="Controls\Presenter\ButtonPresenter.cs" />
     <Compile Include="Controls\Presenter\NotificationPresenter.cs" />
     <Compile Include="Controls\Presenter\Presenter.cs" />
@@ -261,21 +242,20 @@
     <Compile Include="Controls\Presenter\SelectionPresenter.cs" />
     <Compile Include="Controls\ProgressBar\ProgressForegroundConverter.cs" />
     <Compile Include="Controls\ProgressBar\ProgressLine.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberFilter.cs" />
+    <Compile Include="Reflection\MemberFilter.cs" />
     <Compile Include="Controls\PropertyGrid\Converters.cs" />
     <Compile Include="Controls\PropertyGrid\MemberNamePresenter.cs" />
     <Compile Include="Controls\PropertyGrid\MemberPlaceholder.cs" />
     <Compile Include="Controls\PropertyGrid\Bindings.cs" />
     <Compile Include="Controls\PropertyGrid\MemberValuePresenter.cs" />
     <Compile Include="Controls\PropertyGrid\MemberView.cs" />
-    <Compile Include="Controls\PropertyGrid\Models\ListItem.cs" />
-    <Compile Include="Controls\PropertyGrid\Models\ListMember.cs" />
-    <Compile Include="Controls\PropertyGrid\Models\ListProperty.cs" />
-    <Compile Include="Controls\PropertyGrid\Models\ListField.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberRouteElement.cs" />
+    <Compile Include="Reflection\MemberModel\ListItem.cs" />
+    <Compile Include="Reflection\MemberModel\ListMember.cs" />
+    <Compile Include="Reflection\MemberModel\ListProperty.cs" />
+    <Compile Include="Reflection\MemberModel\ListField.cs" />
+    <Compile Include="Reflection\MemberRouteElement.cs" />
     <Compile Include="Controls\PropertyGrid\SourceFilterBinding.cs" />
     <Compile Include="Controls\TabControl\CacheTabControl.cs" />
-    <Compile Include="Controls\MarkDownBox\MarkDownBox.cs" />
     <Compile Include="Controls\TextElement\TextInline.cs" />
     <Compile Include="Controls\TextElement\TickInline.cs" />
     <Compile Include="Controls\TextElement\LinkInline.cs" />
@@ -334,11 +314,10 @@
     <Compile Include="Data\DoubleReference.cs" />
     <Compile Include="Data\Binding\FreezableBinding.cs" />
     <Compile Include="Data\Binding\PushBinding.cs" />
-    <Compile Include="Core\Attribute\Style.cs" />
     <Compile Include="Data\BooleanReference.cs" />
     <Compile Include="Data\Tokenizer.Boolean.cs" />
     <Compile Include="Converters\Type\CharArray.cs" />
-    <Compile Include="Effects\ColorModel.cs" />
+    <Compile Include="Effects\ColorModelEffect.cs" />
     <Compile Include="Input\RoutedEvent.cs" />
     <Compile Include="Linq\Core\Assembly.cs" />
     <Compile Include="Linq\Core\IRemoteBinding.cs" />
@@ -364,26 +343,26 @@
     <Compile Include="Markup\False.cs" />
     <Compile Include="Media\CheckerBrush.cs" />
     <Compile Include="Media\DipHelper.cs" />
-    <Compile Include="Media\Animation\AnimationCache.cs" />
-    <Compile Include="Media\Animation\Decoding\GifApplicationExtension.cs" />
-    <Compile Include="Media\Animation\Decoding\GifBlock.cs" />
-    <Compile Include="Media\Animation\Decoding\GifBlockKind.cs" />
-    <Compile Include="Media\Animation\Decoding\GifColor.cs" />
-    <Compile Include="Media\Animation\Decoding\GifCommentExtension.cs" />
-    <Compile Include="Media\Animation\Decoding\GifDecoderException.cs" />
-    <Compile Include="Media\Animation\Decoding\GifExtension.cs" />
-    <Compile Include="Media\Animation\Decoding\GifFile.cs" />
-    <Compile Include="Media\Animation\Decoding\GifFrame.cs" />
-    <Compile Include="Media\Animation\Decoding\GifGraphicControlExtension.cs" />
-    <Compile Include="Media\Animation\Decoding\GifHeader.cs" />
-    <Compile Include="Media\Animation\Decoding\GifHelpers.cs" />
-    <Compile Include="Media\Animation\Decoding\GifImageData.cs" />
-    <Compile Include="Media\Animation\Decoding\GifImageDescriptor.cs" />
-    <Compile Include="Media\Animation\Decoding\GifLogicalScreenDescriptor.cs" />
-    <Compile Include="Media\Animation\Decoding\GifPlainTextExtension.cs" />
-    <Compile Include="Media\Animation\Decoding\GifTrailer.cs" />
-    <Compile Include="Media\Animation\ImageAnimationController.cs" />
-    <Compile Include="Media\Animation\ImageBehavior.cs" />
+    <Compile Include="Animation\AnimationCache.cs" />
+    <Compile Include="Animation\Decoding\GifApplicationExtension.cs" />
+    <Compile Include="Animation\Decoding\GifBlock.cs" />
+    <Compile Include="Animation\Decoding\GifBlockKind.cs" />
+    <Compile Include="Animation\Decoding\GifColor.cs" />
+    <Compile Include="Animation\Decoding\GifCommentExtension.cs" />
+    <Compile Include="Animation\Decoding\GifDecoderException.cs" />
+    <Compile Include="Animation\Decoding\GifExtension.cs" />
+    <Compile Include="Animation\Decoding\GifFile.cs" />
+    <Compile Include="Animation\Decoding\GifFrame.cs" />
+    <Compile Include="Animation\Decoding\GifGraphicControlExtension.cs" />
+    <Compile Include="Animation\Decoding\GifHeader.cs" />
+    <Compile Include="Animation\Decoding\GifHelpers.cs" />
+    <Compile Include="Animation\Decoding\GifImageData.cs" />
+    <Compile Include="Animation\Decoding\GifImageDescriptor.cs" />
+    <Compile Include="Animation\Decoding\GifLogicalScreenDescriptor.cs" />
+    <Compile Include="Animation\Decoding\GifPlainTextExtension.cs" />
+    <Compile Include="Animation\Decoding\GifTrailer.cs" />
+    <Compile Include="Animation\ImageAnimationController.cs" />
+    <Compile Include="Animation\ImageBehavior.cs" />
     <Compile Include="Media\GradientStepCollection.cs" />
     <Compile Include="Media\Shape.cs" />
     <Compile Include="Media\Easing.cs" />
@@ -393,29 +372,27 @@
     <Compile Include="Models\IMainViewOptions.cs" />
     <Compile Include="Models\Panel\Default\Find.cs" />
     <Compile Include="Models\Panel\Default\FindResults.cs" />
-    <Compile Include="Models\Panel\Default\MarkDown.cs" />
     <Compile Include="Models\Panel\Default\Notifications.cs" />
     <Compile Include="Models\Panel\PanelOptions.cs" />
-    <Compile Include="Native\WindowMessages.cs" />
+    <Compile Include="Imports\WindowMessages.cs" />
     <Compile Include="Styles\StyleKeys.cs" />
     <Compile Include="Styles\StyleKey.cs" />
-    <Compile Include="Text\Expressions.cs" />
     <Compile Include="Models\FindSource.cs" />
     <Compile Include="Theme\ThemeKeys.cs" />
     <Compile Include="Theme\ThemeKey.cs" />
-    <Compile Include="Core\Other\InternalAssembly.cs" />
-    <Compile Include="Configuration\AssemblySource.cs" />
-    <Compile Include="Core\Other\Value.cs" />
+    <Compile Include="Core\InternalAssembly.cs" />
+    <Compile Include="Config\AssemblySource.cs" />
+    <Compile Include="Core\Value.cs" />
     <Compile Include="Theme\DefaultThemes.cs" />
-    <Compile Include="Configuration\StartQueue.cs" />
-    <Compile Include="Configuration\StartTask.cs" />
-    <Compile Include="Configuration\Application.cs" />
+    <Compile Include="Config\StartQueue.cs" />
+    <Compile Include="Config\StartTask.cs" />
+    <Compile Include="Config\Application.cs" />
     <Compile Include="Models\DockViewOptions.cs" />
-    <Compile Include="Configuration\DataFolders.cs" />
-    <Compile Include="Configuration\ApplicationProperties.cs" />
-    <Compile Include="Configuration\IPluginResources.cs" />
-    <Compile Include="Configuration\ReopenedEvent.cs" />
-    <Compile Include="Configuration\UnhandledException.cs" />
+    <Compile Include="Config\DataFolders.cs" />
+    <Compile Include="Config\ApplicationProperties.cs" />
+    <Compile Include="Config\IPluginResources.cs" />
+    <Compile Include="Config\ReopenedEvent.cs" />
+    <Compile Include="Config\UnhandledException.cs" />
     <Compile Include="Controls\Adorner\DropAdorner.cs" />
     <Compile Include="Controls\Border\Border.cs" />
     <Compile Include="Controls\Border\DashedBorder.cs" />
@@ -425,18 +402,11 @@
     <Compile Include="Controls\Browser\BrowserOptions.cs" />
     <Compile Include="Controls\Label\TitleLabel.cs" />
     <Compile Include="Controls\Label\AccentLabel.cs" />
-    <Compile Include="Controls\Navigator\NavigatorCollection.cs" />
-    <Compile Include="Controls\Navigator\NavigatorGroup.cs" />
-    <Compile Include="Controls\Navigator\NavigatorOptions.cs" />
-    <Compile Include="Controls\StorageWindow\NavigatorWindow\NavigatorWindow.xaml.cs">
-      <DependentUpon>NavigatorWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Element\ChildElement.cs" />
     <Compile Include="Controls\Border\PopupBorder.cs" />
     <Compile Include="Controls\Element\RotateElement.cs" />
     <Compile Include="Controls\StorageWindow\StorageWindow.cs" />
     <Compile Include="Controls\StorageWindow\StorageWindowModes.cs" />
-    <Compile Include="Controls\StorageWindow\StorageWindowTypes.cs" />
     <Compile Include="Controls\ComboBox\ComboBoxTemplateSelector.cs" />
     <Compile Include="Controls\DockControl\IDockContentControl.cs" />
     <Compile Include="Controls\DockControl\IDockPanelSource.cs" />
@@ -445,27 +415,20 @@
     <Compile Include="Controls\DockControl\Layout\ILayout.cs" />
     <Compile Include="Controls\ColorControl\ColorControlOptions.cs" />
     <Compile Include="Controls\ColorControl\IColorControlOptions.cs" />
-    <Compile Include="Configuration\SingleInstanceException.cs" />
+    <Compile Include="Config\SingleInstanceException.cs" />
     <Compile Include="Controls\TextElement\BulletElement.xaml.cs">
       <DependentUpon>BulletElement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ColorSelector\AlphaSlider.cs" />
-    <Compile Include="Controls\ColorSelector\ColorSelector.cs" />
-    <Compile Include="Controls\ColorSelector\ComponentSelector.cs" />
-    <Compile Include="Controls\ColorSelector\ComponentSlider.cs" />
-    <Compile Include="Core\Other\PopupTriggers.cs" />
+    <Compile Include="Controls\ColorSelector\Slider\AlphaSlider.cs" />
+    <Compile Include="Controls\ColorSelector\Base.cs" />
+    <Compile Include="Controls\ColorSelector\Selector\ComponentSelector2D.cs" />
+    <Compile Include="Controls\ColorSelector\Slider\ComponentSlider.cs" />
+    <Compile Include="Core\PopupTriggers.cs" />
     <Compile Include="Controls\PropertyGrid\MemberVisibilityConverter.cs" />
     <Compile Include="Controls\PropertyGrid\MemberSortComparer.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberCrumb.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberCrumbSeparator.cs" />
+    <Compile Include="Reflection\MemberCrumb.cs" />
+    <Compile Include="Reflection\MemberCrumbSeparator.cs" />
     <Compile Include="Controls\PropertyGrid\MemberGroupConverterSelector.cs" />
-    <Compile Include="Controls\Table\Cell.cs" />
-    <Compile Include="Controls\Table\CellConverter.cs" />
-    <Compile Include="Controls\Table\CellDictionary.cs" />
-    <Compile Include="Controls\Table\CellFormats.cs" />
-    <Compile Include="Controls\Table\Row.cs" />
-    <Compile Include="Controls\Table\TableData.cs" />
-    <Compile Include="Controls\Table\Table.cs" />
     <Compile Include="Controls\TextBox\Suggestions\DefaultSuggestionHandler.cs" />
     <Compile Include="Controls\TextBox\Suggestions\ISuggest.cs" />
     <Compile Include="Controls\TokenBox\MultiPathBox.cs" />
@@ -499,7 +462,6 @@
     <Compile Include="Converters\Type\AngleRange.cs" />
     <Compile Include="Converters\Type\String.cs" />
     <Compile Include="Data\Binding\DuoBinding.cs" />
-    <Compile Include="Controls\Table\CellReference.cs" />
     <Compile Include="Data\Binding\Relative\Self.cs" />
     <Compile Include="Input\IKeySelectComparer.cs" />
     <Compile Include="Input\KeySelectComparer.cs" />
@@ -546,7 +508,6 @@
     </Compile>
     <Compile Include="Models\Panel\PanelButton.cs" />
     <Compile Include="Models\Panel\Default\Colors.cs" />
-    <Compile Include="Controls\ColorControl\Panels\Component.cs" />
     <Compile Include="Controls\DockControl\PanelTemplateSelector.cs" />
     <Compile Include="Controls\Window\MainWindow.cs" />
     <Compile Include="Controls\PickerWindow\PickerWindow.cs" />
@@ -595,13 +556,13 @@
     <Compile Include="Storage\Watcher\ParentWatcher.cs" />
     <Compile Include="Storage\PathChangedEvent.cs" />
     <Compile Include="Storage\Validation\IValidate.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberRoute.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberData.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberVisibility.cs" />
-    <Compile Include="Controls\PropertyGrid\Models\Field.cs" />
-    <Compile Include="Controls\PropertyGrid\Models\Member.cs" />
-    <Compile Include="Controls\PropertyGrid\Models\Entry.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberSource.cs" />
+    <Compile Include="Reflection\MemberRoute.cs" />
+    <Compile Include="Reflection\MemberData.cs" />
+    <Compile Include="Reflection\MemberVisibility.cs" />
+    <Compile Include="Reflection\MemberModel\Field.cs" />
+    <Compile Include="Reflection\MemberModel\Base.cs" />
+    <Compile Include="Reflection\MemberModel\Entry.cs" />
+    <Compile Include="Reflection\MemberSource.cs" />
     <Compile Include="Controls\ToolBar\FavoriteBar.xaml.cs">
       <DependentUpon>FavoriteBar.xaml</DependentUpon>
     </Compile>
@@ -662,7 +623,7 @@
       <DependentUpon>Main.resx</DependentUpon>
     </Compile>
     <Compile Include="Linq\Dependency\DataGridRow.cs" />
-    <Compile Include="Core\Other\KeyTemplate.cs" />
+    <Compile Include="Core\KeyTemplate.cs" />
     <Compile Include="Linq\Dependency\TextBlock.cs" />
     <Compile Include="Linq\Core\Thickness.cs" />
     <Compile Include="Markup\Assembly.cs" />
@@ -683,7 +644,6 @@
     <Compile Include="Models\Document\DocumentCollection.cs" />
     <Compile Include="Models\Panel\Panel.cs" />
     <Compile Include="Models\Panel\PanelCollection.cs" />
-    <Compile Include="Serialization\XmlCallbackSerializer.cs" />
     <Compile Include="Storage\FilterExtensions.cs" />
     <Compile Include="Storage\Favorites\Favorite.cs" />
     <Compile Include="Storage\Favorites\Favorites.cs" />
@@ -778,31 +738,25 @@
     <Compile Include="Storage\Validation\RemoteValidator.cs" />
     <Compile Include="Storage\Validation\LocalValidator.cs" />
     <Compile Include="Storage\Validation\ValidateConverter.cs" />
-    <Compile Include="Text\Bullets.cs" />
     <Compile Include="Collections\ObjectModel\ObjectCollection.cs" />
     <Compile Include="Collections\ObjectModel\StringCollection.cs" />
     <Compile Include="Collections\Serialization\Writer.cs" />
     <Compile Include="Collections\Serialization\XmlWriter.cs" />
-    <Compile Include="Configuration\AppManifest.cs" />
-    <Compile Include="Configuration\AppManifestPair.cs" />
-    <Compile Include="Configuration\AssemblyContext.cs" />
-    <Compile Include="Configuration\IApplication.cs" />
-    <Compile Include="Configuration\IPlugin.cs" />
-    <Compile Include="Configuration\ManifestFormatException.cs" />
-    <Compile Include="Configuration\ManifestNotFoundException.cs" />
-    <Compile Include="Configuration\Plugin.cs" />
-    <Compile Include="Configuration\Plugins.cs" />
-    <Compile Include="Configuration\Stability.cs" />
-    <Compile Include="Configuration\Updater.cs" />
+    <Compile Include="Config\AssemblyContext.cs" />
+    <Compile Include="Config\IApplication.cs" />
+    <Compile Include="Config\IPlugin.cs" />
+    <Compile Include="Config\Plugin.cs" />
+    <Compile Include="Config\Plugins.cs" />
+    <Compile Include="Config\Stability.cs" />
     <Compile Include="Controls\Control\Other\Clock.xaml.cs">
       <DependentUpon>Clock.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Window\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Other\DialogHandler.cs" />
+    <Compile Include="Core\DialogHandler.cs" />
     <Compile Include="Controls\Button\Buttons.cs" />
-    <Compile Include="Core\Other\DialogImage.cs" />
+    <Compile Include="Core\DialogImage.cs" />
     <Compile Include="Converters\Type\DashStyle.cs" />
     <Compile Include="Effects\BaseEffect.cs" />
     <Compile Include="Controls\ContentControl\ContentControl3D.cs" />
@@ -821,9 +775,9 @@
     <Compile Include="Controls\PropertyGrid\MemberGroupName.cs" />
     <Compile Include="Controls\PropertyGrid\MemberSortName.cs" />
     <Compile Include="Controls\PropertyGrid\MemberTemplateSelector.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberAttributes.cs" />
-    <Compile Include="Controls\PropertyGrid\MemberCollection.cs" />
-    <Compile Include="Controls\PropertyGrid\Models\Property.cs" />
+    <Compile Include="Reflection\MemberAttributes.cs" />
+    <Compile Include="Reflection\MemberCollection.cs" />
+    <Compile Include="Reflection\MemberModel\Property.cs" />
     <Compile Include="Controls\ComboBox\TimeZoneBox.cs" />
     <Compile Include="Controls\ProgressBar\ProgressRing.cs" />
     <Compile Include="Controls\Control\PatternControl.cs" />
@@ -841,7 +795,7 @@
     <Compile Include="Converters\Type\DoubleSize.cs" />
     <Compile Include="Converters\Type\GridLengthArray.cs" />
     <Compile Include="Data\Binding\Relative\Ancestor.cs" />
-    <Compile Include="Core\Other\TypeTemplateSelector.cs" />
+    <Compile Include="Core\TypeTemplateSelector.cs" />
     <Compile Include="Linq\Core\Bitmap.cs" />
     <Compile Include="Linq\Core\BitmapImage.cs" />
     <Compile Include="Linq\Core\BitmapSource.cs" />
@@ -858,18 +812,15 @@
     <Compile Include="Media\Display.cs" />
     <Compile Include="Media\Interpolations.cs" />
     <Compile Include="Media\PixelFormat.cs" />
-    <Compile Include="Native\ICONINFO.cs" />
-    <Compile Include="Native\MINMAXINFO.cs" />
-    <Compile Include="Native\MONITORINFO.cs" />
-    <Compile Include="Native\POINT.cs" />
-    <Compile Include="Native\RECT.cs" />
+    <Compile Include="Imports\ICONINFO.cs" />
+    <Compile Include="Imports\MINMAXINFO.cs" />
+    <Compile Include="Imports\MONITORINFO.cs" />
+    <Compile Include="Imports\POINT.cs" />
+    <Compile Include="Imports\RECT.cs" />
     <Compile Include="Storage\Attributes.cs" />
     <Compile Include="Storage\OverwriteCondition.cs" />
     <Compile Include="Storage\Watcher\Watcher.cs" />
     <Compile Include="Storage\Collections\PathCollection.cs" />
-    <Compile Include="System\Drawing\Point2D.cs" />
-    <Compile Include="Text\Characters.cs" />
-    <Compile Include="Text\Converter.cs" />
     <Compile Include="Behavior\ReverseZIndex.cs" />
     <Compile Include="Controls\Control\SlideControl.cs" />
     <Compile Include="Controls\PickerBox\PickerBox.Generic.cs" />
@@ -880,11 +831,11 @@
     <Compile Include="Controls\PickerWindow\ColorWindow.xaml.cs">
       <DependentUpon>ColorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\ISingleApplication.cs" />
+    <Compile Include="Config\ISingleApplication.cs" />
     <Compile Include="Models\MainViewOptions.cs" />
-    <Compile Include="Configuration\SingleApplication.cs" />
-    <Compile Include="Configuration\SingleInstance.cs" />
-    <Compile Include="Core\Other\DependencyProperty.Generic.cs" />
+    <Compile Include="Config\SingleApplication.cs" />
+    <Compile Include="Config\SingleInstance.cs" />
+    <Compile Include="Core\DependencyProperty.Generic.cs" />
     <Compile Include="Input\DirectionalNavigation.cs" />
     <Compile Include="Input\Global\BaseHookListener.cs" />
     <Compile Include="Input\Global\HookType.cs" />
@@ -930,20 +881,16 @@
     <Compile Include="Linq\Dependency\TreeViewItem.cs" />
     <Compile Include="Linq\Core\Vector.cs" />
     <Compile Include="Linq\Dependency\Window.cs" />
-    <Compile Include="Native\ExifOrientations.cs" />
-    <Compile Include="Native\FileOperationFlags.cs" />
-    <Compile Include="Native\FileOperationType.cs" />
-    <Compile Include="Native\IImageList.cs" />
-    <Compile Include="Native\IMAGEINFO.cs" />
-    <Compile Include="Native\IMAGELISTDRAWPARAMS.cs" />
-    <Compile Include="Native\SHELLEXECUTEINFO.cs" />
-    <Compile Include="Native\SHFILEINFO.cs" />
-    <Compile Include="Native\SHFILEOPSTRUCT.cs" />
-    <Compile Include="Native\Win32.cs" />
-    <Page Include="Controls\StorageWindow\NavigatorWindow\NavigatorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Compile Include="Imports\ExifOrientations.cs" />
+    <Compile Include="Imports\FileOperationFlags.cs" />
+    <Compile Include="Imports\FileOperationType.cs" />
+    <Compile Include="Imports\IImageList.cs" />
+    <Compile Include="Imports\IMAGEINFO.cs" />
+    <Compile Include="Imports\IMAGELISTDRAWPARAMS.cs" />
+    <Compile Include="Imports\SHELLEXECUTEINFO.cs" />
+    <Compile Include="Imports\SHFILEINFO.cs" />
+    <Compile Include="Imports\SHFILEOPSTRUCT.cs" />
+    <Compile Include="Imports\Win32.cs" />
     <Page Include="Controls\TextElement\BulletElement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -967,10 +914,6 @@
     <Page Include="Styles\Generic\PickerBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Styles\Generic\Navigator.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\Generic\PasswordBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1020,10 +963,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Generic\Table.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Styles\Generic\Ruler.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1056,12 +995,12 @@
     <Compile Include="Controls\ContentControl\ResultControl.cs" />
     <Compile Include="Controls\ContentControl\TransitionControl.cs" />
     <Compile Include="Controls\ItemsControl\FlagGroup.cs" />
-    <Compile Include="Core\Other\ItemView.cs" />
+    <Compile Include="Core\ItemView.cs" />
     <Compile Include="Controls\Element\LineElement.cs" />
     <Compile Include="Controls\Button\ImageButton.cs" />
     <Compile Include="Controls\ToggleButton\ImageToggleButton.cs" />
     <Compile Include="Controls\Element\ImageElement.cs" />
-    <Compile Include="Core\Other\SelectionMode.cs" />
+    <Compile Include="Core\SelectionMode.cs" />
     <Compile Include="Controls\ItemsControl\RadioGroup.cs" />
     <Compile Include="Controls\Grid\HorizontalGrid.cs" />
     <Compile Include="Controls\Adorner\RippleAdorner.cs" />
@@ -1118,7 +1057,7 @@
     <Compile Include="Input\Relay\DelegateCommand.cs" />
     <Compile Include="Input\Relay\IExecuteWithObject.cs" />
     <Compile Include="Input\Relay\IExecuteWithObjectAndResult.cs" />
-    <Compile Include="Native\MapType.cs" />
+    <Compile Include="Imports\MapType.cs" />
     <Compile Include="Input\MouseEvent.cs" />
     <Compile Include="Input\Relay\RelayCommand.cs" />
     <Compile Include="Input\Relay\RelayCommand.Generic.cs" />
@@ -1143,26 +1082,12 @@
     <Compile Include="Linq\Core\WriteableBitmap.cs" />
     <Compile Include="Markup\Enumerate.cs" />
     <Compile Include="Markup\Image.cs" />
-    <Compile Include="Media\Animation\ExpanderDoubleAnimation.cs" />
-    <Compile Include="Media\Animation\GridLengthAnimation.cs" />
+    <Compile Include="Animation\ExpanderDoubleAnimation.cs" />
+    <Compile Include="Animation\GridLengthAnimation.cs" />
     <Compile Include="Media\Pixel.cs" />
-    <Compile Include="System\Windows\Point2D.cs" />
-    <Compile Include="System\Windows\Point3D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Text\Encoding.cs" />
-    <Compile Include="Text\Encryption.cs" />
-    <Compile Include="Text\SymmetricAlgorithm.cs" />
-    <Compile Include="Configuration\Resources.cs" />
-    <Compile Include="System\Windows\IPoint2D.cs" />
-    <Compile Include="System\Windows\IPoint3D.cs" />
-    <Compile Include="Configuration\ApplicationResources.cs" />
-    <Compile Include="Timers\BaseTimer.cs" />
-    <Compile Include="Timers\DispatcherTimer.cs" />
-    <Compile Include="Timers\TickEvent.cs" />
-    <Compile Include="Timers\Timer.cs" />
-    <Compile Include="Web\Fetch.cs" />
-    <Compile Include="Web\FetchStream.cs" />
-    <Compile Include="Web\Protocol.cs" />
+    <Compile Include="Config\Resources.cs" />
+    <Compile Include="Config\ApplicationResources.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\Control\Other\Clock.xaml">
@@ -1643,7 +1568,7 @@
     <Resource Include="Images\GradientRadial.png" />
     <Resource Include="Images\Shape.png" />
     <Resource Include="Images\ImportImage.png" />
-    <Content Include="Media\Animation\LICENSE.txt" />
+    <Content Include="Animation\LICENSE.txt" />
     <Resource Include="Images\OpenBox.png" />
     <Resource Include="Images\Calendar.png" />
     <Resource Include="Images\512-Drive.png" />
@@ -1693,7 +1618,7 @@
     <Resource Include="Images\DockRight.png" />
     <Resource Include="Images\DockTop.png" />
     <Resource Include="Controls\ColorControl\Layouts\Default.xml" />
-    <Content Include="Effects\ColorModel.fx" />
+    <Content Include="Effects\ColorModelEffect.fx" />
     <Resource Include="Images\Hide.png" />
     <Resource Include="Images\Pin.png" />
     <Resource Include="Images\Star.png" />
@@ -1727,11 +1652,8 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
     <None Include="LICENSE" />
-    <Resource Include="Effects\ColorModel.ps" />
+    <Resource Include="Effects\ColorModelEffect.ps" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,5 +1,6 @@
 ﻿using Imagin.Core.Controls;
 using Imagin.Core.Input;
+using Imagin.Core.Reflection;
 using System;
 using System.Windows.Input;
 

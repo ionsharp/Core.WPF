@@ -40,9 +40,6 @@
         History="{Binding Options.ExplorerOptions.History, Mode=OneWayToSource}"
         Linq:XExplorer.Path="{Binding Path, Mode=TwoWay}"
         Margin="0,5,0,0"
-        NavigatorOptions="{Binding Options.ExplorerOptions.NavigatorOptions}"
-        Panel1Length="{Binding Options.ExplorerOptions.Panel1Length, Mode=TwoWay}"
-        Panel2Length="{Binding Options.ExplorerOptions.Panel2Length, Mode=TwoWay}"
         SelectionMode="{Binding SelectionMode}"
         ShowFavoriteBar="{Binding Options.ExplorerOptions.ShowFavoriteBar, Mode=OneWay}"
         ViewFiles="{Binding ViewFiles}"/>

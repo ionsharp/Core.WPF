@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace Imagin.Core.Controls
 {
-    [DisplayName("Color view")]
+    [DisplayName("Color control options")]
     [Serializable]
     public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISerialize
     {
@@ -22,7 +22,7 @@ namespace Imagin.Core.Controls
 
         bool autoSaveLayout = true;
         [Category(Category.Layouts)]
-        [DisplayName("AutoSave")]
+        [DisplayName("Auto save")]
         public bool AutoSaveLayout
         {
             get => autoSaveLayout;
@@ -41,6 +41,15 @@ namespace Imagin.Core.Controls
         {
             get => colors;
             set => this.Change(ref colors, value);
+        }
+
+        bool componentNormalize = false;
+        [Category(Category.Component)]
+        [DisplayName("Normalize")]
+        public bool ComponentNormalize
+        {
+            get => componentNormalize;
+            set => this.Change(ref componentNormalize, value);
         }
 
         int componentPrecision = 2;
@@ -92,17 +101,13 @@ namespace Imagin.Core.Controls
         #region ColorControlOptions
 
         public ColorControlOptions() : base() 
-            => XList.ForEach<PropertyInfo>(typeof(WorkingProfile.Default).GetProperties(BindingFlags.Public | BindingFlags.Static), i => profiles.Add(new(i.GetDisplayName(), (WorkingProfile)i.GetValue(null))));
+            => XList.ForEach<PropertyInfo>(typeof(WorkingProfiles).GetProperties(BindingFlags.Public | BindingFlags.Static), i => profiles.Add(new(i.GetDisplayName(), (WorkingProfile)i.GetValue(null))));
 
         public ColorControlOptions(string filePath) : this() => FilePath = filePath;
 
         #endregion
 
         #region Methods
-
-        public override string ToString() => "Color view";
-
-        //...
 
         public static Result Load(string filePath, out ColorControlOptions data)
         {
@@ -136,10 +141,10 @@ namespace Imagin.Core.Controls
         {
             ColorControl = colorPicker;
 
-            Colors = new GroupWriter<StringColor>($@"{Configuration.ApplicationProperties.GetFolderPath(Configuration.DataFolders.Documents)}\ColorControl", "Colors", "data", "colors", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
+            Colors = new GroupWriter<StringColor>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\ColorControl", "Colors", "data", "colors", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
             Colors.Load();
 
-            Layouts = new Layouts($@"{Configuration.ApplicationProperties.GetFolderPath(Configuration.DataFolders.Documents)}\ColorControl\Layouts", GetDefaultLayouts());
+            Layouts = new Layouts($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\ColorControl\Layouts", GetDefaultLayouts());
             Layouts.Update(layout);
             Layouts.Refresh();
         }
