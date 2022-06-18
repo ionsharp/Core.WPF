@@ -7,7 +7,7 @@ namespace Imagin.Core.Controls
 {
     public partial class PropertyWindow : Window
     {
-        public static readonly ReferenceKey<PropertyGrid> PropertyGridKey = new();
+        public static readonly ReferenceKey<MemberGrid> MemberGridKey = new();
 
         public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(nameof(Source), typeof(object), typeof(PropertyWindow), new FrameworkPropertyMetadata(null));
         public object Source
@@ -28,27 +28,27 @@ namespace Imagin.Core.Controls
 
         //...
 
-        public static T Show<T>(string title, T source, Action<PropertyGrid> action = null)
+        public static T Show<T>(string title, T source, Action<MemberGrid> action = null)
         {
             var result = new PropertyWindow();
             result.SetCurrentValue(SourceProperty, source);
             result.SetCurrentValue(TitleProperty, title.NullOrEmpty() ? source.GetType().Name : title);
-            if (result.GetChild<PropertyGrid>(PropertyGridKey) is PropertyGrid i)
+            if (result.GetChild<MemberGrid>(MemberGridKey) is MemberGrid i)
                 action?.Invoke(i);
 
             result.Show();
             return (T)result.Source;
         }
 
-        public static T ShowDialog<T>(string title, T source, Action<PropertyGrid> action = null)
+        public static T ShowDialog<T>(string title, T source, Action<MemberGrid> action = null)
             => ShowDialog(title, source, out int result, action);
 
-        public static T ShowDialog<T>(string title, T source, out int result, Action<PropertyGrid> action, params Button[] buttons)
+        public static T ShowDialog<T>(string title, T source, out int result, Action<MemberGrid> action, params Button[] buttons)
         {
             var window = new PropertyWindow(buttons);
             window.SetCurrentValue(SourceProperty, source);
             window.SetCurrentValue(TitleProperty, title.NullOrEmpty() ? source.GetType().Name : title);
-            if (window.GetChild(PropertyGridKey) is PropertyGrid i)
+            if (window.GetChild(MemberGridKey) is MemberGrid i)
                 action?.Invoke(i);
 
             window.ShowDialog();

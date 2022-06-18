@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Analytics="clr-namespace:Imagin.Core.Analytics"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Core="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
@@ -63,7 +63,7 @@
     <!-- ... [Option, Tool] -->
     
     <DataTemplate x:Key="{x:Static local:DockControl.PanelOptionsTemplateKey}">
-        <local:PropertyGrid
+        <local:MemberGrid
             BorderThickness="0"
             GroupName="Category"
             HeaderVisibility="Visible"
@@ -73,7 +73,7 @@
 
     <DataTemplate x:Key="{x:Static local:DockControl.PanelToolsTemplateKey}">
         <Border x:Name="Border" BorderBrush="{local:ThemeKey ActualKey=Border}">
-            <local:PropertyGrid
+            <local:MemberGrid
                 BorderThickness="0"
                 GroupName="Category"
                 HeaderVisibility="Collapsed"
@@ -115,7 +115,7 @@
                             </DataTemplate>
                         </ContentPresenter.ContentTemplate>
                     </ContentPresenter>
-                    <local:PropertyGrid
+                    <local:MemberGrid
                         BorderThickness="0"
                         GroupName="Category"
                         HeaderVisibility="Collapsed"
@@ -272,13 +272,13 @@
                 Margin="0,0,5,0"
                 Source="{Markup:InternalImage Unpin.png}"
                 ToolTip="{l:Loc Unpin}"
-                Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
             <local:ImageButton Grid.Column="7"
                 Command="{Data:Ancestor DockControl.HideCommand, local:DockRootControl}"
                 CommandParameter="{Binding}"
                 Source="{Markup:InternalImage X.png}"
                 ToolTip="{l:Loc Hide}"
-                Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
         </Grid>
     </DataTemplate>
 
@@ -377,7 +377,7 @@
             local:XDockControl.DragTarget="{Binding}"
             Padding="10,5"
             VerticalAlignment="Center">
-            <local:ImageElement Source="{Binding Icon, Converter={x:Static Converters:NullConverter.Default}}"/>
+            <local:ImageElement Source="{Binding Icon, Converter={x:Static Conversion:NullConverter.Default}}"/>
         </Border>
     </DataTemplate>
 
@@ -514,7 +514,7 @@
                                 Linq:XTextBlock.SplitText="{Binding Text}"
                                 Linq:XTextBlock.SplitTextKey="{Binding Data.Results.FindText, Source={StaticResource FindResultsPanel}}"
                                 TextTrimming="CharacterEllipsis"
-                                TextWrapping="{Binding Data.TextWrap, Converter={x:Static Converters:TextWrappingConverter.Default}, Source={StaticResource FindResultsPanel}}">
+                                TextWrapping="{Binding Data.TextWrap, Converter={x:Static Conversion:TextWrappingConverter.Default}, Source={StaticResource FindResultsPanel}}">
                                 <Linq:XTextBlock.SplitTextStyle>
                                     <Style TargetType="Run">
                                         <Setter Property="Background" Value="DarkOrange"/>
@@ -634,7 +634,7 @@
                                         <TextBlock
                                             Text="{Binding Result.Text}"
                                             TextTrimming="CharacterEllipsis"
-                                            TextWrapping="{Binding Data.TextWrap, Converter={x:Static Converters:TextWrappingConverter.Default}, Source={StaticResource LogPanel}}"
+                                            TextWrapping="{Binding Data.TextWrap, Converter={x:Static Conversion:TextWrappingConverter.Default}, Source={StaticResource LogPanel}}"
                                             ToolTip="{Data:Self Text}"/>
                                     </DataTemplate>
 
@@ -646,7 +646,7 @@
                                                     <Setter.Value>
                                                         <DataTemplate DataType="SharedAnalytics:LogEntry">
                                                             <local:ErrorControl Error="{Binding Result}" 
-                                                                Wrap="{Binding Data.TextWrap, Converter={x:Static Converters:TextWrappingConverter.Default}, Source={StaticResource LogPanel}}"/>
+                                                                Wrap="{Binding Data.TextWrap, Converter={x:Static Conversion:TextWrappingConverter.Default}, Source={StaticResource LogPanel}}"/>
                                                         </DataTemplate>
                                                     </Setter.Value>
                                                 </Setter>
@@ -812,7 +812,7 @@
                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                                 Text="{Binding Text}"
-                                TextWrapping="{Binding TextWrap, Converter={x:Static Converters:TextWrappingConverter.Default}}"
+                                TextWrapping="{Binding TextWrap, Converter={x:Static Conversion:TextWrappingConverter.Default}}"
                                 VerticalAlignment="Stretch"
                                 VerticalContentAlignment="Top"/>
                         </DataTemplate>
@@ -865,11 +865,11 @@
                                                 FontWeight="Bold" 
                                                 Text="{Binding Title}"
                                                 TextTrimming="CharacterEllipsis"
-                                                TextWrapping="{Binding Data.TextWrap, Converter={x:Static Converters:TextWrappingConverter.Default}, Source={StaticResource NotificationsPanel}}"/>
+                                                TextWrapping="{Binding Data.TextWrap, Converter={x:Static Conversion:TextWrappingConverter.Default}, Source={StaticResource NotificationsPanel}}"/>
                                             <TextBlock 
                                                 Opacity="0.5" 
                                                 Text="{Binding Result.Text}"
-                                                TextWrapping="{Binding Data.TextWrap, Converter={x:Static Converters:TextWrappingConverter.Default}, Source={StaticResource NotificationsPanel}}"/>
+                                                TextWrapping="{Binding Data.TextWrap, Converter={x:Static Conversion:TextWrappingConverter.Default}, Source={StaticResource NotificationsPanel}}"/>
                                             <local:AccentLabel HorizontalAlignment="Left">
                                                 <TextBlock FontStyle="Italic" Opacity="0.8" Text="{Data:RelativeTimeBinding Created}"/>
                                             </local:AccentLabel>
@@ -956,7 +956,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Models:OptionsPanel.TemplateKey}">
-        <local:PropertyGrid
+        <local:MemberGrid
             BorderThickness="0"
             GroupName="Category"
             HeaderVisibility="Visible"
@@ -964,7 +964,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Models:PropertiesPanel.TemplateKey}">
-        <local:PropertyGrid
+        <local:MemberGrid
             BorderThickness="0"
             GroupName="Category"
             HeaderVisibility="Visible"
@@ -972,7 +972,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Models:ThemePanel.TemplateKey}">
-        <local:PropertyGrid
+        <local:MemberGrid
             BorderThickness="0"
             Filter="Entry"
             GroupName="None"
@@ -1112,20 +1112,20 @@
                                         Command="{Binding Data.MinimizeCommand, Source={StaticResource DockControl}}"
                                         CommandParameter="{Binding}"
                                         Icon="{Markup:InternalImage Minimize.png}"
-                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                     <MenuItem Header="{l:Loc Restore}"
                                         Command="{Binding Data.RestoreCommand, Source={StaticResource DockControl}}"
                                         CommandParameter="{Binding}"
                                         Icon="{Markup:InternalImage Restore.png}"
-                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                     <MenuItem Header="{l:Loc MinimizeAll}"
                                         Command="{Binding Data.MinimizeAllCommand, Source={StaticResource DockControl}}"
                                         Icon="{Markup:InternalImage MinimizeAll.png}"
-                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                     <MenuItem Header="{l:Loc RestoreAll}"
                                         Command="{Binding Data.RestoreAllCommand, Source={StaticResource DockControl}}"
                                         Icon="{Markup:InternalImage RestoreAll.png}"
-                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                     <Separator/>
                                     <MenuItem Header="{l:Loc Float}"
                                         Command="{Binding Data.FloatCommand, Source={StaticResource DockControl}}"
@@ -1147,19 +1147,19 @@
                                     <MenuItem Header="{l:Loc MoveToPreviousGroup}"
                                         Command="{Binding Data.MoveDocumentToPreviousGroupCommand, Source={StaticResource DockControl}}"
                                         CommandParameter="{Binding}"
-                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                     <MenuItem Header="{l:Loc MoveAllToPreviousGroup}"
                                         Command="{Binding Data.MoveAllDocumentsToPreviousGroupCommand, Source={StaticResource DockControl}}"
                                         CommandParameter="{Binding}"
-                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                     <MenuItem Header="{l:Loc MoveToNextGroup}"
                                         Command="{Binding Data.MoveDocumentToNextGroupCommand, Source={StaticResource DockControl}}"
                                         CommandParameter="{Binding}"
-                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                     <MenuItem Header="{l:Loc MoveAllToNextGroup}"
                                         Command="{Binding Data.MoveAllDocumentsToNextGroupCommand, Source={StaticResource DockControl}}"
                                         CommandParameter="{Binding}"
-                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                        Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                     <Separator/>
                                     <MenuItem Header="{l:Loc Close}"
                                         Command="{Binding Data.CloseDocumentCommand, Source={StaticResource DockControl}}"
@@ -1188,21 +1188,21 @@
                                 Visibility="{Data:VisibilityBinding IsBusy}"/>
                             <Grid Grid.Column="3"
                                 Margin="5,0,0,0"
-                                Visibility="{Binding CanMinimize, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}">
+                                Visibility="{Binding CanMinimize, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}">
                                 <local:ImageButton x:Name="MinimizeButton"
                                     Command="{Data:Ancestor DockControl.MinimizeCommand, {x:Type local:DockRootControl}}"
                                     CommandParameter="{Binding}"
                                     Source="{Markup:InternalImage Minus.png}"
                                     SourceSize="12,12"
                                     ToolTip="{l:Loc Minimize}"
-                                    Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                    Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                 <local:ImageButton x:Name="RestoreButton"
                                     Command="{Data:Ancestor DockControl.RestoreCommand, {x:Type local:DockRootControl}}"
                                     CommandParameter="{Binding}"
                                     Source="{Markup:InternalImage Restore.png}"
                                     SourceSize="12,12"
                                     ToolTip="{l:Loc Restore}"
-                                    Visibility="{Data:Self IsEnabled, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                    Visibility="{Data:Self IsEnabled, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                             </Grid>
                             <local:ImageButton Grid.Column="4" x:Name="CloseButton"
                                 Command="{Data:Ancestor DockControl.CloseDocumentCommand, {x:Type local:DockRootControl}}"
@@ -1211,7 +1211,7 @@
                                 Source="{Markup:InternalImage XRound.png}"
                                 SourceSize="12,12"
                                 ToolTip="{l:Loc Close}"
-                                Visibility="{Binding CanClose, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                Visibility="{Binding CanClose, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                         </Grid>
                     </Grid>
                 </DataTemplate>
@@ -1286,9 +1286,9 @@
                             ContextMenu="{StaticResource {x:Static local:DockControl.PanelMenuKey}}">
                             <local:ImageElement x:Name="Icon"
                                 Margin="0,0,5,0"
-                                Source="{Binding Icon, Converter={x:Static Converters:NullConverter.Default}}"
+                                Source="{Binding Icon, Converter={x:Static Conversion:NullConverter.Default}}"
                                 VerticalAlignment="Center"
-                                Visibility="{Binding Icon, Converter={x:Static Converters:ObjectToVisibilityConverter.Default}}"/>
+                                Visibility="{Binding Icon, Converter={x:Static Conversion:ObjectToVisibilityConverter.Default}}"/>
                             <ContentPresenter Grid.Column="1"
                                 Content="{Binding}"
                                 ContentTemplate="{Data:Ancestor DockControl.PanelTitleTemplate, local:DockRootControl}"
@@ -1302,7 +1302,7 @@
                                 SourceSize="12,12"
                                 ToolTip="{l:Loc Hide}"
                                 VerticalAlignment="Center"
-                                Visibility="{Binding CanHide, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                Visibility="{Binding CanHide, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                         </Grid>
                     </Grid>
                 </DataTemplate>
@@ -1335,7 +1335,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Linq:XElement.FadeTrigger="True"
-                            Linq:XElement.FadeTriggerSource="{TemplateBinding Refreshing, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
+                            Linq:XElement.FadeTriggerSource="{TemplateBinding Refreshing, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
                             Padding="{TemplateBinding Padding}"/>
                         <ContentPresenter
                             ContentTemplate="{TemplateBinding ProgressTemplate}"
@@ -1867,7 +1867,7 @@
                         <Grid Grid.Column="1" Grid.Row="1"
                             Visibility="{Data:VisibilityBinding IsTopOpen, Relative=TemplatedParent}">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="{Data:TemplatedParent TopPanel.PinHeight, Converter={x:Static Converters:GridLengthConverter.Default}, Mode=TwoWay}"/>
+                                <RowDefinition Height="{Data:TemplatedParent TopPanel.PinHeight, Converter={x:Static Conversion:GridLengthConverter.Default}, Mode=TwoWay}"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
@@ -1887,7 +1887,7 @@
                         <Grid Grid.Column="1" Grid.Row="1"
                             Visibility="{Data:VisibilityBinding IsLeftOpen, Relative=TemplatedParent}">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{Data:TemplatedParent LeftPanel.PinWidth, Converter={x:Static Converters:GridLengthConverter.Default}, Mode=TwoWay}"/>
+                                <ColumnDefinition Width="{Data:TemplatedParent LeftPanel.PinWidth, Converter={x:Static Conversion:GridLengthConverter.Default}, Mode=TwoWay}"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
@@ -1909,7 +1909,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="{Data:TemplatedParent RightPanel.PinWidth, Converter={x:Static Converters:GridLengthConverter.Default}, Mode=TwoWay}"/>
+                                <ColumnDefinition Width="{Data:TemplatedParent RightPanel.PinWidth, Converter={x:Static Conversion:GridLengthConverter.Default}, Mode=TwoWay}"/>
                             </Grid.ColumnDefinitions>
                             <Grid Grid.Column="0"/>
                             <GridSplitter Grid.Column="1"
@@ -1929,7 +1929,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="{Data:TemplatedParent BottomPanel.PinHeight, Converter={x:Static Converters:GridLengthConverter.Default}, Mode=TwoWay}"/>
+                                <RowDefinition Height="{Data:TemplatedParent BottomPanel.PinHeight, Converter={x:Static Conversion:GridLengthConverter.Default}, Mode=TwoWay}"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0"/>
                             <GridSplitter Grid.Row="1"

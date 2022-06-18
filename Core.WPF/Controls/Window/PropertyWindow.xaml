@@ -4,8 +4,8 @@
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq">
-    <local:PropertyGrid DataContext="{Data:Ancestor {x:Type local:PropertyWindow}}" 
-        Linq:XElement.Name="{x:Static local:PropertyWindow.PropertyGridKey}"
+    <local:MemberGrid DataContext="{Data:Ancestor {x:Type local:PropertyWindow}}" 
+        Linq:XElement.Name="{x:Static local:PropertyWindow.MemberGridKey}"
         BorderThickness="0"
         GroupName="Category"
         HeaderVisibility="Visible"

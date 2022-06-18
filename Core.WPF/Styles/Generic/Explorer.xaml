@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=System"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -29,16 +29,16 @@
                         <StackPanel Linq:XPanel.Spacing="0,0,0,2.5"
                             Linq:XPanel.SpacingExcept="Last"
                             VerticalAlignment="Top">
-                            <TextBlock Text="{Binding Converter={x:Static Converters:FileNameConverter.Default}}" 
+                            <TextBlock Text="{Binding Converter={x:Static Conversion:FileNameConverter.Default}}" 
                                 FontWeight="Bold"
                                 TextTrimming="CharacterEllipsis"/>
-                            <TextBlock Opacity="0.5" Text="{Binding Converter={x:Static Converters:ItemDescriptionConverter.Default}}"
+                            <TextBlock Opacity="0.5" Text="{Binding Converter={x:Static Conversion:ItemDescriptionConverter.Default}}"
                                 TextTrimming="CharacterEllipsis"/>
                             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
                         </StackPanel>
                     </Grid>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding Converter={x:Static Converters:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.Drive}">
+                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.Drive}">
                             <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
@@ -51,11 +51,11 @@
                                                 Maximum="1"
                                                 Minimum="0"
                                                 MinWidth="164"
-                                                Value="{Binding Converter={x:Static Converters:DriveUsedPercentConverter.Default}, Mode=OneWay}"/>
-                                            <TextBlock FontSize="11" Foreground="{local:ThemeKey ActualKey=Text}" Text="{Binding Converter={x:Static Converters:DriveUsedPercentConverter.Default}, StringFormat={}{0:p0}}"/>
+                                                Value="{Binding Converter={x:Static Conversion:DriveUsedPercentConverter.Default}, Mode=OneWay}"/>
+                                            <TextBlock FontSize="11" Foreground="{local:ThemeKey ActualKey=Text}" Text="{Binding Converter={x:Static Conversion:DriveUsedPercentConverter.Default}, StringFormat={}{0:p0}}"/>
                                         </Grid>
                                         <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding Converter={x:Static Converters:DriveSizeLowConverter.Default}}" Value="True">
+                                            <DataTrigger Binding="{Binding Converter={x:Static Conversion:DriveSizeLowConverter.Default}}" Value="True">
                                                 <Setter TargetName="ProgressBar" Property="Foreground" Value="{local:ThemeKey ActualKey=Red}"/>
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
@@ -63,29 +63,29 @@
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Converter={x:Static Converters:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.File}">
+                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.File}">
                             <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <TextBlock FontStyle="Italic" Text="{Binding Converter={x:Static Converters:ItemSizeConverter.Default}}"/>
+                                        <TextBlock FontStyle="Italic" Text="{Binding Converter={x:Static Conversion:ItemSizeConverter.Default}}"/>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Converter={x:Static Converters:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.Folder}">
+                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.Folder}">
                             <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <TextBlock FontStyle="Italic" Text="{Binding Converter={x:Static Converters:ItemModifiedConverter.Default}}"/>
+                                        <TextBlock FontStyle="Italic" Text="{Binding Converter={x:Static Conversion:ItemModifiedConverter.Default}}"/>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Converter={x:Static Converters:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.Shortcut}">
+                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.Shortcut}">
                             <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <TextBlock FontStyle="Italic" Text="{Binding Converter={x:Static Converters:ShortcutLocationConverter.Default}}"/>
+                                        <TextBlock FontStyle="Italic" Text="{Binding Converter={x:Static Conversion:ShortcutLocationConverter.Default}}"/>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -95,7 +95,7 @@
             </ContentPresenter.ContentTemplate>
         </ContentPresenter>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Converter={x:Static Converters:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.Nothing}">
+            <DataTrigger Binding="{Binding Converter={x:Static Conversion:ItemTypeConverter.Default}}" Value="{x:Static Storage:ItemType.Nothing}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
@@ -182,7 +182,7 @@
                                                                 <Setter Property="Command" Value="{Binding Data.SortCommand, Source={StaticResource Explorer}}"/>
                                                                 <Setter Property="IsChecked">
                                                                     <Setter.Value>
-                                                                        <MultiBinding Converter="{x:Static Converters:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
+                                                                        <MultiBinding Converter="{x:Static Conversion:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
                                                                             <Binding Path="Data.BrowserOptions.SortName" Source="{StaticResource Explorer}"/>
                                                                             <Binding Path="."/>
                                                                         </MultiBinding>
@@ -197,8 +197,8 @@
                                                                 <Setter Property="Command" Value="{Binding Data.SortDirectionCommand, Source={StaticResource Explorer}}"/>
                                                                 <Setter Property="IsChecked">
                                                                     <Setter.Value>
-                                                                        <MultiBinding Converter="{x:Static Converters:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
-                                                                            <Binding Path="Data.BrowserOptions.SortDirection" Converter="{x:Static Converters:SortDirectionConverter.Default}" Source="{StaticResource Explorer}"/>
+                                                                        <MultiBinding Converter="{x:Static Conversion:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
+                                                                            <Binding Path="Data.BrowserOptions.SortDirection" Converter="{x:Static Conversion:SortDirectionConverter.Default}" Source="{StaticResource Explorer}"/>
                                                                             <Binding Path="."/>
                                                                         </MultiBinding>
                                                                     </Setter.Value>
@@ -247,7 +247,7 @@
                                                                 <Setter Property="Command" Value="{Binding Data.GroupCommand, Source={StaticResource Explorer}}"/>
                                                                 <Setter Property="IsChecked">
                                                                     <Setter.Value>
-                                                                        <MultiBinding Converter="{x:Static Converters:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
+                                                                        <MultiBinding Converter="{x:Static Conversion:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
                                                                             <Binding Path="Data.BrowserOptions.GroupName" Source="{StaticResource Explorer}"/>
                                                                             <Binding Path="."/>
                                                                         </MultiBinding>
@@ -262,8 +262,8 @@
                                                                 <Setter Property="Command" Value="{Binding Data.GroupDirectionCommand, Source={StaticResource Explorer}}"/>
                                                                 <Setter Property="IsChecked">
                                                                     <Setter.Value>
-                                                                        <MultiBinding Converter="{x:Static Converters:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
-                                                                            <Binding Path="Data.BrowserOptions.GroupDirection" Converter="{x:Static Converters:SortDirectionConverter.Default}" Source="{StaticResource Explorer}"/>
+                                                                        <MultiBinding Converter="{x:Static Conversion:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
+                                                                            <Binding Path="Data.BrowserOptions.GroupDirection" Converter="{x:Static Conversion:SortDirectionConverter.Default}" Source="{StaticResource Explorer}"/>
                                                                             <Binding Path="."/>
                                                                         </MultiBinding>
                                                                     </Setter.Value>
@@ -298,19 +298,19 @@
                                                 </MenuItem.Resources>
                                                 <MenuItem
                                                     Header="Content" 
-                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Converters:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.Content}}"/>
+                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.Content}}"/>
                                                 <MenuItem 
                                                     Header="Details" 
-                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Converters:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.Details}}"/>
+                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.Details}}"/>
                                                 <MenuItem
                                                     Header="List" 
-                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Converters:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.List}}"/>
+                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.List}}"/>
                                                 <MenuItem 
                                                     Header="Thumbnails" 
-                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Converters:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.Thumbnails}}"/>
+                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.Thumbnails}}"/>
                                                 <MenuItem
                                                     Header="Tiles" 
-                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Converters:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.Tiles}}"/>
+                                                    IsChecked="{Binding BrowserOptions.View, Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:BrowserView.Tiles}}"/>
                                                 <Separator/>
                                                 <local:SliderMenuItem Value="{Binding BrowserOptions.ViewSize, Mode=TwoWay}">
                                                     <MenuItem 
@@ -357,7 +357,7 @@
                             <local:FavoriteBar Grid.Row="1" Linq:XElement.Name="{x:Static local:Explorer.FavoriteBarKey}"
                                 ItemsSource="{TemplateBinding Favorites}"
                                 Linq:XItemsControl.SortDirection="{TemplateBinding FavoriteSortDirection}"
-                                Linq:XItemsControl.SortName="{TemplateBinding FavoriteSortName, Converter={x:Static Converters:ToStringConverter.Default}}">
+                                Linq:XItemsControl.SortName="{TemplateBinding FavoriteSortName, Converter={x:Static Conversion:ToStringConverter.Default}}">
                                 <local:FavoriteBar.Style>
                                     <Style TargetType="{x:Type local:FavoriteBar}" BasedOn="{StaticResource {x:Type local:FavoriteBar}}">
                                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -379,14 +379,14 @@
                                     FileExtensions="{TemplateBinding FileExtensions}"
                                     FolderAttributes="{Data:TemplatedParent BrowserOptions.FolderAttributes}"
                                     FooterVisibility="Visible"
-                                    GroupDirection="{Data:TemplatedParent BrowserOptions.GroupDirection, Converter={x:Static Converters:SortDirectionConverter.Default}, Mode=TwoWay}"
+                                    GroupDirection="{Data:TemplatedParent BrowserOptions.GroupDirection, Converter={x:Static Conversion:SortDirectionConverter.Default}, Mode=TwoWay}"
                                     GroupName="{Data:TemplatedParent BrowserOptions.GroupName, Mode=TwoWay}"
                                     History="{Data:TemplatedParent History, Mode=TwoWay}"
                                     Linq:XExplorer.Path="{Data:TemplatedParent Path=(Linq:XExplorer.Path), Mode=TwoWay}"
                                     OpenFilesOnClick="False"
                                     PresentationTraceSources.TraceLevel="High"
-                                    SelectionMode="{TemplateBinding SelectionMode, Converter={x:Static Converters:SelectionModeConverter.Default}}"
-                                    SortDirection="{Data:TemplatedParent BrowserOptions.SortDirection, Converter={x:Static Converters:SortDirectionConverter.Default}, Mode=TwoWay}"
+                                    SelectionMode="{TemplateBinding SelectionMode, Converter={x:Static Conversion:SelectionModeConverter.Default}}"
+                                    SortDirection="{Data:TemplatedParent BrowserOptions.SortDirection, Converter={x:Static Conversion:SortDirectionConverter.Default}, Mode=TwoWay}"
                                     SortName="{Data:TemplatedParent BrowserOptions.SortName, Mode=TwoWay}"
                                     View="{Data:TemplatedParent BrowserOptions.View}"
                                     ViewCheckBoxes="{Data:TemplatedParent BrowserOptions.ViewCheckBoxes}"

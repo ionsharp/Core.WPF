@@ -91,7 +91,7 @@ namespace Imagin.Core.Controls
                 (GridSplitter.VisibilityProperty, 
                 nameof(SplitterVisibility), 
                 this, BindingMode.OneWay, 
-                Converters.BooleanToVisibilityConverter.Default);
+                Conversion.BooleanToVisibilityConverter.Default);
             return result;
         }
 

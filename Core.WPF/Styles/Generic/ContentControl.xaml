@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Analytics="clr-namespace:Imagin.Core.Analytics;assembly=Imagin.Core"
     xmlns:Common="clr-namespace:Imagin.Core"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup">
@@ -239,7 +239,7 @@
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Data:Self Content, Converter={x:Static Converters:IsStringConverter.Default}}" Value="True">
+                        <DataTrigger Binding="{Data:Self Content, Converter={x:Static Conversion:IsStringConverter.Default}}" Value="True">
                             <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate DataType="Common:DialogReference">
@@ -248,7 +248,7 @@
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Data:Self Content, Converter={x:Static Converters:IsStringConverter.Default}}" Value="False">
+                        <DataTrigger Binding="{Data:Self Content, Converter={x:Static Conversion:IsStringConverter.Default}}" Value="False">
                             <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate DataType="Common:DialogReference">
@@ -279,9 +279,9 @@
                     <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
                         <local:ImageElement
                             Margin="0,0,10,0"
-                            Source="{Data:TemplatedParent Content.Image, Converter={x:Static Converters:UriToImageSourceConverter.Default}}"
+                            Source="{Data:TemplatedParent Content.Image, Converter={x:Static Conversion:UriToImageSourceConverter.Default}}"
                             SourceSize="{Data:TemplatedParent Content.ImageSize}"
-                            Visibility="{Data:TemplatedParent Content.Image, Converter={x:Static Converters:ObjectToVisibilityConverter.Default}}"/>
+                            Visibility="{Data:TemplatedParent Content.Image, Converter={x:Static Conversion:ObjectToVisibilityConverter.Default}}"/>
                         <Grid>
                             <StackPanel VerticalAlignment="Center">
                                 <ContentPresenter Content="{TemplateBinding Content}"
@@ -290,7 +290,7 @@
                                 <CheckBox Content="Do not show again"
                                     IsChecked="{Data:TemplatedParent Content.NeverShow.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Margin="0,10,0,0" 
-                                    Visibility="{Data:TemplatedParent Content.NeverShow, Converter={x:Static Converters:ObjectToVisibilityConverter.Default}}"/>
+                                    Visibility="{Data:TemplatedParent Content.NeverShow, Converter={x:Static Conversion:ObjectToVisibilityConverter.Default}}"/>
                             </StackPanel>
                         </Grid>
                     </Grid>

@@ -3,9 +3,9 @@ using Imagin.Core.Controls;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
-using System.Collections.Specialized;
 
 namespace Imagin.Core.Models
 {
@@ -109,6 +109,7 @@ namespace Imagin.Core.Models
                     ActiveContent = (Content)e.NewItems[0];
                     OnDocumentAdded((Document)e.NewItems[0]);
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     OnDocumentRemoved((Document)e.OldItems[0]);
                     break;

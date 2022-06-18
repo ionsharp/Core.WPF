@@ -402,11 +402,6 @@
                                     </i:ColorControl.Documents>
                                 </i:ColorControl>
                             </local:Element>
-                            <local:Element Category="Control" Type="i:ColorHexagon">
-                                <i:ColorHexagon 
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"/>
-                            </local:Element>
                             <local:Element Category="Control" Type="i:Console">
                                 <i:Console i:XExplorer.Path="{i:SpecialFolder Desktop}"/>
                             </local:Element>
@@ -548,31 +543,31 @@
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </local:Element>
-                            <local:Element Category="DataGrid" Type="i:PropertyGrid">
+                            <local:Element Category="DataGrid" Type="i:MemberGrid">
                                 <local:Element.Options>
                                     <StackPanel
                                         i:XPanel.Spacing="0,0,0,5"
                                         i:XPanel.SpacingExcept="Last">
                                         <Button Content="Anonymous"
-                                            Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=PropertyGridSourceCommand}"
+                                            Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=MemberGridSourceCommand}"
                                             CommandParameter="0"/>
                                         <Button Content="Dependency"
-                                            Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=PropertyGridSourceCommand}"
+                                            Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=MemberGridSourceCommand}"
                                             CommandParameter="1"/>
                                         <Button Content="Reference"
-                                            Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=PropertyGridSourceCommand}"
+                                            Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=MemberGridSourceCommand}"
                                             CommandParameter="2"/>
                                         <Button Content="Value"
-                                            Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=PropertyGridSourceCommand}"
+                                            Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=MemberGridSourceCommand}"
                                             CommandParameter="3"/>
                                     </StackPanel>
                                 </local:Element.Options>
-                                <i:PropertyGrid
+                                <i:MemberGrid
                                     BorderThickness="0"
                                     HeaderVisibility="Visible"
                                     HeadersVisibility="Column"
                                     Margin="-10"
-                                    Source="{i:RemoteBinding RemoteSource=MainViewModel, Path=PropertyGridSource}"/>
+                                    Source="{i:RemoteBinding RemoteSource=MainViewModel, Path=MemberGridSource}"/>
                             </local:Element>
                             <!-- ... FrameworkElement -->
                             <local:Element Category="FrameworkElement" Type="i:FillElement">
@@ -1325,14 +1320,14 @@
                     </ScrollViewer>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type i:PropertiesPanel}">
-                    <i:PropertyGrid
+                    <i:MemberGrid
                         BorderThickness="0"
                         GroupName="DeclaringType"
                         HorizontalScrollBarVisibility="Disabled"
                         Source="{i:PanelBinding Element.Instance, {x:Type local:InheritsPanel}}"
                         VerticalScrollBarVisibility="Auto"
                         View="Single">
-                        <i:PropertyGrid.DescriptionTemplate>
+                        <i:MemberGrid.DescriptionTemplate>
                             <DataTemplate DataType="{x:Type i:MemberModel}">
                                 <GroupBox>
                                     <GroupBox.Header>
@@ -1445,8 +1440,8 @@
                                     </StackPanel>
                                 </GroupBox>
                             </DataTemplate>
-                        </i:PropertyGrid.DescriptionTemplate>
-                    </i:PropertyGrid>
+                        </i:MemberGrid.DescriptionTemplate>
+                    </i:MemberGrid>
                 </DataTemplate>
             </i:PanelTemplateSelector>
         </i:DockControl.PanelTemplateSelector>

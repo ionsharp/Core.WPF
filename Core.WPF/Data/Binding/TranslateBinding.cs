@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Converters;
+﻿using Imagin.Core.Conversion;
 using Imagin.Core.Local.Engine;
 using Imagin.Core.Local.Extensions;
 using Imagin.Core.Linq;

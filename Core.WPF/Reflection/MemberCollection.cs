@@ -45,7 +45,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     #region Fields
 
-    internal readonly PropertyGrid Control;
+    internal readonly MemberGrid Control;
 
     internal readonly MemberModel Parent;
 
@@ -70,9 +70,9 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     public readonly int Depth = 0;
 
-    internal MemberCollection(PropertyGrid propertyGrid) : base() => Control = propertyGrid;
+    internal MemberCollection(MemberGrid propertyGrid) : base() => Control = propertyGrid;
 
-    internal MemberCollection(PropertyGrid propertyGrid, MemberModel parent, int depth) : this(propertyGrid)
+    internal MemberCollection(MemberGrid propertyGrid, MemberModel parent, int depth) : this(propertyGrid)
     {
         Parent 
             = parent;
@@ -115,7 +115,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
     {
         if (input is FieldInfo a)
         {
-            if (PropertyGrid.ForbiddenTypes.Contains(a.FieldType))
+            if (MemberGrid.ForbiddenTypes.Contains(a.FieldType))
                 return false;
 
             return a.IsPublic;
@@ -123,7 +123,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
         if (input is PropertyInfo b)
         {
-            if (PropertyGrid.ForbiddenTypes.Contains(b.PropertyType))
+            if (MemberGrid.ForbiddenTypes.Contains(b.PropertyType))
                 return false;
 
             return b.GetIndexParameters()?.Length == 0 && b.GetGetMethod(false) != null;

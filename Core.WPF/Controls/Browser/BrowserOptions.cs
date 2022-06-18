@@ -1,4 +1,5 @@
 ﻿using Imagin.Core.Data;
+using Imagin.Core.Reflection;
 using Imagin.Core.Storage;
 using System;
 using System.Windows.Data;
@@ -121,7 +122,7 @@ namespace Imagin.Core.Controls
         [Category(Category.View)]
         [DisplayName("Size")]
         [Range(8.0, 512.0, 4.0)]
-        [Format(RangeFormat.Both)]
+        [MemberSetter(nameof(MemberModel.Format), RangeFormat.Both)]
         public double ViewSize
         {
             get => viewSize;

@@ -3,7 +3,7 @@
     xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup">
@@ -69,7 +69,7 @@
                                 IsHitTestVisible="False"
                                 Margin="{TemplateBinding Padding}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Visibility="{Data:TemplatedParent DisplayDate, Converter={x:Static Converters:ObjectToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                                Visibility="{Data:TemplatedParent DisplayDate, Converter={x:Static Conversion:ObjectToVisibilityConverter.Default}, ConverterParameter=1}"/>
                             <DatePickerTextBox x:Name="PART_TextBox"
                                 Grid.Column="0"
                                 Grid.Row="0"

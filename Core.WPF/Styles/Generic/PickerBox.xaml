@@ -3,7 +3,7 @@
     xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Media="clr-namespace:Imagin.Core.Media">
     <ResourceDictionary.MergedDictionaries>
@@ -49,7 +49,7 @@
         <Setter Property="ValueTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <Rectangle Fill="{Binding Converter={x:Static Converters:ColorToSolidColorBrushConverter.Default}}"/>
+                    <Rectangle Fill="{Binding Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>

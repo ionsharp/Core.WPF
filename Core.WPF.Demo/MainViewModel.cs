@@ -2,7 +2,7 @@
 using Imagin.Core.Analytics;
 using Imagin.Core.Collections.ObjectModel;
 using Imagin.Core.Controls;
-using Imagin.Core.Converters;
+using Imagin.Core.Conversion;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
@@ -56,7 +56,7 @@ namespace Demo
         }
 
         object propertyGridSource;
-        public object PropertyGridSource
+        public object MemberGridSource
         {
             get => propertyGridSource;
             set => this.Change(ref propertyGridSource, value);
@@ -130,12 +130,12 @@ namespace Demo
         #region Commands
 
         ICommand propertyGridSourceCommand;
-        public ICommand PropertyGridSourceCommand => propertyGridSourceCommand ??= new RelayCommand<string>(i =>
+        public ICommand MemberGridSourceCommand => propertyGridSourceCommand ??= new RelayCommand<string>(i =>
         {
             switch (i)
             {
                 case "0":
-                    PropertyGridSource = new
+                    MemberGridSource = new
                     {
                         Field1 = true,
                         Field2 = 3,
@@ -145,15 +145,15 @@ namespace Demo
                     break;
 
                 case "1":
-                    PropertyGridSource = Get.Current<Options>();
+                    MemberGridSource = Get.Current<Options>();
                     break;
 
                 case "2":
-                    PropertyGridSource = Get.Current<Options>();
+                    MemberGridSource = Get.Current<Options>();
                     break;
 
                 case "3":
-                    PropertyGridSource = new System.Windows.Point();
+                    MemberGridSource = new System.Windows.Point();
                     break;
             }
         },

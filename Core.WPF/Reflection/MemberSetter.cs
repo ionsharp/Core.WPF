@@ -7,9 +7,9 @@ public class MemberSetterAttribute : Attribute
 {
     public readonly string PropertyName;
 
-    public readonly string Value;
+    public readonly object Value;
 
-    public MemberSetterAttribute(string propertyName, string value) : base()
+    public MemberSetterAttribute(string propertyName, object value) : base()
     {
         PropertyName = propertyName; Value = value;
     }

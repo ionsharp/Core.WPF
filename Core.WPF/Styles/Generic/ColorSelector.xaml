@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Effects="clr-namespace:Imagin.Core.Effects"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -26,17 +26,17 @@
             Height="1" Width="1">
             <local:FillElement.Effect>
                 <Effects:ColorModelEffect
-                    XComponent="{Binding XComponent, Converter={x:Static Converters:Component4ToDoubleConverter.Default}}"
-                    YComponent="{Binding YComponent, Converter={x:Static Converters:Component4ToDoubleConverter.Default}}"
+                    XComponent="{Binding XComponent, Converter={x:Static Conversion:Component4ToDoubleConverter.Default}}"
+                    YComponent="{Binding YComponent, Converter={x:Static Conversion:Component4ToDoubleConverter.Default}}"
                     Depth="{Binding Depth}"
                     Mode="XY"
                     Model="{Binding Model}"
                     Profile="{Binding Profile}"
                     Shape="{Binding Shape}"
-                    X="{Binding X, Converter={x:Static Converters:OneToDoubleConverter.Default}}"
-                    Y="{Binding Y, Converter={x:Static Converters:OneToDoubleConverter.Default}}"
-                    Z="{Binding Z, Converter={x:Static Converters:OneToDoubleConverter.Default}}"
-                    W="{Binding W, Converter={x:Static Converters:OneToDoubleConverter.Default}}"/>
+                    X="{Binding X, Converter={x:Static Conversion:OneToDoubleConverter.Default}}"
+                    Y="{Binding Y, Converter={x:Static Conversion:OneToDoubleConverter.Default}}"
+                    Z="{Binding Z, Converter={x:Static Conversion:OneToDoubleConverter.Default}}"
+                    W="{Binding W, Converter={x:Static Conversion:OneToDoubleConverter.Default}}"/>
             </local:FillElement.Effect>
         </local:FillElement>
     </DataTemplate>
@@ -988,7 +988,7 @@
                                     Height="1" Width="1">
                                     <local:FillElement.Effect>
                                         <Effects:ColorModelEffect
-                                            XComponent="{Binding Component, Converter={x:Static Converters:Component4ToDoubleConverter.Default}}"
+                                            XComponent="{Binding Component, Converter={x:Static Conversion:Component4ToDoubleConverter.Default}}"
                                             Depth="{Binding Depth}"
                                             Mode="Z"
                                             Model="{Binding Model}"
@@ -1052,7 +1052,7 @@
                                 <local:FillElement DataContext="{Data:TemplatedParent}" Height="1" Width="1">
                                     <local:FillElement.Fill>
                                         <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                            <GradientStop Offset="0" Color="{Binding Color, Converter={x:Static Converters:ColorWithoutAlphaConverter.Default}, Mode=OneWay}"/>
+                                            <GradientStop Offset="0" Color="{Binding Color, Converter={x:Static Conversion:ColorWithoutAlphaConverter.Default}, Mode=OneWay}"/>
                                             <GradientStop Offset="1" Color="Transparent"/>
                                         </LinearGradientBrush>
                                     </local:FillElement.Fill>

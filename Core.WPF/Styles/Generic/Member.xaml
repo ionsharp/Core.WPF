@@ -8,7 +8,7 @@
     xmlns:Collections="clr-namespace:Imagin.Core.Collections.ObjectModel"
     xmlns:Common="clr-namespace:Imagin.Core"
     xmlns:Configuration="clr-namespace:Imagin.Core.Config"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -37,7 +37,7 @@
     </ResourceDictionary.MergedDictionaries>
     <!-- ... Styles -->
 
-    <Style x:Key="{x:Static local:PropertyGrid.ComboBoxStyleKey}" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
+    <Style x:Key="{x:Static local:MemberGrid.ComboBoxStyleKey}" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
         <Setter Property="IsEnabled" Value="{Data:InvertBinding IsReadOnly}"/>
         <Setter Property="ItemTemplate">
             <Setter.Value>
@@ -45,10 +45,10 @@
                     <TextBlock x:Name="TextBlock"/>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Data:Ancestor DataContext.Localize, ComboBox}" Value="True">
-                            <Setter TargetName="TextBlock" Property="Text" Value="{Data:TranslateBinding {x:Static Converters:DisplayNameConverter.Default}}"/>
+                            <Setter TargetName="TextBlock" Property="Text" Value="{Data:TranslateBinding {x:Static Conversion:DisplayNameConverter.Default}}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Data:Ancestor DataContext.Localize, ComboBox}" Value="False">
-                            <Setter TargetName="TextBlock" Property="Text" Value="{Binding Converter={x:Static Converters:DisplayNameConverter.Default}}"/>
+                            <Setter TargetName="TextBlock" Property="Text" Value="{Binding Converter={x:Static Conversion:DisplayNameConverter.Default}}"/>
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
@@ -57,19 +57,19 @@
         <Setter Property="Linq:XComboBox.Placeholder" Value="{local:MemberPlaceholder}"/>
     </Style>
 
-    <Style x:Key="{x:Static local:PropertyGrid.PasswordBoxStyleKey}" TargetType="{x:Type PasswordBox}" BasedOn="{StaticResource {x:Type PasswordBox}}">
+    <Style x:Key="{x:Static local:MemberGrid.PasswordBoxStyleKey}" TargetType="{x:Type PasswordBox}" BasedOn="{StaticResource {x:Type PasswordBox}}">
         <Setter Property="IsEnabled" Value="{Data:InvertBinding IsReadOnly}"/>
         <Setter Property="Linq:XPasswordBox.Placeholder" Value="{local:MemberPlaceholder}"/>
     </Style>
 
-    <Style x:Key="{x:Static local:PropertyGrid.TextBoxStyleKey}" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+    <Style x:Key="{x:Static local:MemberGrid.TextBoxStyleKey}" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="IsReadOnly" Value="{Binding IsReadOnly}"/>
         <Setter Property="Linq:XTextBoxBase.Placeholder" Value="{local:MemberPlaceholder}"/>
     </Style>
 
     <!-- ... Templates -->
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ColorBoxTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ColorBoxTemplateKey}">
         <local:ColorBox x:Name="ColorBox" 
             Height="25" Width="25"
             IsEnabled="{Data:InvertBinding IsReadOnly}">
@@ -77,29 +77,29 @@
                 <Behavior:ManualBindingBehavior Property="{x:Static local:ColorBox.ValueProperty}" 
                     ConverterSelectorKey="{Binding TemplateType}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}">
                     <Behavior:ManualBindingBehavior.ConverterSelector>
-                        <Converters:DefaultConverterSelector>
-                            <Converters:ConverterContainer DataKey="{x:Type Color}" 
+                        <Conversion:DefaultConverterSelector>
+                            <Conversion:ConverterContainer DataKey="{x:Type Color}" 
                                 Converter="{x:Null}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type Media:StringColor}" 
-                                Converter="{x:Static Converters:StringColorConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type SharedMath:Hexadecimal}" 
-                                Converter="{x:Static Converters:HexadecimalToColorConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type SolidColorBrush}" 
-                                Converter="{x:Static Converters:SolidColorBrushToColorConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type SystemDrawing:Color}" 
-                                Converter="{x:Static Converters:ColorToColorConverter.Default}"/>
-                        </Converters:DefaultConverterSelector>
+                            <Conversion:ConverterContainer DataKey="{x:Type Media:StringColor}" 
+                                Converter="{x:Static Conversion:StringColorConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type SharedMath:Hexadecimal}" 
+                                Converter="{x:Static Conversion:HexadecimalToColorConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type SolidColorBrush}" 
+                                Converter="{x:Static Conversion:SolidColorBrushToColorConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type SystemDrawing:Color}" 
+                                Converter="{x:Static Conversion:ColorToColorConverter.Default}"/>
+                        </Conversion:DefaultConverterSelector>
                     </Behavior:ManualBindingBehavior.ConverterSelector>
                 </Behavior:ManualBindingBehavior>
             </e:Interaction.Behaviors>
         </local:ColorBox>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ColorTextBoxTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ColorTextBoxTemplateKey}">
         <TextBox x:Name="TextBox"
             Linq:XTextBoxBase.Regex="{x:Static Text:Expressions.LettersAndNumbers}"
             MaxLength="8"
-            Style="{DynamicResource {x:Static local:PropertyGrid.TextBoxStyleKey}}">
+            Style="{DynamicResource {x:Static local:MemberGrid.TextBoxStyleKey}}">
             <Linq:XTextBoxBase.Left>
                 <Collections:DataTemplateCollection>
                     <DataTemplate>
@@ -113,18 +113,18 @@
                 <Behavior:ManualBindingBehavior Property="{x:Static TextBox.TextProperty}" 
                     ConverterSelectorKey="{Binding TemplateType}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}">
                     <Behavior:ManualBindingBehavior.ConverterSelector>
-                        <Converters:DefaultConverterSelector>
-                            <Converters:ConverterContainer DataKey="{x:Type Color}" 
-                                Converter="{x:Static Converters:ColorToStringConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type Media:StringColor}" 
-                                Converter="{x:Static Converters:StringColorToStringConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type SharedMath:Hexadecimal}" 
-                                Converter="{x:Static Converters:HexadecimalToStringConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type SolidColorBrush}" 
-                                Converter="{x:Static Converters:SolidColorBrushToStringConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type SystemDrawing:Color}" 
-                                Converter="{x:Static Converters:ColorToStringConverter.Default}"/>
-                        </Converters:DefaultConverterSelector>
+                        <Conversion:DefaultConverterSelector>
+                            <Conversion:ConverterContainer DataKey="{x:Type Color}" 
+                                Converter="{x:Static Conversion:ColorToStringConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type Media:StringColor}" 
+                                Converter="{x:Static Conversion:StringColorToStringConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type SharedMath:Hexadecimal}" 
+                                Converter="{x:Static Conversion:HexadecimalToStringConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type SolidColorBrush}" 
+                                Converter="{x:Static Conversion:SolidColorBrushToStringConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type SystemDrawing:Color}" 
+                                Converter="{x:Static Conversion:ColorToStringConverter.Default}"/>
+                        </Conversion:DefaultConverterSelector>
                     </Behavior:ManualBindingBehavior.ConverterSelector>
                 </Behavior:ManualBindingBehavior>
             </e:Interaction.Behaviors>
@@ -133,45 +133,45 @@
 
     <!-- ... -->
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ColorBothTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ColorBothTemplateKey}">
         <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*"
             Linq:XPanel.Spacing="0,0,5,0"
             Linq:XPanel.SpacingExcept="Last">
             <ContentPresenter Content="{Binding}" 
-                ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorBoxTemplateKey}}"/>
+                ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorBoxTemplateKey}}"/>
             <ContentPresenter Content="{Binding}"
-                ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTextBoxTemplateKey}}"/>
+                ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorTextBoxTemplateKey}}"/>
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ColorTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ColorTemplateKey}">
         <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding Format}" Value="{x:Null}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ColorBothTemplateKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBothTemplateKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:ColorFormat.Both}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ColorBothTemplateKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBothTemplateKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:ColorFormat.ColorBox}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ColorBoxTemplateKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBoxTemplateKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:ColorFormat.TextBox}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ColorTextBoxTemplateKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorTextBoxTemplateKey}}"/>
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
     <!-- ... -->
     
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.EnumItemTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.EnumItemTemplateKey}">
         <StackPanel Linq:XPanel.VerticalContentAlignment="Center" Orientation="Horizontal">
             <StackPanel.Resources>
                 <Data:Reference x:Key="Member" Data="{Data:Ancestor DataContext, ComboBox}"/>
             </StackPanel.Resources>
             <local:ImageElement
                 Margin="0,0,5,0"
-                Source="{Binding Converter={x:Static Converters:IconConverter.Default}}"
+                Source="{Binding Converter={x:Static Conversion:IconConverter.Default}}"
                 Visibility="{Data:VisibilityBinding Source, Relative=Self}"/>
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}">
                 <ContentPresenter.ContentTemplate>
@@ -195,7 +195,7 @@
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <TextBlock Text="{Data:TranslateBinding {x:Static Converters:DisplayNameConverter.Default}}"/>
+                            <TextBlock Text="{Data:TranslateBinding {x:Static Conversion:DisplayNameConverter.Default}}"/>
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>
@@ -208,7 +208,7 @@
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={x:Static Converters:DisplayNameConverter.Default}}"/>
+                            <TextBlock Text="{Binding Converter={x:Static Conversion:DisplayNameConverter.Default}}"/>
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>
@@ -242,7 +242,7 @@
 
     <!-- ... -->
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ByteUpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ByteUpDownKey}">
         <local:ByteUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -254,12 +254,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:ByteUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:ByteToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:ByteToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:ByteUpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.DateTimeUpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.DateTimeUpDownKey}">
         <local:DateTimeUpDown x:Name="DateTimeUpDown"
             IsReadOnly="{Binding IsReadOnly}"
             Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
@@ -269,12 +269,12 @@
             Minimum="{Binding Minimum}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:DateTimeUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:DateTimeToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:DateTimeToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:DateTimeUpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.DecimalUpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.DecimalUpDownKey}">
         <local:DecimalUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -286,12 +286,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:DecimalUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:DecimalToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:DecimalToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:DecimalUpDown>
     </DataTemplate>
     
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.DoubleUpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.DoubleUpDownKey}">
         <local:DoubleUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -303,12 +303,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:DoubleUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:DoubleToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:DoubleToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:DoubleUpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.Int16UpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.Int16UpDownKey}">
         <local:Int16UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -320,12 +320,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:Int16UpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:Int16ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:Int16ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:Int16UpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.Int32UpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.Int32UpDownKey}">
         <local:Int32UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -337,12 +337,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:Int32UpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:Int32ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:Int32ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:Int32UpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.Int64UpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.Int64UpDownKey}">
         <local:Int64UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -354,12 +354,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:Int64UpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:Int64ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:Int64ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:Int64UpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.SingleUpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.SingleUpDownKey}">
         <local:SingleUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -371,14 +371,14 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:SingleUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:SingleToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:SingleToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:SingleUpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.TimeSpanUpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.TimeSpanUpDownKey}">
         <local:TimeSpanUpDown x:Name="TimeSpanUpDown"
-            CanUpDown="{Data:Self IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
+            CanUpDown="{Data:Self IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
             Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
@@ -388,12 +388,12 @@
             Minimum="{Binding Minimum}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:TimeSpanUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:TimeSpanToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:TimeSpanToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:TimeSpanUpDown>
     </DataTemplate>
     
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.UDoubleUpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.UDoubleUpDownKey}">
         <local:UDoubleUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -405,12 +405,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:UDoubleUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:UDoubleToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:UDoubleToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:UDoubleUpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.UInt16UpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.UInt16UpDownKey}">
         <local:UInt16UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -422,12 +422,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:UInt16UpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:UInt16ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:UInt16ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:UInt16UpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.UInt32UpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.UInt32UpDownKey}">
         <local:UInt32UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -439,12 +439,12 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:UInt32UpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:UInt32ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:UInt32ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:UInt32UpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.UInt64UpDownKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.UInt64UpDownKey}">
         <local:UInt64UpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
             IsReadOnly="{Binding IsReadOnly}"
@@ -456,20 +456,20 @@
             StringFormat="{Binding StringFormat}">
             <e:Interaction.Behaviors>
                 <Behavior:ManualBindingBehavior Property="{x:Static local:UInt64UpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Converters:UInt64ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                    Converter="{x:Static Conversion:UInt64ToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
             </e:Interaction.Behaviors>
         </local:UInt64UpDown>
     </DataTemplate>
 
     <!-- ... -->
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ListTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ListTemplateKey}">
         <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*" Margin="0,2">
             <Grid.Resources>
                 <Data:Reference x:Key="Member" 
                     Data="{Binding}"/>
-                <Data:Reference x:Key="PropertyGrid" 
-                    Data="{Data:Ancestor local:PropertyGrid}"/>
+                <Data:Reference x:Key="MemberGrid" 
+                    Data="{Data:Ancestor local:MemberGrid}"/>
             </Grid.Resources>
             <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,Auto,Auto,Auto,*"
                 Linq:XPanel.Spacing="0,0,5,0"
@@ -592,9 +592,9 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ListBulletTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ListBulletTemplateKey}">
         <ItemsControl
-            ItemsSource="{Binding Value, Converter={x:Static Converters:StringCollectionConverter.Default}}"
+            ItemsSource="{Binding Value, Converter={x:Static Conversion:StringCollectionConverter.Default}}"
             Margin="0,5,0,0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -606,7 +606,7 @@
                             Margin="0,0,5,0"/>
                         <TextBlock
                             HorizontalAlignment="Left"
-                            Text="{Binding Converter={x:Static Converters:ToStringConverter.Default}}"
+                            Text="{Binding Converter={x:Static Conversion:ToStringConverter.Default}}"
                             TextTrimming="CharacterEllipsis"/>
                     </Grid>
                 </DataTemplate>
@@ -614,9 +614,9 @@
         </ItemsControl>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ListCommaTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ListCommaTemplateKey}">
         <ItemsControl 
-            ItemsSource="{Binding Value, Converter={x:Static Converters:StringCollectionConverter.Default}}"
+            ItemsSource="{Binding Value, Converter={x:Static Conversion:StringCollectionConverter.Default}}"
             Linq:XItemsControl.ContainerTracking="True"
             Margin="0,5">
             <ItemsControl.ItemsPanel>
@@ -627,22 +627,22 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Converter={x:Static Converters:ToStringConverter.Default}}"/>
-                        <TextBlock Text=", " Visibility="{Data:Ancestor ContentPresenter, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1, Path=(Linq:XItemsControl.IsLastContainer)}"/>
+                        <TextBlock Text="{Binding Converter={x:Static Conversion:ToStringConverter.Default}}"/>
+                        <TextBlock Text=", " Visibility="{Data:Ancestor ContentPresenter, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1, Path=(Linq:XItemsControl.IsLastContainer)}"/>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ListImageToggleButtonTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ListImageToggleButtonTemplateKey}">
         <local:ImageToggleButton
             Source="{Binding Icon}">
             <local:ImageToggleButton.Resources>
                 <Data:Reference x:Key="Member" 
                     Data="{Binding}"/>
-                <Data:Reference x:Key="PropertyGrid" 
-                    Data="{Data:Ancestor local:PropertyGrid}"/>
+                <Data:Reference x:Key="MemberGrid" 
+                    Data="{Data:Ancestor local:MemberGrid}"/>
             </local:ImageToggleButton.Resources>
             <local:ImageToggleButton.Menu>
                 <ContextMenu>
@@ -662,18 +662,18 @@
                             <MenuItem Tag="*" Header="{l:Loc Prefix=(, Key=None, Suffix=), Lower=True}"
                                 FontStyle="Italic" 
                                 IsEnabled="False"
-                                Visibility="{Binding Data.Value.Count, Converter={x:Static Converters:Int32ToVisibilityConverter.Default}, Source={StaticResource Member}}"/>
+                                Visibility="{Binding Data.Value.Count, Converter={x:Static Conversion:Int32ToVisibilityConverter.Default}, Source={StaticResource Member}}"/>
                             <Separator
                                 Visibility="{Data:VisibilityBinding Data.IsReadOnly, Invert=True, Source={StaticResource Member}}"/>
                             <MenuItem Tag="*" Header="{l:Loc Clear}"
-                                Command="{Binding Data.ClearCommand, Source={StaticResource PropertyGrid}}"
+                                Command="{Binding Data.ClearCommand, Source={StaticResource MemberGrid}}"
                                 CommandParameter="{Binding Data.Value, Source={StaticResource Member}}"
                                 Visibility="{Data:VisibilityBinding Data.IsReadOnly, Invert=True, Source={StaticResource Member}}"/>
                         </CompositeCollection>
                     </ContextMenu.ItemsSource>
                     <ContextMenu.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={x:Static Converters:ToStringConverter.Default}}"/>
+                            <TextBlock Text="{Binding Converter={x:Static Conversion:ToStringConverter.Default}}"/>
                         </DataTemplate>
                     </ContextMenu.ItemTemplate>
                 </ContextMenu>
@@ -683,7 +683,7 @@
 
     <!-- ... -->
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ObjectTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ObjectTemplateKey}">
         <TreeView ItemsSource="{Binding Members}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
@@ -744,12 +744,12 @@
         </TreeView>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.ObjectButtonTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ObjectButtonTemplateKey}">
         <ContentPresenter x:Name="ContentPresenter" Content="{Binding}">
             <ContentPresenter.ContentTemplate>
                 <DataTemplate>
                     <local:ImageButton
-                        Command="{Data:Ancestor EditCommand, {x:Type local:PropertyGrid}}"
+                        Command="{Data:Ancestor EditCommand, {x:Type local:MemberGrid}}"
                         CommandParameter="{Binding}"
                         HorizontalAlignment="Stretch"
                         Source="{Binding Icon}"
@@ -764,7 +764,7 @@
                         <DataTemplate>
                             <Button x:Name="Button" 
                                 Content="{Binding Content}"
-                                Command="{Data:Ancestor EditCommand, {x:Type local:PropertyGrid}}"
+                                Command="{Data:Ancestor EditCommand, {x:Type local:MemberGrid}}"
                                 CommandParameter="{Binding}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"/>
@@ -782,7 +782,7 @@
 
     <!-- ... -->
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.RangeSliderTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.RangeSliderTemplateKey}">
         <Slider x:Name="Slider"
             IsEnabled="False"
             Margin="0,5"
@@ -794,34 +794,34 @@
                 <Behavior:ManualBindingBehavior Property="{x:Static Slider.ValueProperty}" 
                     ConverterSelectorKey="{Binding TemplateType}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}">
                     <Behavior:ManualBindingBehavior.ConverterSelector>
-                        <Converters:DefaultConverterSelector>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:Byte}" 
-                                Converter="{x:Static Converters:ByteToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:DateTime}" 
-                                Converter="{x:Static Converters:DateTimeToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:Decimal}" 
-                                Converter="{x:Static Converters:DecimalToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:Double}" 
+                        <Conversion:DefaultConverterSelector>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:Byte}" 
+                                Converter="{x:Static Conversion:ByteToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:DateTime}" 
+                                Converter="{x:Static Conversion:DateTimeToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:Decimal}" 
+                                Converter="{x:Static Conversion:DecimalToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:Double}" 
                                 Converter="{x:Null}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:Int16}" 
-                                Converter="{x:Static Converters:Int16ToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:Int32}" 
-                                Converter="{x:Static Converters:Int32ToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:Int64}" 
-                                Converter="{x:Static Converters:Int64ToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:Single}" 
-                                Converter="{x:Static Converters:SingleToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:TimeSpan}" 
-                                Converter="{x:Static Converters:TimeSpanToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:UInt16}" 
-                                Converter="{x:Static Converters:UInt16ToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:UInt32}" 
-                                Converter="{x:Static Converters:UInt32ToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type MsSystem:UInt64}" 
-                                Converter="{x:Static Converters:UInt64ToDoubleConverter.Default}"/>
-                            <Converters:ConverterContainer DataKey="{x:Type SharedCommon:UDouble}" 
-                                Converter="{x:Static Converters:UDoubleToDoubleConverter.Default}"/>
-                        </Converters:DefaultConverterSelector>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:Int16}" 
+                                Converter="{x:Static Conversion:Int16ToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:Int32}" 
+                                Converter="{x:Static Conversion:Int32ToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:Int64}" 
+                                Converter="{x:Static Conversion:Int64ToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:Single}" 
+                                Converter="{x:Static Conversion:SingleToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:TimeSpan}" 
+                                Converter="{x:Static Conversion:TimeSpanToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:UInt16}" 
+                                Converter="{x:Static Conversion:UInt16ToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:UInt32}" 
+                                Converter="{x:Static Conversion:UInt32ToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type MsSystem:UInt64}" 
+                                Converter="{x:Static Conversion:UInt64ToDoubleConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type SharedCommon:UDouble}" 
+                                Converter="{x:Static Conversion:UDoubleToDoubleConverter.Default}"/>
+                        </Conversion:DefaultConverterSelector>
                     </Behavior:ManualBindingBehavior.ConverterSelector>
                 </Behavior:ManualBindingBehavior>
             </e:Interaction.Behaviors>
@@ -837,78 +837,78 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.RangeUpDownTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.RangeUpDownTemplateKey}">
         <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:Byte}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ByteUpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ByteUpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:DateTime}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.DateTimeUpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.DateTimeUpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:Decimal}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.DecimalUpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.DecimalUpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:Double}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.DoubleUpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.DoubleUpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:Int16}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.Int16UpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.Int16UpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:Int32}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.Int32UpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.Int32UpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:Int64}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.Int64UpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.Int64UpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:Single}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.SingleUpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.SingleUpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:TimeSpan}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.TimeSpanUpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.TimeSpanUpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:UInt16}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.UInt16UpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.UInt16UpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:UInt32}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.UInt32UpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.UInt32UpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsSystem:UInt64}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.UInt64UpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.UInt64UpDownKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type SharedCommon:UDouble}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.UDoubleUpDownKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.UDoubleUpDownKey}}"/>
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:PropertyGrid.RangeTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.RangeTemplateKey}">
         <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding Format}" Value="{x:Null}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.RangeUpDownTemplateKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:RangeFormat.None}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.RangeUpDownTemplateKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:RangeFormat.Both}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
                             <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="60*,40*">
-                                <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeSliderTemplateKey}}"
+                                <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeSliderTemplateKey}}"
                                     Margin="0,0,5,0"/>
-                                <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeUpDownTemplateKey}}"/>
+                                <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
                             </Grid>
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>
             </DataTrigger>
             <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:RangeFormat.Slider}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.RangeSliderTemplateKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeSliderTemplateKey}}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:RangeFormat.UpDown}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.RangeUpDownTemplateKey}}"/>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
@@ -922,7 +922,7 @@
                 <ComboBox
                     ItemsSource="{Data:EnumerateBinding Value.Horizontal}"
                     Margin="0,0,0,5"
-                    Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
+                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
                     <e:Interaction.Behaviors>
                         <Behavior:ManualBindingBehavior Property="{x:Static ComboBox.SelectedItemProperty}" 
                             Mode="TwoWay" Path="Value.Horizontal" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -930,7 +930,7 @@
                 </ComboBox>
                 <ComboBox
                     ItemsSource="{Data:EnumerateBinding Value.Vertical}"
-                    Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
+                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
                     <e:Interaction.Behaviors>
                         <Behavior:ManualBindingBehavior Property="{x:Static ComboBox.SelectedItemProperty}" 
                             Mode="TwoWay" Path="Value.Vertical" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -949,7 +949,7 @@
             </local:DirectionControl>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedCommon:UDouble}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Configuration -->
@@ -966,13 +966,13 @@
                         <CompositeCollection>
                             <local:ComboBoxSeparator Content="{l:Loc Default}"/>
                             <CollectionContainer Collection="{Markup:Enumerate Common:DefaultThemes, String=True}"/>
-                            <local:ComboBoxSeparator Content="{l:Loc Custom}" Visibility="{Data:RemoteBinding CustomThemes.IsNotEmpty, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, RemoteSource=Resources}"/>
+                            <local:ComboBoxSeparator Content="{l:Loc Custom}" Visibility="{Data:RemoteBinding CustomThemes.IsNotEmpty, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, RemoteSource=Resources}"/>
                             <CollectionContainer Collection="{Data:RemoteBinding CustomThemes, RemoteSource=Resources}"/>
                         </CompositeCollection>
                     </ComboBox.ItemsSource>
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={x:Static Converters:FileNameConverter.Default}, ConverterParameter=0}"/>
+                            <TextBlock Text="{Binding Converter={x:Static Conversion:FileNameConverter.Default}, ConverterParameter=0}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
@@ -1005,13 +1005,13 @@
                         <CompositeCollection>
                             <local:ComboBoxSeparator Content="{l:Loc Default}"/>
                             <CollectionContainer Collection="{Binding Data.DefaultLayouts, Source={StaticResource Layouts}}"/>
-                            <local:ComboBoxSeparator Content="{l:Loc Custom}" Visibility="{Binding Data.IsNotEmpty, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, Source={StaticResource Layouts}}"/>
+                            <local:ComboBoxSeparator Content="{l:Loc Custom}" Visibility="{Binding Data.IsNotEmpty, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, Source={StaticResource Layouts}}"/>
                             <CollectionContainer Collection="{Binding Data, Source={StaticResource Layouts}}"/>
                         </CompositeCollection>
                     </ComboBox.ItemsSource>
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={x:Static Converters:FileNameConverter.Default}, ConverterParameter=0}"/>
+                            <TextBlock Text="{Binding Converter={x:Static Conversion:FileNameConverter.Default}, ConverterParameter=0}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
@@ -1043,7 +1043,7 @@
             </StackPanel>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:Hexadecimal}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:Int32Pattern}">
             <local:PatternControl
@@ -1075,7 +1075,7 @@
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Media:Gradient}">
             <local:GradientBox
                 HorizontalAlignment="Stretch"
-                IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
+                IsEnabled="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
                 Width="Auto">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static local:GradientBox.ValueProperty}" 
@@ -1088,7 +1088,7 @@
         </local:KeyTemplate>
 
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Media:StringColor}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Models -->
@@ -1116,7 +1116,7 @@
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Text:Bullets}">
             <ComboBox
                 ItemsSource="{Data:EnumerateBinding Value}"
-                Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
+                Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static ComboBox.SelectedItemProperty}" 
                         Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1139,13 +1139,13 @@
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListCommaTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ArrayStyle.Bullet}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListBulletTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ArrayStyle.Comma}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListCommaTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
@@ -1175,7 +1175,7 @@
                                 <local:ImageToggleButton Content="{Binding Content}"
                                     HorizontalAlignment="Left"
                                     Source="{Binding Icon}"
-                                    IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}, Mode=OneWay}">
+                                    IsEnabled="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}">
                                     <e:Interaction.Behaviors>
                                         <Behavior:DynamicResourceBehavior Property="{x:Static local:ImageToggleButton.ImageForegroundProperty}" 
                                             Key="{Binding IconColor}"/>
@@ -1192,7 +1192,7 @@
                         <Setter.Value>
                             <DataTemplate>
                                 <local:SwitchButton
-                                    IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}, Mode=OneWay}">
+                                    IsEnabled="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}">
                                     <e:Interaction.Behaviors>
                                         <Behavior:ManualBindingBehavior Property="{x:Static local:SwitchButton.IsCheckedProperty}" 
                                             Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1205,19 +1205,19 @@
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Byte}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:DateTime}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Decimal}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Double}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:DoubleStyle.Angle}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
@@ -1290,8 +1290,8 @@
                             <DataTemplate>
                                 <ComboBox
                                     ItemsSource="{Data:EnumerateBinding Value}"
-                                    ItemTemplate="{DynamicResource {x:Static local:PropertyGrid.EnumItemTemplateKey}}"
-                                    Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
+                                    ItemTemplate="{DynamicResource {x:Static local:MemberGrid.EnumItemTemplateKey}}"
+                                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
                                     <e:Interaction.Behaviors>
                                         <Behavior:ManualBindingBehavior Property="{x:Static ComboBox.SelectedItemProperty}" 
                                             Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1329,9 +1329,9 @@
                             <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                                 <ComboBox
                                     ItemsSource="{Data:EnumerateBinding Value}"
-                                    ItemTemplate="{DynamicResource {x:Static local:PropertyGrid.EnumItemTemplateKey}}"
+                                    ItemTemplate="{DynamicResource {x:Static local:MemberGrid.EnumItemTemplateKey}}"
                                     Linq:XComboBox.SelectionMode="Multiple"
-                                    Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
+                                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
                                     <e:Interaction.Behaviors>
                                         <Behavior:ManualBindingBehavior Property="{x:Static Linq:XComboBox.FlagsProperty}" 
                                             Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1395,28 +1395,28 @@
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Guid}">
             <TextBox x:Name="TextBox"
                 Linq:XTextBoxBase.Regex="{x:Static Text:Expressions.Guid}"
-                Style="{DynamicResource {x:Static local:PropertyGrid.TextBoxStyleKey}}">
+                Style="{DynamicResource {x:Static local:MemberGrid.TextBoxStyleKey}}">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static TextBox.TextProperty}" 
-                        Converter="{x:Static Converters:GuidToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                        Converter="{x:Static Conversion:GuidToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
                 </e:Interaction.Behaviors>
             </TextBox>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Int16}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Int32}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:Int32Style.Index}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
                                 <ComboBox ItemsSource="{Binding ItemSource}"
-                                    Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
+                                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
                                     <ComboBox.Resources>
                                         <Data:Reference x:Key="Member" Data="{Binding}"/>
                                     </ComboBox.Resources>
@@ -1442,35 +1442,35 @@
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Int64}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Object}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}" ContentTemplate="{Markup:EmptyTemplate}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ObjectButtonTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Button}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ObjectButtonTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding DepthIndex}" Value="0"/>
                         <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Shallow}"/>
                     </MultiDataTrigger.Conditions>
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ObjectTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </MultiDataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding DepthIndex}" Value="0"/>
                         <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Deep}"/>
                     </MultiDataTrigger.Conditions>
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ObjectTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </MultiDataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Single}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:String}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}">
@@ -1483,7 +1483,7 @@
                             Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
                             Linq:XTextBoxBase.Suggestions="{Binding Suggestions}"
                             Linq:XTextBoxBase.SuggestionCommand="{Binding SuggestionCommand}"
-                            Style="{DynamicResource {x:Static local:PropertyGrid.TextBoxStyleKey}}">
+                            Style="{DynamicResource {x:Static local:MemberGrid.TextBoxStyleKey}}">
                             <e:Interaction.Behaviors>
                                 <Behavior:ManualBindingBehavior Property="{x:Static TextBox.TextProperty}" 
                                     Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1512,7 +1512,7 @@
                             <DataTemplate>
                                 <local:PathBox
                                     BrowseMode="OpenFile"
-                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}, Mode=OneWay}"
+                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}"
                                     CanValidate="True"
                                     IconVisibility="Visible"
                                     IsReadOnly="{Binding IsReadOnly}"
@@ -1534,7 +1534,7 @@
                             <DataTemplate>
                                 <local:PathBox
                                     BrowseMode="OpenFolder"
-                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}, Mode=OneWay}"
+                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}"
                                     CanValidate="True"
                                     IconVisibility="Visible"
                                     IsReadOnly="{Binding IsReadOnly}"
@@ -1556,7 +1556,7 @@
                             <DataTemplate>
                                 <local:MultiPathBox
                                     BrowseMode="OpenFolder"
-                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}, Mode=OneWay}"
+                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}"
                                     CanValidate="True"
                                     IconVisibility="Visible"
                                     IsReadOnly="{Binding IsReadOnly}"
@@ -1577,7 +1577,7 @@
                             <DataTemplate>
                                 <local:MultiPathBox
                                     BrowseMode="OpenFolder"
-                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}, Mode=OneWay}"
+                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}"
                                     CanValidate="True"
                                     IconVisibility="Visible"
                                     IsReadOnly="{Binding IsReadOnly}"
@@ -1600,7 +1600,7 @@
                                     AcceptsReturn="True"
                                     Height="Auto"
                                     Padding="5,7"
-                                    Style="{DynamicResource {x:Static local:PropertyGrid.TextBoxStyleKey}}"
+                                    Style="{DynamicResource {x:Static local:MemberGrid.TextBoxStyleKey}}"
                                     TextBlock.LineStackingStrategy="BlockLineHeight"
                                     TextBlock.LineHeight="15"
                                     TextWrapping="Wrap"
@@ -1620,7 +1620,7 @@
                             <DataTemplate>
                                 <local:MultiPathBox
                                     BrowseMode="OpenFolder"
-                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}, Mode=OneWay}"
+                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}"
                                     CanValidate="True"
                                     IconVisibility="Visible"
                                     IsReadOnly="{Binding IsReadOnly}"
@@ -1639,7 +1639,7 @@
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <PasswordBox Style="{DynamicResource {x:Static local:PropertyGrid.PasswordBoxStyleKey}}">
+                                <PasswordBox Style="{DynamicResource {x:Static local:MemberGrid.PasswordBoxStyleKey}}">
                                     <e:Interaction.Behaviors>
                                         <Behavior:ManualBindingBehavior Property="{x:Static Linq:XPasswordBox.PasswordProperty}" 
                                             Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1679,7 +1679,7 @@
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:TimeSpan}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:TimeZoneInfo}">
             <local:TimeZoneBox
@@ -1695,13 +1695,13 @@
             <TextBox IsReadOnly="True" Text="{Binding Value.FullName}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:UInt16}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:UInt32}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:UInt64}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.RangeTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Version}">
             <local:VersionBox x:Name="VersionBox"
@@ -1710,7 +1710,7 @@
                 Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static local:VersionBox.TextProperty}" 
-                        Converter="{x:Static Converters:VersionToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                        Converter="{x:Static Conversion:VersionToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
                 </e:Interaction.Behaviors>
             </local:VersionBox>
         </local:KeyTemplate>
@@ -1722,7 +1722,7 @@
                 Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static local:UriBox.TextProperty}" 
-                        Converter="{x:Static Converters:UriToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                        Converter="{x:Static Conversion:UriToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
                 </e:Interaction.Behaviors>
             </local:UriBox>
         </local:KeyTemplate>
@@ -1732,13 +1732,13 @@
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListCommaTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumerableStyle.Bullet}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListBulletTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumerableStyle.Comma}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListCommaTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
@@ -1746,13 +1746,13 @@
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListCommaTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ListStyle.Bullet}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListBulletTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ListStyle.Comma}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListCommaTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
@@ -1760,29 +1760,29 @@
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListCommaTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.Bullet}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListBulletTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.Button}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ObjectButtonTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.Comma}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListCommaTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.Default}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.ImageToggleButton}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:PropertyGrid.ListImageToggleButtonTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListImageToggleButtonTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
 
         <!-- ... System.Drawing -->
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SystemDrawing:Color}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
 
         <!-- ... System.Net -->
@@ -1791,7 +1791,7 @@
                 <TextBox x:Name="TextBox"
                     Linq:XTextBoxBase.Placeholder="{l:Loc Username}"
                     Margin="0,0,0,5"
-                    Style="{DynamicResource {x:Static local:PropertyGrid.TextBoxStyleKey}}">
+                    Style="{DynamicResource {x:Static local:MemberGrid.TextBoxStyleKey}}">
                     <e:Interaction.Behaviors>
                         <Behavior:ManualBindingBehavior Property="{x:Static TextBox.TextProperty}" 
                             Mode="TwoWay" Path="Value.UserName" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1799,7 +1799,7 @@
                 </TextBox>
                 <PasswordBox x:Name="PasswordBox"
                     Linq:XPasswordBox.ToggleButtonVisibility="Visible"
-                    Style="{DynamicResource {x:Static local:PropertyGrid.PasswordBoxStyleKey}}">
+                    Style="{DynamicResource {x:Static local:MemberGrid.PasswordBoxStyleKey}}">
                     <e:Interaction.Behaviors>
                         <Behavior:ManualBindingBehavior Property="{x:Static Linq:XPasswordBox.PasswordProperty}" 
                             Mode="TwoWay" Path="Value.Password" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1810,7 +1810,7 @@
 
         <!-- ... System.Windows -->
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Color}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type FontFamily}">
             <local:FontFamilyBox
@@ -1845,11 +1845,11 @@
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type LinearGradientBrush}">
             <local:GradientBox 
                 HorizontalAlignment="Stretch"
-                IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
+                IsEnabled="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
                 Width="Auto">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static local:GradientBox.ValueProperty}" 
-                        Converter="{x:Static Converters:LinearGradientBrushConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                        Converter="{x:Static Conversion:LinearGradientBrushConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
                 </e:Interaction.Behaviors>
             </local:GradientBox>
         </local:KeyTemplate>
@@ -1900,21 +1900,21 @@
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type RadialGradientBrush}">
             <local:GradientBox 
                 HorizontalAlignment="Stretch"
-                IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
+                IsEnabled="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
                 Width="Auto">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static local:GradientBox.ValueProperty}" 
-                        Converter="{x:Static Converters:RadialGradientBrushConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
+                        Converter="{x:Static Conversion:RadialGradientBrushConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
                 </e:Interaction.Behaviors>
             </local:GradientBox>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SolidColorBrush}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:PropertyGrid.ColorTemplateKey}}"/>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Thickness}">
             <local:ThicknessControl
                 HorizontalAlignment="Stretch"
-                IsEnabled="{Binding IsReadOnly, Converter={x:Static Converters:InverseBooleanConverter.Default}}">
+                IsEnabled="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}}">
                 <e:Interaction.Behaviors>
                     <Behavior:ManualBindingBehavior Property="{x:Static local:ThicknessControl.ThicknessProperty}" 
                         Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
@@ -1935,7 +1935,7 @@
                                     Content="{Data:TranslateBinding DisplayName}"/>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding IsIndeterminate}" Value="True">
-                                        <Setter TargetName="Button" Property="Command" Value="{Data:Ancestor ExecuteAllCommand, {x:Type local:PropertyGrid}}"/>
+                                        <Setter TargetName="Button" Property="Command" Value="{Data:Ancestor ExecuteAllCommand, {x:Type local:MemberGrid}}"/>
                                         <Setter TargetName="Button" Property="CommandParameter" Value="{Binding}"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsIndeterminate}" Value="False">
@@ -1953,7 +1953,7 @@
                                 <local:ImageButton x:Name="ImageButton" Source="{Binding Icon}"/>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding IsIndeterminate}" Value="True">
-                                        <Setter TargetName="ImageButton" Property="Command" Value="{Data:Ancestor ExecuteAllCommand, {x:Type local:PropertyGrid}}"/>
+                                        <Setter TargetName="ImageButton" Property="Command" Value="{Data:Ancestor ExecuteAllCommand, {x:Type local:MemberGrid}}"/>
                                         <Setter TargetName="ImageButton" Property="CommandParameter" Value="{Binding}"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsIndeterminate}" Value="False">

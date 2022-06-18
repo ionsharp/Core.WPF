@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Math="clr-namespace:Imagin.Core.Numerics;assembly=Imagin.Core">
@@ -29,17 +29,17 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProgressRing">
                     <Grid
-                        Height="{Data:TemplatedParent Radius, Converter={x:Static Converters:RadiusToDiameterConverter.Default}}"
-                        Width="{Data:TemplatedParent Radius, Converter={x:Static Converters:RadiusToDiameterConverter.Default}}">
+                        Height="{Data:TemplatedParent Radius, Converter={x:Static Conversion:RadiusToDiameterConverter.Default}}"
+                        Width="{Data:TemplatedParent Radius, Converter={x:Static Conversion:RadiusToDiameterConverter.Default}}">
                         <Grid.Resources>
                             <Data:Reference x:Key="ProgressRing" Data="{Data:TemplatedParent}"/>
                         </Grid.Resources>
                         <Path Fill="{TemplateBinding Background}">
                             <Path.Data>
                                 <EllipseGeometry 
-                                    Center="{Data:Ancestor Radius, local:ProgressRing, Converter={x:Static Converters:DoubleToPointConverter.Default}}">
+                                    Center="{Data:Ancestor Radius, local:ProgressRing, Converter={x:Static Conversion:DoubleToPointConverter.Default}}">
                                     <EllipseGeometry.RadiusX>
-                                        <MultiBinding Converter="{x:Static Converters:MathMultiConverter.Default}">
+                                        <MultiBinding Converter="{x:Static Conversion:MathMultiConverter.Default}">
                                             <Binding Path="Data.Radius" 
                                                 Source="{StaticResource ProgressRing}"/>
                                             <Binding Source="{x:Static Math:NumberOperation.Subtract}"/>
@@ -54,10 +54,10 @@
                             </Path.Data>
                         </Path>
                         <Ellipse
-                            Height="{TemplateBinding Radius, Converter={x:Static Converters:RadiusToDiameterConverter.Default}}"
+                            Height="{TemplateBinding Radius, Converter={x:Static Conversion:RadiusToDiameterConverter.Default}}"
                             Stroke="{TemplateBinding BackgroundStroke}" 
                             StrokeThickness="{TemplateBinding BackgroundStrokeThickness}"
-                            Width="{TemplateBinding Radius, Converter={x:Static Converters:RadiusToDiameterConverter.Default}}"/>
+                            Width="{TemplateBinding Radius, Converter={x:Static Conversion:RadiusToDiameterConverter.Default}}"/>
                         <Path
                             Stroke="{TemplateBinding Foreground}" 
                             StrokeThickness="{TemplateBinding StrokeThickness}">
@@ -75,7 +75,7 @@
                                         <ArcSegment 
                                             RotationAngle="0" 
                                             SweepDirection="Clockwise"
-                                            IsLargeArc="{Data:Ancestor Angle, local:ProgressRing, Converter={x:Static Converters:DoubleGreaterThanConverter.Default}, ConverterParameter=180}">
+                                            IsLargeArc="{Data:Ancestor Angle, local:ProgressRing, Converter={x:Static Conversion:DoubleGreaterThanConverter.Default}, ConverterParameter=180}">
                                             <ArcSegment.Point>
                                                 <MultiBinding Converter="{x:Static local:ProgressRing.AngleToPointConverter}">
                                                     <Binding Path="Data.Angle" 

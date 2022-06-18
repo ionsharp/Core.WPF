@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Converters;
+﻿using Imagin.Core.Conversion;
 using Imagin.Core.Media;
 using System.ComponentModel;
 using System.Windows;

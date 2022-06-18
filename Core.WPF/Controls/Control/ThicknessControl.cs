@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Converters;
+﻿using Imagin.Core.Conversion;
 using Imagin.Core.Linq;
 using System.Collections.Generic;
 using System.Windows;

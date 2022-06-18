@@ -2,11 +2,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Text="clr-namespace:Imagin.Core.Text;assembly=Imagin.Core">
     <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}">
-        <!--<Setter Property="FontFamily" Value="{Markup:DefaultFont Swis721.ttf#Swis721 Cn BT}"/>-->
         <!--<Setter Property="FontFamily" Value="{Markup:DefaultFont Lucida.ttf#Lucida Grande}"/>-->
         <Setter Property="UseLayoutRounding" Value="False" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -15,7 +14,7 @@
     <Style x:Key="{x:Type local:BulletElement}" TargetType="{x:Type local:BulletElement}" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="Text">
             <Setter.Value>
-                <MultiBinding Converter="{x:Static Converters:BulletMultiConverter.Default}">
+                <MultiBinding Converter="{x:Static Conversion:BulletMultiConverter.Default}">
                     <Data:Self Path="Bullet"/>
                     <Data:Self Path="Value"/>
                 </MultiBinding>

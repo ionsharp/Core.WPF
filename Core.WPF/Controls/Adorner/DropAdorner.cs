@@ -18,10 +18,10 @@ namespace Imagin.Core.Controls
             Target.Bind(ContentControl.ContentTemplateProperty, 
                 new PropertyPath("(0)", XControl.DropTemplateProperty), control);
             Target.Bind(ContentControl.VisibilityProperty,
-                new PropertyPath("(0)", XControl.IsDraggingOverProperty), control, System.Windows.Data.BindingMode.OneWay, Converters.BooleanToVisibilityConverter.Default);
+                new PropertyPath("(0)", XControl.IsDraggingOverProperty), control, System.Windows.Data.BindingMode.OneWay, Conversion.BooleanToVisibilityConverter.Default);
 
             Element.Bind(Control.OpacityProperty,
-                new PropertyPath("(0)", XControl.IsDraggingOverProperty), control, System.Windows.Data.BindingMode.OneWay, new Converters.SimpleConverter<bool, double>(i => i ? 0 : 1));
+                new PropertyPath("(0)", XControl.IsDraggingOverProperty), control, System.Windows.Data.BindingMode.OneWay, new Conversion.SimpleConverter<bool, double>(i => i ? 0 : 1));
 
             Children.Add(Target);
             SetCurrentValue(IsHitTestVisibleProperty, false);

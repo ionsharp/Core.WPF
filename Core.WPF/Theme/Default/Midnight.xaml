@@ -311,8 +311,8 @@
 
     <SolidColorBrush x:Key="ProgressCircleForeground" Color="#FFCD33"/>
 
-    <SolidColorBrush x:Key="PropertyGridDescriptionBackground" Color="#10000000"/>
-    <SolidColorBrush x:Key="PropertyGridDescriptionBorder" Color="#22000000"/>
+    <SolidColorBrush x:Key="MemberGridDescriptionBackground" Color="#10000000"/>
+    <SolidColorBrush x:Key="MemberGridDescriptionBorder" Color="#22000000"/>
 
     <SolidColorBrush x:Key="RadioButtonBackground" Color="Transparent"/>
     <SolidColorBrush x:Key="RadioButtonBorder" Color="#44000000"/>

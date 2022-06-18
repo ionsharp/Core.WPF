@@ -1,6 +1,6 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Controls;
-using Imagin.Core.Converters;
+using Imagin.Core.Conversion;
 using Imagin.Core.Data;
 using Imagin.Core.Linq;
 using Imagin.Core.Storage;
@@ -48,9 +48,9 @@ public abstract class MemberModel : BaseNamable, IComparable
                     i.AssignableTypes = new(m);
                     return;
                 }
-                if (i.Type != null && PropertyGrid.AssignableTypes.ContainsKey(i.Type))
+                if (i.Type != null && MemberGrid.AssignableTypes.ContainsKey(i.Type))
                 {
-                    i.AssignableTypes = new(PropertyGrid.AssignableTypes[i.Type]);
+                    i.AssignableTypes = new(MemberGrid.AssignableTypes[i.Type]);
                     return;
                 }
                 if (a.Values != null)
@@ -199,7 +199,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     //...
 
     /// <summary>
-    /// To do: Use <see cref="Imagin.Core.Converters.NullConverter"/> to prevent changing <see cref="UpDown{T}.Increment"/> if <see langword="null"/>. It does not currently work as intended...
+    /// To do: Use <see cref="Imagin.Core.Conversion.NullConverter"/> to prevent changing <see cref="UpDown{T}.Increment"/> if <see langword="null"/>. It does not currently work as intended...
     /// </summary>
     object DefaultIncrement
     {
@@ -246,7 +246,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     }
 
     /// <summary>
-    /// To do: Use <see cref="Imagin.Core.Converters.NullConverter"/> to prevent changing <see cref="UpDown{T}.Maximum"/> if <see langword="null"/>. It does not currently work as intended...
+    /// To do: Use <see cref="Imagin.Core.Conversion.NullConverter"/> to prevent changing <see cref="UpDown{T}.Maximum"/> if <see langword="null"/>. It does not currently work as intended...
     /// </summary>
     object DefaultMaximum
     {
@@ -293,7 +293,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     }
 
     /// <summary>
-    /// To do: Use <see cref="Imagin.Core.Converters.NullConverter"/> to prevent changing <see cref="UpDown{T}.Minimum"/> if <see langword="null"/>. It does not currently work as intended...
+    /// To do: Use <see cref="Imagin.Core.Conversion.NullConverter"/> to prevent changing <see cref="UpDown{T}.Minimum"/> if <see langword="null"/>. It does not currently work as intended...
     /// </summary>
     object DefaultMinimum
     {
@@ -464,7 +464,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     public virtual object Format
     {
         get => format;
-        private set => this.Change(ref format, value);
+        set => this.Change(ref format, value);
     }
 
     double height = double.NaN;
@@ -524,7 +524,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     }
 
     public bool IsIndeterminable 
-        => PropertyGrid.IndeterminableTypes.Contains(TemplateType);
+        => MemberGrid.IndeterminableTypes.Contains(TemplateType);
 
     bool isLockable = false;
     public bool IsLockable
@@ -710,7 +710,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     public virtual object Style
     {
         get => style;
-        private set => this.Change(ref style, value);
+        set => this.Change(ref style, value);
     }
 
     object suggestions = null;
@@ -1037,7 +1037,7 @@ public abstract class MemberModel : BaseNamable, IComparable
         if (input.IsNullable())
             input = Enumerable.FirstOrDefault(input.GetGenericArguments());
 
-        if (PropertyGrid.DefaultTypes.Contains(input))
+        if (MemberGrid.DefaultTypes.Contains(input))
             return input;
 
         if (input.IsArray)

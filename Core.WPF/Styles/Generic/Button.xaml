@@ -4,7 +4,7 @@
     xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -289,14 +289,14 @@
                                 Source="{TemplateBinding Source}"
                                 SourceSize="{TemplateBinding SourceSize}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Visibility="{TemplateBinding Source, Converter={x:Static Converters:ObjectToVisibilityConverter.Default}}"/>
+                                Visibility="{TemplateBinding Source, Converter={x:Static Conversion:ObjectToVisibilityConverter.Default}}"/>
 
                             <ContentPresenter Grid.Column="1"
                                 Margin="{TemplateBinding ContentMargin}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                 <ContentPresenter.Visibility>
-                                    <MultiBinding Converter="{x:Static Converters:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
-                                        <Data:TemplatedParent Converter="{x:Static Converters:IsNullConverter.Default}" ConverterParameter="1" Path="Content"/>
+                                    <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
+                                        <Data:TemplatedParent Converter="{x:Static Conversion:IsNullConverter.Default}" ConverterParameter="1" Path="Content"/>
                                         <Data:TemplatedParent Path="ContentVisibility"/>
                                     </MultiBinding>
                                 </ContentPresenter.Visibility>
@@ -339,9 +339,9 @@
             <!-- ... -->
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Data:Self Content, Converter={x:Static Converters:IsNullConverter.Default}}" Value="False"/>
+                    <Condition Binding="{Data:Self Content, Converter={x:Static Conversion:IsNullConverter.Default}}" Value="False"/>
                     <Condition Binding="{Data:Self ContentVisibility}" Value="Visible"/>
-                    <Condition Binding="{Data:Self Source, Converter={x:Static Converters:IsNullConverter.Default}}" Value="False"/>
+                    <Condition Binding="{Data:Self Source, Converter={x:Static Conversion:IsNullConverter.Default}}" Value="False"/>
                 </MultiDataTrigger.Conditions>
                 <Setter Property="ContentMargin" Value="3,0,0,0"/>
             </MultiDataTrigger>
@@ -449,8 +449,8 @@
 
     <Style x:Key="{x:Type local:FolderButton}" TargetType="{x:Type local:FolderButton}" BasedOn="{StaticResource {x:Type local:ImageButton}}">
         <Setter Property="AllowDrop" Value="True" />
-        <Setter Property="ButtonVisibility" Value="{Data:Self Items.IsEmpty, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
-        <Setter Property="Content" Value="{Data:Self Path, Converter={x:Static Converters:FileNameConverter.Default}}"/>
+        <Setter Property="ButtonVisibility" Value="{Data:Self Items.IsEmpty, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
+        <Setter Property="Content" Value="{Data:Self Path, Converter={x:Static Conversion:FileNameConverter.Default}}"/>
         <Setter Property="g:DragDrop.IsDropTarget" Value="True"/>
         <Setter Property="ItemStyle">
             <Setter.Value>
@@ -484,7 +484,7 @@
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate DataType="{x:Type Storage:Item}">
-                    <TextBlock Text="{Binding Path, Converter={x:Static Converters:FileNameConverter.Default}}"/>
+                    <TextBlock Text="{Binding Path, Converter={x:Static Conversion:FileNameConverter.Default}}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>

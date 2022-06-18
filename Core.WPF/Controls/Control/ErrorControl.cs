@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Analytics;
-using Imagin.Core.Converters;
+using Imagin.Core.Conversion;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;

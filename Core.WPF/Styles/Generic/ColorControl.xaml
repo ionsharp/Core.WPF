@@ -3,7 +3,7 @@
     xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -37,7 +37,7 @@
                                     </DataTemplate.Triggers>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type Models:OptionsPanel}">
-                                    <local:PropertyGrid Source="{Binding Data.Options, Source={StaticResource ColorControl}}"
+                                    <local:MemberGrid Source="{Binding Data.Options, Source={StaticResource ColorControl}}"
                                         BorderThickness="0"
                                         GroupName="Category"/>
                                 </DataTemplate>
@@ -58,7 +58,7 @@
                                                                     Command="{Binding Data.SaveOldColorCommand, Source={StaticResource ColorControl}}"/>
                                                             </ContextMenu>
                                                         </Border.ContextMenu>
-                                                        <Grid Background="{Binding OldColor, Converter={x:Static Converters:ColorToSolidColorBrushConverter.Default}, ConverterParameter=0}"/>
+                                                        <Grid Background="{Binding OldColor, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}, ConverterParameter=0}"/>
                                                     </Border>
                                                     <Border 
                                                         Background="{x:Static Media:CheckerBrush.Default}"
@@ -71,7 +71,7 @@
                                                                     Command="{Binding Data.SaveNewColorCommand, Source={StaticResource ColorControl}}"/>
                                                             </ContextMenu>
                                                         </Border.ContextMenu>
-                                                        <Grid x:Name="Grid" Background="{Binding Data.ActiveDocument.Color.ActualColor, Converter={x:Static Converters:ColorToSolidColorBrushConverter.Default}, ConverterParameter=1, Source={StaticResource ColorControl}}"/>
+                                                        <Grid x:Name="Grid" Background="{Binding Data.ActiveDocument.Color.ActualColor, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}, ConverterParameter=1, Source={StaticResource ColorControl}}"/>
                                                     </Border>
                                                 </StackPanel>
                                             </Border>
@@ -81,7 +81,7 @@
                                                 <ComboBox
                                                     ItemsSource="{Binding Models}"
                                                     SelectedIndex="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                    Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
+                                                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
                                                     <ComboBox.ItemTemplate>
                                                         <DataTemplate>
                                                             <TextBlock Text="{Binding Name}"/>
@@ -91,7 +91,7 @@
                                                 <ComboBox
                                                     ItemsSource="{Binding Components}"
                                                     SelectedIndex="{Binding ComponentIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                    Style="{DynamicResource {x:Static local:PropertyGrid.ComboBoxStyleKey}}">
+                                                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
                                                     <ComboBox.ItemTemplate>
                                                         <DataTemplate>
                                                             <TextBlock>(<Run Text="{Binding Symbol, Mode=OneWay}"/>) <Run Text="{Binding Name, Mode=OneWay}"/></TextBlock>
@@ -100,7 +100,7 @@
                                                 </ComboBox>
                                             </Grid>
                                         </local:BottomBorder>
-                                        <local:PropertyGrid x:Name="PropertyGrid"
+                                        <local:MemberGrid x:Name="MemberGrid"
                                             BorderThickness="0"
                                             GroupName="Category"
                                             HeaderVisibility="Collapsed"
@@ -568,7 +568,7 @@
                             </DataTemplate>
                         </Border.Resources>
                         <local:DockControl
-                            ActiveDocument="{Data:TemplatedParent ActiveDocument, Converter={x:Static Converters:ColorDocumentConverter.Default}, Mode=TwoWay}"
+                            ActiveDocument="{Data:TemplatedParent ActiveDocument, Converter={x:Static Conversion:ColorDocumentConverter.Default}, Mode=TwoWay}"
                             AutoSave="{Data:TemplatedParent Options.AutoSaveLayout}"
                             Documents="{TemplateBinding Documents}"
                             DocumentToolTipTemplate="{DynamicResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
@@ -581,7 +581,7 @@
                                         <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"
                                             Margin="5"/>
                                         <local:TopBorder x:Name="Border2" Height="32">
-                                            <local:PropertyGrid
+                                            <local:MemberGrid
                                                 BorderThickness="0"
                                                 GroupName="None"
                                                 HeaderVisibility="Collapsed"
@@ -652,7 +652,7 @@
                                         Height="16"
                                         Margin="0,0,5,0"
                                         Width="16">
-                                        <local:FillElement Fill="{Binding Color.ActualColor, Converter={x:Static Converters:ColorToSolidColorBrushConverter.Default}, ConverterParameter=1, Mode=OneWay}"/>
+                                        <local:FillElement Fill="{Binding Color.ActualColor, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}, ConverterParameter=1, Mode=OneWay}"/>
                                     </local:ClipBorder>
                                 </DataTemplate>
                             </local:DockControl.DocumentIconTemplate>

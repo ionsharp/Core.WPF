@@ -32,7 +32,7 @@ public class ColorViewModel : ViewModel
     //...
 
     Color actualColor = System.Windows.Media.Colors.White;
-    [Format(ColorFormat.TextBox), DisplayName("Color")]
+    [MemberSetter(nameof(MemberModel.Format), ColorFormat.TextBox), DisplayName("Color")]
     [Featured, Label(false), Visible]
     public Color ActualColor
     {
@@ -156,7 +156,7 @@ public class ColorViewModel : ViewModel
     public bool WVisibility => ModelType?.Inherits<ColorModel4>() == true;
 
     double illuminant = CCT.GetTemperature((xy)WorkingProfile.Default.Chromacity);
-    [Category(Category.Profile), Format(RangeFormat.Both), Index(-3), Range(2000.0, 30000.0, 100.0), StringFormat("N0"), Visible]
+    [Category(Category.Profile), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(-3), Range(2000.0, 30000.0, 100.0), StringFormat("N0"), Visible]
     [MemberTrigger(nameof(MemberModel.RightText), nameof(IlluminantUnit))]
     public double Illuminant
     {
@@ -320,7 +320,7 @@ public class ColorViewModel : ViewModel
         ActualColor = defaultColor;
 
         Options = options;
-        Options.PropertyChanged += OnOptionsChanged;
+        Options.If(i => i.PropertyChanged += OnOptionsChanged);
     }
 
     #endregion
@@ -330,9 +330,13 @@ public class ColorViewModel : ViewModel
     ColorModel GetColor()
     {
         if (WVisibility)
-            return Colour.New(ModelType, x, y, z, w);
+        {
+            var result4 = M.Denormalize(new Vector4(x, y, z, w), Minimum, Maximum);
+            return Colour.New(ModelType, result4[0], result4[1], result4[2], result4[3]);
+        }
 
-        return Colour.New(ModelType, x, y, z);
+        var result3 = M.Denormalize(new Vector3(x, y, z), Minimum, Maximum);
+        return Colour.New(ModelType, result3[0], result3[1], result3[2]);
     }
 
     //...
@@ -358,7 +362,7 @@ public class ColorViewModel : ViewModel
 
         var aRange = new DoubleRange(0, 1);
         var bRange = new DoubleRange(Minimum[index], Maximum[index]);
-        return (Options.ComponentNormalize ? (double)result : aRange.Convert(bRange.Minimum, bRange.Maximum, result)).Round(Options.ComponentPrecision).ToString();
+        return (Options?.ComponentNormalize == true ? (double)result : aRange.Convert(bRange.Minimum, bRange.Maximum, result)).Round(Options?.ComponentPrecision ?? 2).ToString();
     }
 
     void SetDisplayValue(string input, int index)
@@ -366,7 +370,7 @@ public class ColorViewModel : ViewModel
         var aRange = new DoubleRange(0, 1);
         var bRange = new DoubleRange(Minimum[index], Maximum[index]);
 
-        var result = Options.ComponentNormalize ? (One)(input?.Double() ?? 0) : (One)bRange.Convert(aRange.Minimum, aRange.Maximum, input?.Double() ?? 0);
+        var result = Options?.ComponentNormalize == true ? (One)(input?.Double() ?? 0) : (One)bRange.Convert(aRange.Minimum, aRange.Maximum, input?.Double() ?? 0);
         switch (index)
         {
             case 0: X = result; break;

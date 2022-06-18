@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Converters;
+﻿using Imagin.Core.Conversion;
 using Imagin.Core.Linq;
 using System.Windows.Data;
 using System.Windows.Media;

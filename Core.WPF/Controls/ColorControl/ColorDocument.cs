@@ -1,4 +1,5 @@
-﻿using Imagin.Core.Colors;
+﻿using Imagin.Core.Analytics;
+using Imagin.Core.Colors;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
@@ -51,7 +52,7 @@ public class ColorDocument : Document
     }
 
     double depth = 0;
-    [Featured(AboveBelow.Below), Format(RangeFormat.Both), Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
+    [Featured(AboveBelow.Below), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
     public double Depth
     {
         get => depth;
@@ -69,10 +70,10 @@ public class ColorDocument : Document
     public override object Icon => Color.ActualColor;
 
     [Hidden]
-    public bool Is3D => Dimension == Dimensions.Three;
+    public bool Dimension12 => !Dimension3;
 
     [Hidden]
-    public bool IsNot3D => !Is3D;
+    public bool Dimension3 => Dimension == Dimensions.Three;
 
     StringColor oldColor = DefaultOldColor;
     public System.Windows.Media.Color OldColor
@@ -85,8 +86,8 @@ public class ColorDocument : Document
     public readonly ColorControlOptions Options;
 
     double rotateX = 45;
-    [DisplayName("X°"), Format(RangeFormat.Both), Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Is3D))]
+    [DisplayName("X°"), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateX
     {
         get => rotateX;
@@ -94,8 +95,8 @@ public class ColorDocument : Document
     }
 
     double rotateY = 45;
-    [DisplayName("Y°"), Format(RangeFormat.Both), Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Is3D))]
+    [DisplayName("Y°"), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateY
     {
         get => rotateY;
@@ -103,8 +104,8 @@ public class ColorDocument : Document
     }
 
     double rotateZ = 0;
-    [DisplayName("Z°"), Format(RangeFormat.Both), Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Is3D))]
+    [DisplayName("Z°"), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateZ
     {
         get => rotateZ;
@@ -113,7 +114,7 @@ public class ColorDocument : Document
 
     Shapes2 shape = Shapes2.Square;
     [Featured(AboveBelow.Above), Index(1), Label(false), Localize(false), Visible]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(IsNot3D))]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension12))]
     public Shapes2 Shape
     {
         get => shape;
@@ -125,8 +126,8 @@ public class ColorDocument : Document
     public override object ToolTip => Color.ActualColor;
 
     double zoom = 1.8;
-    [Format(RangeFormat.Both), Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Is3D))]
+    [MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double Zoom
     {
         get => zoom;
@@ -136,6 +137,8 @@ public class ColorDocument : Document
     #endregion
 
     #region ColorDocument
+
+    public ColorDocument() : this(DefaultNewColor, DefaultModel, null) { }
 
     public ColorDocument(ColorControlOptions options) : this(DefaultNewColor, DefaultModel, options) { }
 
@@ -152,24 +155,22 @@ public class ColorDocument : Document
 
     public override void Subscribe()
     {
+        Log.Write<ColorDocument>("ColorDocument.Subscribe");
         base.Subscribe();
-        Color.PropertyChanged += OnColorChanged;
+        Color.ColorChanged += OnColorChanged;
     }
 
     public override void Unsubscribe()
     {
         base.Unsubscribe();
-        Color.PropertyChanged -= OnColorChanged;
+        Color.ColorChanged -= OnColorChanged;
     }
 
     public override void Save() { }
 
     //...
 
-    void OnColorChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        this.Changed(() => Color);
-    }
+    void OnColorChanged(object sender, EventArgs<System.Windows.Media.Color> e) => this.Changed(() => Color);
 
     public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
@@ -186,8 +187,8 @@ public class ColorDocument : Document
                 break;
 
             case nameof(Dimension):
-                this.Changed(() => Is3D);
-                this.Changed(() => IsNot3D);
+                this.Changed(() => Dimension3);
+                this.Changed(() => Dimension12);
                 break;
         }
     }

@@ -42,8 +42,8 @@
             public const string Controls
                 = Core + ".Controls";
 
-            public const string Converters
-                = Core + ".Converters";
+            public const string Conversion
+                = Core + ".Conversion";
 
             public const string Data
                 = Core + ".Data";

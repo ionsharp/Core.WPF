@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Config;
-using Imagin.Core.Converters;
+using Imagin.Core.Conversion;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using Imagin.Core.Models;

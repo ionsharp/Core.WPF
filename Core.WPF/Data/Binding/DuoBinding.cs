@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Converters;
+﻿using Imagin.Core.Conversion;
 using System.Windows.Data;
 
 namespace Imagin.Core.Data

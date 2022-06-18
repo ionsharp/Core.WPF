@@ -24,7 +24,7 @@
                 Linq:XButton.Result="1"/>
         </local:Buttons>
     </Linq:XWindow.FooterButtons>
-    <local:PropertyGrid
+    <local:MemberGrid
         BorderThickness="0"
         GroupName="None"
         HeaderVisibility="Collapsed"

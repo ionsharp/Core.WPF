@@ -4,7 +4,7 @@
     xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -32,7 +32,7 @@
                             Foreground="White"
                             HorizontalAlignment="Center"
                             Margin="0,5,0,0"
-                            Text="{Binding Path, Converter={x:Static Converters:FileNameConverter.Default}, ConverterParameter=0}"
+                            Text="{Binding Path, Converter={x:Static Conversion:FileNameConverter.Default}, ConverterParameter=0}"
                             TextWrapping="NoWrap"
                             TextTrimming="CharacterEllipsis"
                             Width="64"/>
@@ -94,7 +94,7 @@
                             <Style x:Key="Style.CheckBox" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
                                 <Setter Property="IsChecked" Value="{Data:Ancestor IsSelected, {x:Type ListViewItem}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 <Setter Property="Margin" Value="0,0,5,0"/>
-                                <Setter Property="Visibility" Value="{Binding Data.ViewCheckBoxes, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, Source={StaticResource Browser}}"/>
+                                <Setter Property="Visibility" Value="{Binding Data.ViewCheckBoxes, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, Source={StaticResource Browser}}"/>
                             </Style>
 
                             <Style x:Key="Style.TextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
@@ -103,18 +103,18 @@
                                 <Setter Property="Linq:XTextBox.EditMouseEvent" Value="DelayedMouseDown"/>
                                 <Setter Property="Linq:XTextBoxBase.Ignore" Value="{x:Static SharedStorage:StoragePath.InvalidFileNameCharacters}"/>
                                 <Setter Property="Linq:XTextBox.IsEditable" Value="False"/>
-                                <Setter Property="Linq:XTextBox.Label" Value="{Binding Path, Converter={x:Static Converters:FileNameConverter.Default}, ConverterParameter=1}"/>
+                                <Setter Property="Linq:XTextBox.Label" Value="{Binding Path, Converter={x:Static Conversion:FileNameConverter.Default}, ConverterParameter=1}"/>
                                 <Setter Property="Linq:XTextBoxBase.TextTrimming" Value="CharacterEllipsis"/>
                                 <Setter Property="Padding" Value="0"/>
-                                <Setter Property="Text" Value="{Binding Path, Converter={x:Static Converters:FileNameConverter.Default}, ConverterParameter=1}"/>
+                                <Setter Property="Text" Value="{Binding Path, Converter={x:Static Conversion:FileNameConverter.Default}, ConverterParameter=1}"/>
                                 <Style.Triggers>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
                                             <Condition Binding="{Binding Type}" Value="File"/>
                                             <Condition Binding="{Data:Ancestor ViewFileExtensions, {x:Type local:Browser}}" Value="False"/>
                                         </MultiDataTrigger.Conditions>
-                                        <Setter Property="Linq:XTextBox.Label" Value="{Binding Path, Converter={x:Static Converters:FileNameConverter.Default}, ConverterParameter=0}"/>
-                                        <Setter Property="Text" Value="{Binding Path, Converter={x:Static Converters:FileNameConverter.Default}, ConverterParameter=0}"/>
+                                        <Setter Property="Linq:XTextBox.Label" Value="{Binding Path, Converter={x:Static Conversion:FileNameConverter.Default}, ConverterParameter=0}"/>
+                                        <Setter Property="Text" Value="{Binding Path, Converter={x:Static Conversion:FileNameConverter.Default}, ConverterParameter=0}"/>
                                     </MultiDataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -271,7 +271,7 @@
                                                         Text="Type:"/>
                                                     <Run 
                                                         FontSize="12"
-                                                        Text="{Binding Path, Converter={x:Static Converters:ItemDescriptionConverter.Default}}"/>
+                                                        Text="{Binding Path, Converter={x:Static Conversion:ItemDescriptionConverter.Default}}"/>
                                                 </TextBlock>
                                             </DataTemplate>
                                         </ContentPresenter.ContentTemplate>
@@ -291,7 +291,7 @@
                                                         Text="Date modified:"/>
                                                     <Run 
                                                         FontSize="12"
-                                                        Text="{Binding Modified, Converter={x:Static Converters:RelativeTimeConverter.Default}}"/>
+                                                        Text="{Binding Modified, Converter={x:Static Conversion:RelativeTimeConverter.Default}}"/>
                                                 </TextBlock>
                                             </DataTemplate>
                                         </ContentPresenter.ContentTemplate>
@@ -311,7 +311,7 @@
                                                         Text="Size:"/>
                                                     <Run 
                                                         FontSize="12"
-                                                        Text="{Binding Size, Converter={x:Static Converters:FileSizeConverter.Default}}"/>
+                                                        Text="{Binding Size, Converter={x:Static Conversion:FileSizeConverter.Default}}"/>
                                                 </TextBlock>
                                             </DataTemplate>
                                         </ContentPresenter.ContentTemplate>
@@ -325,9 +325,9 @@
                                                     <ProgressBar 
                                                         HorizontalAlignment="Stretch"
                                                         Height="14"
-                                                        Maximum="{Binding TotalSize, Converter={x:Static Converters:Int64ToDoubleConverter.Default}}"
+                                                        Maximum="{Binding TotalSize, Converter={x:Static Conversion:Int64ToDoubleConverter.Default}}"
                                                         Minimum="0"
-                                                        Value="{Binding AvailableFreeSpace, Converter={x:Static Converters:Int64ToDoubleConverter.Default}}"/>
+                                                        Value="{Binding AvailableFreeSpace, Converter={x:Static Conversion:Int64ToDoubleConverter.Default}}"/>
                                                 </DataTemplate>
                                             </Setter.Value>
                                         </Setter>
@@ -348,11 +348,11 @@
                                                     <TextBlock 
                                                         FontSize="12"
                                                         TextTrimming="CharacterEllipsis">
-                                                        <Run Text="{Binding AvailableFreeSpace, Converter={x:Static Converters:FileSizeConverter.Default}}"/>
+                                                        <Run Text="{Binding AvailableFreeSpace, Converter={x:Static Conversion:FileSizeConverter.Default}}"/>
                                                         <Run 
                                                             Foreground="#66000000"
                                                             Text="free of"/>
-                                                        <Run Text="{Binding TotalSize, Converter={x:Static Converters:FileSizeConverter.Default}}"/>
+                                                        <Run Text="{Binding TotalSize, Converter={x:Static Conversion:FileSizeConverter.Default}}"/>
                                                     </TextBlock>
                                                 </DataTemplate>
                                             </Setter.Value>
@@ -448,7 +448,7 @@
                                                 <DataTemplate>
                                                     <TextBlock 
                                                         Foreground="#66000000"
-                                                        Text="{Binding Path, Converter={x:Static Converters:ItemDescriptionConverter.Default}}" 
+                                                        Text="{Binding Path, Converter={x:Static Conversion:ItemDescriptionConverter.Default}}" 
                                                         TextTrimming="CharacterEllipsis"/>
                                                 </DataTemplate>
                                             </ContentPresenter.ContentTemplate>
@@ -461,7 +461,7 @@
                                                         Foreground="#66000000"
                                                         TextTrimming="CharacterEllipsis">
                                                         <TextBlock.Text>
-                                                            <MultiBinding Converter="{x:Static Converters:FileSizeMultiConverter.Default}">
+                                                            <MultiBinding Converter="{x:Static Conversion:FileSizeMultiConverter.Default}">
                                                                 <Binding Path="Size"/>
                                                                 <Data:Ancestor Path="FileSizeFormat" Type="{x:Type local:Browser}"/>
                                                             </MultiBinding>
@@ -480,11 +480,11 @@
                                                     <TextBlock 
                                                         FontSize="12"
                                                         TextTrimming="CharacterEllipsis">
-                                                        <Run Text="{Binding AvailableFreeSpace, Converter={x:Static Converters:FileSizeConverter.Default}}"/>
+                                                        <Run Text="{Binding AvailableFreeSpace, Converter={x:Static Conversion:FileSizeConverter.Default}}"/>
                                                         <Run 
                                                             Foreground="#66000000"
                                                             Text="free of"/>
-                                                        <Run Text="{Binding TotalSize, Converter={x:Static Converters:FileSizeConverter.Default}}"/>
+                                                        <Run Text="{Binding TotalSize, Converter={x:Static Conversion:FileSizeConverter.Default}}"/>
                                                     </TextBlock>
                                                 </DataTemplate>
                                             </Setter.Value>
@@ -496,9 +496,9 @@
                                                         HorizontalAlignment="Stretch"
                                                         Height="12"
                                                         Margin="0,2"
-                                                        Maximum="{Binding TotalSize, Converter={x:Static Converters:Int64ToDoubleConverter.Default}}"
+                                                        Maximum="{Binding TotalSize, Converter={x:Static Conversion:Int64ToDoubleConverter.Default}}"
                                                         Minimum="0"
-                                                        Value="{Binding AvailableFreeSpace, Converter={x:Static Converters:Int64ToDoubleConverter.Default}}"/>
+                                                        Value="{Binding AvailableFreeSpace, Converter={x:Static Conversion:Int64ToDoubleConverter.Default}}"/>
                                                 </DataTemplate>
                                             </Setter.Value>
                                         </Setter>
@@ -521,11 +521,11 @@
                                 Linq:XItemsControl.ColumnVisibility="{TemplateBinding ColumnVisibility}"
                                 Linq:XItemsControl.GroupConverterSelector="{x:Static local:BrowserGroupConverterSelector.Default}"
                                 Linq:XItemsControl.GroupDirection="{TemplateBinding GroupDirection}"
-                                Linq:XItemsControl.GroupName="{TemplateBinding GroupName, Converter={x:Static Converters:ToStringConverter.Default}}"
+                                Linq:XItemsControl.GroupName="{TemplateBinding GroupName, Converter={x:Static Conversion:ToStringConverter.Default}}"
                                 Linq:XItemsControl.GroupNameDisable="None"
                                 Linq:XItemsControl.GroupStyle="{Data:Ancestor GroupStyle, local:Browser}"
                                 Linq:XItemsControl.SortDirection="{TemplateBinding SortDirection}"
-                                Linq:XItemsControl.SortName="{TemplateBinding SortName, Converter={x:Static Converters:ToStringConverter.Default}}"
+                                Linq:XItemsControl.SortName="{TemplateBinding SortName, Converter={x:Static Conversion:ToStringConverter.Default}}"
                                 Linq:XItemsControl.KeySelect="True"
                                 Linq:XItemsControl.KeySelectProperty="Name"
                                 ItemsSource="{TemplateBinding Items}"
@@ -590,7 +590,7 @@
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <TextBlock 
-                                                                            Text="{Binding Path, Converter={x:Static Converters:ItemDescriptionConverter.Default}}" 
+                                                                            Text="{Binding Path, Converter={x:Static Conversion:ItemDescriptionConverter.Default}}" 
                                                                             TextTrimming="CharacterEllipsis"/>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
@@ -601,7 +601,7 @@
                                                                         <TextBlock 
                                                                             TextTrimming="CharacterEllipsis">
                                                                             <TextBlock.Text>
-                                                                                <MultiBinding Converter="{x:Static Converters:FileSizeMultiConverter.Default}">
+                                                                                <MultiBinding Converter="{x:Static Conversion:FileSizeMultiConverter.Default}">
                                                                                     <Binding Path="Size"/>
                                                                                     <Binding Path="Data.FileSizeFormat" Source="{StaticResource Browser}"/>
                                                                                 </MultiBinding>
@@ -614,7 +614,7 @@
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <TextBlock 
-                                                                            Text="{Binding Accessed, Converter={x:Static Converters:RelativeTimeConverter.Default}}"
+                                                                            Text="{Binding Accessed, Converter={x:Static Conversion:RelativeTimeConverter.Default}}"
                                                                             TextTrimming="CharacterEllipsis"/>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
@@ -623,7 +623,7 @@
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <TextBlock 
-                                                                            Text="{Binding Created, Converter={x:Static Converters:RelativeTimeConverter.Default}}" 
+                                                                            Text="{Binding Created, Converter={x:Static Conversion:RelativeTimeConverter.Default}}" 
                                                                             TextTrimming="CharacterEllipsis"/>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
@@ -632,7 +632,7 @@
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <TextBlock 
-                                                                            Text="{Binding Modified, Converter={x:Static Converters:RelativeTimeConverter.Default}}" 
+                                                                            Text="{Binding Modified, Converter={x:Static Conversion:RelativeTimeConverter.Default}}" 
                                                                             TextTrimming="CharacterEllipsis"/>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
@@ -741,25 +741,25 @@
                                         Margin="0,7.5,0,5"
                                         Opacity="0.4"
                                         TextTrimming="CharacterEllipsis">
-                                        <Run Text="{Data:TemplatedParent Items.Count, Mode=OneWay, StringFormat={} {0} item}"/><Run Text="{Data:TemplatedParent Items.Count, Converter={x:Static Converters:PluralConverter.Default}, Mode=OneWay}"/>
-                                        (<Run Text="{Data:TemplatedParent Length, Converter={x:Static Converters:FileSizeConverter.Default}, Mode=OneWay}"/>)
+                                        <Run Text="{Data:TemplatedParent Items.Count, Mode=OneWay, StringFormat={} {0} item}"/><Run Text="{Data:TemplatedParent Items.Count, Converter={x:Static Conversion:PluralConverter.Default}, Mode=OneWay}"/>
+                                        (<Run Text="{Data:TemplatedParent Length, Converter={x:Static Conversion:FileSizeConverter.Default}, Mode=OneWay}"/>)
                                     </TextBlock>
                                     <local:ProgressCircle
                                         Height="20"
                                         HorizontalAlignment="Center"
-                                        Visibility="{Data:TemplatedParent Items.IsRefreshing, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"
+                                        Visibility="{Data:TemplatedParent Items.IsRefreshing, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"
                                         Width="20"/>
                                     <TextBlock
                                         Margin="0,7.5,0,5"
                                         Opacity="0.4"
                                         TextTrimming="CharacterEllipsis"
-                                        Visibility="{TemplateBinding SelectionCount, Converter={x:Static Converters:Int32ToVisibilityConverter.Default}}">
-                                        <Run Text="{Data:TemplatedParent SelectionCount, Mode=OneWay, StringFormat={} {0} item}"/><Run Text="{Data:TemplatedParent SelectionCount, Converter={x:Static Converters:PluralConverter.Default}, Mode=OneWay}"/> <Run Text="selected"/>
-                                        (<Run Text="{Data:TemplatedParent SelectionLength, Converter={x:Static Converters:FileSizeConverter.Default}, Mode=OneWay}"/>)
+                                        Visibility="{TemplateBinding SelectionCount, Converter={x:Static Conversion:Int32ToVisibilityConverter.Default}}">
+                                        <Run Text="{Data:TemplatedParent SelectionCount, Mode=OneWay, StringFormat={} {0} item}"/><Run Text="{Data:TemplatedParent SelectionCount, Converter={x:Static Conversion:PluralConverter.Default}, Mode=OneWay}"/> <Run Text="selected"/>
+                                        (<Run Text="{Data:TemplatedParent SelectionLength, Converter={x:Static Conversion:FileSizeConverter.Default}, Mode=OneWay}"/>)
                                     </TextBlock>
                                     <local:ImageElement Source="{Markup:InternalImage Selection.png}"
                                         Margin="5,0,0,0"
-                                        Visibility="{TemplateBinding SelectionCount, Converter={x:Static Converters:Int32ToVisibilityConverter.Default}}"/>
+                                        Visibility="{TemplateBinding SelectionCount, Converter={x:Static Conversion:Int32ToVisibilityConverter.Default}}"/>
                                 </Grid>
                             </local:TopBorder>
                         </Grid>

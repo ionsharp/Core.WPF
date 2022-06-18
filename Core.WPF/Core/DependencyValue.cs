@@ -1,6 +1,5 @@
 ﻿using Imagin.Core.Input;
 using Imagin.Core.Linq;
-using System;
 using System.Windows;
 
 namespace Imagin.Core

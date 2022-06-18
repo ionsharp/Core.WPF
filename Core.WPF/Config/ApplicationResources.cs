@@ -47,7 +47,7 @@ namespace Imagin.Core.Config
             {
                 switch (i)
                 {
-                    case StyleKeys.Member: break; //StyleKeys.PropertyGrid imports this already!
+                    case StyleKeys.Member: break; //StyleKeys.MemberGrid imports this already!
                     default:
                         application.Resources.MergedDictionaries.Add(New(InternalAssembly.Name, StyleKey.KeyFormat.F(i)));
                         break;

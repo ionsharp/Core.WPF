@@ -22,6 +22,7 @@ Core.WPF.Demo/bin
 obj
 Core.WPF/obj
 Core.WPF.Demo/obj
+Core.WPF/Effects/fxc.exe
 
 # Windows shortcuts
 *.lnk

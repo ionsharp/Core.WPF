@@ -39,7 +39,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(InternalAssembly.Xml, InternalAssembly.Space.Colors)]
 [assembly: XmlnsDefinition(InternalAssembly.Xml, InternalAssembly.Space.Config)]
 [assembly: XmlnsDefinition(InternalAssembly.Xml, InternalAssembly.Space.Controls)]
-[assembly: XmlnsDefinition(InternalAssembly.Xml, InternalAssembly.Space.Converters)]
+[assembly: XmlnsDefinition(InternalAssembly.Xml, InternalAssembly.Space.Conversion)]
 [assembly: XmlnsDefinition(InternalAssembly.Xml, InternalAssembly.Space.Core)]
 [assembly: XmlnsDefinition(InternalAssembly.Xml, InternalAssembly.Space.Data)]
 [assembly: XmlnsDefinition(InternalAssembly.Xml, InternalAssembly.Space.Effects)]

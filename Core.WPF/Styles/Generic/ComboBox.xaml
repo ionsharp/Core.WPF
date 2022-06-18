@@ -4,7 +4,7 @@
     xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -108,7 +108,7 @@
                             IsHitTestVisible="False" 
                             Margin="{TemplateBinding Padding}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                            Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
                         <TextBox
                             Background="Transparent"
                             BorderThickness="0"
@@ -120,7 +120,7 @@
                             Linq:XTextBoxBase.Placeholder="{Data:TemplatedParent Path=(Linq:XComboBox.Placeholder)}"
                             Padding="{TemplateBinding Padding}"
                             Text="{Data:TemplatedParent Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                            Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                         
                         <local:RotateElement Grid.Column="1"
                             IsHitTestVisible="False"
@@ -128,7 +128,7 @@
                             Rotate="{TemplateBinding IsDropDownOpen}"
                             Rotation="-90,0"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Visibility="{Data:Ancestor IsReadOnly, {x:Type ComboBox}, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
+                            Visibility="{Data:Ancestor IsReadOnly, {x:Type ComboBox}, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
                             <local:ImageElement 
                                 Source="{Markup:InternalImage 32-ArrowDown.png}"
                                 Foreground="{TemplateBinding Foreground}"/>
@@ -283,7 +283,7 @@
                                 Foreground="{TemplateBinding Foreground}"
                                 SourceSize="12,12"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Visibility="{Data:TemplatedParent Path=(Linq:XComboBoxItem.IsSelected), Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                Visibility="{Data:TemplatedParent Path=(Linq:XComboBoxItem.IsSelected), Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                         </Grid>
                     </Border>
                 </ControlTemplate>
@@ -374,7 +374,7 @@
                     </Setter>
                     <Setter Property="ToolTip" Value="{Binding}"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Converter={x:Static Converters:HiddenConverter.Default}}" Value="True">
+                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:HiddenConverter.Default}}" Value="True">
                             <Setter Property="Opacity" Value="{x:Static local:Explorer.HiddenOpacity}"/>
                         </DataTrigger>
                     </Style.Triggers>
@@ -393,7 +393,7 @@
                             Width="16"/>
                         <TextBlock 
                             Grid.Column="1"
-                            Text="{Binding Converter={x:Static Converters:FileNameConverter.Default}}"/>
+                            Text="{Binding Converter={x:Static Conversion:FileNameConverter.Default}}"/>
                     </Grid>
                 </DataTemplate>
             </Setter.Value>
@@ -450,14 +450,14 @@
                                     ButtonVisibility="Visible"
                                     Focusable="False"
                                     Linq:XElement.OverrideMargin="1,0"
-                                    Visibility="{Data:TemplatedParent Crumbs.Count, Converter={x:Static Converters:Int32ToVisibilityConverter.Default}}">
+                                    Visibility="{Data:TemplatedParent Crumbs.Count, Converter={x:Static Conversion:Int32ToVisibilityConverter.Default}}">
                                     <local:ImageToggleButton.Menu>
                                         <ContextMenu ItemsSource="{Binding Data.Crumbs, Source={StaticResource AddressBox}}">
                                             <ContextMenu.ItemContainerStyle>
                                                 <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
                                                     <Setter Property="Command" Value="{Binding Data.SetPathCommand, Source={StaticResource AddressBox}}" />
                                                     <Setter Property="CommandParameter" Value="{Binding}" />
-                                                    <Setter Property="Header" Value="{Binding Converter={x:Static Converters:FileNameConverter.Default}}" />
+                                                    <Setter Property="Header" Value="{Binding Converter={x:Static Conversion:FileNameConverter.Default}}" />
                                                     <Setter Property="Icon" Value="{Binding}"/>
                                                     <Setter Property="Linq:XMenuItem.IconTemplate">
                                                         <Setter.Value>
@@ -479,7 +479,7 @@
                                                         <DataTrigger Binding="{Binding}" Value="*">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Converter={x:Static Converters:HiddenConverter.Default}}" Value="True">
+                                                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:HiddenConverter.Default}}" Value="True">
                                                             <Setter Property="Opacity" Value="{x:Static local:Explorer.HiddenOpacity}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -508,7 +508,7 @@
                                     g:DragDrop.IsDropTarget="True"
                                     ItemsSource="{TemplateBinding Crumbs}"
                                     ToolTip="{Data:TemplatedParent Path=(Linq:XExplorer.Path)}"
-                                    Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
+                                    Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
                                     <Linq:XElement.ToolTipTemplate>
                                         <DataTemplate>
                                             <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static Linq:XExplorer.ToolTipTemplateKey}}"/>
@@ -549,13 +549,13 @@
                                     Padding="3"
                                     Text="{Data:TemplatedParent Path=(Linq:XExplorer.Path), Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                     VerticalContentAlignment="Center"
-                                    Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                    Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                 <!-- ... -->
                                 <local:ImageButton Grid.Column="3"
                                     Command="{Data:TemplatedParent GoCommand}"
                                     Source="{Markup:InternalImage Image=ArrowNext}" 
                                     ToolTip="{l:Loc Go}"
-                                    Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                    Visibility="{Data:TemplatedParent IsEditable, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                 <local:ImageButton Grid.Column="4"
                                     Command="{Data:TemplatedParent RefreshCommand}" 
                                     Source="{Markup:InternalImage Refresh.png}" 
@@ -580,7 +580,7 @@
                                     IsChecked="{Data:TemplatedParent IsFavorite, Mode=TwoWay}"
                                     Source="{Markup:InternalImage Star.png}"
                                     ToolTip="{l:Loc Favorite}"
-                                    Visibility="{Data:TemplatedParent Favorites, Converter={x:Static Converters:ObjectToVisibilityConverter.Default}}"/>
+                                    Visibility="{Data:TemplatedParent Favorites, Converter={x:Static Conversion:ObjectToVisibilityConverter.Default}}"/>
                                 <local:ImageToggleButton Grid.Column="6"
                                     ButtonSource="{Markup:InternalImage 32-ArrowDown.png}"
                                     ButtonVisibility="Visible"
@@ -588,7 +588,7 @@
                                     IsChecked="{Data:TemplatedParent IsDropDownOpen, Mode=TwoWay}"
                                     ToolTip="{l:Loc History}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Visibility="{Data:Ancestor IsReadOnly, {x:Type ComboBox}, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                                    Visibility="{Data:Ancestor IsReadOnly, {x:Type ComboBox}, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
                             </Grid>
                             <!-- ... -->
                         </Grid>
@@ -650,7 +650,7 @@
                             Path="{Binding Path}"/>
                         <TextBlock 
                             Grid.Column="1"
-                            Text="{Binding Path, Converter={x:Static Converters:FileNameConverter.Default}}"/>
+                            Text="{Binding Path, Converter={x:Static Conversion:FileNameConverter.Default}}"/>
                     </Grid>
                 </DataTemplate>
             </Setter.Value>

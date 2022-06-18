@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Collections="clr-namespace:Imagin.Core.Collections.ObjectModel"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -141,9 +141,9 @@
                         </TextBlock.Resources>
                         <Run FontWeight="Bold" Text="{Binding Data.Text, Mode=OneWay, Source={StaticResource TextBoxBase}}"/><Run>
                             <Run.Text>
-                                <MultiBinding Converter="{x:Static Converters:SubstringMultiConverter.Default}" Mode="OneWay">
+                                <MultiBinding Converter="{x:Static Conversion:SubstringMultiConverter.Default}" Mode="OneWay">
                                     <Binding Path="."/>
-                                    <Binding Converter="{x:Static Converters:StringLengthConverter.Default}" Path="Data.Text" Source="{StaticResource TextBoxBase}"/>
+                                    <Binding Converter="{x:Static Conversion:StringLengthConverter.Default}" Path="Data.Text" Source="{StaticResource TextBoxBase}"/>
                                 </MultiBinding>
                             </Run.Text>
                         </Run>
@@ -227,7 +227,7 @@
                         Command="{Binding}"
                         Focusable="False"
                         Margin="0,0,5,0"
-                        Source="{Data:Ancestor TextBox, Converter={x:Static Converters:NullConverter.Default}, Path=(Linq:XTextBox.EnterButtonSource)}"
+                        Source="{Data:Ancestor TextBox, Converter={x:Static Conversion:NullConverter.Default}, Path=(Linq:XTextBox.EnterButtonSource)}"
                         ToolTip="{l:Loc Enter}"/>
                 </DataTemplate>
             </Setter.Value>
@@ -295,7 +295,7 @@
                                     IsHitTestVisible="False"
                                     Margin="{TemplateBinding Padding}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Visibility="{Data:TemplatedParent Path=(Linq:XTextBoxBase.IsEmpty), Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                    Visibility="{Data:TemplatedParent Path=(Linq:XTextBoxBase.IsEmpty), Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                 <!-- ... Label -->
                                 <ContentControl Grid.Column="1"
                                     Content="{Data:TemplatedParent Path=(Linq:XTextBox.Label)}"
@@ -304,7 +304,7 @@
                                     IsHitTestVisible="False"
                                     Margin="{TemplateBinding Padding}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Visibility="{Data:TemplatedParent Path=(Linq:XTextBox.IsEditable), Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                                    Visibility="{Data:TemplatedParent Path=(Linq:XTextBox.IsEditable), Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
                                 
                                 <!-- ... Text (trim) -->
                                 <ContentControl Grid.Column="1"
@@ -315,10 +315,10 @@
                                     Margin="{TemplateBinding Padding}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                     <ContentControl.Visibility>
-                                        <MultiBinding Converter="{x:Static Converters:BooleanToVisibilityMultiConverter.Default}">
+                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
                                             <Data:TemplatedParent Path="(Linq:XTextBox.IsEditable)"/>
-                                            <Data:TemplatedParent Path="(Linq:XTextBoxBase.TextTrimming)" Converter="{x:Static Converters:ValueNotEqualToParameterConverter.Default}" ConverterParameter="{x:Static TextTrimming.None}"/>
-                                            <Data:TemplatedParent Path="IsKeyboardFocused" Converter="{x:Static Converters:InverseBooleanConverter.Default}"/>
+                                            <Data:TemplatedParent Path="(Linq:XTextBoxBase.TextTrimming)" Converter="{x:Static Conversion:ValueNotEqualToParameterConverter.Default}" ConverterParameter="{x:Static TextTrimming.None}"/>
+                                            <Data:TemplatedParent Path="IsKeyboardFocused" Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
                                         </MultiBinding>
                                     </ContentControl.Visibility>
                                 </ContentControl>
@@ -330,9 +330,9 @@
                                     Style="{Data:TemplatedParent Path=(Linq:XTextBoxBase.ScrollViewerStyle)}"
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
                                     <ScrollViewer.Visibility>
-                                        <MultiBinding Converter="{x:Static Converters:AandBorCMultiConverter.Default}">
+                                        <MultiBinding Converter="{x:Static Conversion:AandBorCMultiConverter.Default}">
                                             <Data:TemplatedParent Path="(Linq:XTextBox.IsEditable)"/>
-                                            <Data:TemplatedParent Path="(Linq:XTextBoxBase.TextTrimming)" Converter="{x:Static Converters:ValueEqualsParameterConverter.Default}" ConverterParameter="{x:Static TextTrimming.None}"/>
+                                            <Data:TemplatedParent Path="(Linq:XTextBoxBase.TextTrimming)" Converter="{x:Static Conversion:ValueEqualsParameterConverter.Default}" ConverterParameter="{x:Static TextTrimming.None}"/>
                                             <Data:TemplatedParent Path="IsKeyboardFocused"/>
                                         </MultiBinding>
                                     </ScrollViewer.Visibility>
@@ -346,7 +346,7 @@
                                     Content="{Markup:True}"
                                     ContentTemplate="{Data:TemplatedParent Path=(Linq:XTextBox.ClearButtonTemplate)}">
                                     <ContentControl.Visibility>
-                                        <MultiBinding Converter="{x:Static Converters:BooleanToVisibilityMultiConverter.Default}">
+                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
                                             <Data:TemplatedParent Path="(Linq:XTextBox.ClearButtonVisibility)"/>
                                             <Data:TemplatedParent Path="(Linq:XTextBox.IsEditable)"/>
                                         </MultiBinding>
@@ -358,9 +358,9 @@
                                     ContentTemplate="{Data:TemplatedParent Path=(Linq:XTextBox.EditButtonTemplate)}"
                                     HorizontalAlignment="{Data:TemplatedParent Path=(Linq:XTextBox.EditButtonAlignment)}">
                                     <ContentControl.Visibility>
-                                        <MultiBinding Converter="{x:Static Converters:BooleanToVisibilityMultiConverter.Default}">
+                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
                                             <Data:TemplatedParent Path="(Linq:XTextBox.EditButtonVisibility)"/>
-                                            <Data:TemplatedParent Path="(Linq:XTextBox.IsEditable)" Converter="{x:Static Converters:InverseBooleanConverter.Default}"/>
+                                            <Data:TemplatedParent Path="(Linq:XTextBox.IsEditable)" Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
                                         </MultiBinding>
                                     </ContentControl.Visibility>
                                 </ContentControl>
@@ -369,7 +369,7 @@
                                     Content="{Data:TemplatedParent Path=(Linq:XTextBox.EnterCommand)}"
                                     ContentTemplate="{Data:TemplatedParent Path=(Linq:XTextBox.EnterButtonTemplate)}">
                                     <ContentControl.Visibility>
-                                        <MultiBinding Converter="{x:Static Converters:BooleanToVisibilityMultiConverter.Default}">
+                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
                                             <Data:TemplatedParent Path="(Linq:XTextBox.EnterButtonVisibility)"/>
                                             <Data:TemplatedParent Path="(Linq:XTextBox.IsEditable)"/>
                                         </MultiBinding>
@@ -398,7 +398,7 @@
                         <Popup x:Name="PART_Popup"
                             AllowsTransparency="True"
                             Focusable="False"
-                            IsOpen="{Data:TemplatedParent Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, Mode=TwoWay, Path=(Linq:XTextBoxBase.MenuVisibility)}"
+                            IsOpen="{Data:TemplatedParent Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, Mode=TwoWay, Path=(Linq:XTextBoxBase.MenuVisibility)}"
                             Linq:XPopup.CloseOnMouseLeave="True"
                             Placement="{Data:TemplatedParent Path=(Linq:XTextBoxBase.MenuPlacement)}" 
                             PlacementTarget="{Binding ElementName=PART_Border}"
@@ -584,7 +584,7 @@
                             ContentTemplate="{Binding ValidateTemplate}" 
                             Margin="0,0,5,0"
                             ToolTip="{Binding ValidateToolTip}"
-                            Visibility="{Binding CanValidate, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                            Visibility="{Binding CanValidate, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                     </DataTemplate>
                     <DataTemplate>
                         <ContentControl
@@ -593,7 +593,7 @@
                             Content="{Binding BrowseCommand}"
                             ContentTemplate="{Binding BrowseButtonTemplate}"
                             ToolTip="{Binding BrowseButtonToolTip}"
-                            Visibility="{Binding BrowseButtonVisibility, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                            Visibility="{Binding BrowseButtonVisibility, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                     </DataTemplate>
                 </Collections:DataTemplateCollection>
             </Setter.Value>
@@ -649,7 +649,7 @@
                     <DataTemplate>
                         <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,*"
                             Margin="0,0,5,0"
-                            Visibility="{Data:Ancestor CanUpDown, local:UpDown, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}">
+                            Visibility="{Data:Ancestor CanUpDown, local:UpDown, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}">
                             <ContentPresenter
                                 Content="{Data:Ancestor UpCommand, local:UpDown}"
                                 ContentTemplate="{Data:Ancestor UpButtonTemplate, local:UpDown}"/>
@@ -710,7 +710,7 @@
                     <DataTemplate>
                         <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,*"
                             Margin="0,0,5,0"
-                            Visibility="{Data:Ancestor CanUpDown, local:DateTimeUpDown, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}">
+                            Visibility="{Data:Ancestor CanUpDown, local:DateTimeUpDown, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}">
                             <ContentPresenter
                                 Content="{Data:Ancestor UpCommand, local:UpDown}"
                                 ContentTemplate="{Data:Ancestor UpButtonTemplate, local:UpDown}"/>
@@ -723,11 +723,11 @@
                         <local:ImageToggleButton
                             DataContext="{Data:Ancestor {x:Type local:DateTimeUpDown}}"
                             Focusable="False"
-                            IsChecked="{Binding Path=(Linq:XTextBoxBase.MenuVisibility), Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, Mode=TwoWay}"
+                            IsChecked="{Binding Path=(Linq:XTextBoxBase.MenuVisibility), Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, Mode=TwoWay}"
                             Margin="0,0,1,0"
                             Padding="2.5"
                             Source="{Markup:InternalImage ArrowDownSmall.png}"
-                            Visibility="{Binding IsReadOnly, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                            Visibility="{Binding IsReadOnly, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
                     </DataTemplate>
                 </Collections:DataTemplateCollection>
             </Setter.Value>
@@ -767,7 +767,7 @@
                     <DataTemplate>
                         <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,*"
                             Margin="0,0,5,0"
-                            Visibility="{Data:Ancestor CanUpDown, local:TimeSpanUpDown, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}">
+                            Visibility="{Data:Ancestor CanUpDown, local:TimeSpanUpDown, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}">
                             <ContentPresenter
                                 Content="{Data:Ancestor UpCommand, local:UpDown}"
                                 ContentTemplate="{Data:Ancestor UpButtonTemplate, local:UpDown}"/>
@@ -779,11 +779,11 @@
                     <DataTemplate>
                         <local:ImageToggleButton DataContext="{Data:Ancestor {x:Type local:TimeSpanUpDown}}"
                             Focusable="False"
-                            IsChecked="{Binding Path=(Linq:XTextBoxBase.MenuVisibility), Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, Mode=TwoWay}"
+                            IsChecked="{Binding Path=(Linq:XTextBoxBase.MenuVisibility), Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, Mode=TwoWay}"
                             Margin="0,0,1,0"
                             Padding="2.5"
                             Source="{Markup:InternalImage ArrowDownSmall.png}"
-                            Visibility="{Binding IsReadOnly, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                            Visibility="{Binding IsReadOnly, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
                     </DataTemplate>
                 </Collections:DataTemplateCollection>
             </Setter.Value>
@@ -791,7 +791,7 @@
         <Setter Property="Linq:XTextBoxBase.SuggestionTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Converter={x:Static Converters:TimeSpanToDateTimeStringConverter.Default}, ConverterParameter='h:mm tt', Mode=OneWay}"/>
+                    <TextBlock Text="{Binding Converter={x:Static Conversion:TimeSpanToDateTimeStringConverter.Default}, ConverterParameter='h:mm tt', Mode=OneWay}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -847,7 +847,7 @@
                                     IsHitTestVisible="False"
                                     Margin="{TemplateBinding Padding}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Visibility="{Data:TemplatedParent Path=(Linq:XTextBoxBase.IsEmpty), Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                                    Visibility="{Data:TemplatedParent Path=(Linq:XTextBoxBase.IsEmpty), Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                                 <!-- ... Text -->
                                 <ScrollViewer x:Name="PART_ContentHost" Grid.Column="1"
                                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -884,7 +884,7 @@
                         <Popup x:Name="PART_Popup"
                             AllowsTransparency="True"
                             Focusable="False" 
-                            IsOpen="{Data:TemplatedParent Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, Mode=TwoWay, Path=(Linq:XTextBoxBase.MenuVisibility)}"
+                            IsOpen="{Data:TemplatedParent Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, Mode=TwoWay, Path=(Linq:XTextBoxBase.MenuVisibility)}"
                             Linq:XPopup.CloseOnMouseLeave="True"
                             Placement="{Data:TemplatedParent Path=(Linq:XTextBoxBase.MenuPlacement)}" 
                             PlacementTarget="{Binding ElementName=Bd}"
@@ -994,7 +994,7 @@
                             Content="{Binding BrowseCommand}"
                             ContentTemplate="{Binding BrowseButtonTemplate}"
                             ToolTip="{Binding BrowseButtonToolTip}"
-                            Visibility="{Binding BrowseButtonVisibility, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                            Visibility="{Binding BrowseButtonVisibility, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                     </DataTemplate>
                 </Collections:DataTemplateCollection>
             </Setter.Value>
@@ -1009,11 +1009,11 @@
                                     Linq:XPanel.Spacing="0,0,5,0"
                                     Linq:XPanel.SpacingExcept="Last">
                                     <local:Thumbnail Path="{Binding}"/>
-                                    <TextBlock Text="{Binding Converter={x:Static Converters:FileNameConverter.Default}, ConverterParameter=1}"/>
+                                    <TextBlock Text="{Binding Converter={x:Static Conversion:FileNameConverter.Default}, ConverterParameter=1}"/>
                                     <ContentControl
                                         ContentTemplate="{Data:Ancestor ValidateTemplate, {x:Type local:MultiPathBox}}"
                                         ToolTip="{Data:Ancestor ValidateToolTip, {x:Type local:MultiPathBox}}"
-                                        Visibility="{Data:Ancestor CanValidate, {x:Type local:MultiPathBox}, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}">
+                                        Visibility="{Data:Ancestor CanValidate, {x:Type local:MultiPathBox}, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}">
                                         <ContentControl.Content>
                                             <MultiBinding Converter="{x:Static Storage:ValidateConverter.Default}" Mode="OneWay">
                                                 <Binding Path="."/>

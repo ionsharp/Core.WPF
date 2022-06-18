@@ -6,7 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Behavior="clr-namespace:Imagin.Core.Behavior"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup">
@@ -207,7 +207,7 @@
                                                         Background="{local:ThemeKey Key=DataGridColumnHeader.Background}"
                                                         BorderBrush="{local:ThemeKey Key=DataGridColumnHeader.Border}"
                                                         BorderThickness="0,0,0,1"
-                                                        Visibility="{Data:Ancestor {x:Type TreeView}, Converter={x:Static Converters:ValueEqualsParameterVisibilityConverter.Default}, ConverterParameter={x:Static local:TreeViewModes.Grid}, Path=(Linq:XTreeView.Mode)}">
+                                                        Visibility="{Data:Ancestor {x:Type TreeView}, Converter={x:Static Conversion:ValueEqualsParameterVisibilityConverter.Default}, ConverterParameter={x:Static local:TreeViewModes.Grid}, Path=(Linq:XTreeView.Mode)}">
                                                         <local:TreeViewColumnHeaderPresenter
                                                             ItemsSource="{Data:Ancestor {x:Type TreeView}, Path=(Linq:XTreeView.Columns)}"
                                                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
@@ -302,7 +302,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Linq:XElement.FadeIn" Value="True" />
-        <Setter Property="Linq:XTreeViewItem.ParentHasColumns" Value="{Data:Ancestor {x:Type TreeView}, Path=(Linq:XTreeView.Mode), Converter={x:Static Converters:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:TreeViewModes.Grid}}"/>
+        <Setter Property="Linq:XTreeViewItem.ParentHasColumns" Value="{Data:Ancestor {x:Type TreeView}, Path=(Linq:XTreeView.Mode), Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static local:TreeViewModes.Grid}}"/>
         <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=TreeViewItemForeground}" />
         <Setter Property="Opacity" Value="0" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -458,7 +458,7 @@
                             Rotate="{TemplateBinding IsChecked}"
                             Rotation="-90,0"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Visibility="{Data:Ancestor IsReadOnly, {x:Type ComboBox}, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
+                            Visibility="{Data:Ancestor IsReadOnly, {x:Type ComboBox}, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
                             <local:ImageElement 
                                 Source="{Markup:InternalImage 32-ArrowDown.png}"
                                 Foreground="{TemplateBinding Foreground}"/>
@@ -539,7 +539,7 @@
                             IsHitTestVisible="False"
                             Margin="{TemplateBinding Padding}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Visibility="{Data:TemplatedParent Path=(Linq:XTreeView.SelectedItems).IsEmpty, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                            Visibility="{Data:TemplatedParent Path=(Linq:XTreeView.SelectedItems).IsEmpty, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                         <ContentPresenter
                             Content="{Data:TemplatedParent Path=(Linq:XTreeView.SelectedItems)}" 
                             ContentTemplate="{TemplateBinding SelectionTemplate}" 
@@ -586,7 +586,7 @@
                                                                     Background="{local:ThemeKey Key=DataGridColumnHeader.Background}"
                                                                     BorderBrush="{local:ThemeKey Key=DataGridColumnHeader.Border}"
                                                                     BorderThickness="0,0,0,1"
-                                                                    Visibility="{Data:Ancestor {x:Type TreeView}, Converter={x:Static Converters:ValueEqualsParameterVisibilityConverter.Default}, ConverterParameter={x:Static local:TreeViewModes.Grid}, Path=(Linq:XTreeView.Mode)}">
+                                                                    Visibility="{Data:Ancestor {x:Type TreeView}, Converter={x:Static Conversion:ValueEqualsParameterVisibilityConverter.Default}, ConverterParameter={x:Static local:TreeViewModes.Grid}, Path=(Linq:XTreeView.Mode)}">
                                                                     <local:TreeViewColumnHeaderPresenter
                                                                         ItemsSource="{Data:Ancestor {x:Type TreeView}, Path=(Linq:XTreeView.Columns)}"
                                                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
@@ -701,7 +701,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <CheckBox 
-                        IsEnabled="{Data:Ancestor Column.IsReadOnly, {x:Type local:TreeViewCell}, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
+                        IsEnabled="{Data:Ancestor Column.IsReadOnly, {x:Type local:TreeViewCell}, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
                         IsThreeState="{Data:Ancestor Column.IsThreeState, {x:Type local:TreeViewCell}}">
                         <e:Interaction.Behaviors>
                             <Behavior:BindingBehavior
@@ -720,8 +720,8 @@
             <Setter.Value>
                 <DataTemplate>
                     <ComboBox
-                        IsEnabled="{Data:Ancestor Column.IsReadOnly, {x:Type local:TreeViewCell}, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
-                        ItemsSource="{Data:Ancestor Column.DataType, {x:Type local:TreeViewCell}, Converter={x:Static Converters:EnumConverter.Default}}">
+                        IsEnabled="{Data:Ancestor Column.IsReadOnly, {x:Type local:TreeViewCell}, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
+                        ItemsSource="{Data:Ancestor Column.DataType, {x:Type local:TreeViewCell}, Converter={x:Static Conversion:EnumConverter.Default}}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Data:TranslateBinding}"/>
@@ -856,7 +856,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <local:SwitchButton 
-                        IsEnabled="{Data:Ancestor Column.IsReadOnly, {x:Type local:TreeViewCell}, Converter={x:Static Converters:InverseBooleanConverter.Default}}"
+                        IsEnabled="{Data:Ancestor Column.IsReadOnly, {x:Type local:TreeViewCell}, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
                         IsThreeState="{Data:Ancestor Column.IsThreeState, {x:Type local:TreeViewCell}}">
                         <e:Interaction.Behaviors>
                             <Behavior:BindingBehavior 

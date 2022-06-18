@@ -117,7 +117,7 @@ namespace Imagin.Core.Controls
         }
         static void OnVisibilityChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<TreeViewColumn>().OnVisibilityChanged(new Value<Visibility>(e));
 
-        public TreeViewColumn() : base() => this.Bind(VisibilityProperty, new PropertyPath("(0)", XDependency.IsVisibleProperty), this, BindingMode.OneWay, Converters.BooleanToVisibilityConverter.Default);
+        public TreeViewColumn() : base() => this.Bind(VisibilityProperty, new PropertyPath("(0)", XDependency.IsVisibleProperty), this, BindingMode.OneWay, Conversion.BooleanToVisibilityConverter.Default);
 
         protected virtual void OnVisibilityChanged(Value<Visibility> input) => VisibilityChanged?.Invoke(this, EventArgs.Empty);
     }

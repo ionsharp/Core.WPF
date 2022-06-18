@@ -3,7 +3,7 @@
     xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -245,11 +245,11 @@
                                 Style="{StaticResource {x:Static local:DownloadControl.TextBlockStyleKey}}"/>
 
                             <local:TitleLabel Content="{l:Loc Remaining, Suffix=:}"/>
-                            <TextBlock FontStyle="Italic" Text="{TemplateBinding Remaining, Converter={x:Static Converters:ShortTimeConverter.Default}}"
+                            <TextBlock FontStyle="Italic" Text="{TemplateBinding Remaining, Converter={x:Static Conversion:ShortTimeConverter.Default}}"
                                 Style="{StaticResource {x:Static local:DownloadControl.TextBlockStyleKey}}"/>
 
                             <local:TitleLabel Content="{l:Loc Speed, Suffix=:}"/>
-                            <TextBlock FontStyle="Italic" Text="{TemplateBinding Speed, Converter={x:Static Converters:FileSpeedConverter.Default}}"
+                            <TextBlock FontStyle="Italic" Text="{TemplateBinding Speed, Converter={x:Static Conversion:FileSpeedConverter.Default}}"
                                 Style="{StaticResource {x:Static local:DownloadControl.TextBlockStyleKey}}"/>
                         </StackPanel>
                     </Border>
@@ -286,7 +286,7 @@
                                     <Rectangle 
                                         Width="10" 
                                         Height="10" 
-                                        Fill="{TemplateBinding DefaultBackground, Converter={x:Static Converters:ColorToSolidColorBrushConverter.Default}}"/>
+                                        Fill="{TemplateBinding DefaultBackground, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}"/>
                                 </Border>
                                 <Border 
                                     Cursor="Hand" 
@@ -298,7 +298,7 @@
                                     <Rectangle
                                         Width="10" 
                                         Height="10" 
-                                        Fill="{TemplateBinding DefaultForeground, Converter={x:Static Converters:ColorToSolidColorBrushConverter.Default}}"/>
+                                        Fill="{TemplateBinding DefaultForeground, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}"/>
                                 </Border>
                             </Grid>
                             <Grid 
@@ -470,12 +470,12 @@
                                     Height="22"
                                     IsSnapToTickEnabled="True"
                                     Margin="10,0"
-                                    Maximum="{Data:TemplatedParent Steps, Converter={x:Static Converters:SubtractConverter.Default}, ConverterParameter=1}"
+                                    Maximum="{Data:TemplatedParent Steps, Converter={x:Static Conversion:SubtractConverter.Default}, ConverterParameter=1}"
                                     Minimum="0"
                                     SmallChange="1"
                                     TickPlacement="BottomRight"
                                     TickFrequency="1"
-                                    Value="{Data:TemplatedParent SelectedStepIndex, Converter={x:Static Converters:Int32ToDoubleConverter.Default}, Mode=TwoWay}"
+                                    Value="{Data:TemplatedParent SelectedStepIndex, Converter={x:Static Conversion:Int32ToDoubleConverter.Default}, Mode=TwoWay}"
                                     VerticalAlignment="Center"/>
                                 <local:Int32UpDown Grid.Column="2" Grid.Row="0"
                                     Minimum="1"
@@ -485,7 +485,7 @@
                                     Width="75"/>
 
                                 <local:ColorBox Grid.Column="0" Grid.Row="1" 
-                                    Value="{Data:TemplatedParent SelectedStep.Color, Converter={x:Static Converters:StringColorConverter.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Value="{Data:TemplatedParent SelectedStep.Color, Converter={x:Static Conversion:StringColorConverter.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     VerticalAlignment="Center"/>
                                 <Slider Grid.Column="1" Grid.Row="1"
                                     Height="22"
@@ -569,7 +569,7 @@
                                     <DataTemplate>
                                         <local:DoubleUpDown 
                                             CanUpDown="False"
-                                            IsReadOnly="{Binding Data.IsEditable, Converter={x:Static Converters:InverseBooleanConverter.Default}, Source={StaticResource MatrixControl}}"
+                                            IsReadOnly="{Binding Data.IsEditable, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Source={StaticResource MatrixControl}}"
                                             TextAlignment="Center"
                                             Value="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Visibility="{Binding Data.LabelVisibility, Source={StaticResource MatrixControl}}">
@@ -770,7 +770,7 @@
                                     Points="{TemplateBinding Points}"
                                     Stroke="#22000000">
                                     <Polygon.StrokeThickness>
-                                        <MultiBinding Converter="{x:Static Converters:ZoomMultiConverter.Default}" Mode="OneWay">
+                                        <MultiBinding Converter="{x:Static Conversion:ZoomMultiConverter.Default}" Mode="OneWay">
                                             <Binding>
                                                 <Binding.Source>
                                                     <System:Double>2</System:Double>
@@ -786,7 +786,7 @@
                                     <Style TargetType="FrameworkElement">
                                         <Setter Property="Canvas.Left">
                                             <Setter.Value>
-                                                <MultiBinding Converter="{x:Static Converters:MathMultiConverter.Default}">
+                                                <MultiBinding Converter="{x:Static Conversion:MathMultiConverter.Default}">
                                                     <Binding Path="X"/>
                                                     <Binding Source="{x:Static Numbers:NumberOperation.Multiply}"/>
                                                     <Binding Path="Data.Zoom" Source="{StaticResource PointControl}"/>
@@ -801,7 +801,7 @@
                                         </Setter>
                                         <Setter Property="Canvas.Top">
                                             <Setter.Value>
-                                                <MultiBinding Converter="{x:Static Converters:MathMultiConverter.Default}">
+                                                <MultiBinding Converter="{x:Static Conversion:MathMultiConverter.Default}">
                                                     <Binding Path="Y"/>
                                                     <Binding Source="{x:Static Numbers:NumberOperation.Multiply}"/>
                                                     <Binding Path="Data.Zoom" Source="{StaticResource PointControl}"/>
@@ -963,7 +963,7 @@
                                                 Source="{Binding}"
                                                 Stretch="UniformToFill"
                                                 VerticalAlignment="Stretch"
-                                                Visibility="{Binding Data.BackgroundBlur, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, Source={StaticResource SlideView}}">
+                                                Visibility="{Binding Data.BackgroundBlur, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, Source={StaticResource SlideView}}">
                                                 <Image.Effect>
                                                     <BlurEffect Radius="100"/>
                                                 </Image.Effect>
@@ -1066,7 +1066,7 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding Border.CornerRadius}"
                         Padding="{TemplateBinding Padding}">
-                        <StackPanel Linq:XElement.Name="{x:Static local:StackControl.StackPanelKey}" Orientation="{TemplateBinding Orientation, Converter={x:Static Converters:InverseOrientationConverter.Default}}"/>
+                        <StackPanel Linq:XElement.Name="{x:Static local:StackControl.StackPanelKey}" Orientation="{TemplateBinding Orientation, Converter={x:Static Conversion:InverseOrientationConverter.Default}}"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

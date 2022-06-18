@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Converters;
+﻿using Imagin.Core.Conversion;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Models;

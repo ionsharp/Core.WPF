@@ -3,7 +3,7 @@
     xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup">
@@ -31,27 +31,27 @@
                                                 CommandParameter="True"
                                                 Source="{Markup:InternalImage ArrowLeftRound.png}" 
                                                 ToolTip="{l:Loc CollapseLeft}" 
-                                                Visibility="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Converters:OrientationToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                                                Visibility="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Conversion:OrientationToVisibilityConverter.Default}, ConverterParameter=1}"/>
                                             <local:ImageButton 
                                                 x:Name="PART_CollapseUp" 
                                                 Command="{Data:Ancestor CollapseCommand, {x:Type local:SplitGrid}}"
                                                 CommandParameter="False"
                                                 Source="{Markup:InternalImage ArrowUpRound.png}" 
                                                 ToolTip="{l:Loc CollapseUp}" 
-                                                Visibility="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Converters:OrientationToVisibilityConverter.Default}}"/>
+                                                Visibility="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Conversion:OrientationToVisibilityConverter.Default}}"/>
                                         </Grid>
                                         <local:ImageButton x:Name="PART_AlignButton" 
                                             Command="{Data:Ancestor AlignCommand, {x:Type local:SplitGrid}}"
                                             Source="{Markup:InternalImage AlignCenter.png}" 
                                             ToolTip="{l:Loc Align}"/>
                                         <local:ImageToggleButton x:Name="PART_HorizontalButton" 
-                                            IsChecked="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Converters:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static Orientation.Horizontal}, Mode=TwoWay}"
+                                            IsChecked="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static Orientation.Horizontal}, Mode=TwoWay}"
                                             GroupName="SplitOrientation"
                                             Source="{Markup:InternalImage Rows.png}" 
                                             ToolTip="{l:Loc TopAndBottom}"/>
                                         <local:ImageToggleButton x:Name="PART_VerticalButton"
                                             GroupName="SplitOrientation"
-                                            IsChecked="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Converters:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static Orientation.Vertical}, Mode=TwoWay}"
+                                            IsChecked="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Static Orientation.Vertical}, Mode=TwoWay}"
                                             Source="{Markup:InternalImage Columns.png}" 
                                             ToolTip="{l:Loc SideBySide}"/>
                                         <Grid x:Name="PART_SwapButtons">
@@ -60,13 +60,13 @@
                                                 Command="{Data:Ancestor SwapCommand, {x:Type local:SplitGrid}}"
                                                 Source="{Markup:InternalImage UpDownArrows.png}"
                                                 ToolTip="{l:Loc SwapRows}" 
-                                                Visibility="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Converters:OrientationToVisibilityConverter.Default}}"/>
+                                                Visibility="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Conversion:OrientationToVisibilityConverter.Default}}"/>
                                             <local:ImageButton 
                                                 x:Name="PART_SwapVertical"
                                                 Command="{Data:Ancestor SwapCommand, {x:Type local:SplitGrid}}"
                                                 Source="{Markup:InternalImage LeftRightArrows.png}" 
                                                 ToolTip="{l:Loc SwapColumns}"
-                                                Visibility="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Converters:OrientationToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                                                Visibility="{Data:Ancestor Orientation, {x:Type local:SplitGrid}, Converter={x:Static Conversion:OrientationToVisibilityConverter.Default}, ConverterParameter=1}"/>
                                         </Grid>
                                     </StackPanel>
                                     <ItemsControl x:Name="PART_CustomButtons"

@@ -1,5 +1,6 @@
 ﻿using Imagin.Core.Data;
 using Imagin.Core.Media;
+using Imagin.Core.Reflection;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -49,7 +50,7 @@ namespace Imagin.Core.Controls
 
         double fontSize = 16.0;
         [Range(12.0, 48.0, 1.0)]
-        [Format(RangeFormat.Both)]
+        [MemberSetter(nameof(MemberModel.Format), RangeFormat.Both)]
         public double FontSize
         {
             get => fontSize;

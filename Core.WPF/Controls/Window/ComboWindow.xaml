@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Behavior="clr-namespace:Imagin.Core.Behavior"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq">
     <Grid DataContext="{Data:Ancestor {x:Type local:ComboWindow}}"
@@ -12,7 +12,7 @@
         <TextBlock 
             Margin="0,0,0,5"
             Text="{Binding Text}"
-            Visibility="{Binding Text, Converter={x:Static Converters:StringToVisibilityConverter.Default}}"/>
+            Visibility="{Binding Text, Converter={x:Static Conversion:StringToVisibilityConverter.Default}}"/>
         <ComboBox x:Name="ComboBox"
             ItemsSource="{Binding ItemsSource}"
             Linq:XComboBox.Placeholder="{Binding Placeholder}"

@@ -298,8 +298,8 @@
         //...
         ProgressCircleForeground,
         //...
-        PropertyGridDescriptionBackground,
-        PropertyGridDescriptionBorder,
+        MemberGridDescriptionBackground,
+        MemberGridDescriptionBorder,
         //...
         RadioButtonBackground,
         RadioButtonBorder,

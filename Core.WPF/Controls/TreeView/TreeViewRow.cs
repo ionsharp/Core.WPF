@@ -121,7 +121,7 @@ namespace Imagin.Core.Controls
                 column);
             result.Bind(VisibilityProperty, 
                 new PropertyPath("(0)", XDependency.IsVisibleProperty), 
-                column, BindingMode.OneWay, Converters.BooleanToVisibilityConverter.Default);
+                column, BindingMode.OneWay, Conversion.BooleanToVisibilityConverter.Default);
             return result;
         }
 

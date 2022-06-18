@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Analytics="clr-namespace:Imagin.Core.Analytics"
     xmlns:Common="clr-namespace:Imagin.Core"
-    xmlns:Converters="clr-namespace:Imagin.Core.Converters"
+    xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Core="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
@@ -48,7 +48,7 @@
         <Setter Property="Linq:XWindow.DialogTemplate">
             <Setter.Value>
                 <DataTemplate DataType="{x:Type Common:DialogReference}">
-                    <local:DialogControl Content="{Binding}" Visibility="{Binding Converter={x:Static Converters:ObjectToVisibilityConverter.Default}}"/>
+                    <local:DialogControl Content="{Binding}" Visibility="{Binding Converter={x:Static Conversion:ObjectToVisibilityConverter.Default}}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -417,7 +417,7 @@
         <Setter Property="Linq:XWindow.HeaderTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <local:PropertyGrid x:Name="PropertyGrid" MaxHeight="32"
+                    <local:MemberGrid x:Name="MemberGrid" MaxHeight="32"
                         BorderThickness="0"
                         GroupName="Category"
                         HeaderVisibility="Collapsed"
@@ -427,7 +427,7 @@
                         VerticalAlignment="Center"/>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:ToolAttribute}}" Value="False">
-                            <Setter TargetName="PropertyGrid" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="MemberGrid" Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
@@ -561,7 +561,7 @@
                             <Data:Reference x:Key="StorageWindow" Data="{Data:Ancestor {x:Type local:StorageWindow}}"/>
                         </Grid.Resources>
                         <Grid Linq:XGrid.Rows="*,Auto"
-                            Visibility="{Binding Data.ViewOptions, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}, ConverterParameter=1, Source={StaticResource StorageWindow}}">
+                            Visibility="{Binding Data.ViewOptions, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1, Source={StaticResource StorageWindow}}">
                             <ContentPresenter Content="{Binding}"/>
                             <local:TopBorder Grid.Row="1"
                                 Padding="5">
@@ -586,7 +586,7 @@
                                                             <Setter.Value>
                                                                 <DataTemplate>
                                                                     <TextBlock 
-                                                                        Text="{Binding FileExtensions, Converter={x:Static Converters:ListToStringConverter.Default}}"
+                                                                        Text="{Binding FileExtensions, Converter={x:Static Conversion:ListToStringConverter.Default}}"
                                                                         TextTrimming="CharacterEllipsis"/>
                                                                 </DataTemplate>
                                                             </Setter.Value>
@@ -608,14 +608,14 @@
                                 </Grid>
                             </local:TopBorder>
                         </Grid>
-                        <local:PropertyGrid
+                        <local:MemberGrid
                             DataContext="{Binding Data, Source={StaticResource StorageWindow}}"
                             BorderThickness="0"
                             GroupName="Category"
                             HeaderVisibility="Visible"
                             Margin="0,0,0,10"
                             Source="{Binding Options}"
-                            Visibility="{Binding ViewOptions, Converter={x:Static Converters:BooleanToVisibilityConverter.Default}}"/>
+                            Visibility="{Binding ViewOptions, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
                     </Grid>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Data:Ancestor Mode, local:StorageWindow}" Value="Open">
