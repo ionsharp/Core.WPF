@@ -1023,8 +1023,8 @@
                                         <Canvas>
                                             <ContentPresenter Content="{Data:Ancestor ArrowForeground, local:ComponentSlider}"
                                                 ContentTemplate="{Data:Ancestor ArrowTemplate, local:ComponentSlider}"
-                                                Canvas.Left="{Data:Ancestor ArrowPosition.X}"
-                                                Canvas.Top="{Data:Ancestor ArrowPosition.Y}"/>
+                                                Canvas.Left="{Data:Ancestor ArrowPosition.X, local:ComponentSlider}"
+                                                Canvas.Top="{Data:Ancestor ArrowPosition.Y, local:ComponentSlider}"/>
                                         </Canvas>
                                     </DataTemplate>
                                 </Setter.Value>
