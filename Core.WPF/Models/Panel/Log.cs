@@ -130,11 +130,11 @@ namespace Imagin.Core.Models
         bool filterError = true;
         [Category(Category.Filter)]
         [Label(false)]
-        [Icon(Images.XRound, ThemeKeys.ResultError)]
+        [Image(Images.XRound, ThemeKeys.ResultError)]
         [Index(-5)]
         [MemberTrigger(nameof(MemberModel.Content), nameof(ErrorCount))]
         [Tool]
-        [Style(BooleanStyle.Image)]
+        [MemberStyle(BooleanStyle.Image)]
         public bool FilterError
         {
             get => filterError;
@@ -144,11 +144,11 @@ namespace Imagin.Core.Models
         bool filterMessage = true;
         [Category(Category.Filter)]
         [Label(false)]
-        [Icon(Images.Info, ThemeKeys.ResultMessage)]
+        [Image(Images.Info, ThemeKeys.ResultMessage)]
         [Index(-4)]
         [MemberTrigger(nameof(MemberModel.Content), nameof(MessageCount))]
         [Tool]
-        [Style(BooleanStyle.Image)]
+        [MemberStyle(BooleanStyle.Image)]
         public bool FilterMessage
         {
             get => filterMessage;
@@ -158,11 +158,11 @@ namespace Imagin.Core.Models
         bool filterSuccess = true;
         [Category(Category.Filter)]
         [Label(false)]
-        [Icon(Images.CheckmarkRound, ThemeKeys.ResultSuccess)]
+        [Image(Images.CheckmarkRound, ThemeKeys.ResultSuccess)]
         [Index(-3)]
         [MemberTrigger(nameof(MemberModel.Content), nameof(SuccessCount))]
         [Tool]
-        [Style(BooleanStyle.Image)]
+        [MemberStyle(BooleanStyle.Image)]
         public bool FilterSuccess
         {
             get => filterSuccess;
@@ -172,11 +172,11 @@ namespace Imagin.Core.Models
         bool filterWarning = true;
         [Category(Category.Filter)]
         [Label(false)]
-        [Icon(Images.Warning, ThemeKeys.ResultWarning)]
+        [Image(Images.Warning, ThemeKeys.ResultWarning)]
         [Index(-2)]
         [MemberTrigger(nameof(MemberModel.Content), nameof(WarningCount))]
         [Tool]
-        [Style(BooleanStyle.Image)]
+        [MemberStyle(BooleanStyle.Image)]
         public bool FilterWarning
         {
             get => filterWarning;
@@ -187,7 +187,7 @@ namespace Imagin.Core.Models
         [Category(Category.Category0)]
         [DisplayName("Level")]
         [Tool]
-        [Style(EnumStyle.FlagSelect)]
+        [MemberStyle(EnumStyle.FlagSelect)]
         public ResultLevel FilterLevel
         {
             get => filterLevel;
@@ -213,11 +213,11 @@ namespace Imagin.Core.Models
         [Command(nameof(SearchCommand))]
         [Label(false)]
         [Featured(AboveBelow.Below)]
-        [Icon(Images.Search)]
+        [Image(Images.Search)]
         [Index(int.MaxValue)]
         [MemberSetter(nameof(MemberModel.Placeholder), "Search...")]
         [Tool]
-        [Style(StringStyle.Search)]
+        [MemberStyle(StringStyle.Search)]
         [Suggestions(nameof(SearchHistory), nameof(SearchSuggestionCommand))]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]
         [Width(300)]
@@ -257,10 +257,10 @@ namespace Imagin.Core.Models
         bool textWrap = false;
         [Category(Category.Text)]
         [Label(false)]
-        [Icon(Images.ArrowDownLeft)]
+        [Image(Images.ArrowDownLeft)]
         [Index(int.MaxValue - 1)]
         [Tool]
-        [Style(BooleanStyle.Image)]
+        [MemberStyle(BooleanStyle.Image)]
         public bool TextWrap
         {
             get => textWrap;
@@ -399,7 +399,7 @@ namespace Imagin.Core.Models
 
         [Category(Category.Commands0)]
         [DisplayName("Clear")]
-        [Icon(Images.Trash)]
+        [Image(Images.Trash)]
         [Index(2)]
         [Tool]
         new public ICommand ClearCommand => base.ClearCommand;
@@ -407,7 +407,7 @@ namespace Imagin.Core.Models
         ICommand cutCommand;
         [Category(Category.Commands0)]
         [DisplayName("Cut")]
-        [Icon(Images.Cut)]
+        [Image(Images.Cut)]
         [Index(0)]
         [Tool]
         public ICommand CutCommand
@@ -421,7 +421,7 @@ namespace Imagin.Core.Models
         ICommand copyCommand;
         [Category(Category.Commands0)]
         [DisplayName("Copy")]
-        [Icon(Images.Copy)]
+        [Image(Images.Copy)]
         [Index(1)]
         [Tool]
         public ICommand CopyCommand => copyCommand ??= new RelayCommand(() =>

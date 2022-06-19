@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace Imagin.Core.Media.Animation
+namespace Imagin.Core.Animation
 {
     /// <summary>
     /// Animates a double value.

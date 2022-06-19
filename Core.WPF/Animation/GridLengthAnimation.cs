@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace Imagin.Core.Media.Animation
+namespace Imagin.Core.Animation
 {
     /// <summary>
     /// Animates a <see cref="GridLength"/> value just like the <see cref="DoubleAnimation"/> animates a <see cref="double"/> value.

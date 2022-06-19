@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Linq;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using Imagin.Core.Numerics;
 using System;
 using System.Collections;
@@ -265,7 +265,11 @@ namespace Imagin.Core.Conversion
         public static ColorToStringConverter Default { get; private set; } = new ColorToStringConverter();
         ColorToStringConverter() { }
 
-        protected override ConverterValue<string> ConvertTo(ConverterData<Color> input) => input.Value.Hexadecimal(input.Parameter == 1).ToString(input.Parameter == 1);
+        protected override ConverterValue<string> ConvertTo(ConverterData<Color> input)
+        {
+            input.Value.Convert(out Hexadecimal result, input.Parameter == 1);
+            return result.ToString(input.Parameter == 1);
+        }
 
         protected override ConverterValue<Color> ConvertBack(ConverterData<string> input) => new Hexadecimal(input.Value).Color().A(i => input.Parameter == 1 ? i : input.Parameter == 0 ? (byte)255 : throw new NotSupportedException());
     }
@@ -346,10 +350,19 @@ namespace Imagin.Core.Conversion
         public static Int32ColorToStringConverter Default { get; private set; } = new Int32ColorToStringConverter();
         Int32ColorToStringConverter() { }
 
-        protected override ConverterValue<string> ConvertTo(ConverterData<System.Drawing.Color> input) => input.Value.Double().Hexadecimal(input.Parameter == 1).ToString(input.Parameter == 1);
+        protected override ConverterValue<string> ConvertTo(ConverterData<System.Drawing.Color> input)
+        {
+            input.Value.Convert(out Color color);
+            color.Convert(out Hexadecimal result, input.Parameter == 1);
+            return result.ToString(input.Parameter == 1);
+        }
 
-        protected override ConverterValue<System.Drawing.Color> ConvertBack(ConverterData<string> input) 
-            => new Hexadecimal(input.Value).Color().A(i => input.Parameter == 1 ? i : input.Parameter == 0 ? (byte)255 : throw new NotSupportedException()).Int32();
+        protected override ConverterValue<System.Drawing.Color> ConvertBack(ConverterData<string> input)
+        {
+            var color = new Hexadecimal(input.Value).Color().A(i => input.Parameter == 1 ? i : input.Parameter == 0 ? (byte)255 : throw new NotSupportedException());
+            color.Convert(out System.Drawing.Color result);
+            return result;
+        }
     }
 
     [ValueConversion(typeof(int), typeof(string))]
@@ -391,7 +404,11 @@ namespace Imagin.Core.Conversion
         public static SolidColorBrushToStringConverter Default { get; private set; } = new SolidColorBrushToStringConverter();
         SolidColorBrushToStringConverter() { }
 
-        protected override ConverterValue<string> ConvertTo(ConverterData<SolidColorBrush> input) => input.Value.Color.Hexadecimal().ToString(true);
+        protected override ConverterValue<string> ConvertTo(ConverterData<SolidColorBrush> input)
+        {
+            input.Value.Color.Convert(out Hexadecimal result);
+            return result.ToString(true);
+        }
 
         protected override ConverterValue<SolidColorBrush> ConvertBack(ConverterData<string> input) => new Hexadecimal(input.Value).SolidColorBrush();
     }
@@ -402,7 +419,11 @@ namespace Imagin.Core.Conversion
         public static StringColorToStringConverter Default { get; private set; } = new();
         StringColorToStringConverter() { }
 
-        protected override ConverterValue<string> ConvertTo(ConverterData<StringColor> input) => input.Value.Value.Hexadecimal().ToString(true);
+        protected override ConverterValue<string> ConvertTo(ConverterData<StringColor> input)
+        {
+            input.Value.Value.Convert(out Hexadecimal result);
+            return result.ToString(true);
+        }
 
         protected override ConverterValue<StringColor> ConvertBack(ConverterData<string> input) => new(new Hexadecimal(input.Value).Color());
     }

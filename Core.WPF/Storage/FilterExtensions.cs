@@ -1,5 +1,6 @@
 ﻿using Imagin.Core.Data;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using System;
 
 namespace Imagin.Core.Storage
@@ -17,7 +18,7 @@ namespace Imagin.Core.Storage
 
         string value = string.Empty;
         [DisplayName("Extensions")]
-        [Style(StringStyle.Tokens)]
+        [MemberStyle(StringStyle.Tokens)]
         public string Value
         {
             get => value;

@@ -51,7 +51,7 @@ namespace Imagin.Core.Config
             {
                 case DataFolders.Documents:
                     var i = Get.Where<SingleApplication>();
-                    return $@"{Environment.SpecialFolder.MyDocuments.Path()}\{XAssembly.Company(InternalAssembly.Name)}";
+                    return $@"{Environment.SpecialFolder.MyDocuments.Path()}\{XAssembly.Company(AssemblyProperties.Name)}";
 
                 case DataFolders.ExecutionPath:
                     return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);

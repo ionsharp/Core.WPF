@@ -1,9 +1,9 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Collections;
 using Imagin.Core.Collections.ObjectModel;
-using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,10 +58,10 @@ namespace Imagin.Core.Models
         bool textWrap = true;
         [Category(Category.Text)]
         [Label(false)]
-        [Icon(Images.ArrowDownLeft)]
+        [Image(Images.ArrowDownLeft)]
         [Index(int.MaxValue - 1)]
         [Tool]
-        [Style(BooleanStyle.Image)]
+        [MemberStyle(BooleanStyle.Image)]
         public bool TextWrap
         {
             get => textWrap;
@@ -132,7 +132,7 @@ namespace Imagin.Core.Models
         ICommand markAllCommand;
         [Category(Category.Commands0)]
         [DisplayName("MarkAll")]
-        [Icon(Images.Read)]
+        [Image(Images.Read)]
         [Tool]
         public ICommand MarkAllCommand => markAllCommand
             ??= new RelayCommand(() => Notifications.ForEach<Notification>(i => i.IsRead = true), () => Notifications?.Contains<Notification>(i => !i.IsRead) == true);
@@ -140,7 +140,7 @@ namespace Imagin.Core.Models
         ICommand unmarkAllCommand;
         [Category(Category.Commands0)]
         [DisplayName("UnmarkAll")]
-        [Icon(Images.Unread)]
+        [Image(Images.Unread)]
         [Tool]
         public ICommand UnmarkAllCommand => unmarkAllCommand
             ??= new RelayCommand(() => Notifications.ForEach<Notification>(i => i.IsRead = false), () => Notifications?.Contains<Notification>(i => i.IsRead) == true);

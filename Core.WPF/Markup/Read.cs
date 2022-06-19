@@ -16,7 +16,7 @@ namespace Imagin.Core.Markup
 
     public class ReadInternal : Read
     {
-        public override string Assembly => InternalAssembly.Name;
+        public override string Assembly => AssemblyProperties.Name;
 
         public ReadInternal(string relativePath) : base(relativePath) { }
     }

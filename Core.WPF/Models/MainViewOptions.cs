@@ -2,10 +2,10 @@
 using Imagin.Core.Collections.Serialization;
 using Imagin.Core.Config;
 using Imagin.Core.Controls;
-using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Local;
+using Imagin.Core.Reflection;
 using Imagin.Core.Serialization;
 using Imagin.Core.Storage;
 using System;
@@ -73,7 +73,7 @@ namespace Imagin.Core.Models
         #region Save
 
         bool autoSave = false;
-        [DisplayName("Auto save"), Featured, Style(BooleanStyle.Switch)]
+        [DisplayName("Auto save"), Featured, MemberStyle(BooleanStyle.Switch)]
         public bool AutoSave
         {
             get => autoSave;

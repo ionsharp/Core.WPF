@@ -33,16 +33,6 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     #endregion
 
-    #region (enum) LoadType
-
-    internal enum LoadType
-    {
-        Recreate,
-        Update
-    }
-
-    #endregion
-
     #region Fields
 
     internal readonly MemberGrid Control;
@@ -53,7 +43,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     #region Properties
 
-    public MemberSource Source { get; private set; }
+    public MemberSource Source { get; internal set; }
 
     //...
 
@@ -61,7 +51,11 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
     public bool Loading
     {
         get => loading;
-        set => this.Change(ref loading, value);
+        set
+        {
+            this.Change(ref loading, value);
+            Control.Loading = value;
+        }
     }
 
     #endregion
@@ -88,8 +82,6 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     //... (new)
 
-    new void Add(MemberModel i) => base.Add(i);
-
     new internal void Clear()
     {
         Unsubscribe();
@@ -97,12 +89,6 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
         Source = null;
     }
-
-    new void Insert(int index, MemberModel i) => base.Insert(index, i);
-
-    new void Remove(MemberModel i) => base.Remove(i);
-
-    new void RemoveAt(int i) => base.RemoveAt(i);
 
     //... (private)
 
@@ -134,149 +120,6 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     //...
 
-    async Task Load(LoadType loadType, MemberFilter filter, Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
-    {
-        await Task.Run(() =>
-        {
-            switch (loadType)
-            {
-                case LoadType.Recreate:
-
-                    var visibility
-                        = Source.SharedType.GetAttribute<MemberVisibilityAttribute>() ?? new();
-
-                    lock (cache)
-                    {
-                        if (!Cache.Current.ContainsKey(Source.SharedType))
-                        {
-                            var data = new CacheData();
-                            foreach (var i in GetMembers(Source.SharedType))
-                            {
-                                if (!Supported(i))
-                                    continue;
-
-                                bool isImplicit(MemberInfo j)
-                                    => !j.HasAttribute<BrowsableAttribute>() && !j.HasAttribute<HiddenAttribute>() && !j.HasAttribute<VisibleAttribute>();
-
-                                switch (i.MemberType)
-                                {
-                                    case MemberTypes.Field:
-                                        if (visibility.Field == MemberVisibility.Explicit)
-                                        {
-                                            if (isImplicit(i))
-                                                continue;
-                                        }
-                                        break;
-
-                                    case MemberTypes.Property:
-                                        if (visibility.Property == MemberVisibility.Explicit)
-                                        {
-                                            if (isImplicit(i))
-                                                continue;
-                                        }
-                                        break;
-
-                                    default: continue;
-                                }
-
-                                var attributes = new MemberAttributes(i);
-                                if (attributes.Hidden)
-                                    continue;
-
-                                data.Add(i, new(i));
-                            }
-                            Cache.Current.Add(Source.SharedType, data);
-                        }
-                    }
-
-                    foreach (var i in Cache.Current[Source.SharedType])
-                    {
-                        switch (i.Key.MemberType)
-                        {
-                            case MemberTypes.Field:
-                                if (!filter.HasFlag(MemberFilter.Field))
-                                    continue;
-
-                                break;
-
-                            case MemberTypes.Property:
-                                if (!filter.HasFlag(MemberFilter.Property))
-                                    continue;
-
-                                break;
-
-                            default: continue;
-                        }
-
-                        if (filterAttribute != null)
-                        {
-                            if (!filterAttributeIgnore)
-                            {
-                                if (!i.Value.ContainsKey(filterAttribute))
-                                    continue;
-                            }
-                            else
-                            {
-                                if (i.Value.ContainsKey(filterAttribute))
-                                    continue;
-                            }
-                        }
-
-                        var data = new MemberData(this, Source, i.Key, i.Value);
-
-                        MemberModel result = null;
-                        if (i.Key is FieldInfo field)
-                        {
-                            var templateType = MemberModel.GetTemplateType(field.FieldType);
-
-                            result = templateType == typeof(INotifyCollectionChanged)
-                            ? new ListFieldModel(data)
-                            : new FieldModel(data);
-                        }
-
-                        else if (i.Key is PropertyInfo property)
-                        {
-                            var templateType = MemberModel.GetTemplateType(property.PropertyType);
-
-                            result = templateType == typeof(INotifyCollectionChanged)
-                            ? new ListPropertyModel(data)
-                            : new PropertyModel(data);
-                        }
-
-                        result.DepthIndex = Depth;
-                        result.UpdateValue();
-
-                        Add(result);
-                        Dispatch.Invoke(() => onAdded?.Invoke(result));
-                    }
-                    break;
-
-                case LoadType.Update:
-                    this.ForEach(i => Dispatch.Invoke(() => i.UpdateSource(Source)));
-                    break;
-            }
-        });
-    }
-
-    void Load(IDictionary input, Action<MemberModel> onAdded)
-    {
-        foreach (DictionaryEntry i in input)
-        {
-            if (i.Value != null)
-            {
-                var memberData = new MemberData(this, Source, null, null);
-
-                var result = new EntryModel(memberData) { Name = i.Key.ToString() };
-                result.UpdateValue(i.Value);
-                    
-                Add(result);
-                Dispatch.Invoke(() => onAdded?.Invoke(result));
-            }
-        }
-    }
-
-    //...
-
     void OnSourceChanged(object sender, PropertyChangedEventArgs e) 
         => this.FirstOrDefault(i => i.Name == e.PropertyName)?.UpdateValueSafe();
 
@@ -293,15 +136,11 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
         else
         {
             var result = false;
-            foreach (var i in Source)
+            if (Source.Instance is ILock j)
             {
-                if (i is ILock j)
+                if (j.IsLocked)
                 {
-                    if (j.IsLocked)
-                    {
-                        result = true;
-                        break;
-                    }
+                    result = true;
                 }
             }
             if (!result)
@@ -317,93 +156,197 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     //... (internal)
 
-    internal async Task Reload(LoadType type, MemberSource source, MemberFilter filter, Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
+    void Load(IDictionary input, Action<MemberModel> onAdded)
+    {
+        foreach (DictionaryEntry i in input)
+        {
+            if (i.Value != null)
+            {
+                var memberData = new MemberData(this, Source, null, null);
+
+                var result = new EntryModel(memberData) { Name = i.Key.ToString() };
+                result.UpdateValue(i.Value);
+
+                Add(result);
+                Dispatch.Invoke(() => onAdded?.Invoke(result));
+            }
+        }
+    }
+
+    //...
+
+    internal void LoadSync(Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
+    {
+        var visibility
+            = Source.Type.GetAttribute<MemberVisibilityAttribute>() ?? new();
+
+            if (!Cache.Current.ContainsKey(Source.Type))
+            {
+                var data = new CacheData();
+                foreach (var i in GetMembers(Source.Type))
+                {
+                    if (!Supported(i))
+                        continue;
+
+                    bool isImplicit(MemberInfo j)
+                        => !j.HasAttribute<BrowsableAttribute>() && !j.HasAttribute<HiddenAttribute>() && !j.HasAttribute<VisibleAttribute>();
+
+                    switch (i.MemberType)
+                    {
+                        case MemberTypes.Field:
+                            if (visibility.Field == MemberVisibility.Explicit)
+                            {
+                                if (isImplicit(i))
+                                    continue;
+                            }
+                            break;
+
+                        case MemberTypes.Property:
+                            if (visibility.Property == MemberVisibility.Explicit)
+                            {
+                                if (isImplicit(i))
+                                    continue;
+                            }
+                            break;
+
+                        default: continue;
+                    }
+
+                    var attributes = new MemberAttributes(i);
+                    if (attributes.Hidden)
+                        continue;
+
+                    data.Add(i, new(i));
+                }
+                Cache.Current.Add(Source.Type, data);
+            }
+
+        foreach (var i in Cache.Current[Source.Type])
+        {
+            switch (i.Key.MemberType)
+            {
+                case MemberTypes.Field: case MemberTypes.Property: break;
+                default: continue;
+            }
+
+            if (filterAttribute != null)
+            {
+                if (!filterAttributeIgnore)
+                {
+                    if (!i.Value.ContainsKey(filterAttribute))
+                        continue;
+                }
+                else
+                {
+                    if (i.Value.ContainsKey(filterAttribute))
+                        continue;
+                }
+            }
+
+            var data = new MemberData(this, Source, i.Key, i.Value);
+
+            MemberModel result = null;
+            if (i.Key is FieldInfo field)
+            {
+                var templateType = MemberModel.GetTemplateType(field.FieldType);
+
+                result = templateType == typeof(INotifyCollectionChanged)
+                ? new ListFieldModel(data, Depth)
+                : new FieldModel(data, Depth);
+            }
+
+            else if (i.Key is PropertyInfo property)
+            {
+                var templateType = MemberModel.GetTemplateType(property.PropertyType);
+
+                result = templateType == typeof(INotifyCollectionChanged)
+                ? new ListPropertyModel(data, Depth)
+                : new PropertyModel(data, Depth);
+            }
+
+            Add(result);
+            Dispatch.Invoke(() => onAdded?.Invoke(result));
+        }
+
+        if (Source.Instance is IDictionary dictionary)
+            Load(dictionary, onAdded);
+    }
+
+    internal async Task Load(MemberSource source, Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
     {
         Loading = true;
 
-        if (type == LoadType.Recreate)
-            Clear();
-
-        if (type == LoadType.Update)
-        {
-            for (var i = Count - 1; i >= 0; i--)
-            {
-                if (this[i] is EntryModel j)
-                {
-                    j.Unsubscribe();
-                    RemoveAt(i);
-                }
-            }
-        }
-
+        Clear();
         Source = source;
-        if (filter != MemberFilter.None)
-        {
-            if (filter.HasFlag(MemberFilter.Field) || filter.HasFlag(MemberFilter.Property))
-                await Load(type, filter, filterAttribute, filterAttributeIgnore, onAdded);
 
-            if (Source.Count == 1)
+        await Task.Run(() =>
+        {
+            lock (cache)
             {
-                await Task.Run(() =>
-                {
-                    if (filter.HasFlag(MemberFilter.Entry))
-                    {
-                        if (Source.First is IDictionary dictionary)
-                            Load(dictionary, onAdded);
-                    }
-                });
+                LoadSync(filterAttribute, filterAttributeIgnore, onAdded);
             }
-        }
+        });
 
         Subscribe();
         Loading = false;
     }
 
-    internal async Task Recreate(MemberFilter filter, Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
-        => await Reload(LoadType.Recreate, Source, filter, filterAttribute, filterAttributeIgnore, onAdded);
+    internal async Task Load(Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
+        => await Load(Source, filterAttribute, filterAttributeIgnore, onAdded);
+
+    internal void Load(object input)
+    {
+        Clear();
+        Source = new(new MemberPathSource(input));
+
+        LoadSync(null, false, null);
+        Subscribe();
+    }
 
     //... (public)
 
-    public void Refresh() => this.ForEach(i => i.UpdateValue());
+    public void Refresh() => this.ForEach(i => i.UpdateValueSafe());
+
+    public void Refresh(MemberSource newSource)
+    {
+        for (var i = Count - 1; i >= 0; i--)
+        {
+            if (this[i] is EntryModel j)
+            {
+                j.Unsubscribe();
+                RemoveAt(i);
+            }
+        }
+
+        Unsubscribe();
+        Source = newSource;
+
+        XList.ForEach<MemberModel>(this, i =>
+        {
+            i.UpdateSource(newSource);
+            i.UpdateValueSafe();
+        });
+
+        Subscribe();
+    }
 
     public void Subscribe()
     {
-        this.ForEach(i =>
-        {
-            i.Unsubscribe();
-            i.Subscribe();
-        });
-        if (Source?.Count > 0)
-        {
-            foreach (var i in Source)
-            {
-                i.If<ILock>(j =>
-                {
-                    j.Locked -= OnSourceLocked;
-                    j.Locked += OnSourceLocked;
-                });
-                i.If<INotifyPropertyChanged>(j =>
-                {
-                    j.PropertyChanged -= OnSourceChanged;
-                    j.PropertyChanged += OnSourceChanged;
-                });
-            }
-        }
+        this.ForEach(i => { i.Unsubscribe(); i.Subscribe(); });
+
+        Source?.Instance.If<ILock>
+            (j => { j.Locked -= OnSourceLocked; j.Locked += OnSourceLocked; });
+        Source?.Instance.If<INotifyPropertyChanged>
+            (j => { j.PropertyChanged -= OnSourceChanged; j.PropertyChanged += OnSourceChanged; });
     }
 
     public void Unsubscribe()
     {
         this.ForEach(i => i.Unsubscribe());
-        if (Source?.Count > 0)
-        {
-            foreach (var i in Source)
-            {
-                i.If<ILock>
-                    (j => j.Locked -= OnSourceLocked);
-                i.If<INotifyPropertyChanged>
-                    (j => j.PropertyChanged -= OnSourceChanged);
-            }
-        }
+        Source?.Instance.If<ILock>
+            (j => { j.Locked -= OnSourceLocked; });
+        Source?.Instance.If<INotifyPropertyChanged>
+            (j => { j.PropertyChanged -= OnSourceChanged; });
     }
 
     //...

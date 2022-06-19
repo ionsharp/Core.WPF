@@ -2,7 +2,7 @@
 using Imagin.Core.Collections.Serialization;
 using Imagin.Core.Colors;
 using Imagin.Core.Linq;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using Imagin.Core.Models;
 using Imagin.Core.Serialization;
 using System;
@@ -134,7 +134,7 @@ namespace Imagin.Core.Controls
 
         public IEnumerable<Uri> GetDefaultLayouts()
         {
-            yield return Resources.Uri(InternalAssembly.Name, "Controls/ColorControl/Layouts/Default.xml");
+            yield return Resources.Uri(AssemblyProperties.Name, "Controls/ColorControl/Layouts/Default.xml");
         }
 
         public void OnLoaded(ColorControl colorPicker)

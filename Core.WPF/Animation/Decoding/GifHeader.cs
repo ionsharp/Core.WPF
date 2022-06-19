@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Imagin.Core.Media.Animation.Decoding
+namespace Imagin.Core.Animation.Decoding
 {
     internal class GifHeader : GifBlock
     {

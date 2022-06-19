@@ -1098,4 +1098,13 @@
   <data name="Lock" xml:space="preserve">
     <value>ロック</value>
   </data>
+  <data name="ExportAll" xml:space="preserve">
+    <value>すべてエクスポート</value>
+  </data>
+  <data name="Models" xml:space="preserve">
+    <value>モデル</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>プロフィール</value>
+  </data>
 </root>

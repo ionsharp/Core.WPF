@@ -108,7 +108,7 @@ namespace Imagin.Core.Linq
         /// <returns></returns>
         public static string Hexadecimal(this Bitmap input) => new System.Runtime.Remoting.Metadata.W3cXsd2001.SoapHexBinary(input.Bytes()).ToString();
 
-        public static Bitmap PixelFormat(this Bitmap input, Media.PixelFormat format)
+        public static Bitmap PixelFormat(this Bitmap input, Paint.PixelFormat format)
         {
             var result = new Bitmap(input.Width, input.Height, format.Imaging());
 

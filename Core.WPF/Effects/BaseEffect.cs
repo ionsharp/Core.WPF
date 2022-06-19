@@ -18,7 +18,7 @@ namespace Imagin.Core.Effects
 
         public BaseEffect() : base()
         {
-            PixelShader = new() { UriSource = new Uri($"/{InternalAssembly.Name};component/Effects/{FilePath}", UriKind.Relative) };
+            PixelShader = new() { UriSource = new Uri($"/{AssemblyProperties.Name};component/Effects/{FilePath}", UriKind.Relative) };
             UpdateShaderValue(InputProperty);
         }
     }

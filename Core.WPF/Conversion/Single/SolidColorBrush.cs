@@ -55,7 +55,7 @@ namespace Imagin.Core.Conversion
             var lightness 
                 = input.ActualParameter.Double();
 
-            var rgb = Xrgb.Convert(input.Value.Color);
+            input.Value.Color.Convert(out RGB rgb);
 
             var hsb = new HSB();
             hsb.From(rgb, WorkingProfile.Default);

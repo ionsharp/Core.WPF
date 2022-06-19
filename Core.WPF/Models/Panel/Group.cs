@@ -28,7 +28,7 @@ namespace Imagin.Core.Models
         [Label(false)]
         [MemberSetter(nameof(MemberModel.ItemPath), nameof(GroupCollection<T>.Name))]
         [MemberTrigger(nameof(MemberModel.ItemSource), nameof(Groups))]
-        [Style(Int32Style.Index)]
+        [MemberStyle(Int32Style.Index)]
         [Tool, Visible]
         public int SelectedGroupIndex
         {
@@ -68,21 +68,21 @@ namespace Imagin.Core.Models
 
         ICommand addCommand;
         [DisplayName("Add")]
-        [Icon(Images.Plus)]
+        [Image(Images.Plus)]
         [Index(0)]
         [Tool, Visible]
         public ICommand AddCommand => addCommand ??= new RelayCommand(() => SelectedGroup.As<GroupCollection<T>>().Add(new T()), () => SelectedGroup != null);
 
         ICommand cloneCommand;
         [DisplayName("Clone")]
-        [Icon(Images.Clone)]
+        [Image(Images.Clone)]
         [Index(1)]
         [Tool, Visible]
         public ICommand CloneCommand => cloneCommand ??= new RelayCommand(() => SelectedGroup.Insert(SelectedGroup.IndexOf(SelectedItem), (T)SelectedItem.As<ICloneable>().Clone()), () => SelectedGroup != null && SelectedItem is ICloneable);
 
         ICommand deleteCommand;
         [DisplayName("Delete")]
-        [Icon(Images.Trash)]
+        [Image(Images.Trash)]
         [Index(2)]
         [Tool, Visible]
         public ICommand DeleteCommand => deleteCommand ??= new RelayCommand(() => SelectedGroup.Remove(SelectedItem), () => SelectedGroup?.Contains(SelectedItem) == true);
@@ -90,21 +90,21 @@ namespace Imagin.Core.Models
         ICommand addGroupCommand;
         [DisplayName("Add group")]
         [Featured, Index(0)]
-        [Icon(Images.FolderAdd)]
+        [Image(Images.FolderAdd)]
         [Tool, Visible]
         public ICommand AddGroupCommand => addGroupCommand ??= new RelayCommand(() => Groups.Add(new GroupCollection<T>()), () => Groups != null);
 
         ICommand deleteGroupCommand;
         [DisplayName("Delete group")]
         [Featured, Index(1)]
-        [Icon(Images.FolderDelete)]
+        [Image(Images.FolderDelete)]
         [Tool, Visible]
         public ICommand DeleteGroupCommand => deleteGroupCommand ??= new RelayCommand(() => Groups.Remove(SelectedGroup), () => Groups?.Contains(SelectedGroup) == true);
 
         ICommand exportCommand;
         [Category(nameof(Category.Export))]
         [DisplayName("Export")]
-        [Icon(Images.Export)]
+        [Image(Images.Export)]
         [Tool, Visible]
         public ICommand ExportCommand
             => exportCommand ??= new RelayCommand(() => _ = Groups.Export(SelectedGroup), () => SelectedGroup != null);
@@ -112,7 +112,7 @@ namespace Imagin.Core.Models
         ICommand exportAllCommand;
         [Category(nameof(Category.Export))]
         [DisplayName("ExportAll")]
-        [Icon(Images.ExportAll)]
+        [Image(Images.ExportAll)]
         [Tool, Visible]
         public ICommand ExportAllCommand
             => exportAllCommand ??= new RelayCommand(() => _ = Groups.Export());
@@ -120,7 +120,7 @@ namespace Imagin.Core.Models
         ICommand importCommand;
         [Category(nameof(Category.Import))]
         [DisplayName("Import")]
-        [Icon(Images.Import)]
+        [Image(Images.Import)]
         [Tool, Visible]
         public ICommand ImportCommand
             => importCommand ??= new RelayCommand(() => Groups.Import());

@@ -2,7 +2,7 @@
 using Imagin.Core.Analytics;
 using Imagin.Core.Collections;
 using Imagin.Core.Controls;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using Imagin.Core.Conversion;
 using Imagin.Core.Input;
 using Imagin.Core.Numerics;

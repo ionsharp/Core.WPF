@@ -1,7 +1,6 @@
 ﻿using Imagin.Core.Analytics;
-using Imagin.Core.Data;
-using Imagin.Core.Linq;
 using Imagin.Core.Imports;
+using Imagin.Core.Reflection;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.ComponentModel;
@@ -19,7 +18,7 @@ namespace Imagin.Core.Storage
         [DisplayName("Path")]
         [Featured]
         [ReadOnly]
-        [Style(StringStyle.FilePath)]
+        [MemberStyle(StringStyle.FilePath)]
         public override string Path
         {
             get => base.Path;

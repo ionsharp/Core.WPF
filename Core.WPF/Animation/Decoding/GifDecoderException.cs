@@ -1,6 +1,6 @@
 using System;
 
-namespace Imagin.Core.Media.Animation.Decoding
+namespace Imagin.Core.Animation.Decoding
 {
     [Serializable]
     internal class GifDecoderException : Exception

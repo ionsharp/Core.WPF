@@ -40,8 +40,8 @@
             <Setter.Value>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="BorderBrush" Value="{local:ThemeKey Key=Window.Content.Border}"/>
-                    <Setter Property="BorderThickness" Value="1"/>
-                    <Setter Property="Margin" Value="2"/>
+                    <Setter Property="BorderThickness" Value="0,1,0,0"/>
+                    <Setter Property="Margin" Value="0,2,0,0"/>
                 </Style>
             </Setter.Value>
         </Setter>

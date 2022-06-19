@@ -13,7 +13,7 @@ namespace Imagin.Core.Linq
             List<FieldInfo> result = new();
             if (input?.Inherits<DependencyObject>(true) == true)
             {
-                var types = XAssembly.GetAssembly(InternalAssembly.Name).GetTypes(InternalAssembly.Space.Linq, i => i.GetAttribute<ExtendsAttribute>()?.Type != null);
+                var types = XAssembly.GetAssembly(AssemblyProperties.Name).GetTypes(AssemblyProperties.Path.Linq, i => i.GetAttribute<ExtendsAttribute>()?.Type != null);
                 foreach (var i in types)
                 {
                     var extends = i.GetAttribute<ExtendsAttribute>().Type;

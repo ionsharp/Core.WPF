@@ -97,7 +97,7 @@ namespace Imagin.Core.Models
         [Category(Category.Group), Option]
         [DisplayName(nameof(GroupName))]
         [MemberTrigger(nameof(MemberModel.ItemSource), nameof(GroupNames))]
-        [Style(Int32Style.Index)]
+        [MemberStyle(Int32Style.Index)]
         public virtual int GroupNameIndex
         {
             get => groupNameIndex;
@@ -139,7 +139,7 @@ namespace Imagin.Core.Models
         [Category(Category.Sort), Option]
         [DisplayName(nameof(SortName))]
         [MemberTrigger(nameof(MemberModel.ItemSource), nameof(SortNames))]
-        [Style(Int32Style.Index)]
+        [MemberStyle(Int32Style.Index)]
         public virtual int SortNameIndex
         {
             get => sortNameIndex;
@@ -275,14 +275,14 @@ namespace Imagin.Core.Models
 
         ICommand clearCommand;
         [DisplayName("Clear")]
-        [Icon(Images.Trash)]
+        [Image(Images.Trash)]
         [Tool]
         public virtual ICommand ClearCommand => clearCommand ??= new RelayCommand(() => Data.Clear(), () => Data?.Count > 0);
 
         ICommand refreshCommand;
         [DisplayName("Refresh")]
         [Featured(AboveBelow.Below)]
-        [Icon(Images.Refresh)]
+        [Image(Images.Refresh)]
         [Index(int.MaxValue)]
         [Tool]
         public virtual ICommand RefreshCommand => refreshCommand ??= new RelayCommand(() => DataGrid.ItemsSource.As<ListCollectionView>().Refresh(), () => DataGrid?.ItemsSource is ListCollectionView);

@@ -164,11 +164,11 @@ namespace Imagin.Core.Models
         [Command(nameof(SearchCommand))]
         [Label(false)]
         [Featured(AboveBelow.Below)]
-        [Icon(Images.Search)]
+        [Image(Images.Search)]
         [Index(int.MaxValue)]
         [MemberSetter(nameof(MemberModel.Placeholder), "Search...")]
         [Tool]
-        [Style(StringStyle.Search)]
+        [MemberStyle(StringStyle.Search)]
         [Suggestions(nameof(SearchHistory), nameof(SearchSuggestionCommand))]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]
         [Width(300)]
@@ -196,10 +196,10 @@ namespace Imagin.Core.Models
 
         bool textWrap = true;
         [Label(false)]
-        [Icon(Images.ArrowDownLeft)]
+        [Image(Images.ArrowDownLeft)]
         [Index(int.MaxValue - 1)]
         [Tool]
-        [Style(BooleanStyle.Image)]
+        [MemberStyle(BooleanStyle.Image)]
         public bool TextWrap
         {
             get => textWrap;
@@ -244,7 +244,7 @@ namespace Imagin.Core.Models
 
         ICommand copyCommand;
         [DisplayName("Copy")]
-        [Icon(Images.Copy)]
+        [Image(Images.Copy)]
         [Tool]
         public ICommand CopyCommand => copyCommand ??= new RelayCommand(() =>
         {

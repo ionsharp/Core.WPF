@@ -23,7 +23,7 @@ namespace Imagin.Core.Markup
     {
         public Images Image { set => RelativePath = $"Images/{value}.png"; }
 
-        public override string Assembly => InternalAssembly.Name;
+        public override string Assembly => AssemblyProperties.Name;
 
         public InternalImage() : base() { }
 

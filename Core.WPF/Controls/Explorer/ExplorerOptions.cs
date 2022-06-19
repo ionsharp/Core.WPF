@@ -1,6 +1,7 @@
 ﻿using Imagin.Core.Collections.ObjectModel;
 using Imagin.Core.Data;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using Imagin.Core.Storage;
 using System;
 using System.Windows;
@@ -74,7 +75,7 @@ namespace Imagin.Core.Controls
 
         string defaultPath = StoragePath.Root;
         [Category(Category.General)]
-        [Style(StringStyle.FolderPath)]
+        [MemberStyle(StringStyle.FolderPath)]
         public string DefaultPath
         {
             get => defaultPath;

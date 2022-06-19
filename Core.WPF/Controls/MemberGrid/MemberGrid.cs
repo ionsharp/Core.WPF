@@ -4,7 +4,7 @@ using Imagin.Core.Config;
 using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using Imagin.Core.Models;
 using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
@@ -38,9 +38,6 @@ namespace Imagin.Core.Controls
             = new();
 
         //...
-
-        public static readonly ResourceKey IndeterminateTemplateKey
-            = new();
 
         public static readonly ResourceKey NullTemplateKey
             = new();
@@ -497,18 +494,6 @@ namespace Imagin.Core.Controls
 
         #endregion
 
-        #region Filter
-
-        public static readonly DependencyProperty FilterProperty = DependencyProperty.Register(nameof(Filter), typeof(MemberFilter), typeof(MemberGrid), new FrameworkPropertyMetadata(MemberFilter.All, OnFilterChanged));
-        public MemberFilter Filter
-        {
-            get => (MemberFilter)GetValue(FilterProperty);
-            set => SetValue(FilterProperty, value);
-        }
-        static void OnFilterChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<MemberGrid>().OnFilterChanged(e);
-        
-        #endregion
-
         #region FilterAttribute
 
         public static readonly DependencyProperty FilterAttributeProperty = DependencyProperty.Register(nameof(FilterAttribute), typeof(Type), typeof(MemberGrid), new FrameworkPropertyMetadata(null, OnFilterAttributeChanged));
@@ -567,40 +552,6 @@ namespace Imagin.Core.Controls
 
         #endregion
 
-        #region IndeterminateText
-
-        public static readonly DependencyProperty IndeterminateTextProperty = DependencyProperty.Register(nameof(IndeterminateText), typeof(string), typeof(MemberGrid), new FrameworkPropertyMetadata("(multiple values)"));
-        public string IndeterminateText
-        {
-            get => (string)GetValue(IndeterminateTextProperty);
-            set => SetValue(IndeterminateTextProperty, value);
-        }
-
-        #endregion
-
-        #region IndeterminateTextStyle
-
-        public static readonly DependencyProperty IndeterminateTextStyleProperty = DependencyProperty.Register(nameof(IndeterminateTextStyle), typeof(Style), typeof(MemberGrid), new FrameworkPropertyMetadata(default(Style)));
-        public Style IndeterminateTextStyle
-        {
-            get => (Style)GetValue(IndeterminateTextStyleProperty);
-            set => SetValue(IndeterminateTextStyleProperty, value);
-        }
-
-        #endregion
-
-        #region (ReadOnly) IsIndeterminate
-
-        static readonly DependencyPropertyKey IsIndeterminateKey = DependencyProperty.RegisterReadOnly(nameof(IsIndeterminate), typeof(bool), typeof(MemberGrid), new FrameworkPropertyMetadata(false));
-        public static readonly DependencyProperty IsIndeterminateProperty = IsIndeterminateKey.DependencyProperty;
-        public bool IsIndeterminate
-        {
-            get => (bool)GetValue(IsIndeterminateProperty);
-            private set => SetValue(IsIndeterminateKey, value);
-        }
-
-        #endregion
-
         #region (ReadOnly) Loading
 
         static readonly DependencyPropertyKey LoadingKey = DependencyProperty.RegisterReadOnly(nameof(Loading), typeof(bool), typeof(MemberGrid), new FrameworkPropertyMetadata(false));
@@ -608,7 +559,7 @@ namespace Imagin.Core.Controls
         public bool Loading
         {
             get => (bool)GetValue(LoadingProperty);
-            private set => SetValue(LoadingKey, value);
+            internal set => SetValue(LoadingKey, value);
         }
 
         #endregion
@@ -625,28 +576,6 @@ namespace Imagin.Core.Controls
         #endregion
 
         //...
-
-        #region MemberIndeterminateText
-
-        public static readonly DependencyProperty MemberIndeterminateTextProperty = DependencyProperty.Register(nameof(MemberIndeterminateText), typeof(string), typeof(MemberGrid), new FrameworkPropertyMetadata("(multiple values)"));
-        public string MemberIndeterminateText
-        {
-            get => (string)GetValue(MemberIndeterminateTextProperty);
-            set => SetValue(MemberIndeterminateTextProperty, value);
-        }
-
-        #endregion
-
-        #region MemberIndeterminateTextStyle
-
-        public static readonly DependencyProperty MemberIndeterminateTextStyleProperty = DependencyProperty.Register(nameof(MemberIndeterminateTextStyle), typeof(Style), typeof(MemberGrid), new FrameworkPropertyMetadata(default(Style)));
-        public Style MemberIndeterminateTextStyle
-        {
-            get => (Style)GetValue(MemberIndeterminateTextStyleProperty);
-            set => SetValue(MemberIndeterminateTextStyleProperty, value);
-        }
-
-        #endregion
 
         #region MemberNullText
 
@@ -785,14 +714,14 @@ namespace Imagin.Core.Controls
 
         #region (ReadOnly) Route
 
-        static readonly DependencyPropertyKey RouteKey = DependencyProperty.RegisterReadOnly(nameof(Route), typeof(MemberRoute), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
+        static readonly DependencyPropertyKey RouteKey = DependencyProperty.RegisterReadOnly(nameof(Route), typeof(MemberPath), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
         public static readonly DependencyProperty RouteProperty = RouteKey.DependencyProperty;
         /// <summary>
         /// Stores a reference to every nested property relative to the original object; properties are stored in order of depth.
         /// </summary>
-        public MemberRoute Route
+        public MemberPath Route
         {
-            get => (MemberRoute)GetValue(RouteProperty);
+            get => (MemberPath)GetValue(RouteProperty);
             private set => SetValue(RouteKey, value);
         }
 
@@ -1153,15 +1082,13 @@ namespace Imagin.Core.Controls
 
         async Task Load(Value i, CancellationToken token)
         {
-            Loading = true;
-
             //Force current source to recreate
             if (i.New is SourceFilterUpdate update)
             {
                 if (Members.Source != null)
                 {
                     Clear();
-                    await Members.Recreate(Filter, FilterAttribute, false, OnMemberAdded);
+                    await Members.Load(FilterAttribute, false, OnMemberAdded);
                 }
             }
             //Source != null
@@ -1175,58 +1102,42 @@ namespace Imagin.Core.Controls
                     handleFilter.Invoke(() => SetCurrentValue(FilterAttributeProperty, sourceFilter.Filter));
                 }
 
-                var j = Route.Clean(i.Old, i.New);
+                var j = Route.New(i.Old, i.New);
                 //i.Old != i.New
-                if (j.Element != null)
+                if (j != null)
                 {
                     var oldSource
                         = Members.Source;
                     var newSource
-                        = new MemberSource(j.Element);
+                        = new MemberSource(j);
 
                     ActualSource
-                        = j.Element.Value;
-                    IsIndeterminate
-                        = newSource.Indeterminate;
+                        = j.Value;
 
-                    if (IsIndeterminate)
+                    Route.Append(j);
+
+                    if (oldSource?.Type != newSource.Type)
                     {
-                        Route.Clear();
                         Clear();
-
-                        Members.Clear();
+                        await Members.Load(newSource, FilterAttribute, filterAttributeIgnore, OnMemberAdded);
                     }
                     else
                     {
-                        Route.Append(j.Element);
-
-                        var loadType
-                            = oldSource?.SharedType != newSource.SharedType
-                            ? MemberCollection.LoadType.Recreate : MemberCollection.LoadType.Update;
-
-                        if (loadType == MemberCollection.LoadType.Recreate)
-                            Clear();
-
-                        else Clear(i => i is EntryModel);
-                        await Members.Reload(loadType, newSource, Filter, FilterAttribute, filterAttributeIgnore, OnMemberAdded);
+                        Clear(i => i is EntryModel);
+                        Members.Refresh(newSource);
                     }
                 }
             }
             //Source = null
             else
             {
-                ActualSource
-                    = null;
-                IsIndeterminate
-                    = false;
+                ActualSource = null;
 
                 Route.Clear();
                 Clear();
 
                 Members.Clear();
             }
-
-            Loading = false;
             SourceChanged?.Invoke(this, new EventArgs<object>(i.New));
         }
 
@@ -1388,9 +1299,6 @@ namespace Imagin.Core.Controls
 
         //...
 
-        protected virtual void OnFilterChanged(Value<MemberFilter> input)
-            => SetCurrentValue(SourceProperty, new SourceFilterUpdate());
-
         protected virtual void OnFilterAttributeChanged(Value<Type> input)
         {
             if (input.New?.Inherits<Attribute>() == false)
@@ -1535,7 +1443,7 @@ namespace Imagin.Core.Controls
 
         ICommand backCommand;
         public ICommand BackCommand => backCommand
-            ??= new RelayCommand(() => EditCommand.Execute(Route.Last<MemberRouteElement>(1)), () => Route.Count > 1);
+            ??= new RelayCommand(() => EditCommand.Execute(Route.Last<MemberPathElement>(1)), () => Route.Count > 1);
 
         ICommand clearCommand;
         public ICommand ClearCommand => clearCommand
@@ -1549,20 +1457,9 @@ namespace Imagin.Core.Controls
         public ICommand EditCommand 
             => editCommand ??= new RelayCommand<object>(i => SetCurrentValue(SourceProperty, i));
 
-        ICommand executeAllCommand;
-        public ICommand ExecuteAllCommand => executeAllCommand ??= new RelayCommand<MemberModel>(i =>
-        {
-            foreach (ICommand j in i.GetValues())
-                j.Execute(null);
-        },
-        i => i != null && i.Source.Count > 1 && i.Type == typeof(ICommand));
-
         ICommand expandGroupsCommand;
         public ICommand ExpandGroupsCommand => expandGroupsCommand
             ??= new RelayCommand(() => this.GetChild(ScrollViewerKey)?.FindVisualChildren<Expander>().ForEach(i => i.IsExpanded = true), () => GroupName != MemberGroupName.None);
-
-        ICommand filterCommand;
-        public ICommand FilterCommand => filterCommand ??= new RelayCommand<MemberFilter>(i => SetCurrentValue(FilterProperty, i));
 
         ICommand groupCommand;
         public ICommand GroupCommand => groupCommand ??= new RelayCommand<MemberGroupName>(i => SetCurrentValue(GroupNameProperty, i));

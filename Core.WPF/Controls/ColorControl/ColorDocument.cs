@@ -2,7 +2,7 @@
 using Imagin.Core.Colors;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using Imagin.Core.Models;
 using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
@@ -52,7 +52,7 @@ public class ColorDocument : Document
     }
 
     double depth = 0;
-    [Featured(AboveBelow.Below), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
+    [Featured(AboveBelow.Below), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
     public double Depth
     {
         get => depth;
@@ -86,7 +86,7 @@ public class ColorDocument : Document
     public readonly ColorControlOptions Options;
 
     double rotateX = 45;
-    [DisplayName("X°"), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [DisplayName("X°"), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateX
     {
@@ -95,7 +95,7 @@ public class ColorDocument : Document
     }
 
     double rotateY = 45;
-    [DisplayName("Y°"), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [DisplayName("Y°"), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateY
     {
@@ -104,7 +104,7 @@ public class ColorDocument : Document
     }
 
     double rotateZ = 0;
-    [DisplayName("Z°"), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [DisplayName("Z°"), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateZ
     {
@@ -121,12 +121,19 @@ public class ColorDocument : Document
         set => this.Change(ref shape, value);
     }
 
-    public override string Title => $"#{Color.ActualColor.Hexadecimal()}";
+    public override string Title
+    {
+        get
+        {
+            Color.ActualColor.Convert(out Hexadecimal color);
+            return $"#{color}";
+        }
+    }
 
     public override object ToolTip => Color.ActualColor;
 
     double zoom = 1.8;
-    [MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
+    [MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double Zoom
     {

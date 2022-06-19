@@ -1,6 +1,6 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Collections.Generic;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using System;
 using System.Collections;
 using System.Windows;

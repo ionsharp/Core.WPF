@@ -1098,4 +1098,13 @@
   <data name="Lock" xml:space="preserve">
     <value>Serratura</value>
   </data>
+  <data name="ExportAll" xml:space="preserve">
+    <value>Esporta tutto</value>
+  </data>
+  <data name="Models" xml:space="preserve">
+    <value>Modelli</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profilo</value>
+  </data>
 </root>

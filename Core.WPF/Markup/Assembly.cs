@@ -89,6 +89,6 @@ namespace Imagin.Core.Markup
 
     public sealed class DefaultAssemblyName : AssemblyName
     {
-        public DefaultAssemblyName() : base(InternalAssembly.Name) { }
+        public DefaultAssemblyName() : base(AssemblyProperties.Name) { }
     }
 }

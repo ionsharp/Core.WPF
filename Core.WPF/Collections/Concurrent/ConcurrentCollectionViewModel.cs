@@ -102,7 +102,7 @@ namespace Imagin.Core.Collections.Concurrent
         /// </remarks>
         public ConcurrentCollectionViewModel(IObservable<NotifyCollectionChangedEventArgs> Observable)
         {
-            SubscriptionActionToken = DispatcherQueueProcessor.Instance.QueueSubscribe(() => UnsubscribeToken = Observable.Subscribe(this));
+            SubscriptionActionToken = ConcurrentDispatcherQueue.Instance.QueueSubscribe(() => UnsubscribeToken = Observable.Subscribe(this));
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace Imagin.Core.Collections.Concurrent
         /// </summary>
         public void OnNext(NotifyCollectionChangedEventArgs value)
         {
-            DispatcherQueueProcessor.Instance.Add(() => ProcessCommand(value));
+            ConcurrentDispatcherQueue.Instance.Add(() => ProcessCommand(value));
         }
     }
 }

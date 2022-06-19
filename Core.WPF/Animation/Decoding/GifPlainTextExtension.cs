@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Imagin.Core.Media.Animation.Decoding
+namespace Imagin.Core.Animation.Decoding
 {
     // label 0x01
     internal class GifPlainTextExtension : GifExtension

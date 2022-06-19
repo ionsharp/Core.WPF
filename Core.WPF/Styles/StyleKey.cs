@@ -15,6 +15,6 @@ namespace Imagin.Core.Controls
             set => RelativePath = KeyFormat.F(value);
         }
 
-        public StyleKey() : base() => Assembly = InternalAssembly.Name;
+        public StyleKey() : base() => Assembly = AssemblyProperties.Name;
     }
 }

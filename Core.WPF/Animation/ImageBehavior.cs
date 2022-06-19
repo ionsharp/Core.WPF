@@ -12,9 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
-using Imagin.Core.Media.Animation.Decoding;
+using Imagin.Core.Animation.Decoding;
 
-namespace Imagin.Core.Media.Animation
+namespace Imagin.Core.Animation
 {
     /// <summary>
     /// Provides attached properties that display animated GIFs in a standard Image control.

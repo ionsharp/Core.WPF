@@ -1042,6 +1042,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export all.
+        /// </summary>
+        internal static string ExportAll {
+            get {
+                return ResourceManager.GetString("ExportAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extensions.
         /// </summary>
         internal static string Extensions {
@@ -1717,6 +1726,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Models.
+        /// </summary>
+        internal static string Models {
+            get {
+                return ResourceManager.GetString("Models", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Modified.
         /// </summary>
         internal static string Modified {
@@ -2100,6 +2118,15 @@ namespace Imagin.Core.Lang {
         internal static string Previous {
             get {
                 return ResourceManager.GetString("Previous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile.
+        /// </summary>
+        internal static string Profile {
+            get {
+                return ResourceManager.GetString("Profile", resourceCulture);
             }
         }
         

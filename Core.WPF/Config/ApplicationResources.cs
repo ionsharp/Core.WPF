@@ -39,7 +39,7 @@ namespace Imagin.Core.Config
         public ApplicationResources(BaseApplication application) : base()
         {
             //... Themes
-            DefaultResources.Add(new(InternalAssembly.Name));
+            DefaultResources.Add(new(AssemblyProperties.Name));
 
             //... Styles
             application.Resources.MergedDictionaries.Add(this);
@@ -49,7 +49,7 @@ namespace Imagin.Core.Config
                 {
                     case StyleKeys.Member: break; //StyleKeys.MemberGrid imports this already!
                     default:
-                        application.Resources.MergedDictionaries.Add(New(InternalAssembly.Name, StyleKey.KeyFormat.F(i)));
+                        application.Resources.MergedDictionaries.Add(New(AssemblyProperties.Name, StyleKey.KeyFormat.F(i)));
                         break;
                 }
             });

@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Data;
+﻿using Imagin.Core.Reflection;
 using System.IO;
 
 namespace Imagin.Core.Storage
@@ -19,7 +19,7 @@ namespace Imagin.Core.Storage
         [DisplayName("Path")]
         [Featured]
         [ReadOnly]
-        [Style(StringStyle.FolderPath)]
+        [MemberStyle(StringStyle.FolderPath)]
         public override string Path
         {
             get => base.Path;

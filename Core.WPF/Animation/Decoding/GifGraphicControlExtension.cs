@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Imagin.Core.Media.Animation.Decoding
+namespace Imagin.Core.Animation.Decoding
 {
     // label 0xF9
     internal class GifGraphicControlExtension : GifExtension

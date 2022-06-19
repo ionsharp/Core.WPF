@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Imagin.Core.Media;
+namespace Imagin.Core.Paint;
 
 /// <summary>A normalized <see cref="ColorModel"/> used to perform conversion via user interface.</summary>
 [DisplayName("Color")]
@@ -64,7 +64,7 @@ public class ColorViewModel : ViewModel
 
     Vector2 chromacity = WorkingProfile.Default.Chromacity;
     [Assignable(nameof(DefaultChromacity))]
-    [Category(Category.Profile), Index(-2), Style(ObjectStyle.Shallow), Visible]
+    [Category(Category.Profile), Index(-2), MemberStyle(ObjectStyle.Shallow), Visible]
     public Vector2 Chromacity
     {
         get => chromacity;
@@ -104,48 +104,52 @@ public class ColorViewModel : ViewModel
     }
 
     [Hidden]
-    public ObservableCollection<Imagin.Core.Colors.Component> Components { get; private set; } = new();
+    public ObservableCollection<Colors.Component> Components { get; private set; } = new();
 
     ICompress compress = WorkingProfile.Default.Compress;
     [Assignable(typeof(GammaCompression), typeof(LogGammaCompression), typeof(LCompression), typeof(PQCompression), typeof(Rec709Compression), typeof(Rec2020Compression), typeof(sRGBCompression))]
-    [Category(Category.Profile), Index(1), Style(ObjectStyle.Shallow), Visible]
+    [Category(Category.Profile), Index(1), MemberStyle(ObjectStyle.Shallow), Visible]
     public ICompress Compress
     {
         get => compress;
         set => this.Change(ref compress, value);
     }
 
-    [MemberTrigger(nameof(MemberModel.DisplayName),  nameof(NameX))]
-    [MemberTrigger(nameof(MemberModel.RightText),    nameof(UnitX))]
-    [Category(Category.Component), Clear(false), Index(0), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
+    [MemberSetter(nameof(MemberModel.ClearText), false)]
+    [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameX))]
+    [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitX))]
+    [Category(Category.Component), Index(0), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayX
     {
         get => GetDisplayValue(0);
         set => SetDisplayValue(value, 0);
     }
 
-    [MemberTrigger(nameof(MemberModel.DisplayName),  nameof(NameY))]
-    [MemberTrigger(nameof(MemberModel.RightText),    nameof(UnitY))]
-    [Category(Category.Component), Clear(false), Index(1), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
+    [MemberSetter(nameof(MemberModel.ClearText), false)]
+    [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameY))]
+    [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitY))]
+    [Category(Category.Component), Index(1), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayY
     {
         get => GetDisplayValue(1);
         set => SetDisplayValue(value, 1);
     }
 
-    [MemberTrigger(nameof(MemberModel.DisplayName),  nameof(NameZ))]
-    [MemberTrigger(nameof(MemberModel.RightText),    nameof(UnitZ))]
-    [Category(Category.Component), Clear(false), Index(2), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
+    [MemberSetter(nameof(MemberModel.ClearText), false)]
+    [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameZ))]
+    [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitZ))]
+    [Category(Category.Component), Index(2), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayZ
     {
         get => GetDisplayValue(2);
         set => SetDisplayValue(value, 2);
     }
 
-    [MemberTrigger(nameof(MemberModel.DisplayName),  nameof(NameW))]
-    [MemberTrigger(nameof(MemberModel.IsVisible),    nameof(WVisibility))]
-    [MemberTrigger(nameof(MemberModel.RightText),    nameof(UnitW))]
-    [Category(Category.Component), Clear(false), Index(3), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
+    [MemberSetter(nameof(MemberModel.ClearText), false)]
+    [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameW))]
+    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(WVisibility))]
+    [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitW))]
+    [Category(Category.Component), Index(3), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayW
     {
         get => WVisibility ? GetDisplayValue(3) : "0";
@@ -156,7 +160,7 @@ public class ColorViewModel : ViewModel
     public bool WVisibility => ModelType?.Inherits<ColorModel4>() == true;
 
     double illuminant = CCT.GetTemperature((xy)WorkingProfile.Default.Chromacity);
-    [Category(Category.Profile), MemberSetter(nameof(MemberModel.Format), RangeFormat.Both), Index(-3), Range(2000.0, 30000.0, 100.0), StringFormat("N0"), Visible]
+    [Category(Category.Profile), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(-3), Range(2000.0, 30000.0, 100.0), StringFormat("N0"), Visible]
     [MemberTrigger(nameof(MemberModel.RightText), nameof(IlluminantUnit))]
     public double Illuminant
     {
@@ -223,7 +227,7 @@ public class ColorViewModel : ViewModel
 
     Primary3 primary = WorkingProfile.Default.Primary;
     [Assignable(nameof(DefaultPrimary))]
-    [Category(Category.Profile), Index(0), Style(ObjectStyle.Deep), Visible]
+    [Category(Category.Profile), Index(0), MemberStyle(ObjectStyle.Deep), Visible]
     public Primary3 Primary
     {
         get => primary;
@@ -272,7 +276,7 @@ public class ColorViewModel : ViewModel
     public Vector Value => new(x, y, z);
 
     Vector3 white = (XYZ)(xyY)(xy)WorkingProfile.Default.Chromacity;
-    [Category(Category.Profile), Index(-1), Style(ObjectStyle.Shallow), Visible]
+    [Category(Category.Profile), Index(-1), MemberStyle(ObjectStyle.Shallow), Visible]
     public Vector3 White
     {
         get => white;
@@ -405,7 +409,7 @@ public class ColorViewModel : ViewModel
         handle.SafeInvoke((Action)(() =>
         {
             return;
-            var a = Xrgb.Convert(ActualColor);
+            ActualColor.Convert(out RGB a);
             var b = Colour.New(ModelType, a, WorkingProfile.Default).Value / 255.0;
             var c = new Vector3(b[0], b[1], b[2]);
             X = c.X; Y = c.Y; Z = c.Z;

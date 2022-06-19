@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
-namespace Imagin.Core.Media.Animation
+namespace Imagin.Core.Animation
 {
     /// <summary>
     /// Provides a way to pause, resume or seek a GIF animation.

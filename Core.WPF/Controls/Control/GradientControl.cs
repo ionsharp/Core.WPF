@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Linq;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -55,7 +55,7 @@ namespace Imagin.Core.Controls
 
         #region GradientControl
 
-        public GradientControl() : base() => SetCurrentValue(GradientProperty, Media.Gradient.Default.Steps);
+        public GradientControl() : base() => SetCurrentValue(GradientProperty, Paint.Gradient.Default.Steps);
 
         #endregion
 
@@ -123,7 +123,7 @@ namespace Imagin.Core.Controls
         protected virtual GradientStepCollection OnGradientCoerced(GradientStepCollection input)
         {
             if (input == null || input.Count == 0)
-                return Media.Gradient.Default.Steps;
+                return Paint.Gradient.Default.Steps;
 
             return input;
         }

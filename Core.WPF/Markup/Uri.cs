@@ -34,7 +34,7 @@ namespace Imagin.Core.Markup
 
     public class InternalUri : Uri
     {
-        public override string Assembly => InternalAssembly.Name;
+        public override string Assembly => AssemblyProperties.Name;
 
         public InternalUri(string relativePath) : base(relativePath) { }
     }

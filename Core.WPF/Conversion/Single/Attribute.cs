@@ -104,12 +104,12 @@ namespace Imagin.Core.Conversion
     }
 
     [ValueConversion(typeof(object), typeof(string))]
-    public class IconConverter : AttributeConverter<IconAttribute>
+    public class IconConverter : AttributeConverter<ImageAttribute>
     {
         public static IconConverter Default { get; private set; } = new();
         IconConverter() { }
 
         protected override string GetResult(Attribute input)
-            => input.As<IconAttribute>()?.Icon;
+            => input.As<ImageAttribute>()?.Icon;
     }
 }

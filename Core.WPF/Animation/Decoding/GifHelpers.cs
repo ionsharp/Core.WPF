@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Imagin.Core.Media.Animation.Decoding
+namespace Imagin.Core.Animation.Decoding
 {
     internal static class GifHelpers
     {

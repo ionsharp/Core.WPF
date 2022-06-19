@@ -5,7 +5,6 @@ namespace Imagin.Core.Controls
     [Serializable]
     public enum MemberSortName
     {
-        DisplayName,
-        Type
+        DisplayName, Type
     }
 }

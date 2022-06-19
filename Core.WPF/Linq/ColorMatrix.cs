@@ -1,5 +1,4 @@
 ﻿using Imagin.Core.Colors;
-using Imagin.Core.Media;
 using Imagin.Core.Numerics;
 using System.Windows.Media.Imaging;
 
@@ -18,7 +17,7 @@ public static partial class XColorMatrix
         return result;
     }
 
-    public static unsafe ColorMatrix Resize(this ColorMatrix input, Int32Size size, Interpolations interpolation)
+    public static unsafe ColorMatrix Resize(this ColorMatrix input, Int32Size size, Paint.Interpolations interpolation)
     {
         var result = new ColorMatrix(size.Height.UInt32(), size.Width.UInt32());
 
@@ -42,7 +41,7 @@ public static partial class XColorMatrix
         int widthSource = input.Columns.Int32(), heightSource = input.Rows.Int32();
 
         //Nearest Neighbor
-        if (interpolation == Interpolations.NearestNeighbor)
+        if (interpolation == Paint.Interpolations.NearestNeighbor)
         {
             for (var y = 0; y < size.Height; y++)
             {
@@ -56,13 +55,15 @@ public static partial class XColorMatrix
 
                     var i = y0 * widthSource + x0;
                     var j = pixels[i].Decode();
-                    result.SetValue(y.UInt32(), x.UInt32(), XVector4.Convert(j));
+
+                    j.Convert(out Vector4 k);
+                    result.SetValue(y.UInt32(), x.UInt32(), k);
                 }
             }
         }
 
         //Bilinear
-        else if (interpolation == Interpolations.Bilinear)
+        else if (interpolation == Paint.Interpolations.Bilinear)
         {
             for (var y = 0; y < size.Height; y++)
             {

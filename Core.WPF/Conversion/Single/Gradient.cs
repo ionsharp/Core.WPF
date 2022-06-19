@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Media;
+﻿using Imagin.Core.Paint;
 using System.Windows.Data;
 using System.Windows.Media;
 

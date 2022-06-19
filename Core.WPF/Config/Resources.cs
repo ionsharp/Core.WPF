@@ -64,7 +64,7 @@ namespace Imagin.Core
         }
 
         public static string ReadInternal(string relativePath)
-            => Read(InternalAssembly.Name, relativePath);
+            => Read(AssemblyProperties.Name, relativePath);
 
         public static string ReadProject(string relativePath)
             => Read(XAssembly.ShortName(), relativePath);
@@ -89,7 +89,7 @@ namespace Imagin.Core
 
         public static Uri InternalImage(Images image) => InternalUri($"Images/{image}.png");
 
-        public static Uri InternalUri(string relativePath) => Uri(InternalAssembly.Name, relativePath);
+        public static Uri InternalUri(string relativePath) => Uri(AssemblyProperties.Name, relativePath);
 
         //...
 

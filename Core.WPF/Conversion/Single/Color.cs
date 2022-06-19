@@ -1,6 +1,6 @@
 ﻿using Imagin.Core.Linq;
 using Imagin.Core.Numerics;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -23,9 +23,17 @@ namespace Imagin.Core.Conversion
         public static ColorToColorConverter Default { get; private set; } = new ColorToColorConverter();
         ColorToColorConverter() { }
 
-        protected override ConverterValue<Color> ConvertTo(ConverterData<System.Drawing.Color> input) => input.Value.Double();
+        protected override ConverterValue<Color> ConvertTo(ConverterData<System.Drawing.Color> input)
+        {
+             input.Value.Convert(out Color result);
+            return result;
+        }
 
-        protected override ConverterValue<System.Drawing.Color> ConvertBack(ConverterData<Color> input) => input.Value.Int32();
+        protected override ConverterValue<System.Drawing.Color> ConvertBack(ConverterData<Color> input)
+        {
+            input.Value.Convert(out System.Drawing.Color result);
+            return result;
+        }
     }
     
     [ValueConversion(typeof(Hexadecimal), typeof(Color))]
@@ -36,7 +44,11 @@ namespace Imagin.Core.Conversion
 
         protected override ConverterValue<Color> ConvertTo(ConverterData<Hexadecimal> input) => input.Value.Color();
 
-        protected override ConverterValue<Hexadecimal> ConvertBack(ConverterData<Color> input) => input.Value.Hexadecimal();
+        protected override ConverterValue<Hexadecimal> ConvertBack(ConverterData<Color> input)
+        {
+            input.Value.Convert(out Hexadecimal result);
+            return result;
+        }
     }
 
     [ValueConversion(typeof(SolidColorBrush), typeof(Color))]

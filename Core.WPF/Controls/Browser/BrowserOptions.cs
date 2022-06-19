@@ -18,7 +18,7 @@ namespace Imagin.Core.Controls
         Attributes fileAttributes = Attributes.All;
         [Category(Category.Filter)]
         [DisplayName("FileAttributes")]
-        [Style(EnumStyle.FlagSelect)]
+        [MemberStyle(EnumStyle.FlagSelect)]
         public Attributes FileAttributes
         {
             get => fileAttributes;
@@ -28,7 +28,7 @@ namespace Imagin.Core.Controls
         string fileExtensions = string.Empty;
         [Category(Category.Filter)]
         [DisplayName("FileExtensions")]
-        [Style(StringStyle.Tokens)]
+        [MemberStyle(StringStyle.Tokens)]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]
         public string FileExtensions
         {
@@ -39,7 +39,7 @@ namespace Imagin.Core.Controls
         Attributes folderAttributes = Attributes.All;
         [Category(Category.Filter)]
         [DisplayName("FolderAttributes")]
-        [Style(EnumStyle.FlagSelect)]
+        [MemberStyle(EnumStyle.FlagSelect)]
         public Attributes FolderAttributes
         {
             get => folderAttributes;

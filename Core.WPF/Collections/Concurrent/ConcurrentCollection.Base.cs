@@ -26,7 +26,7 @@ namespace Imagin.Core.Collections.Concurrent
         /// <summary>
         /// Gets if the calling thread is the same as the dispatcher thread
         /// </summary>
-        protected static bool IsDispatcherThread => DispatcherQueueProcessor.Instance.IsDispatcherThread;
+        protected static bool IsDispatcherThread => ConcurrentDispatcherQueue.Instance.IsDispatcherThread;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 

@@ -1,9 +1,9 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Controls;
 using Imagin.Core.Conversion;
-using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using Imagin.Core.Storage;
 using System;
 using System.Runtime.CompilerServices;
@@ -173,7 +173,7 @@ namespace Imagin.Core.Models
         [Hidden]
         [Index(-1)]
         [Label(false)]
-        [Style(StringStyle.Thumbnail)]
+        [MemberStyle(StringStyle.Thumbnail)]
         [Status]
         [XmlIgnore]
         public string Path
@@ -291,7 +291,7 @@ namespace Imagin.Core.Models
         #region Commands
 
         [DisplayName("Save")]
-        [Icon(Images.Save)]
+        [Image(Images.Save)]
         [Tool]
         [XmlIgnore]
         public override ICommand SaveCommand => base.SaveCommand;
@@ -299,7 +299,7 @@ namespace Imagin.Core.Models
         [field: NonSerialized]
         ICommand saveAsCommand;
         [DisplayName("SaveAs")]
-        [Icon(Images.SaveAs)]
+        [Image(Images.SaveAs)]
         [Tool]
         [XmlIgnore]
         public ICommand SaveAsCommand => saveAsCommand ??= new RelayCommand(SaveAs);

@@ -6,7 +6,7 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Effects="clr-namespace:Imagin.Core.Effects"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
-    xmlns:Media="clr-namespace:Imagin.Core.Media">
+    xmlns:Media="clr-namespace:Imagin.Core.Paint">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="{local:StyleKey Key=Control}"/>
     </ResourceDictionary.MergedDictionaries>

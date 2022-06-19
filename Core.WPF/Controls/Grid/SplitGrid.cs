@@ -1,7 +1,7 @@
 ﻿using Imagin.Core.Collections.ObjectModel;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
-using Imagin.Core.Media.Animation;
+using Imagin.Core.Animation;
 using System;
 using System.Windows;
 using System.Windows.Controls;

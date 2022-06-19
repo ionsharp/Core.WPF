@@ -12,7 +12,7 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
-    xmlns:Media="clr-namespace:Imagin.Core.Media"
+    xmlns:Media="clr-namespace:Imagin.Core.Paint"
     xmlns:Models="clr-namespace:Imagin.Core.Models"
     xmlns:MsCollections="clr-namespace:System.Collections;assembly=mscorlib"
     xmlns:MsCollectionsSpecialized="clr-namespace:System.Collections.Specialized;assembly=System"
@@ -150,13 +150,13 @@
             <DataTrigger Binding="{Binding Format}" Value="{x:Null}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBothTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:ColorFormat.Both}">
+            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:ColorFormat.Both}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBothTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:ColorFormat.ColorBox}">
+            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:ColorFormat.ColorBox}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBoxTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:ColorFormat.TextBox}">
+            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:ColorFormat.TextBox}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorTextBoxTemplateKey}}"/>
             </DataTrigger>
         </DataTemplate.Triggers>
@@ -564,7 +564,7 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type Reflection:ListItemModel}">
+                    <DataTemplate DataType="{x:Type Reflection:ListObjectModel}">
                         <!--
                         <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
                             <local:BulletElement Bullet="NumberParenthesis"
@@ -829,7 +829,6 @@
         <DataTemplate.Triggers>
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsIndeterminate}" Value="False"/>
                     <Condition Binding="{Binding IsReadOnly}" Value="False"/>
                 </MultiDataTrigger.Conditions>
                 <Setter TargetName="Slider" Property="IsEnabled" Value="True"/>
@@ -888,10 +887,10 @@
             <DataTrigger Binding="{Binding Format}" Value="{x:Null}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:RangeFormat.None}">
+            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:RangeFormat.None}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:RangeFormat.Both}">
+            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:RangeFormat.Both}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
@@ -904,10 +903,10 @@
                     </Setter.Value>
                 </Setter>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:RangeFormat.Slider}">
+            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:RangeFormat.Slider}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeSliderTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Common:RangeFormat.UpDown}">
+            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:RangeFormat.UpDown}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
             </DataTrigger>
         </DataTemplate.Triggers>
@@ -1059,7 +1058,7 @@
             </local:PatternControl>
         </local:KeyTemplate>
 
-        <!-- ... Imagin.Core.Media -->
+        <!-- ... Imagin.Core.Paint -->
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Numerics:Unit}">
             <local:UnitControl
                 IsEnabled="{Data:InvertBinding IsReadOnly}"
@@ -1071,7 +1070,7 @@
             </local:UnitControl>
         </local:KeyTemplate>
 
-        <!-- ... Imagin.Core.Media (Shared) -->
+        <!-- ... Imagin.Core.Paint (Shared) -->
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Media:Gradient}">
             <local:GradientBox
                 HorizontalAlignment="Stretch"
@@ -1141,10 +1140,10 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ArrayStyle.Bullet}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ArrayStyle.Bullet}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ArrayStyle.Comma}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ArrayStyle.Comma}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
@@ -1168,7 +1167,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:BooleanStyle.Image}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:BooleanStyle.Image}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1187,7 +1186,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:BooleanStyle.Switch}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:BooleanStyle.Switch}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1219,7 +1218,7 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:DoubleStyle.Angle}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:DoubleStyle.Angle}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1233,7 +1232,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:DoubleStyle.Progress}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:DoubleStyle.Progress}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1247,7 +1246,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:DoubleStyle.ProgressRound}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:DoubleStyle.ProgressRound}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1261,7 +1260,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:DoubleStyle.Unit}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:DoubleStyle.Unit}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1301,7 +1300,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumStyle.FlagCheck}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumStyle.FlagCheck}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="{x:Type Reflection:MemberModel}">
@@ -1323,7 +1322,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumStyle.FlagSelect}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumStyle.FlagSelect}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="{x:Type Reflection:MemberModel}">
@@ -1346,7 +1345,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumStyle.FlagSwitch}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumStyle.FlagSwitch}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="{x:Type Reflection:MemberModel}">
@@ -1368,7 +1367,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumStyle.FlagToggle}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumStyle.FlagToggle}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="{x:Type Reflection:MemberModel}">
@@ -1411,7 +1410,7 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:Int32Style.Index}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:Int32Style.Index}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1450,20 +1449,20 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Button}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ObjectStyle.Button}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding DepthIndex}" Value="0"/>
-                        <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Shallow}"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Static Reflection:ObjectStyle.Shallow}"/>
                     </MultiDataTrigger.Conditions>
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </MultiDataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding DepthIndex}" Value="0"/>
-                        <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Deep}"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Static Reflection:ObjectStyle.Deep}"/>
                     </MultiDataTrigger.Conditions>
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </MultiDataTrigger>
@@ -1490,7 +1489,7 @@
                             </e:Interaction.Behaviors>
                         </TextBox>
                         <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.Search}">
+                            <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.Search}">
                                 <Setter TargetName="TextBox" Property="Linq:XTextBox.EnterButtonSource" Value="{Binding Icon}"/>
                                 <Setter TargetName="TextBox" Property="Linq:XTextBox.EnterButtonVisibility" Value="Visible"/>
                             </DataTrigger>
@@ -1506,7 +1505,7 @@
                 </ContentPresenter.ContentTemplate>
             </ContentPresenter>
             <local:KeyTemplate.Triggers>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.FilePath}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.FilePath}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1528,7 +1527,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.FolderPath}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.FolderPath}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1550,7 +1549,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.MultiFiles}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.MultiFiles}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1571,7 +1570,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.MultiFolders}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.MultiFolders}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1592,7 +1591,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.MultiLines}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.MultiLines}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1614,7 +1613,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.MultiPaths}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.MultiPaths}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1635,7 +1634,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.Password}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.Password}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1649,7 +1648,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.Thumbnail}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.Thumbnail}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1659,7 +1658,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger> 
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:StringStyle.Tokens}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.Tokens}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1734,10 +1733,10 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumerableStyle.Bullet}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumerableStyle.Bullet}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:EnumerableStyle.Comma}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumerableStyle.Comma}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
@@ -1748,10 +1747,10 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ListStyle.Bullet}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ListStyle.Bullet}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:ListStyle.Comma}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ListStyle.Comma}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
@@ -1762,19 +1761,19 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.Bullet}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.Bullet}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.Button}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.Button}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.Comma}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.Comma}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.Default}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.Default}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Data:CollectionStyle.ImageToggleButton}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.ImageToggleButton}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListImageToggleButtonTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
@@ -1933,15 +1932,6 @@
                                 <Button x:Name="Button"
                                     Command="{Binding Value}" 
                                     Content="{Data:TranslateBinding DisplayName}"/>
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding IsIndeterminate}" Value="True">
-                                        <Setter TargetName="Button" Property="Command" Value="{Data:Ancestor ExecuteAllCommand, {x:Type local:MemberGrid}}"/>
-                                        <Setter TargetName="Button" Property="CommandParameter" Value="{Binding}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsIndeterminate}" Value="False">
-                                        <Setter TargetName="Button" Property="Command" Value="{Binding Value}"/>
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
@@ -1950,16 +1940,7 @@
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <local:ImageButton x:Name="ImageButton" Source="{Binding Icon}"/>
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding IsIndeterminate}" Value="True">
-                                        <Setter TargetName="ImageButton" Property="Command" Value="{Data:Ancestor ExecuteAllCommand, {x:Type local:MemberGrid}}"/>
-                                        <Setter TargetName="ImageButton" Property="CommandParameter" Value="{Binding}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsIndeterminate}" Value="False">
-                                        <Setter TargetName="ImageButton" Property="Command" Value="{Binding Value}"/>
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
+                                <local:ImageButton x:Name="ImageButton" Command="{Binding Value}" Source="{Binding Icon}"/>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>

@@ -14,39 +14,26 @@ namespace Imagin.Core.Controls
         {
             Converter = new MultiConverter<string>(i =>
             {
-                if (i.Values?.Length >= 3)
+                if (i.Values?.Length >= 1)
                 {
                     if (i.Values[0] is MemberModel member)
                     {
-                        if (i.Values[1] is bool isIndeterminate)
+                        string result = null;
+
+                        if (i.Values.Length >= 2)
                         {
-                            if (i.Values[2] is string indeterminateText)
-                            {
-                                string result = null;
-
-                                if (i.Values.Length >= 4)
-                                {
-                                    if (i.Values[3] is IValueConverter converter)
-                                        return converter.Convert(member, typeof(string), null, CultureInfo.CurrentCulture)?.ToString();
-                                }
-
-                                if (isIndeterminate)
-                                    return indeterminateText;
-
-                                result = $"{(member.Placeholder ?? member.DisplayName ?? member.Name)}";
-                                return member.Localize ? result.Translate() : result;
-                            }
+                            if (i.Values[1] is IValueConverter converter)
+                                return converter.Convert(member, typeof(string), null, CultureInfo.CurrentCulture)?.ToString();
                         }
+
+                        result = $"{(member.Placeholder ?? member.DisplayName ?? member.Name)}";
+                        return member.Localize ? result.Translate() : result;
                     }
                 }
                 return null;
             });
             Bindings.Add(new Binding() 
                 { Path = new(".") });
-            Bindings.Add(new Binding() 
-                { Path = new("IsIndeterminate") });
-            Bindings.Add(new Ancestor(nameof(MemberGrid.IndeterminateText), 
-                typeof(MemberGrid)));
             Bindings.Add(new Ancestor(nameof(MemberGrid.PlaceholderConverter), 
                 typeof(MemberGrid)));
             Bindings.Add(new RemoteBinding(nameof(MainViewOptions.Language), 

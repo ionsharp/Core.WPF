@@ -45,10 +45,6 @@
 
     <!-- ... -->
 
-    <DataTemplate x:Key="{x:Static local:MemberGrid.IndeterminateTemplateKey}">
-        <TextBlock Style="{Data:Ancestor MemberIndeterminateTextStyle, {x:Type local:MemberGrid}}"/>
-    </DataTemplate>
-
     <DataTemplate x:Key="{x:Static local:MemberGrid.NullTemplateKey}">
         <TextBlock Style="{Data:Ancestor MemberNullTextStyle, {x:Type local:MemberGrid}}"/>
     </DataTemplate>
@@ -159,44 +155,21 @@
                                     <ContentPresenter x:Name="ContentPresenter" Content="{Binding Data, Source={StaticResource Member}}" 
                                         ContentTemplateSelector="{StaticResource MemberTemplateSelector}"/>
                                     <DataTemplate.Triggers>
-                                        <!-- !IsIndeterminable & !IsIndeterminate & Value = null -->
+                                        <!-- Value = null -->
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Data.IsIndeterminable, Source={StaticResource Member}}" Value="False"/>
-                                                <Condition Binding="{Binding Data.IsIndeterminate, Source={StaticResource Member}}" Value="False"/>
                                                 <Condition Binding="{Binding Data.Value, Source={StaticResource Member}}" Value="{x:Null}"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.NullTemplateKey}}"/>
                                             <Setter TargetName="ContentPresenter" Property="ContentTemplateSelector" Value="{x:Null}"/>
                                         </MultiDataTrigger>
-                                        <!-- Converter != null & IsReadOnly & !IsIndeterminable & !IsIndeterminate -->
+                                        <!-- Converter != null & IsReadOnly -->
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Data:IsNullBinding Data.Converter, Source={StaticResource Member}}" Value="False"/>
                                                 <Condition Binding="{Binding Data.IsReadOnly, Source={StaticResource Member}}" Value="True"/>
-                                                <Condition Binding="{Binding Data.IsIndeterminable, Source={StaticResource Member}}" Value="False"/>
-                                                <Condition Binding="{Binding Data.IsIndeterminate, Source={StaticResource Member}}" Value="False"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ReadOnlyTemplateKey}}"/>
-                                            <Setter TargetName="ContentPresenter" Property="ContentTemplateSelector" Value="{x:Null}"/>
-                                        </MultiDataTrigger>
-                                        <!-- Converter != null & IsReadOnly & IsIndeterminable -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Data:IsNullBinding Data.Converter, Source={StaticResource Member}}" Value="False"/>
-                                                <Condition Binding="{Binding Data.IsReadOnly, Source={StaticResource Member}}" Value="True"/>
-                                                <Condition Binding="{Binding Data.IsIndeterminable, Source={StaticResource Member}}" Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ReadOnlyTemplateKey}}"/>
-                                            <Setter TargetName="ContentPresenter" Property="ContentTemplateSelector" Value="{x:Null}"/>
-                                        </MultiDataTrigger>
-                                        <!-- !IsIndeterminable & IsIndeterminate -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Data.IsIndeterminable, Source={StaticResource Member}}" Value="False"/>
-                                                <Condition Binding="{Binding Data.IsIndeterminate, Source={StaticResource Member}}" Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.IndeterminateTemplateKey}}"/>
                                             <Setter TargetName="ContentPresenter" Property="ContentTemplateSelector" Value="{x:Null}"/>
                                         </MultiDataTrigger>
                                     </DataTemplate.Triggers>
@@ -272,7 +245,7 @@
                         <MultiDataTrigger >
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Data:IsNullBinding Icon}" Value="False"/>
-                                <Condition Binding="{Binding Style}" Value="{x:Static Data:ObjectStyle.Button}"/>
+                                <Condition Binding="{Binding Style}" Value="{x:Static Reflection:ObjectStyle.Button}"/>
                                 <Condition Binding="{Binding TemplateType}" Value="{x:Type System:Object}"/>
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="ImageButton" Property="Visibility" Value="Collapsed"/>
@@ -370,9 +343,9 @@
                     Margin="0,-1,5,0"
                     Visibility="{Data:VisibilityBinding CanNavigateBack, Relative=TemplatedParent}"/>
 
-                <!-- ... Crumbs -->
+                <!-- ... Path -->
                 <ContentPresenter Grid.Column="1"
-                    Content="{Data:TemplatedParent Route.Crumbs}"
+                    Content="{Data:TemplatedParent Route}"
                     ContentStringFormat="{TemplateBinding RouteStringFormat}"
                     ContentTemplate="{TemplateBinding RouteTemplate}"
                     ContentTemplateSelector="{TemplateBinding RouteTemplateSelector}"/>
@@ -540,7 +513,7 @@
                                     Margin="5,-1,0,0"
                                     Visibility="{Data:VisibilityBinding CanNavigateBack, Relative=TemplatedParent}"/>
                                 <ContentPresenter
-                                    Content="{Data:TemplatedParent Route.Crumbs}"
+                                    Content="{Data:TemplatedParent Route}"
                                     ContentStringFormat="{TemplateBinding RouteStringFormat}"
                                     ContentTemplate="{TemplateBinding RouteTemplate}"
                                     ContentTemplateSelector="{TemplateBinding RouteTemplateSelector}"
@@ -597,26 +570,6 @@
                                         <ContextMenu.ItemsSource>
                                             <CompositeCollection>
                                                 <Separator Linq:XSeparator.Header="Filter"/>
-                                                <local:FlagMenuItem Header="{l:Loc Filter}"
-                                                    Icon="{Markup:InternalImage Filter.png}"
-                                                    InputGestureText="{Binding Data.Filter, Source={StaticResource MemberGrid}}"
-                                                    Type="Reflection:MemberFilter"
-                                                    TypeVisibility="Visible"
-                                                    Value="{Binding Data.Filter, Mode=TwoWay, Source={StaticResource MemberGrid}}">
-                                                    <Linq:XMenuItem.InputGestureTextTemplate>
-                                                        <DataTemplate>
-                                                            <local:AccentLabel Content="{Binding}" FontStyle="Italic" HorizontalAlignment="Left"/>
-                                                        </DataTemplate>
-                                                    </Linq:XMenuItem.InputGestureTextTemplate>
-                                                    <local:FlagMenuItem.ItemContainerStyle>
-                                                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                                                            <Setter Property="Header" Value="{Data:TranslateBinding Value}"/>
-                                                            <Setter Property="IsCheckable" Value="True"/>
-                                                            <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=TwoWay}"/>
-                                                            <Setter Property="StaysOpenOnClick" Value="True"/>
-                                                        </Style>
-                                                    </local:FlagMenuItem.ItemContainerStyle>
-                                                </local:FlagMenuItem>
                                                 <MenuItem Header="{l:Loc Group}" 
                                                     Icon="{Markup:InternalImage Group.png}"
                                                     InputGestureText="{Binding Data.GroupName, Source={StaticResource MemberGrid}}">
@@ -901,10 +854,6 @@
                             ContentTemplate="{TemplateBinding FeaturedTemplate}"/>
                     </local:TopBorder>
                 </Grid>
-
-                <TextBlock Text="{TemplateBinding IndeterminateText}"
-                    Style="{TemplateBinding IndeterminateTextStyle}"
-                    Visibility="{TemplateBinding IsIndeterminate, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
             </Grid>
         </Border>
     </ControlTemplate>
@@ -968,30 +917,6 @@
         <Setter Property="HeaderVisibility" Value="Visible"/>
         <Setter Property="HeadersVisibility" Value="None"/>
         <!-- ... -->
-        <Setter Property="IndeterminateText" Value="One or more objects do not share a base type and can't be edited."/>
-        <Setter Property="IndeterminateTextStyle">
-            <Setter.Value>
-                <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
-                    <Setter Property="FontStyle" Value="Italic"/>
-                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                    <Setter Property="Margin" Value="10"/>
-                    <Setter Property="TextWrapping" Value="Wrap"/>
-                    <Setter Property="VerticalAlignment" Value="Center"/>
-                </Style>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="MemberIndeterminateText" Value="{l:Loc Prefix=(, Key=MultipleValues, Suffix=), Lower=True}"/>
-        <Setter Property="MemberIndeterminateTextStyle">
-            <Setter.Value>
-                <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
-                    <Setter Property="FontStyle" Value="Italic"/>
-                    <Setter Property="HorizontalAlignment" Value="Left"/>
-                    <Setter Property="Margin" Value="0,5"/>
-                    <Setter Property="Text" Value="{Data:Ancestor MemberIndeterminateText, {x:Type local:MemberGrid}}"/>
-                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                </Style>
-            </Setter.Value>
-        </Setter>
         <Setter Property="MemberNullText" Value="{l:Loc Prefix=(, Key=Null, Suffix=), Lower=True}"/>
         <Setter Property="MemberNullTextStyle">
             <Setter.Value>
@@ -1158,72 +1083,65 @@
                                 <StackPanel Orientation="Horizontal"/>
                             </ItemsPanelTemplate>
                         </ToolBar.ItemsPanel>
-                        <ToolBar.ItemTemplateSelector>
-                            <local:TypeTemplateSelector Strict="True">
-                                <local:TypeTemplateSelector.Default>
-                                    <DataTemplate DataType="{x:Type Reflection:MemberCrumb}">
-                                        <local:ImageButton x:Name="Button"
-                                            ButtonVisibility="Collapsed"
-                                            Command="{Data:Ancestor EditCommand, {x:Type local:MemberGrid}}"
-                                            CommandParameter="{Binding Element}"
-                                            Linq:XElement.ToolTipTemplate="{DynamicResource {x:Static local:MemberGrid.ToolTipKey}}"
-                                            Margin="0,0,2,0"
-                                            ToolTip="{Binding}">
-                                            <local:ImageButton.Menu>
-                                                <ContextMenu/>
-                                            </local:ImageButton.Menu>
-                                            <StackPanel Orientation="Horizontal">
-                                                <ContentPresenter x:Name="ContentPresenter0" Content="{Binding Element}">
-                                                    <ContentPresenter.ContentTemplate>
-                                                        <DataTemplate>
-                                                            <local:ImageElement
-                                                                Margin="0,0,5,0"
-                                                                Source="{Data:IconBinding Value}"/>
-                                                        </DataTemplate>
-                                                    </ContentPresenter.ContentTemplate>
-                                                </ContentPresenter>
-                                                <ContentPresenter x:Name="ContentPresenter1" Content="{Binding Element}"/>
-                                            </StackPanel>
-                                        </local:ImageButton>
-                                        <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Data:IconBinding Element.Value}" Value="{x:Null}">
-                                                <Setter TargetName="ContentPresenter0" Property="ContentTemplate" Value="{Markup:EmptyTemplate}"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberCrumbChild}">
-                                                <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate DataType="{x:Type Reflection:MemberRouteChild}">
-                                                            <TextBlock Text="{Binding Name}"/>
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberCrumbItem}">
-                                                <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate DataType="{x:Type Reflection:MemberRouteItem}">
-                                                            <TextBlock Text="{Data:DisplayNameBinding Value}"/>
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberCrumbSource}">
-                                                <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate DataType="{x:Type Reflection:MemberRouteSource}">
-                                                            <TextBlock Text="{Data:DisplayNameBinding Value}"/>
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </DataTemplate.Triggers>
-                                    </DataTemplate>
-                                </local:TypeTemplateSelector.Default>
-                                <DataTemplate DataType="{x:Type Reflection:MemberCrumbSeparator}">
-                                    <TextBlock FontSize="10" Text="●" Margin="0,0,2,0"/>
-                                </DataTemplate>
-                            </local:TypeTemplateSelector>
-                        </ToolBar.ItemTemplateSelector>
+                        <ToolBar.ItemTemplate>
+                            <DataTemplate DataType="{x:Type Reflection:MemberPathElement}">
+                                <local:ImageButton x:Name="Button"
+                                    ButtonVisibility="Collapsed"
+                                    Command="{Data:Ancestor EditCommand, {x:Type local:MemberGrid}}"
+                                    CommandParameter="{Binding}"
+                                    Linq:XElement.ToolTipTemplate="{DynamicResource {x:Static local:MemberGrid.ToolTipKey}}"
+                                    Margin="0,0,2,0"
+                                    ToolTip="{Binding}">
+                                    <local:ImageButton.Menu>
+                                        <ContextMenu/>
+                                    </local:ImageButton.Menu>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ContentPresenter x:Name="ContentPresenter0" Content="{Binding}">
+                                            <ContentPresenter.ContentTemplate>
+                                                <DataTemplate>
+                                                    <local:ImageElement
+                                                        Margin="0,0,5,0"
+                                                        Source="{Data:IconBinding Value}"/>
+                                                </DataTemplate>
+                                            </ContentPresenter.ContentTemplate>
+                                        </ContentPresenter>
+                                        <ContentPresenter x:Name="ContentPresenter1" Content="{Binding}"/>
+                                    </StackPanel>
+                                </local:ImageButton>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Data:IconBinding Element.Value}" Value="{x:Null}">
+                                        <Setter TargetName="ContentPresenter0" Property="ContentTemplate" Value="{Markup:EmptyTemplate}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberPathChild}">
+                                        <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate DataType="{x:Type Reflection:MemberPathChild}">
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberPathItem}">
+                                        <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate DataType="{x:Type Reflection:MemberPathItem}">
+                                                    <TextBlock Text="{Data:DisplayNameBinding Value}"/>
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type Reflection:MemberPathSource}">
+                                        <Setter TargetName="ContentPresenter1" Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate DataType="{x:Type Reflection:MemberPathSource}">
+                                                    <TextBlock Text="{Data:DisplayNameBinding Value}"/>
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ToolBar.ItemTemplate>
                     </ToolBar>
                 </DataTemplate>
             </Setter.Value>
@@ -1245,9 +1163,6 @@
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling"/>
         <Style.Triggers>
-            <Trigger Property="IsIndeterminate" Value="True">
-                <Setter Property="IsEnabled" Value="False"/>
-            </Trigger>
             <Trigger Property="Orientation" Value="Horizontal">
                 <Setter Property="CellStyle">
                     <Setter.Value>

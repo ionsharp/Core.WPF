@@ -9,7 +9,7 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
-    xmlns:Media="clr-namespace:Imagin.Core.Media"
+    xmlns:Media="clr-namespace:Imagin.Core.Paint"
     xmlns:Models="clr-namespace:Imagin.Core.Models"
     xmlns:SharedAnalytics="clr-namespace:Imagin.Core.Analytics;assembly=Imagin.Core">
     <ResourceDictionary.MergedDictionaries>
@@ -974,7 +974,6 @@
     <DataTemplate x:Key="{x:Static Models:ThemePanel.TemplateKey}">
         <local:MemberGrid
             BorderThickness="0"
-            Filter="Entry"
             GroupName="None"
             HeaderVisibility="Visible"
             Source="{Data:RemoteBinding CurrentTheme, RemoteSource=Resources}"

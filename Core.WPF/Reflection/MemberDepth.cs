@@ -2,7 +2,5 @@
 
 public enum MemberDepth
 {
-    None,
-    Shallow,
-    Deep
+    None, Shallow, Deep
 }

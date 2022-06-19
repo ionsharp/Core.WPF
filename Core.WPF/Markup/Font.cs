@@ -11,7 +11,7 @@ namespace Imagin.Core.Markup
 
     public class DefaultFont : Font
     {
-        public DefaultFont(string fileName) : base(InternalAssembly.Name, $"Fonts/{fileName}") { }
+        public DefaultFont(string fileName) : base(AssemblyProperties.Name, $"Fonts/{fileName}") { }
     }
 
     public class Font : Uri

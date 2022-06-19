@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Data;
-using Imagin.Core.Media;
+using Imagin.Core.Paint;
 using Imagin.Core.Reflection;
 using System;
 using System.Windows;
@@ -19,7 +19,7 @@ namespace Imagin.Core.Controls
         }
 
         string backgroundImage = string.Empty;
-        [Style(StringStyle.FilePath)]
+        [MemberStyle(StringStyle.FilePath)]
         public string BackgroundImage
         {
             get => backgroundImage;
