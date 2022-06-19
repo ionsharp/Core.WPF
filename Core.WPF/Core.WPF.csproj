@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analytics\LogWriter.cs" />
+    <Compile Include="Controls\ColorSelector\ColorSelectorView.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector3D.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelectorEllipse.cs" />
@@ -435,7 +436,7 @@
       <DependentUpon>BulletElement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ColorSelector\Slider\AlphaSlider.cs" />
-    <Compile Include="Controls\ColorSelector\Base.cs" />
+    <Compile Include="Controls\ColorSelector\ColorSelector.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector2D.cs" />
     <Compile Include="Controls\ColorSelector\Slider\ComponentSlider.cs" />
     <Compile Include="Controls\-\PopupTriggers.cs" />

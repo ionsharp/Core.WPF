@@ -68,10 +68,7 @@ public class ComponentSlider : BaseComponentSlider
 
     protected override void Mark()
     {
-        if (Shape == Shapes2.Circle)
-        {
-        }
-        else
+        if (Shape == Shapes2.Square)
         {
             var y = (One)GetValue(GetProperty(Component));
 

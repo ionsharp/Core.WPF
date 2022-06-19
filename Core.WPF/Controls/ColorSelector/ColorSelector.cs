@@ -40,9 +40,17 @@ public class ColorSelector : Control
 
     public ColorSelector() : base() { }
 
-    protected virtual void Mark() { }
-
     //...
+
+    Vector2<One> CoerceDepth(Vector2<One> a)
+    {
+        if (Depth > 0)
+        {
+            var b = (new Vector2(a.X, a.Y) * Depth).Round() / Depth;
+            a = new(b[0], b[1]);
+        }
+        return a;
+    }
 
     protected override void OnMouseDown(MouseButtonEventArgs e)
     {
@@ -50,6 +58,7 @@ public class ColorSelector : Control
         if (Mouse.LeftButton == MouseButtonState.Pressed)
         {
             var point = Normalize(e.GetPosition(this));
+            point = CoerceDepth(point);
 
             OnMouseChanged(point);
             CaptureMouse();
@@ -60,7 +69,12 @@ public class ColorSelector : Control
     {
         base.OnMouseMove(e);
         if (Mouse.LeftButton == MouseButtonState.Pressed)
-            OnMouseChanged(Normalize(e.GetPosition(this)));
+        {
+            var point = Normalize(e.GetPosition(this));
+            point = CoerceDepth(point);
+
+            OnMouseChanged(point);
+        }
     }
 
     protected override void OnMouseUp(MouseButtonEventArgs e)
@@ -70,9 +84,15 @@ public class ColorSelector : Control
             ReleaseMouseCapture();
     }
 
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+        base.OnRenderSizeChanged(sizeInfo);
+        Mark();
+    }
+
     //...
 
-    /// <summary>Gets a <see cref="Point"/> with range [0, 1].</summary>
+    /// <summary>Gets a <see cref="Point"/> in range [0, 1].</summary>
     protected Vector2<One> Normalize(Point input)
     {
         input = input.Coerce(new Point(ActualWidth, ActualHeight), new Point(0, 0));
@@ -83,15 +103,11 @@ public class ColorSelector : Control
 
     //...
 
+    protected virtual void Mark() { }
+
     protected virtual void OnMouseChanged(Vector2<One> input) { }
 
     //...
-
-    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-    {
-        base.OnRenderSizeChanged(sizeInfo);
-        Mark();
-    }
 
     public override void OnApplyTemplate()
     {

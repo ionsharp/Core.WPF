@@ -5,6 +5,7 @@
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Effects="clr-namespace:Imagin.Core.Effects"
+    xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
     xmlns:Media="clr-namespace:Imagin.Core.Paint">
     <ResourceDictionary.MergedDictionaries>
@@ -1067,6 +1068,535 @@
                                 ContentTemplate="{TemplateBinding ArrowTemplate}"/>
                         </Canvas>
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ... ColorSelectorView -->
+
+    <Style x:Key="{x:Type local:ColorSelectorView}" TargetType="{x:Type local:ColorSelectorView}" BasedOn="{StaticResource {x:Type Control}}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ColorSelectorView">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding Border.CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                        <Border.Resources>
+                            <!-- (🗸) 3 > 1D -->
+                            <DataTemplate x:Key="Color3Template1D" DataType="{x:Type local:ColorDocument}">
+                                <Grid Linq:XGrid.AutoColumns="True">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition x:Name="Column0"/>
+                                        <ColumnDefinition x:Name="Column1"/>
+                                        <ColumnDefinition x:Name="Column2"/>
+                                    </Grid.ColumnDefinitions>
+                                    <local:ComponentSlider x:Name="XComponentSlider"
+                                        Component="X"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        X="{Binding Color.X, Mode=TwoWay}"
+                                        Y="{Binding Color.Y}"
+                                        Z="{Binding Color.Z}"/>
+                                    <local:ComponentSlider x:Name="YComponentSlider"
+                                        Component="Y"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        X="{Binding Color.X}"
+                                        Y="{Binding Color.Y, Mode=TwoWay}"
+                                        Z="{Binding Color.Z}"/>
+                                    <local:ComponentSlider x:Name="ZComponentSlider"
+                                        Component="Z"
+                                        Depth="{Binding Depth}"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        X="{Binding Color.X}"
+                                        Y="{Binding Color.Y}"
+                                        Z="{Binding Color.Z, Mode=TwoWay}"/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="X">
+                                        <Setter TargetName="Column0" Property="Width" Value="*"/>
+                                        <Setter TargetName="Column1" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column2" Property="Width" Value="Auto"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Shape" Value="{Binding Shape}"/>
+                                        <Setter TargetName="YComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Shape" Value="Square"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="YComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Width" Value="48"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Y">
+                                        <Setter TargetName="Column0" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column1" Property="Width" Value="*"/>
+                                        <Setter TargetName="Column2" Property="Width" Value="Auto"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="YComponentSlider" Property="Shape" Value="{Binding Shape}"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Shape" Value="Square"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="YComponentSlider" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Width" Value="48"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Z">
+                                        <Setter TargetName="Column0" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column1" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column2" Property="Width" Value="*"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="YComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Shape" Value="{Binding Shape}"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="YComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Width" Value="Auto"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+
+                            <!-- (🗸) 3 > 2D -->
+                            <DataTemplate x:Key="Color3Template2D" DataType="{x:Type local:ColorDocument}">
+                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto">
+                                    <local:ComponentSelector2D x:Name="ComponentSelector"
+                                        BorderBrush="Black"
+                                        BorderThickness="1"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        RotateX="{Binding RotateX}"
+                                        RotateY="{Binding RotateY}"
+                                        RotateZ="{Binding RotateZ}"
+                                        Shape="{Binding Shape}"
+                                        Zoom="{Binding Zoom}"/>
+                                    <local:ComponentSlider x:Name="ComponentSlider"
+                                        Component="{Binding Color.Component}"
+                                        Depth="{Binding Depth}"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        Width="48"/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="X">
+                                        <Setter TargetName="ComponentSelector" Property="XComponent" Value="Y"/>
+                                        <Setter TargetName="ComponentSelector" Property="YComponent" Value="Z"/>
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+
+                                        <Setter TargetName="ComponentSlider" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Y">
+                                        <Setter TargetName="ComponentSelector" Property="XComponent" Value="X"/>
+                                        <Setter TargetName="ComponentSelector" Property="YComponent" Value="Z"/>
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+
+                                        <Setter TargetName="ComponentSlider" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Z">
+                                        <Setter TargetName="ComponentSelector" Property="XComponent" Value="X"/>
+                                        <Setter TargetName="ComponentSelector" Property="YComponent" Value="Y"/>
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+
+                                        <Setter TargetName="ComponentSlider" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+
+                            <!-- (🗸) 3 > 3D -->
+                            <DataTemplate x:Key="Color3Template3D" DataType="{x:Type local:ColorDocument}">
+                                <local:ComponentSelector3D x:Name="ComponentSelector"
+                                    Depth="{Binding Depth}"
+                                    Model="{Binding Color.ModelType}"
+                                    Profile="{Binding Color.Profile}"
+                                    RotateX="{Binding RotateX}"
+                                    RotateY="{Binding RotateY}"
+                                    RotateZ="{Binding RotateZ}"
+                                    Zoom="{Binding Zoom}"/>
+                            </DataTemplate>
+
+                            <!-- (🗸) 4 > 1D -->
+                            <DataTemplate x:Key="Color4Template1D" DataType="{x:Type local:ColorDocument}">
+                                <Grid Linq:XGrid.AutoColumns="True">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition x:Name="Column0"/>
+                                        <ColumnDefinition x:Name="Column1"/>
+                                        <ColumnDefinition x:Name="Column2"/>
+                                        <ColumnDefinition x:Name="Column3"/>
+                                    </Grid.ColumnDefinitions>
+                                    <local:ComponentSlider x:Name="XComponentSlider"
+                                        Component="X"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        X="{Binding Color.X, Mode=TwoWay}"
+                                        Y="{Binding Color.Y}"
+                                        Z="{Binding Color.Z}"
+                                        W="{Binding Color.W}"/>
+                                    <local:ComponentSlider x:Name="YComponentSlider"
+                                        Component="Y"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        X="{Binding Color.X}"
+                                        Y="{Binding Color.Y, Mode=TwoWay}"
+                                        Z="{Binding Color.Z}"
+                                        W="{Binding Color.W}"/>
+                                    <local:ComponentSlider x:Name="ZComponentSlider"
+                                        Component="Z"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        X="{Binding Color.X}"
+                                        Y="{Binding Color.Y}"
+                                        Z="{Binding Color.Z, Mode=TwoWay}"
+                                        W="{Binding Color.W}"/>
+                                    <local:ComponentSlider x:Name="WComponentSlider"
+                                        Component="W"
+                                        Depth="{Binding Depth}"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        X="{Binding Color.X}"
+                                        Y="{Binding Color.Y}"
+                                        Z="{Binding Color.Z}"
+                                        W="{Binding Color.W, Mode=TwoWay}"/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="X">
+                                        <Setter TargetName="Column0" Property="Width" Value="*"/>
+                                        <Setter TargetName="Column1" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column2" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column3" Property="Width" Value="Auto"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Shape" Value="{Binding Shape}"/>
+                                        <Setter TargetName="YComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="WComponentSlider" Property="Shape" Value="Square"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="YComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="WComponentSlider" Property="Width" Value="48"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Y">
+                                        <Setter TargetName="Column0" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column1" Property="Width" Value="*"/>
+                                        <Setter TargetName="Column2" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column3" Property="Width" Value="Auto"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="YComponentSlider" Property="Shape" Value="{Binding Shape}"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="WComponentSlider" Property="Shape" Value="Square"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="YComponentSlider" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="WComponentSlider" Property="Width" Value="48"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Z">
+                                        <Setter TargetName="Column0" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column1" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column2" Property="Width" Value="*"/>
+                                        <Setter TargetName="Column3" Property="Width" Value="Auto"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="YComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Shape" Value="{Binding Shape}"/>
+                                        <Setter TargetName="WComponentSlider" Property="Shape" Value="Square"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="YComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="WComponentSlider" Property="Width" Value="48"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="W">
+                                        <Setter TargetName="Column0" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column1" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column2" Property="Width" Value="Auto"/>
+                                        <Setter TargetName="Column3" Property="Width" Value="*"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="YComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Shape" Value="Square"/>
+                                        <Setter TargetName="WComponentSlider" Property="Shape" Value="{Binding Shape}"/>
+
+                                        <Setter TargetName="XComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="YComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="ZComponentSlider" Property="Width" Value="48"/>
+                                        <Setter TargetName="WComponentSlider" Property="Width" Value="Auto"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+
+                            <!-- (🗸) 4 > 2D -->
+                            <DataTemplate x:Key="Color4Template2D" DataType="{x:Type local:ColorDocument}">
+                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto,Auto">
+                                    <local:ComponentSelector2D x:Name="ComponentSelector"
+                                        BorderBrush="Black"
+                                        BorderThickness="1"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        RotateX="{Binding RotateX}"
+                                        RotateY="{Binding RotateY}"
+                                        RotateZ="{Binding RotateZ}"
+                                        Shape="{Binding Shape}"
+                                        Zoom="{Binding Zoom}"/>
+                                    <local:ComponentSlider x:Name="ComponentSlider0"
+                                        Component="{Binding Color.Component}"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        Width="48"/>
+                                    <local:ComponentSlider x:Name="ComponentSlider1"
+                                        Depth="{Binding Depth}"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        Width="48"/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="X">
+                                        <Setter TargetName="ComponentSelector" Property="XComponent" Value="Z"/>
+                                        <Setter TargetName="ComponentSelector" Property="YComponent" Value="W"/>
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="W" Value="{Binding Color.W, Mode=TwoWay}"/>
+
+                                        <Setter TargetName="ComponentSlider0" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+
+                                        <Setter TargetName="ComponentSlider1" Property="Component" Value="Y"/>
+                                        <Setter TargetName="ComponentSlider1" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Y">
+                                        <Setter TargetName="ComponentSelector" Property="XComponent" Value="X"/>
+                                        <Setter TargetName="ComponentSelector" Property="YComponent" Value="W"/>
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="W" Value="{Binding Color.W, Mode=TwoWay}"/>
+
+                                        <Setter TargetName="ComponentSlider0" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+
+                                        <Setter TargetName="ComponentSlider1" Property="Component" Value="Z"/>
+                                        <Setter TargetName="ComponentSlider1" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Z">
+                                        <Setter TargetName="ComponentSelector" Property="XComponent" Value="X"/>
+                                        <Setter TargetName="ComponentSelector" Property="YComponent" Value="Y"/>
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+
+                                        <Setter TargetName="ComponentSlider0" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+
+                                        <Setter TargetName="ComponentSlider1" Property="Component" Value="W"/>
+                                        <Setter TargetName="ComponentSlider1" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="W" Value="{Binding Color.W, Mode=TwoWay}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="W">
+                                        <Setter TargetName="ComponentSelector" Property="XComponent" Value="Y"/>
+                                        <Setter TargetName="ComponentSelector" Property="YComponent" Value="Z"/>
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+
+                                        <Setter TargetName="ComponentSlider0" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider0" Property="W" Value="{Binding Color.W, Mode=TwoWay}"/>
+
+                                        <Setter TargetName="ComponentSlider1" Property="Component" Value="X"/>
+                                        <Setter TargetName="ComponentSlider1" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider1" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+
+                            <!-- (🗸) 4 > 3D -->
+                            <DataTemplate x:Key="Color4Template3D" DataType="{x:Type local:ColorDocument}">
+                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto">
+                                    <local:ComponentSelector3D x:Name="ComponentSelector"
+                                        Component="{Binding Color.Component}"
+                                        Depth="{Binding Depth}"
+                                        Margin="0,0,5,0"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        RotateX="{Binding RotateX}"
+                                        RotateY="{Binding RotateY}"
+                                        RotateZ="{Binding RotateZ}"
+                                        Zoom="{Binding Zoom}"/>
+                                    <local:ComponentSlider x:Name="ComponentSlider"
+                                        Component="{Binding Color.Component}"
+                                        Depth="{Binding Depth}"
+                                        Model="{Binding Color.ModelType}"
+                                        Profile="{Binding Color.Profile}"
+                                        Width="48"/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="X">
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="W" Value="{Binding Color.W, Mode=TwoWay}"/>
+
+                                        <Setter TargetName="ComponentSlider" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Y">
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="W" Value="{Binding Color.W, Mode=TwoWay}"/>
+
+                                        <Setter TargetName="ComponentSlider" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="Z">
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="W" Value="{Binding Color.W, Mode=TwoWay}"/>
+
+                                        <Setter TargetName="ComponentSlider" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Color.Component}" Value="W">
+                                        <Setter TargetName="ComponentSelector" Property="X" Value="{Binding Color.X, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Y" Value="{Binding Color.Y, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="Z" Value="{Binding Color.Z, Mode=TwoWay}"/>
+                                        <Setter TargetName="ComponentSelector" Property="W" Value="{Binding Color.W, Mode=OneWay}"/>
+
+                                        <Setter TargetName="ComponentSlider" Property="X" Value="{Binding Color.X, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Y" Value="{Binding Color.Y, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="Z" Value="{Binding Color.Z, Mode=OneWay}"/>
+                                        <Setter TargetName="ComponentSlider" Property="W" Value="{Binding Color.W, Mode=TwoWay}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </Border.Resources>
+                        <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,Auto">
+                            <ContentPresenter Content="{TemplateBinding Document}" Margin="5">
+                                <ContentPresenter.ContentTemplate>
+                                    <DataTemplate DataType="{x:Type local:ColorDocument}">
+                                        <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+                                        <DataTemplate.Triggers>
+                                            <!-- 3 > 1D -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Dimension}" Value="One"/>
+                                                    <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template1D}"/>
+                                            </MultiDataTrigger>
+                                            <!-- 3 > 2D -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Dimension}" Value="Two"/>
+                                                    <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template2D}"/>
+                                            </MultiDataTrigger>
+                                            <!-- 3 > 3D -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Dimension}" Value="Three"/>
+                                                    <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template3D}"/>
+                                            </MultiDataTrigger>
+                                            <!-- 4 > 1D -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Dimension}" Value="One"/>
+                                                    <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template1D}"/>
+                                            </MultiDataTrigger>
+                                            <!-- 4 > 2D -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Dimension}" Value="Two"/>
+                                                    <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template2D}"/>
+                                            </MultiDataTrigger>
+                                            <!-- 4 > 3D -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Dimension}" Value="Three"/>
+                                                    <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template3D}"/>
+                                            </MultiDataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ContentPresenter.ContentTemplate>
+                            </ContentPresenter>
+                            <local:TopBorder x:Name="Border2" Height="32">
+                                <local:MemberGrid
+                                    BorderThickness="0"
+                                    GroupName="None"
+                                    HeaderVisibility="Collapsed"
+                                    Margin="2"
+                                    Orientation="Horizontal"
+                                    Source="{TemplateBinding Document}"/>
+                            </local:TopBorder>
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

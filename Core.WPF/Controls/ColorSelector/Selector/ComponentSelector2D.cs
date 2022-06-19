@@ -44,11 +44,6 @@ public class ComponentSelector2D : ComponentSelector
     {
         var x = GetValue(XComponent);
         var y = GetValue(YComponent);
-
-        if (Shape == Shapes2.Circle)
-        {
-        }
-
         Mark(x, y);
     }
 

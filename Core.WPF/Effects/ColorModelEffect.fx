@@ -847,9 +847,12 @@ float3 HSB_Lrgb(float3 input)
 {
 	float3 result = { 0, 0, 0 };
 
-	float _h = input[0] / 360, _s = input[1] / 100, _b = input[2] / 100;
+	float _h = input[0], _s = input[1] / 100, _b = input[2] / 100;
 	float r = 0, g = 0, b = 0;
 	
+	_h = _h > 359 ? 359 : _h; //360 produces BLACK!
+	_h /= 360;
+
 	if (_s == 0)
 	{
 	    r = g = b = _b;
@@ -952,7 +955,10 @@ float3 Lrgb_HSB(float3 input)
 //(+|+) [HSL]
 float3 HSL_Lrgb(float3 input)
 {
+
 	float h = input[0], s = input[1] / 100, l = input[2] / 100;
+	h = h > 359 ? 359 : h; //360 produces BLACK!
+
 	h /= 60;
 
 	float3 result = { 0, 0, 0 };
