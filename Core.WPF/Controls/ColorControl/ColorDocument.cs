@@ -59,7 +59,7 @@ public class ColorDocument : Document
         set => this.Change(ref depth, value);
     }
 
-    Dimensions dimension = Dimensions.One;
+    Dimensions dimension = Dimensions.Two;
     [Featured(AboveBelow.Above), Index(0), Label(false), Localize(false), Visible]
     public Dimensions Dimension
     {

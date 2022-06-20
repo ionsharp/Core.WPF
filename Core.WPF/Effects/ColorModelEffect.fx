@@ -86,13 +86,13 @@ static float MaxValue = 3.40282347E+38;
 
 //...
 
-static float Total3 = 45;
+static float Total3 = 46;
 
-static float Total4 = 45;
+static float Total4 = 4;
 
 //...
 
-static float3 Maximum3[45] =
+static float3 Maximum3[46] =
 {
 	//RCA
 	float3(255, 255, 255),
@@ -112,11 +112,7 @@ static float3 Maximum3[45] =
 	float3(360, 100, 100),
 	//HSB
 	float3(360, 100, 100),
-	//HSBk
-	float3(360, 100, 100),
 	//HSL
-	float3(360, 100, 100),
-	//HSLk
 	float3(360, 100, 100),
 	//HSLuv
 	float3(360, 100, 100),
@@ -135,17 +131,25 @@ static float3 Maximum3[45] =
 	//Labh
 	float3(100, 128, 128),
 	//Labi
-	float3(8, 12, 6),
+	//float3(8, 12, 6),
 	//Labj
 	float3(1, 1, 1),
 	//Labk
 	float3(1, 1, 1),
+	//Labksb
+	float3(360, 100, 100),
+	//Labksl
+	float3(360, 100, 100),
+	//Labkwb
+	float3(360, 100, 100),
 	//LCHab
 	float3(100, 100, 360),
 	//LCHabh
 	float3(100, 100, 360),
 	//LCHabj
 	float3(1, 1, 360),
+	//LCHrg
+	float3(100, 100, 360),
 	//LCHuv
 	float3(100, 100, 360),
 	//LCHxy
@@ -186,7 +190,7 @@ static float3 Maximum3[45] =
 	float3(1, 0.5, 0.5)
 };
 
-static float3 Minimum3[45] =
+static float3 Minimum3[46] =
 {
 	//RCA
 	float3(0, 0, 0),
@@ -206,11 +210,7 @@ static float3 Minimum3[45] =
 	float3(0, 0, 0),
 	//HSB
 	float3(0, 0, 0),
-	//HSBk
-	float3(0, 0, 0),
 	//HSL
-	float3(0, 0, 0),
-	//HSLk
 	float3(0, 0, 0),
 	//HSLuv
 	float3(0, 0, 0),
@@ -229,16 +229,24 @@ static float3 Minimum3[45] =
 	//Labh
 	float3(0, -128, -128),
 	//Labi
-	float3(-10, -6, -10),
+	//float3(-10, -6, -10),
 	//Labj
 	float3(0, -1, -1),
 	//Labk
+	float3(0, 0, 0),
+	//Labksb
+	float3(0, 0, 0),
+	//Labksl
+	float3(0, 0, 0),
+	//Labkwb
 	float3(0, 0, 0),
 	//LCHab
 	float3(0, 0, 0),
 	//LCHabh
 	float3(0, 0, 0),
 	//LCHabj
+	float3(0, 0, 0),
+	//LCHrg
 	float3(0, 0, 0),
 	//LCHuv
 	float3(0, 0, 0),
@@ -1053,12 +1061,19 @@ float3 Lrgb_HSL(float3 input)
 //(-|-) [HSM]
 float3 HSM_Lrgb(float3 input)
 {
-	float h = input[0] / 360, s = input[1] / 100, m = input[2] / 100;
+	float h = cos(GetRadian(input[0])), s = input[1] / 100, m = input[2] / 255;
 	float r, g, b;
 
-	r = (3 / 41) * s * cos(h) + m - (4 / 861) * sqrt(861 * Pow2(s) * (1 - Pow2(cos(h))));
-	g = (sqrt(41) * s * cos(h) + (23 * m) - (19 * r)) / 4;
-	b = ((11 * r) - (9 * m) - (sqrt(41) * s * cos(h))) / 2;
+	float i = h * s;
+	float j = i * sqrt(41);
+
+	float x = 4 / 861;
+	float y = 861 * Pow2(s);
+	float z = 1 - Pow2(h);
+
+	r = (3 / 41 * i) + m - (x * sqrt(y * z));
+	g = (j + (23 * m) - (19 * r)) / 4;
+	b = ((11 * r) - (9 * m) - j) / 2;
 	return float3(r, g, b);
 }
 float3 Lrgb_HSM(float3 input)
@@ -1389,6 +1404,18 @@ float3 Lrgb_XYZ(float3 input)
 	return Multiply(m, input);
 }
 
+//(-|-) [JCh]
+float3 JCh_Lrgb(float3 input) { return input; }
+float3 Lrgb_JCh(float3 input) { return input; }
+
+//(-|-) [JMh]
+float3 JMh_Lrgb(float3 input) { return input; }
+float3 Lrgb_JMh(float3 input) { return input; }
+
+//(-|-) [Jsh]
+float3 Jsh_Lrgb(float3 input) { return input; }
+float3 Lrgb_Jsh(float3 input) { return input; }
+
 //(+|+) [Lab]
 float3 Lab_Lrgb(float3 input)
 {
@@ -1578,25 +1605,17 @@ float3 Lrgb_Labk(float3 input)
 	return Multiply(n, v);
 }
 
-//(-|-) [Labk] > [HSBk]
-float3 HSBk_Lrgb(float3 input)
-{
-	return HSB_Lrgb(input);
-}
-float3 Lrgb_HSBk(float3 input)
-{
-	return Lrgb_HSB(input);
-}
+//(-|-) [Labk] > [Labksb]
+float3 Labksb_Lrgb(float3 input) { return HSB_Lrgb(input); }
+float3 Lrgb_Labksb(float3 input) { return Lrgb_HSB(input); }
 
-//(-|-) [Labk] > [HSLk]
-float3 HSLk_Lrgb(float3 input)
-{
-	return HSL_Lrgb(input);
-}
-float3 Lrgb_HSLk(float3 input)
-{
-	return Lrgb_HSL(input);
-}
+//(-|-) [Labk] > [Labksl]
+float3 Labksl_Lrgb(float3 input) { return HSL_Lrgb(input); }
+float3 Lrgb_Labksl(float3 input) { return Lrgb_HSL(input); }
+
+//(-|-) [Labk] > [Labkwb]
+float3 Labkwb_Lrgb(float3 input) { return HWB_Lrgb(input); }
+float3 Lrgb_Labkwb(float3 input) { return Lrgb_HWB(input); }
 
 //(+|+) [Luv]
 float3 Luv_Lrgb(float3 input)
@@ -1774,6 +1793,18 @@ float3 Lrgb_LMS(float3 input)
 	return Multiply(m, xyz);
 }
 
+//(-|-) [QCh]
+float3 QCh_Lrgb(float3 input) { return input; }
+float3 Lrgb_QCh(float3 input) { return input; }
+
+//(-|-) [QMh]
+float3 QMh_Lrgb(float3 input) { return input; }
+float3 Lrgb_QMh(float3 input) { return input; }
+
+//(-|-) [Qsh]
+float3 Qsh_Lrgb(float3 input) { return input; }
+float3 Lrgb_Qsh(float3 input) { return input; }
+
 //(+|-) [RCA]
 float3 RCA_Lrgb(float3 input)
 {
@@ -1832,6 +1863,25 @@ float3 rgG_Lrgb(float3 input)
 float3 Lrgb_rgG(float3 input)
 {
 	return XYZ_xyY(input);
+}
+
+//(+|-) [rgG] > LCHrg
+float3 LCHrg_Lrgb(float3 input)
+{
+	//LCHrg > Lab
+	float3 result = FromLCh(input);
+
+	//Lab > rgG
+	result = float3(result.y, result.z, result.x);
+	result = (result + float3(100, 100, 0)) / float3(200, 200, 100);
+
+	//rgG > Lrgb
+	return rgG_Lrgb(result);
+}
+float3 Lrgb_LCHrg(float3 input)
+{
+	float3 result = Lrgb_rgG(input);
+	return ToLCh(float3(result.z, result.x, result.y));
 }
 
 //(+|-) [RGV]
@@ -2421,46 +2471,47 @@ float3 FLrgb(float m, float3 input)
 	else if (m == 6)  { return Lrgb_HCY(input); }
 	else if (m == 7)  { return Lrgb_HPLuv(input); }
 	else if (m == 8)  { return Lrgb_HSB(input); }
-	else if (m == 9)  { return Lrgb_HSBk(input); }
-	else if (m == 10) { return Lrgb_HSL(input); }
+	else if (m == 9)  { return Lrgb_HSL(input); }
 
-		 if (m == 11) { return Lrgb_HSLk(input); }
-	else if (m == 12) { return Lrgb_HSLuv(input); }
-	else if (m == 13) { return Lrgb_HSM(input); }
-	else if (m == 14) { return Lrgb_HSP(input); }
-	else if (m == 15) { return Lrgb_HWB(input); }
-	else if (m == 16) { return Lrgb_IPT(input); }
-	else if (m == 17) { return Lrgb_JPEG(input); }
-	else if (m == 18) { return Lrgb_Lab(input); }
-	else if (m == 19) { return Lrgb_Labh(input); }
-	else if (m == 20) { return Lrgb_Labi(input); }
+		 if (m == 10) { return Lrgb_HSLuv(input); }
+	else if (m == 11) { return Lrgb_HSM(input); }
+	else if (m == 12) { return Lrgb_HSP(input); }
+	else if (m == 13) { return Lrgb_HWB(input); }
+	else if (m == 14) { return Lrgb_IPT(input); }
+	else if (m == 15) { return Lrgb_JPEG(input); }
+	else if (m == 16) { return Lrgb_Lab(input); }
+	else if (m == 17) { return Lrgb_Labh(input); }
+	else if (m == 18) { return Lrgb_Labj(input); }
+	else if (m == 19) { return Lrgb_Labk(input); }
 
-		 if (m == 21) { return Lrgb_Labj(input); }
-	else if (m == 22) { return Lrgb_Labk(input); }
+		 if (m == 20) { return Lrgb_Labksb(input); }
+	else if (m == 21) { return Lrgb_Labksl(input); }
+	else if (m == 22) { return Lrgb_Labkwb(input); }
 	else if (m == 23) { return Lrgb_LCHab(input); }
 	else if (m == 24) { return Lrgb_LCHabh(input); }
 	else if (m == 25) { return Lrgb_LCHabj(input); }
-	else if (m == 26) { return Lrgb_LCHuv(input); }
-	else if (m == 27) { return Lrgb_LCHxy(input); }
-	else if (m == 28) { return Lrgb_LMS(input); }
-	else if (m == 29) { return Lrgb_Luv(input); }
-	else if (m == 30) { return Lrgb_rgG(input); }
+	else if (m == 26) { return Lrgb_LCHrg(input); }
+	else if (m == 27) { return Lrgb_LCHuv(input); }
+	else if (m == 28) { return Lrgb_LCHxy(input); }
+	else if (m == 29) { return Lrgb_LMS(input); }
 
-		 if (m == 31) { return Lrgb_TSL(input); }
-	else if (m == 32) { return Lrgb_UCS(input); }
-	else if (m == 33) { return Lrgb_UVW(input); }
-	else if (m == 34) { return Lrgb_xvYCC(input); }
-	else if (m == 35) { return Lrgb_xyY(input); }
-	else if (m == 36) { return Lrgb_xyYC(input); }
-	else if (m == 37) { return Lrgb_XYZ(input); }
-	else if (m == 38) { return Lrgb_YCbCr(input); }
-	else if (m == 39) { return Lrgb_YCoCg(input); }
-	else if (m == 40) { return Lrgb_YDbDr(input); }
+		 if (m == 30) { return Lrgb_Luv(input); }
+	else if (m == 31) { return Lrgb_rgG(input); }
+	else if (m == 32) { return Lrgb_TSL(input); }
+	else if (m == 33) { return Lrgb_UCS(input); }
+	else if (m == 34) { return Lrgb_UVW(input); }
+	else if (m == 35) { return Lrgb_xvYCC(input); }
+	else if (m == 36) { return Lrgb_xyY(input); }
+	else if (m == 37) { return Lrgb_xyYC(input); }
+	else if (m == 38) { return Lrgb_XYZ(input); }
+	else if (m == 39) { return Lrgb_YCbCr(input); }
 
-		 if (m == 41) { return Lrgb_YES(input); }
-	else if (m == 42) { return Lrgb_YIQ(input); }
-	else if (m == 43) { return Lrgb_YPbPr(input); }
-	else if (m == 44) { return Lrgb_YUV(input); }
+		 if (m == 40) { return Lrgb_YCoCg(input); }
+	else if (m == 41) { return Lrgb_YDbDr(input); }
+	else if (m == 42) { return Lrgb_YES(input); }
+	else if (m == 43) { return Lrgb_YIQ(input); }
+	else if (m == 44) { return Lrgb_YPbPr(input); }
+	else if (m == 45) { return Lrgb_YUV(input); }
 
 	return input;
 }
@@ -2477,56 +2528,57 @@ float3 TLrgb(float m, float3 input)
 	else if (m == 6)  { return HCY_Lrgb(input); }
 	else if (m == 7)  { return HPLuv_Lrgb(input); }
 	else if (m == 8)  { return HSB_Lrgb(input); }
-	else if (m == 9)  { return HSBk_Lrgb(input); }
-	else if (m == 10) { return HSL_Lrgb(input); }
+	else if (m == 9)  { return HSL_Lrgb(input); }
 	
-		 if (m == 11) { return HSLk_Lrgb(input); }
-	else if (m == 12) { return HSLuv_Lrgb(input); }
-	else if (m == 13) { return HSM_Lrgb(input); }
-	else if (m == 14) { return HSP_Lrgb(input); }
-	else if (m == 15) { return HWB_Lrgb(input); }
-	else if (m == 16) { return IPT_Lrgb(input); }
-	else if (m == 17) { return JPEG_Lrgb(input); }
-	else if (m == 18) { return Lab_Lrgb(input); }
-	else if (m == 19) { return Labh_Lrgb(input); }
-	else if (m == 20) { return Labi_Lrgb(input); }
+		 if (m == 10) { return HSLuv_Lrgb(input); }
+	else if (m == 11) { return HSM_Lrgb(input); }
+	else if (m == 12) { return HSP_Lrgb(input); }
+	else if (m == 13) { return HWB_Lrgb(input); }
+	else if (m == 14) { return IPT_Lrgb(input); }
+	else if (m == 15) { return JPEG_Lrgb(input); }
+	else if (m == 16) { return Lab_Lrgb(input); }
+	else if (m == 17) { return Labh_Lrgb(input); }
+	else if (m == 18) { return Labj_Lrgb(input); }
+	else if (m == 19) { return Labk_Lrgb(input); }
 
-		 if (m == 21) { return Labj_Lrgb(input); }
-	else if (m == 22) { return Labk_Lrgb(input); }
+		 if (m == 20) { return Labksb_Lrgb(input); }
+	else if (m == 21) { return Labksl_Lrgb(input); }
+	else if (m == 22) { return Labkwb_Lrgb(input); }
 	else if (m == 23) { return LCHab_Lrgb(input); }
 	else if (m == 24) { return LCHabh_Lrgb(input); }
 	else if (m == 25) { return LCHabj_Lrgb(input); }
-	else if (m == 26) { return LCHuv_Lrgb(input); }
-	else if (m == 27) { return LCHxy_Lrgb(input); }
-	else if (m == 28) { return LMS_Lrgb(input); }
-	else if (m == 29) { return Luv_Lrgb(input); }
-	else if (m == 30) { return rgG_Lrgb(input); }
+	else if (m == 26) { return LCHrg_Lrgb(input); }
+	else if (m == 27) { return LCHuv_Lrgb(input); }
+	else if (m == 28) { return LCHxy_Lrgb(input); }
+	else if (m == 29) { return LMS_Lrgb(input); }
 
-		 if (m == 31) { return TSL_Lrgb(input); }
-	else if (m == 32) { return UCS_Lrgb(input); }
-	else if (m == 33) { return UVW_Lrgb(input); }
-	else if (m == 34) { return xvYCC_Lrgb(input); }
-	else if (m == 35) { return xyY_Lrgb(input); }
-	else if (m == 36) { return xyYC_Lrgb(input); }
-	else if (m == 37) { return XYZ_Lrgb(input); }
-	else if (m == 38) { return YCbCr_Lrgb(input); }
-	else if (m == 39) { return YCoCg_Lrgb(input); }
-	else if (m == 40) { return YDbDr_Lrgb(input); }
+		 if (m == 30) { return Luv_Lrgb(input); }
+	else if (m == 31) { return rgG_Lrgb(input); }
+	else if (m == 32) { return TSL_Lrgb(input); }
+	else if (m == 33) { return UCS_Lrgb(input); }
+	else if (m == 34) { return UVW_Lrgb(input); }
+	else if (m == 35) { return xvYCC_Lrgb(input); }
+	else if (m == 36) { return xyY_Lrgb(input); }
+	else if (m == 37) { return xyYC_Lrgb(input); }
+	else if (m == 38) { return XYZ_Lrgb(input); }
+	else if (m == 39) { return YCbCr_Lrgb(input); }
 
-		 if (m == 41) { return YES_Lrgb(input); }
-	else if (m == 42) { return YIQ_Lrgb(input); }
-	else if (m == 43) { return YPbPr_Lrgb(input); }
-	else if (m == 44) { return YUV_Lrgb(input); }
+		 if (m == 40) { return YCoCg_Lrgb(input); }
+	else if (m == 41) { return YDbDr_Lrgb(input); }
+	else if (m == 42) { return YES_Lrgb(input); }
+	else if (m == 43) { return YIQ_Lrgb(input); }
+	else if (m == 44) { return YPbPr_Lrgb(input); }
+	else if (m == 45) { return YUV_Lrgb(input); }
 
 	return input;
 }
 
 float3 TLrgb(float m, float4 input)
 {
-		 if (m == 45) { return CMYK_Lrgb(input); }
-	else if (m == 46) { return CMYW_Lrgb(input); }
-	else if (m == 47) { return RGBK_Lrgb(input); }
-	else if (m == 48) { return RGBW_Lrgb(input); }
+		 if (m == 46) { return CMYK_Lrgb(input); }
+	else if (m == 47) { return CMYW_Lrgb(input); }
+	else if (m == 48) { return RGBK_Lrgb(input); }
+	else if (m == 49) { return RGBW_Lrgb(input); }
 	return float3(0, 0, 0);
 }
 
