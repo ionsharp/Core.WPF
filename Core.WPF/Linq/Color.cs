@@ -1,6 +1,6 @@
 ﻿using Imagin.Core.Colors;
 using Imagin.Core.Numerics;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using System;
 using System.Windows.Media;
 using static Imagin.Core.Numerics.M;
@@ -85,8 +85,8 @@ public static partial class XColor
     {
         b = b.A((b.A.Double() / 255d * amount * 255d).Byte());
 
-        double a1 = M.Normalize(a.A), r1 = M.Normalize(a.R), g1 = M.Normalize(a.G), b1 = M.Normalize(a.B),
-            a2 = M.Normalize(b.A), r2 = M.Normalize(b.R), g2 = M.Normalize(b.G), b2 = M.Normalize(b.B);
+        double a1 = Normalize(a.A), r1 = Normalize(a.R), g1 = Normalize(a.G), b1 = Normalize(a.B),
+            a2 = Normalize(b.A), r2 = Normalize(b.R), g2 = Normalize(b.G), b2 = Normalize(b.B);
 
         double a3 = 0, r3 = 0, g3 = 0, b3 = 0;
 
@@ -112,8 +112,8 @@ public static partial class XColor
                 hsb2 = new HSB();
                 hsb2.From(Colour.New<RGB>(r2 * 255, g2 * 255, b2 * 255), WorkingProfile.Default);
 
-                Colour.New<HSB>(hsb2[0], hsb1[1], hsb1[2]).To(out rgb, WorkingProfile.Default);
-                r3 = rgb[0]; g3 = rgb[1]; b3 = rgb[2];
+                Colour.New<HSB>(hsb2.X, hsb1.Y, hsb1.Z).To(out rgb, WorkingProfile.Default);
+                r3 = rgb.X; g3 = rgb.Y; b3 = rgb.Z;
                 break;
             #endregion
             #region ColorBurn
@@ -182,8 +182,8 @@ public static partial class XColor
                 hsb2 = new HSB();
                 hsb2.From(Colour.New<RGB>(r2 * 255, g2 * 255, b2 * 255), WorkingProfile.Default);
 
-                Colour.New<HSB>(hsb2[0], hsb1[1], hsb1[2]).To(out rgb, WorkingProfile.Default);
-                r3 = rgb[0]; g3 = rgb[1]; b3 = rgb[2];
+                Colour.New<HSB>(hsb2.X, hsb1.Y, hsb1.Z).To(out rgb, WorkingProfile.Default);
+                r3 = rgb.X; g3 = rgb.Y; b3 = rgb.Z;
                 break;
             #endregion
             #region Lighten
@@ -224,8 +224,8 @@ public static partial class XColor
                 hsb2 = new HSB();
                 hsb2.From(Colour.New<RGB>(r2 * 255, g2 * 255, b2 * 255), WorkingProfile.Default);
 
-                Colour.New<HSB>(hsb2[0], hsb1[1], hsb1[2]).To(out rgb, WorkingProfile.Default);
-                r3 = rgb[0]; g3 = rgb[1]; b3 = rgb[2];
+                Colour.New<HSB>(hsb2.X, hsb1.Y, hsb1.Z).To(out rgb, WorkingProfile.Default);
+                r3 = rgb.X; g3 = rgb.Y; b3 = rgb.Z;
                 break;
             #endregion
             #region Multiply
@@ -293,8 +293,8 @@ public static partial class XColor
                 hsb2 = new HSB();
                 hsb2.From(Colour.New<RGB>(r2 * 255, g2 * 255, b2 * 255), WorkingProfile.Default);
 
-                Colour.New<HSB>(hsb2[0], hsb1[1], hsb1[2]).To(out rgb, WorkingProfile.Default);
-                r3 = rgb[0]; g3 = rgb[1]; b3 = rgb[2];
+                Colour.New<HSB>(hsb2.X, hsb1.Y, hsb1.Z).To(out rgb, WorkingProfile.Default);
+                r3 = rgb.X; g3 = rgb.Y; b3 = rgb.Z;
                 break;
             #endregion
             #region Screen
@@ -319,7 +319,7 @@ public static partial class XColor
                 break;
                 #endregion
         }
-        return Color.FromArgb(M.Denormalize(a3), M.Denormalize(r3), M.Denormalize(g3), M.Denormalize(b3));
+        return Color.FromArgb(Denormalize(a3), Denormalize(r3), Denormalize(g3), Denormalize(b3));
     }
 
     #endregion
@@ -350,14 +350,14 @@ public static partial class XColor
     //...
 
     public static Color Convert(Vector3 input)
-        => Color.FromArgb(255, M.Denormalize(input.X), M.Denormalize(input.Y), M.Denormalize(input.Z));
+        => Color.FromArgb(255, Denormalize(input.X), Denormalize(input.Y), Denormalize(input.Z));
 
     public static Color Convert(Vector4 input)
-        => Color.FromArgb(M.Denormalize(input.W), M.Denormalize(input.X), M.Denormalize(input.Y), M.Denormalize(input.Z));
+        => Color.FromArgb(Denormalize(input.W), Denormalize(input.X), Denormalize(input.Y), Denormalize(input.Z));
 
     public static Color Convert(RGB input)
     {
-        var result = input.Value.Transform(i => M.Clamp(i, 255).Byte());
+        var result = new Vector(input.Value).Transform(i => Clamp(i, 255).Byte());
         return Color.FromArgb(255, result[0], result[1], result[2]);
     }
 

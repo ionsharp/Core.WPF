@@ -2142,7 +2142,7 @@ public class DockControl : Control
         {
             if (Drag.Window != null)
             {
-                var position = Paint.Display.Mouse;
+                var position = Media.Display.Mouse;
                 Drag.Window.Left
                     = position.X + FloatingWindowDragOffset;
                 Drag.Window.Top
@@ -3429,7 +3429,7 @@ public static class XDockControl
                     var content = reference.Content;
                     SetDragReference(element, null);
 
-                    var p0 = Paint.Display.Mouse;
+                    var p0 = Media.Display.Mouse;
                     var p1 = new Point(p0.X + root.DockControl.FloatingWindowDragOffset, p0.Y + root.DockControl.FloatingWindowDragOffset);
 
                     var window = root.DockControl.Float(content, p1);

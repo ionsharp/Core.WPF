@@ -502,7 +502,7 @@
     <SolidColorBrush x:Key="TreeViewItemSelectedActiveBorder" Color="#99D6FF"/>
     <SolidColorBrush x:Key="TreeViewItemSelectedActiveForeground" Color="#333"/>
 
-    <SolidColorBrush x:Key="WindowActiveBorder" Color="#FF007ACC"/>
+    <SolidColorBrush x:Key="WindowActiveBorder" Color="#777"/>
     <LinearGradientBrush x:Key="WindowBackground" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#FCFCFC"/>
         <GradientStop Offset="1" Color="#F5F5F5"/>

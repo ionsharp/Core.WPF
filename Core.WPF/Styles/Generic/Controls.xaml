@@ -7,9 +7,9 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
-    xmlns:Media="clr-namespace:Imagin.Core.Paint"
+    xmlns:Media="clr-namespace:Imagin.Core.Media"
     xmlns:Numbers="clr-namespace:Imagin.Core.Numerics;assembly=Imagin.Core"
-    xmlns:SharedMedia="clr-namespace:Imagin.Core.Paint;assembly=Imagin.Core"
+    xmlns:SharedMedia="clr-namespace:Imagin.Core.Media;assembly=Imagin.Core"
     xmlns:System="clr-namespace:System;assembly=mscorlib">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="{local:StyleKey Key=Button}"/>

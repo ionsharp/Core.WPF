@@ -60,7 +60,7 @@ namespace Imagin.Core.Conversion
             var hsb = new HSB();
             hsb.From(rgb, WorkingProfile.Default);
 
-            Colors.Colour.New<HSB>(hsb[0], hsb[1], lightness * 100).To(out rgb, WorkingProfile.Default);
+            Colors.Colour.New<HSB>(hsb.X, hsb.Y, lightness * 100).To(out rgb, WorkingProfile.Default);
             return new SolidColorBrush(Linq.XColor.Convert(rgb));
         }
 

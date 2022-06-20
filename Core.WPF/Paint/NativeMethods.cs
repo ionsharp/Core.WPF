@@ -2,7 +2,7 @@
 using System.Runtime;
 using System.Runtime.InteropServices;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     internal static class NativeMethods
     {

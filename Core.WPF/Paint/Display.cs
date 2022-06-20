@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     public class Display
     {

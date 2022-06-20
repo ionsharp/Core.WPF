@@ -9,7 +9,7 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
-    xmlns:Media="clr-namespace:Imagin.Core.Paint"
+    xmlns:Media="clr-namespace:Imagin.Core.Media"
     xmlns:Models="clr-namespace:Imagin.Core.Models"
     xmlns:SharedAnalytics="clr-namespace:Imagin.Core.Analytics;assembly=Imagin.Core">
     <ResourceDictionary.MergedDictionaries>

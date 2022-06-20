@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Media;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     public class ClearTypeLetterGlyph
     {

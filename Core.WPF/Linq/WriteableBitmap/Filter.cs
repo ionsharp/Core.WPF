@@ -1,7 +1,7 @@
 using Imagin.Core.Linq;
 using System;
 using System.Windows.Media.Imaging;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 
 namespace Imagin.Core.Linq
 {
@@ -85,7 +85,7 @@ namespace Imagin.Core.Linq
                 throw new InvalidOperationException("Kernel height must be odd!");
             }
 
-            using (var srcContext = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var srcContext = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var w = srcContext.Width;
                 var h = srcContext.Height;
@@ -173,7 +173,7 @@ namespace Imagin.Core.Linq
         /// <returns>The new inverted WriteableBitmap.</returns>
         public static WriteableBitmap Invert(this WriteableBitmap bmp)
         {
-            using (var srcContext = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var srcContext = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var result = XBitmap.New(srcContext.Width, srcContext.Height);
                 using (var resultContext = result.GetBitmapContext())
@@ -216,7 +216,7 @@ namespace Imagin.Core.Linq
         /// <returns>The new gray WriteableBitmap.</returns>
         public static WriteableBitmap Gray(this WriteableBitmap bmp)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var nWidth = context.Width;
                 var nHeight = context.Height;
@@ -259,7 +259,7 @@ namespace Imagin.Core.Linq
         {
             var factor = (int)((259.0 * (level + 255.0)) / (255.0 * (259.0 - level)) * 255.0);
 
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var nWidth = context.Width;
                 var nHeight = context.Height;
@@ -306,7 +306,7 @@ namespace Imagin.Core.Linq
         /// <returns>The new WriteableBitmap.</returns>
         public static WriteableBitmap AdjustBrightness(this WriteableBitmap bmp, int nLevel)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var nWidth = context.Width;
                 var nHeight = context.Height;
@@ -353,7 +353,7 @@ namespace Imagin.Core.Linq
         /// <returns>The new WriteableBitmap.</returns>
         public static WriteableBitmap AdjustGamma(this WriteableBitmap bmp, double value)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var nWidth = context.Width;
                 var nHeight = context.Height;

@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Media;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     [Serializable]
     public sealed class DefaultGradients : GroupCollection<Gradient>

@@ -12,7 +12,7 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
-    xmlns:Media="clr-namespace:Imagin.Core.Paint"
+    xmlns:Media="clr-namespace:Imagin.Core.Media"
     xmlns:Models="clr-namespace:Imagin.Core.Models"
     xmlns:MsCollections="clr-namespace:System.Collections;assembly=mscorlib"
     xmlns:MsCollectionsSpecialized="clr-namespace:System.Collections.Specialized;assembly=System"
@@ -1058,7 +1058,7 @@
             </local:PatternControl>
         </local:KeyTemplate>
 
-        <!-- ... Imagin.Core.Paint -->
+        <!-- ... Imagin.Core.Media -->
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Numerics:Unit}">
             <local:UnitControl
                 IsEnabled="{Data:InvertBinding IsReadOnly}"
@@ -1070,7 +1070,7 @@
             </local:UnitControl>
         </local:KeyTemplate>
 
-        <!-- ... Imagin.Core.Paint (Shared) -->
+        <!-- ... Imagin.Core.Media (Shared) -->
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Media:Gradient}">
             <local:GradientBox
                 HorizontalAlignment="Stretch"

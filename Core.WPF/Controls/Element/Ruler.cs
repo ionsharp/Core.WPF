@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Linq;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using Imagin.Core.Numerics;
 using System.Globalization;
 using System.Windows;

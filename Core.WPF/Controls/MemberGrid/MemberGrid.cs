@@ -4,7 +4,7 @@ using Imagin.Core.Config;
 using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using Imagin.Core.Models;
 using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;

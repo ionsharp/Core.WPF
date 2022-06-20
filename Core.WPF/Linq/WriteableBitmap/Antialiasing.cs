@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 
 namespace Imagin.Core.Linq
 {

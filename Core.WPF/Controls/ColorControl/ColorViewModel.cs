@@ -1,7 +1,6 @@
 ﻿using Imagin.Core.Collections.Generic;
 using Imagin.Core.Colors;
 using Imagin.Core.Controls;
-using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Models;
@@ -15,7 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Imagin.Core.Paint;
+namespace Imagin.Core.Media;
 
 /// <summary>A normalized <see cref="ColorModel"/> used to perform conversion via user interface.</summary>
 [DisplayName("Color")]
@@ -409,10 +408,10 @@ public class ColorViewModel : ViewModel
         handle.SafeInvoke((Action)(() =>
         {
             return;
-            ActualColor.Convert(out RGB a);
-            var b = Colour.New(ModelType, a, WorkingProfile.Default).Value / 255.0;
-            var c = new Vector3(b[0], b[1], b[2]);
-            X = c.X; Y = c.Y; Z = c.Z;
+            //ActualColor.Convert(out RGB a);
+            //var b = Colour.New(ModelType, a, WorkingProfile.Default).Value / 255.0;
+            //var c = new Vector3(b[0], b[1], b[2]);
+            //X = c.X; Y = c.Y; Z = c.Z;
         }));
     }
 

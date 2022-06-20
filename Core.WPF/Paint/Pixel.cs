@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     public struct Pixel
     {

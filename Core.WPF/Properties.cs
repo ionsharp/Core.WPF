@@ -83,8 +83,8 @@ public static class AssemblyProperties
         public const string Numerics
             = Core + $".{nameof(Imagin.Core.Numerics)}";
 
-        public const string Paint
-            = Core + $".{nameof(Imagin.Core.Paint)}";
+        public const string Media
+            = Core + $".{nameof(Imagin.Core.Media)}";
 
         public const string Reflection
             = Core + $".{nameof(Imagin.Core.Reflection)}";

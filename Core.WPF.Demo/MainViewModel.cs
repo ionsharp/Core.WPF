@@ -5,7 +5,7 @@ using Imagin.Core.Controls;
 using Imagin.Core.Conversion;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using Imagin.Core.Models;
 using Imagin.Core.Storage;
 using System;
@@ -235,7 +235,7 @@ namespace Demo
 
         ICommand showGradientWindowCommand;
         public ICommand ShowGradientWindowCommand => showGradientWindowCommand
-            ??= new RelayCommand(() => new GradientWindow("Select gradient", Imagin.Core.Paint.Gradient.Default).ShowDialog());
+            ??= new RelayCommand(() => new GradientWindow("Select gradient", Imagin.Core.Media.Gradient.Default).ShowDialog());
 
         ICommand showInputWindowCommand;
         public ICommand ShowInputWindowCommand => showInputWindowCommand 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     #region (enum) Ease
 

@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Paint;
+﻿using Imagin.Core.Media;
 
 namespace Imagin.Core.Controls
 {

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 
 namespace Imagin.Core.Linq
 {
@@ -119,7 +119,7 @@ namespace Imagin.Core.Linq
             var dw = (int)destRect.Width;
             var dh = (int)destRect.Height;
 
-            using (var srcContext = source.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var srcContext = source.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
 #if WPF
                 var isPrgba = srcContext.Format == PixelFormats.Pbgra32 || srcContext.Format == PixelFormats.Prgba64 || srcContext.Format == PixelFormats.Prgba128Float;
@@ -192,7 +192,7 @@ namespace Imagin.Core.Linq
                                 var len = xx + wx < dpw ? wx : dpw - xx;
                                 if (len > sw) len = sw;
                                 if (len > dw) len = dw;
-                                Paint.BitmapContext.BlockCopy(srcContext, (sourceIdx + offset) * 4, destContext, (idx + offset) * 4, len * 4);
+                                Media.BitmapContext.BlockCopy(srcContext, (sourceIdx + offset) * 4, destContext, (idx + offset) * 4, len * 4);
                             }
 
                      // Pixel by pixel copying
@@ -355,7 +355,7 @@ namespace Imagin.Core.Linq
             }
         }
 
-        public static void Blit(Paint.BitmapContext destContext, int dpw, int dph, Rect destRect, Paint.BitmapContext srcContext, Rect sourceRect, int sourceWidth)
+        public static void Blit(Media.BitmapContext destContext, int dpw, int dph, Rect destRect, Media.BitmapContext srcContext, Rect sourceRect, int sourceWidth)
         {
             int dw = (int)destRect.Width;
             int dh = (int)destRect.Height;
@@ -504,7 +504,7 @@ namespace Imagin.Core.Linq
             const int PRECISION_VALUE = (1 << PRECISION_SHIFT);
             const int PRECISION_MASK = PRECISION_VALUE - 1;
 
-            using (Paint.BitmapContext destContext = bmp.GetBitmapContext())
+            using (Media.BitmapContext destContext = bmp.GetBitmapContext())
             {
                 if (transform == null) transform = new MatrixTransform();
 
@@ -514,7 +514,7 @@ namespace Imagin.Core.Linq
                 var inverse = transform.Inverse;
                 if(shouldClear) destContext.Clear();
 
-                using (Paint.BitmapContext sourceContext = source.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+                using (Media.BitmapContext sourceContext = source.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
                 {
                     var sourcePixels = sourceContext.Pixels;
                     int sourceWidth = sourceContext.Width;

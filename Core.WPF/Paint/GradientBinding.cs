@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     public class GradientBinding : MultiBinding
     {

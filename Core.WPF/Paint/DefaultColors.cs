@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     [Serializable]
     public sealed class DefaultColors : GroupCollection<StringColor>

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     public static class ScrollingTool
     {

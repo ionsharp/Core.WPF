@@ -53,7 +53,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Markup)]
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Models)]
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Numerics)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Paint)]
+[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Media)]
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Reflection)]
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Storage)]
 

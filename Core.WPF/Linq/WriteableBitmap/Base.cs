@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 
 namespace Imagin.Core.Linq
 {
@@ -80,7 +80,7 @@ namespace Imagin.Core.Linq
                 var y = 1;
                 while (y < h)
                 {
-                    Paint.BitmapContext.BlockCopy(context, 0, context, y * len, blockHeight * len);
+                    Media.BitmapContext.BlockCopy(context, 0, context, y * len, blockHeight * len);
                     y += blockHeight;
                     blockHeight = Math.Min(2 * blockHeight, h - y);
                 }
@@ -106,12 +106,12 @@ namespace Imagin.Core.Linq
         /// <returns>A copy of the WriteableBitmap.</returns>
         public static WriteableBitmap Clone(this WriteableBitmap bmp)
         {
-            using (var srcContext = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var srcContext = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var result = XBitmap.New(srcContext.Width, srcContext.Height);
                 using (var destContext = result.GetBitmapContext())
                 {
-                    Paint.BitmapContext.BlockCopy(srcContext, 0, destContext, 0, srcContext.Length * SizeOfArgb);
+                    Media.BitmapContext.BlockCopy(srcContext, 0, destContext, 0, srcContext.Length * SizeOfArgb);
                 }
                 return result;
             }
@@ -204,7 +204,7 @@ namespace Imagin.Core.Linq
         /// <returns>The color of the pixel at x, y.</returns>
         public static int GetPixeli(this WriteableBitmap bmp, int x, int y)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 return context.Pixels[y * context.Width + x];
             }
@@ -220,7 +220,7 @@ namespace Imagin.Core.Linq
         /// <returns>The color of the pixel at x, y as a Color struct.</returns>
         public static Color GetPixel(this WriteableBitmap bmp, int x, int y)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var c = context.Pixels[y * context.Width + x];
                 var a = (byte)(c >> 24);
@@ -250,7 +250,7 @@ namespace Imagin.Core.Linq
         /// <returns>The brightness of the pixel at x, y.</returns>
         public static byte GetBrightness(this WriteableBitmap bmp, int x, int y)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 // Extract color components
                 var c = context.Pixels[y * context.Width + x];

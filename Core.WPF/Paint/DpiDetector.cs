@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     public static class DpiDetector
     {

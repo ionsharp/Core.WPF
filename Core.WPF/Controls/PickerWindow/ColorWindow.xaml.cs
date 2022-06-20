@@ -1,7 +1,7 @@
 ﻿using Imagin.Core.Config;
 using Imagin.Core.Conversion;
 using Imagin.Core.Linq;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using Imagin.Core.Models;
 using System;
 using System.Windows;

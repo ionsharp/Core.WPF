@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media.Imaging;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 
 namespace Imagin.Core.Linq
 {
@@ -14,9 +14,9 @@ namespace Imagin.Core.Linq
         /// <remarks>For WPF the BitmapContext will lock the bitmap. Call Dispose on the context to unlock</remarks>
         /// <param name="bmp"></param>
         /// <returns></returns>
-        public static Paint.BitmapContext GetBitmapContext(this WriteableBitmap bmp)
+        public static Media.BitmapContext GetBitmapContext(this WriteableBitmap bmp)
         {
-            return new Paint.BitmapContext(bmp);
+            return new Media.BitmapContext(bmp);
         }
 
         /// <summary>
@@ -26,9 +26,9 @@ namespace Imagin.Core.Linq
         /// <param name="bmp">The bitmap.</param>
         /// <param name="mode">The ReadWriteMode. If set to ReadOnly, the bitmap will not be invalidated on dispose of the context, else it will</param>
         /// <returns></returns>
-        public static Paint.BitmapContext GetBitmapContext(this WriteableBitmap bmp, Paint.ReadWriteMode mode)
+        public static Media.BitmapContext GetBitmapContext(this WriteableBitmap bmp, Media.ReadWriteMode mode)
         {
-            return new Paint.BitmapContext(bmp, mode);
+            return new Media.BitmapContext(bmp, mode);
         }
     }
 }

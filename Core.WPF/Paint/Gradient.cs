@@ -4,7 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     [Image(Images.Gradient)]
     [Serializable]

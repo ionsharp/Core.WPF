@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Linq;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using System.Windows;
 
 namespace Imagin.Core.Controls

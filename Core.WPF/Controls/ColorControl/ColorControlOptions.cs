@@ -2,7 +2,7 @@
 using Imagin.Core.Collections.Serialization;
 using Imagin.Core.Colors;
 using Imagin.Core.Linq;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using Imagin.Core.Models;
 using Imagin.Core.Serialization;
 using System;

@@ -1,9 +1,9 @@
-﻿using Imagin.Core.Paint;
+﻿using Imagin.Core.Media;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     public struct IntRect
     {

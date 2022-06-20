@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     /// <summary>
     /// Read Write Mode for the BitmapContext.

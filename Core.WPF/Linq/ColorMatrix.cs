@@ -17,7 +17,7 @@ public static partial class XColorMatrix
         return result;
     }
 
-    public static unsafe ColorMatrix Resize(this ColorMatrix input, Int32Size size, Paint.Interpolations interpolation)
+    public static unsafe ColorMatrix Resize(this ColorMatrix input, Int32Size size, Media.Interpolations interpolation)
     {
         var result = new ColorMatrix(size.Height.UInt32(), size.Width.UInt32());
 
@@ -41,7 +41,7 @@ public static partial class XColorMatrix
         int widthSource = input.Columns.Int32(), heightSource = input.Rows.Int32();
 
         //Nearest Neighbor
-        if (interpolation == Paint.Interpolations.NearestNeighbor)
+        if (interpolation == Media.Interpolations.NearestNeighbor)
         {
             for (var y = 0; y < size.Height; y++)
             {
@@ -63,7 +63,7 @@ public static partial class XColorMatrix
         }
 
         //Bilinear
-        else if (interpolation == Paint.Interpolations.Bilinear)
+        else if (interpolation == Media.Interpolations.Bilinear)
         {
             for (var y = 0; y < size.Height; y++)
             {

@@ -1,9 +1,9 @@
 using Imagin.Core.Linq;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 
 namespace Imagin.Core.Linq
 {
@@ -43,7 +43,7 @@ namespace Imagin.Core.Linq
         /// <returns>A new WriteableBitmap that is a cropped version of the input.</returns>
         public static WriteableBitmap Crop(this WriteableBitmap bmp, int x, int y, int width, int height)
         {
-            using (var srcContext = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var srcContext = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var srcWidth = srcContext.Width;
                 var srcHeight = srcContext.Height;
@@ -68,7 +68,7 @@ namespace Imagin.Core.Linq
                     {
                         var srcOff = ((y + line) * srcWidth + x) * SizeOfArgb;
                         var dstOff = line * width * SizeOfArgb;
-                        Paint.BitmapContext.BlockCopy(srcContext, srcOff, destContext, dstOff, width * SizeOfArgb);
+                        Media.BitmapContext.BlockCopy(srcContext, srcOff, destContext, dstOff, width * SizeOfArgb);
                     }
 
                     return result;
@@ -100,14 +100,14 @@ namespace Imagin.Core.Linq
         /// <returns>A new WriteableBitmap that is a resized version of the input.</returns>
         public static WriteableBitmap Resize(this WriteableBitmap input, int newWidth, int newHeight, Interpolations interpolation)
         {
-            using (var srcContext = input.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var srcContext = input.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 var pd = Resize(srcContext, srcContext.Width, srcContext.Height, newWidth, newHeight, interpolation);
 
                 var result = XBitmap.New(newWidth, newHeight);
                 using (var dstContext = result.GetBitmapContext())
                 {
-                    Paint.BitmapContext.BlockCopy(pd, 0, dstContext, 0, SizeOfArgb * pd.Length);
+                    Media.BitmapContext.BlockCopy(pd, 0, dstContext, 0, SizeOfArgb * pd.Length);
                 }
                 return result;
             }
@@ -123,7 +123,7 @@ namespace Imagin.Core.Linq
         /// <param name="newHeight">The new desired height.</param>
         /// <param name="interpolation">The interpolation method that should be used.</param>
         /// <returns>A new bitmap that is a resized version of the input.</returns>
-        public static int[] Resize(Paint.BitmapContext input, int oldWidth, int oldHeight, int newWidth, int newHeight, Interpolations interpolation)
+        public static int[] Resize(Media.BitmapContext input, int oldWidth, int oldHeight, int newWidth, int newHeight, Interpolations interpolation)
         {
             return Resize(input.Pixels, oldWidth, oldHeight, newWidth, newHeight, interpolation);
         }
@@ -268,7 +268,7 @@ namespace Imagin.Core.Linq
         /// <returns>A new WriteableBitmap that is a rotated version of the input.</returns>
         public static WriteableBitmap Rotate(this WriteableBitmap bmp, int angle)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 // Use refs for faster access (really important!) speeds up a lot!
                 var w = context.Width;
@@ -373,7 +373,7 @@ namespace Imagin.Core.Linq
             int iCentreX, iCentreY;
             int iDestCentreX, iDestCentreY;
             int iWidth, iHeight, newWidth, newHeight;
-            using (var bmpContext = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var bmpContext = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
 
                 iWidth = bmpContext.Width;
@@ -520,7 +520,7 @@ namespace Imagin.Core.Linq
         /// <returns>A new WriteableBitmap that is a flipped version of the input.</returns>
         public static WriteableBitmap Flip(this WriteableBitmap bmp, FlipMode flipMode)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 // Use refs for faster access (really important!) speeds up a lot!
                 var w = context.Width;

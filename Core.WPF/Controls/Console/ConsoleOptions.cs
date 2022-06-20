@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Data;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using Imagin.Core.Reflection;
 using System;
 using System.Windows;

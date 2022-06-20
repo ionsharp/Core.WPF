@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using static Imagin.Core.Numerics.M;
 
-namespace Imagin.Core.Paint;
+namespace Imagin.Core.Media;
 
 [Image(Images.Shape)]
 [Serializable]

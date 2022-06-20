@@ -4,7 +4,7 @@ using System;
 using System.Windows.Media;
 using System.Xml.Serialization;
 
-namespace Imagin.Core.Paint;
+namespace Imagin.Core.Media;
 
 [Serializable]
 public class StringColor : Base

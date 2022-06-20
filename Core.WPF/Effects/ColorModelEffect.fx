@@ -86,13 +86,13 @@ static float MaxValue = 3.40282347E+38;
 
 //...
 
-static float Total3 = 46;
+static float Total3 = 52;
 
 static float Total4 = 4;
 
 //...
 
-static float3 Maximum3[46] =
+static float3 Maximum3[52] =
 {
 	//RCA
 	float3(255, 255, 255),
@@ -124,6 +124,12 @@ static float3 Maximum3[46] =
 	float3(360, 100, 100),
 	//IPT
 	float3(1, 1, 1),
+	//JCh
+	float3(100, 100, 360),
+	//JMh
+	float3(100, 100, 360),
+	//Jsh
+	float3(100, 100, 360),
 	//JPEG
 	float3(255, 255, 255),
 	//Lab
@@ -158,6 +164,12 @@ static float3 Maximum3[46] =
 	float3(1, 1, 1),
 	//Luv
 	float3(100, 224, 122),
+	//QCh
+	float3(100, 100, 360),
+	//QMh
+	float3(100, 100, 360),
+	//Qsh
+	float3(100, 100, 360),
 	//rgG
 	float3(1, 1, 1),
 	//TSL
@@ -190,7 +202,7 @@ static float3 Maximum3[46] =
 	float3(1, 0.5, 0.5)
 };
 
-static float3 Minimum3[46] =
+static float3 Minimum3[52] =
 {
 	//RCA
 	float3(0, 0, 0),
@@ -221,6 +233,12 @@ static float3 Minimum3[46] =
 	//HWB
 	float3(0, 0, 0),
 	//IPT
+	float3(0, 0, 0),
+	//JCh
+	float3(0, 0, 0),
+	//JMh
+	float3(0, 0, 0),
+	//Jsh
 	float3(0, 0, 0),
 	//JPEG
 	float3(0, 0, 0),
@@ -256,6 +274,12 @@ static float3 Minimum3[46] =
 	float3(0, 0, 0),
 	//Luv
 	float3(0, -134, -140),
+	//QCh
+	float3(0, 0, 0),
+	//QMh
+	float3(0, 0, 0),
+	//Qsh
+	float3(0, 0, 0),
 	//rgG
 	float3(0, 0, 0),
 	//TSL
@@ -311,6 +335,52 @@ static float4 Minimum4[4] =
 	//RGBW
 	float4(0, 0, 0, 0),
 };
+
+//[Structs]
+
+struct CAM02
+{
+	float J, Q;
+	float C, M, s;
+	float h;
+};
+
+struct CAM02Conditions
+{
+	float xw, yw, zw, aw;
+	float la, yb;
+	int surround;
+	float n, z, f, c, nbb, nc, ncb, fl, d;
+};
+
+//[Matrices]
+static float3x3 Aab_RGB = float3x3
+(
+	float3(0.32787,  0.32145,  0.20527),
+	float3(0.32787, -0.63507, -0.18603),
+	float3(0.32787, -0.15681, -4.49038)
+);
+
+static float3x3 CAT02_XYZ = float3x3
+(
+	float3( 1.096124, -0.278869, 0.182745),
+	float3( 0.454369,  0.473533, 0.072098),
+	float3(-0.009628, -0.005698, 1.015326)
+);
+
+static float3x3 XYZ_CAT02 = float3x3
+(
+	float3( 0.7328, 0.4296, -0.1624),
+	float3(-0.7036, 1.6975,  0.0061),
+	float3( 0.0030, 0.0136,  0.9834)
+);
+
+static float3x3 HPE_XYZ = float3x3
+(
+	float3(1.910197, -1.112124,  0.201908),
+	float3(0.370950,  0.629054, -0.000008),
+	float3(0,		  0,		 1)
+);
 
 //[Methods]
 
@@ -1392,6 +1462,8 @@ float3 Lrgb_TSL(float3 input)
 	return tsl;
 }
  
+//...
+
 //(+|+) [XYZ]
 float3 XYZ_Lrgb(float3 input)
 {
@@ -1404,17 +1476,141 @@ float3 Lrgb_XYZ(float3 input)
 	return Multiply(m, input);
 }
 
-//(-|-) [JCh]
-float3 JCh_Lrgb(float3 input) { return input; }
+//(+|-) [CAM02]
+float inverse_nonlinear_adaptation(float c, float fl) { return (100.0 / fl) * pow((27.13 * abs(c - 0.1)) / (400.0 - abs(c - 0.1)), 1.0 / 0.42); }
+
+float3 CAM02_XYZ(CAM02 input, CAM02Conditions conditions)
+{
+	float r, g, b;
+	float rw = 0, gw = 0, bw = 0;
+	float rc = 0, gc = 0, bc = 0;
+	float rp, gp, bp;
+	float rpa = 0, gpa = 0, bpa = 0;
+	float a, ca, cb;
+	float et, t;
+	float p1, p2, p3, p4, p5, hr;
+	float tx = 0, ty = 0, tz = 0;
+
+	float3 rgbw = Multiply(XYZ_CAT02, float3(conditions.xw, conditions.yw, conditions.zw));
+	rw = rgbw[0]; gw = rgbw[1]; bw = rgbw[2];
+
+	t = pow(input.C / (sqrt(input.J / 100.0) * pow(1.64 - pow(0.29, conditions.n), 0.73)), (1.0 / 0.9));
+	et = (1.0 / 4.0) * (cos(((input.h * pi) / 180.0) + 2.0) + 3.8);
+
+	a = pow(input.J / 100.0, 1.0 / (conditions.c * conditions.z)) * conditions.aw;
+
+	p1 = ((50000.0 / 13.0) * conditions.nc * conditions.ncb) * et / t;
+	p2 = (a / conditions.nbb) + 0.305;
+	p3 = 21.0 / 20.0;
+
+	hr = (input.h * pi) / 180.0;
+
+	if (abs(sin(hr)) >= abs(cos(hr)))
+	{
+		p4 = p1 / sin(hr);
+		cb = (p2 * (2.0 + p3) * (460.0 / 1403.0)) / (p4 + (2.0 + p3) * (220.0 / 1403.0) * (cos(hr) / sin(hr)) - (27.0 / 1403.0) + p3 * (6300.0 / 1403.0));
+		ca = cb * (cos(hr) / sin(hr));
+	}
+	else
+	{
+		p5 = p1 / cos(hr);
+		ca = (p2 * (2.0 + p3) * (460.0 / 1403.0)) / (p5 + (2.0 + p3) * (220.0 / 1403.0) - ((27.0 / 1403.0) - p3 * (6300.0 / 1403.0)) * (sin(hr) / cos(hr)));
+		cb = ca * (sin(hr) / cos(hr));
+	}
+
+	float3 rgbpa = Multiply(Aab_RGB, float3((a / conditions.nbb) + 0.305, ca, cb));
+	rpa = rgbpa[0]; gpa = rgbpa[1]; bpa = rgbpa[2];
+
+	rp = inverse_nonlinear_adaptation(rpa, conditions.fl);
+	gp = inverse_nonlinear_adaptation(gpa, conditions.fl);
+	bp = inverse_nonlinear_adaptation(bpa, conditions.fl);
+
+	float3 xyzt = Multiply(HPE_XYZ, float3(rp, gp, bp));
+	tx = xyzt[0]; ty = xyzt[1]; tz = xyzt[2];
+
+	float3 rgbc = Multiply(XYZ_CAT02, float3(tx, ty, tz));
+	rc = rgbc[0]; gc = rgbc[1]; bc = rgbc[2];
+
+	r = rc / (((conditions.yw * conditions.d) / rw) + (1.0 - conditions.d));
+	g = gc / (((conditions.yw * conditions.d) / gw) + (1.0 - conditions.d));
+	b = bc / (((conditions.yw * conditions.d) / bw) + (1.0 - conditions.d));
+
+	return Multiply(CAT02_XYZ, float3(r, g, b));
+}
+CAM02 XYZ_CAM02(float3 input, CAM02Conditions conditions)
+{
+	CAM02 result;
+	result.J = 0; result.Q = 0;
+	result.C = 0; result.M = 0; result.s = 0;
+	result.h = 0;
+	return result;
+}
+
+//(+|-) [CAM02] > [JCh]
+float3 JCh_Lrgb(CAM02 input, CAM02Conditions conditions)
+{
+	//JCh > XYZ
+	float3 result = CAM02_XYZ(input, conditions);
+
+	//XYZ > Lrgb
+	return XYZ_Lrgb(result);
+}
 float3 Lrgb_JCh(float3 input) { return input; }
 
-//(-|-) [JMh]
-float3 JMh_Lrgb(float3 input) { return input; }
+//(+|-) [CAM02] > [JMh]
+float3 JMh_Lrgb(CAM02 input, CAM02Conditions conditions)
+{
+	//JMh > XYZ
+	float3 result = CAM02_XYZ(input, conditions);
+
+	//XYZ > Lrgb
+	return XYZ_Lrgb(result);
+}
 float3 Lrgb_JMh(float3 input) { return input; }
 
-//(-|-) [Jsh]
-float3 Jsh_Lrgb(float3 input) { return input; }
+//(+|-) [CAM02] > [Jsh]
+float3 Jsh_Lrgb(CAM02 input, CAM02Conditions conditions)
+{
+	//Jsh > XYZ
+	float3 result = CAM02_XYZ(input, conditions);
+
+	//XYZ > Lrgb
+	return XYZ_Lrgb(result);
+}
 float3 Lrgb_Jsh(float3 input) { return input; }
+
+//(+|-) [CAM02] > [QCh]
+float3 QCh_Lrgb(CAM02 input, CAM02Conditions conditions)
+{
+	//QCh > XYZ
+	float3 result = CAM02_XYZ(input, conditions);
+
+	//XYZ > Lrgb
+	return XYZ_Lrgb(result);
+}
+float3 Lrgb_QCh(float3 input) { return input; }
+
+//(+|-) [CAM02] > [QMh]
+float3 QMh_Lrgb(CAM02 input, CAM02Conditions conditions)
+{ 	
+	//QMh > XYZ
+	float3 result = CAM02_XYZ(input, conditions);
+
+	//XYZ > Lrgb
+	return XYZ_Lrgb(result);
+}
+float3 Lrgb_QMh(float3 input) { return input; }
+
+//(+|-) [CAM02] > [Qsh]
+float3 Qsh_Lrgb(CAM02 input, CAM02Conditions conditions)
+{
+	//Qsh > XYZ
+	float3 result = CAM02_XYZ(input, conditions);
+
+	//XYZ > Lrgb
+	return XYZ_Lrgb(result);
+}
+float3 Lrgb_Qsh(float3 input) { return input; }
 
 //(+|+) [Lab]
 float3 Lab_Lrgb(float3 input)
@@ -1792,18 +1988,6 @@ float3 Lrgb_LMS(float3 input)
 	float3 xyz = Lrgb_XYZ(input);
 	return Multiply(m, xyz);
 }
-
-//(-|-) [QCh]
-float3 QCh_Lrgb(float3 input) { return input; }
-float3 Lrgb_QCh(float3 input) { return input; }
-
-//(-|-) [QMh]
-float3 QMh_Lrgb(float3 input) { return input; }
-float3 Lrgb_QMh(float3 input) { return input; }
-
-//(-|-) [Qsh]
-float3 Qsh_Lrgb(float3 input) { return input; }
-float3 Lrgb_Qsh(float3 input) { return input; }
 
 //(+|-) [RCA]
 float3 RCA_Lrgb(float3 input)
@@ -2478,107 +2662,129 @@ float3 FLrgb(float m, float3 input)
 	else if (m == 12) { return Lrgb_HSP(input); }
 	else if (m == 13) { return Lrgb_HWB(input); }
 	else if (m == 14) { return Lrgb_IPT(input); }
-	else if (m == 15) { return Lrgb_JPEG(input); }
-	else if (m == 16) { return Lrgb_Lab(input); }
-	else if (m == 17) { return Lrgb_Labh(input); }
-	else if (m == 18) { return Lrgb_Labj(input); }
-	else if (m == 19) { return Lrgb_Labk(input); }
+	else if (m == 15) { return Lrgb_JCh(input); }
+	else if (m == 16) { return Lrgb_JMh(input); }
+	else if (m == 17) { return Lrgb_Jsh(input); }
+	else if (m == 18) { return Lrgb_JPEG(input); }
+	else if (m == 19) { return Lrgb_Lab(input); }
 
-		 if (m == 20) { return Lrgb_Labksb(input); }
-	else if (m == 21) { return Lrgb_Labksl(input); }
-	else if (m == 22) { return Lrgb_Labkwb(input); }
-	else if (m == 23) { return Lrgb_LCHab(input); }
-	else if (m == 24) { return Lrgb_LCHabh(input); }
-	else if (m == 25) { return Lrgb_LCHabj(input); }
-	else if (m == 26) { return Lrgb_LCHrg(input); }
-	else if (m == 27) { return Lrgb_LCHuv(input); }
-	else if (m == 28) { return Lrgb_LCHxy(input); }
-	else if (m == 29) { return Lrgb_LMS(input); }
+		 if (m == 20) { return Lrgb_Labh(input); }
+	else if (m == 21) { return Lrgb_Labj(input); }
+	else if (m == 22) { return Lrgb_Labk(input); }
+	else if (m == 23) { return Lrgb_Labksb(input); }
+	else if (m == 24) { return Lrgb_Labksl(input); }
+	else if (m == 25) { return Lrgb_Labkwb(input); }
+	else if (m == 26) { return Lrgb_LCHab(input); }
+	else if (m == 27) { return Lrgb_LCHabh(input); }
+	else if (m == 28) { return Lrgb_LCHabj(input); }
+	else if (m == 29) { return Lrgb_LCHrg(input); }
 
-		 if (m == 30) { return Lrgb_Luv(input); }
-	else if (m == 31) { return Lrgb_rgG(input); }
-	else if (m == 32) { return Lrgb_TSL(input); }
-	else if (m == 33) { return Lrgb_UCS(input); }
-	else if (m == 34) { return Lrgb_UVW(input); }
-	else if (m == 35) { return Lrgb_xvYCC(input); }
-	else if (m == 36) { return Lrgb_xyY(input); }
-	else if (m == 37) { return Lrgb_xyYC(input); }
-	else if (m == 38) { return Lrgb_XYZ(input); }
-	else if (m == 39) { return Lrgb_YCbCr(input); }
+		 if (m == 30) { return Lrgb_LCHuv(input); }
+	else if (m == 31) { return Lrgb_LCHxy(input); }
+	else if (m == 32) { return Lrgb_LMS(input); }
+	else if (m == 33) { return Lrgb_Luv(input); }
+	else if (m == 34) { return Lrgb_QCh(input); }
+	else if (m == 35) { return Lrgb_QMh(input); }
+	else if (m == 36) { return Lrgb_Qsh(input); }
+	else if (m == 37) { return Lrgb_rgG(input); }
+	else if (m == 38) { return Lrgb_TSL(input); }
+	else if (m == 39) { return Lrgb_UCS(input); }
 
-		 if (m == 40) { return Lrgb_YCoCg(input); }
-	else if (m == 41) { return Lrgb_YDbDr(input); }
-	else if (m == 42) { return Lrgb_YES(input); }
-	else if (m == 43) { return Lrgb_YIQ(input); }
-	else if (m == 44) { return Lrgb_YPbPr(input); }
-	else if (m == 45) { return Lrgb_YUV(input); }
+		 if (m == 40) { return Lrgb_UVW(input); }
+	else if (m == 41) { return Lrgb_xvYCC(input); }
+	else if (m == 42) { return Lrgb_xyY(input); }
+	else if (m == 43) { return Lrgb_xyYC(input); }
+	else if (m == 44) { return Lrgb_XYZ(input); }
+	else if (m == 45) { return Lrgb_YCbCr(input); }
+	else if (m == 46) { return Lrgb_YCoCg(input); }
+	else if (m == 47) { return Lrgb_YDbDr(input); }
+	else if (m == 48) { return Lrgb_YES(input); }
+	else if (m == 49) { return Lrgb_YIQ(input); }
+
+		 if (m == 50) { return Lrgb_YPbPr(input); }
+	else if (m == 51) { return Lrgb_YUV(input); }
 
 	return input;
 }
 
 //[*] > [Lrgb]
 
-float3 TLrgb(float m, float3 input)
+float3 TLrgb(float m, float3 input3)
 {
-		 if (m == 0)  { return RCA_Lrgb(input); }
-	else if (m == 2)  { return RGV_Lrgb(input); }
-	else if (m == 3)  { return RYB_Lrgb(input); }
-	else if (m == 4)  { return CMY_Lrgb(input); }
-	else if (m == 5)  { return HCV_Lrgb(input); }
-	else if (m == 6)  { return HCY_Lrgb(input); }
-	else if (m == 7)  { return HPLuv_Lrgb(input); }
-	else if (m == 8)  { return HSB_Lrgb(input); }
-	else if (m == 9)  { return HSL_Lrgb(input); }
+		 if (m == 0)  { return RCA_Lrgb(input3); }
+	else if (m == 2)  { return RGV_Lrgb(input3); }
+	else if (m == 3)  { return RYB_Lrgb(input3); }
+	else if (m == 4)  { return CMY_Lrgb(input3); }
+	else if (m == 5)  { return HCV_Lrgb(input3); }
+	else if (m == 6)  { return HCY_Lrgb(input3); }
+	else if (m == 7)  { return HPLuv_Lrgb(input3); }
+	else if (m == 8)  { return HSB_Lrgb(input3); }
+	else if (m == 9)  { return HSL_Lrgb(input3); }
 	
-		 if (m == 10) { return HSLuv_Lrgb(input); }
-	else if (m == 11) { return HSM_Lrgb(input); }
-	else if (m == 12) { return HSP_Lrgb(input); }
-	else if (m == 13) { return HWB_Lrgb(input); }
-	else if (m == 14) { return IPT_Lrgb(input); }
-	else if (m == 15) { return JPEG_Lrgb(input); }
-	else if (m == 16) { return Lab_Lrgb(input); }
-	else if (m == 17) { return Labh_Lrgb(input); }
-	else if (m == 18) { return Labj_Lrgb(input); }
-	else if (m == 19) { return Labk_Lrgb(input); }
+		 if (m == 10) { return HSLuv_Lrgb(input3); }
+	else if (m == 11) { return HSM_Lrgb(input3); }
+	else if (m == 12) { return HSP_Lrgb(input3); }
+	else if (m == 13) { return HWB_Lrgb(input3); }
+	else if (m == 14) { return IPT_Lrgb(input3); }
+	//(15-17)
+	else if (m == 18) { return JPEG_Lrgb(input3); }
+	else if (m == 19) { return Lab_Lrgb(input3); }
 
-		 if (m == 20) { return Labksb_Lrgb(input); }
-	else if (m == 21) { return Labksl_Lrgb(input); }
-	else if (m == 22) { return Labkwb_Lrgb(input); }
-	else if (m == 23) { return LCHab_Lrgb(input); }
-	else if (m == 24) { return LCHabh_Lrgb(input); }
-	else if (m == 25) { return LCHabj_Lrgb(input); }
-	else if (m == 26) { return LCHrg_Lrgb(input); }
-	else if (m == 27) { return LCHuv_Lrgb(input); }
-	else if (m == 28) { return LCHxy_Lrgb(input); }
-	else if (m == 29) { return LMS_Lrgb(input); }
+		 if (m == 20) { return Labh_Lrgb(input3); }
+	else if (m == 21) { return Labj_Lrgb(input3); }
+	else if (m == 22) { return Labk_Lrgb(input3); }
+	else if (m == 23) { return Labksb_Lrgb(input3); }
+	else if (m == 24) { return Labksl_Lrgb(input3); }
+	else if (m == 25) { return Labkwb_Lrgb(input3); }
+	else if (m == 26) { return LCHab_Lrgb(input3); }
+	else if (m == 27) { return LCHabh_Lrgb(input3); }
+	else if (m == 28) { return LCHabj_Lrgb(input3); }
+	else if (m == 29) { return LCHrg_Lrgb(input3); }
 
-		 if (m == 30) { return Luv_Lrgb(input); }
-	else if (m == 31) { return rgG_Lrgb(input); }
-	else if (m == 32) { return TSL_Lrgb(input); }
-	else if (m == 33) { return UCS_Lrgb(input); }
-	else if (m == 34) { return UVW_Lrgb(input); }
-	else if (m == 35) { return xvYCC_Lrgb(input); }
-	else if (m == 36) { return xyY_Lrgb(input); }
-	else if (m == 37) { return xyYC_Lrgb(input); }
-	else if (m == 38) { return XYZ_Lrgb(input); }
-	else if (m == 39) { return YCbCr_Lrgb(input); }
+		 if (m == 30) { return LCHuv_Lrgb(input3); }
+	else if (m == 31) { return LCHxy_Lrgb(input3); }
+	else if (m == 32) { return LMS_Lrgb(input3); }
+	else if (m == 33) { return Luv_Lrgb(input3); }
+	//(34-36)
+	else if (m == 37) { return rgG_Lrgb(input3); }
+	else if (m == 38) { return TSL_Lrgb(input3); }
+	else if (m == 39) { return UCS_Lrgb(input3); }
 
-		 if (m == 40) { return YCoCg_Lrgb(input); }
-	else if (m == 41) { return YDbDr_Lrgb(input); }
-	else if (m == 42) { return YES_Lrgb(input); }
-	else if (m == 43) { return YIQ_Lrgb(input); }
-	else if (m == 44) { return YPbPr_Lrgb(input); }
-	else if (m == 45) { return YUV_Lrgb(input); }
+		 if (m == 40) { return UVW_Lrgb(input3); }
+	else if (m == 41) { return xvYCC_Lrgb(input3); }
+	else if (m == 42) { return xyY_Lrgb(input3); }
+	else if (m == 43) { return xyYC_Lrgb(input3); }
+	else if (m == 44) { return XYZ_Lrgb(input3); }
+	else if (m == 45) { return YCbCr_Lrgb(input3); }
+	else if (m == 46) { return YCoCg_Lrgb(input3); }
+	else if (m == 47) { return YDbDr_Lrgb(input3); }
+	else if (m == 48) { return YES_Lrgb(input3); }
+	else if (m == 49) { return YIQ_Lrgb(input3); }
 
-	return input;
+		 if (m == 50) { return YPbPr_Lrgb(input3); }
+	else if (m == 51) { return YUV_Lrgb(input3); }
+
+	return input3;
 }
 
 float3 TLrgb(float m, float4 input)
 {
-		 if (m == 46) { return CMYK_Lrgb(input); }
-	else if (m == 47) { return CMYW_Lrgb(input); }
-	else if (m == 48) { return RGBK_Lrgb(input); }
-	else if (m == 49) { return RGBW_Lrgb(input); }
+		 if (m == 52) { return CMYK_Lrgb(input); }
+	else if (m == 53) { return CMYW_Lrgb(input); }
+	else if (m == 54) { return RGBK_Lrgb(input); }
+	else if (m == 55) { return RGBW_Lrgb(input); }
+	return float3(0, 0, 0);
+}
+
+float3 TLrgb(float m, CAM02 input, CAM02Conditions conditions)
+{
+		 if (m == 15) { return JCh_Lrgb(input, conditions); }
+	else if (m == 16) { return JMh_Lrgb(input, conditions); }
+	else if (m == 17) { return Jsh_Lrgb(input, conditions); }
+
+	else if (m == 34) { return QCh_Lrgb(input, conditions); }
+	else if (m == 35) { return QMh_Lrgb(input, conditions); }
+	else if (m == 36) { return Qsh_Lrgb(input, conditions); }
 	return float3(0, 0, 0);
 }
 
@@ -2597,6 +2803,15 @@ float3 ToRGB(float m, float4 input)
 {
 	//* > Lrgb
 	float3 result = TLrgb(m, input);
+
+	//Lrgb > RGB
+	return Lrgb_RGB(result);
+}
+
+float3 ToRGB(float m, CAM02 input, CAM02Conditions conditions)
+{
+	//* > Lrgb
+	float3 result = TLrgb(m, input, conditions);
 
 	//Lrgb > RGB
 	return Lrgb_RGB(result);
@@ -2770,13 +2985,72 @@ float4 main(float2 uv : TEXCOORD) : COLOR
 		return color;
 	}
 
-	if (is4)
+	if 
+	(
+		//JCh, JMh, Jsh
+		Model == 15 || Model == 16 || Model == 17
+		||  
+		//QCh, QMh, Qsh
+	    Model == 34 || Model == 35 || Model == 36
+	)
+	{
+		CAM02 input6;
+		input6.h = input3.z;
+
+			 if (Model == 15)
+		{
+			input6.J = input3.x; input6.C = input3.y; 
+			input6.Q = 1; input6.M = 1; input6.s = 1; //?
+		}
+		else if (Model == 16)
+		{
+			input6.J = input3.x; input6.M = input3.y;
+			input6.Q = 1;  input6.C = 1; input6.s = 1; //?
+		}
+		else if (Model == 17)
+		{
+			input6.J = input3.x; input6.s = input3.y; 
+			input6.Q = 1; input6.C = 1; input6.M = 1; //?
+		}
+		else if (Model == 34)
+		{
+			input6.Q = input3.x; input6.C = input3.y;
+			input6.J = 1;  input6.M = 1; input6.s = 1; //?
+		}
+		else if (Model == 35)
+		{
+			input6.Q = input3.x; input6.M = input3.y;
+			input6.J = 1; input6.C = 1;  input6.s = 1; //?
+		}
+		else if (Model == 36)
+		{
+			input6.Q = input3.x; input6.s = input3.y;
+			input6.J = 1; input6.C = 1; input6.M = 1; //?
+		}
+
+		//To do: Conditions need passed! The following is temporary and allows shader to compile...
+		CAM02Conditions conditions;
+		conditions.xw = 1;
+		conditions.yw = 1; conditions.zw = 1; conditions.aw = 1;
+		conditions.la = 1; conditions.yb = 1;
+		conditions.surround = 1;
+		conditions.n = 1; conditions.z = 1; conditions.f = 1;
+		conditions.c = 1;
+		conditions.nbb = 1;
+		conditions.nc = 1;
+		conditions.ncb = 1; conditions.fl = 1; conditions.d = 1;
+
+		output = ToRGB(Model, input6, conditions);
+	}
+	//CMYK, CMYW, RGBK, RGBW
+	else if (is4)
 	{
 		input4 = Depth > 0 ? round(input4 * Depth) / Depth : input4;
 		//input4 = ConvertRange(input4, min4, max4);
 
 		output = ToRGB(Model, input4);
 	}
+	//Everything else!
 	else
 	{
 		input3 = Depth > 0 ? round(input3 * Depth) / Depth : input3;

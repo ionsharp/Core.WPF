@@ -1,5 +1,5 @@
 ﻿using Imagin.Core.Conversion;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;

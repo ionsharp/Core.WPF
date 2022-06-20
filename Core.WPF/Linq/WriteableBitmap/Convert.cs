@@ -2,7 +2,7 @@ using Imagin.Core.Linq;
 using System;
 using System.IO;
 using System.Windows.Media.Imaging;
-using Imagin.Core.Paint;
+using Imagin.Core.Media;
 
 namespace Imagin.Core.Linq
 {
@@ -24,7 +24,7 @@ namespace Imagin.Core.Linq
         /// <returns>The color buffer as byte ARGB values.</returns>
         public static byte[] ToByteArray(this WriteableBitmap bmp, int offset, int count)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 if (count == -1)
                 {
@@ -34,7 +34,7 @@ namespace Imagin.Core.Linq
 
                 var len = count * SizeOfArgb;
                 var result = new byte[len]; // ARGB
-                Paint.BitmapContext.BlockCopy(context, offset, result, 0, len);
+                Media.BitmapContext.BlockCopy(context, offset, result, 0, len);
                 return result;
             }
         }
@@ -72,7 +72,7 @@ namespace Imagin.Core.Linq
         {
             using (var context = bmp.GetBitmapContext())
             {
-                Paint.BitmapContext.BlockCopy(buffer, offset, context, 0, count);
+                Media.BitmapContext.BlockCopy(buffer, offset, context, 0, count);
                 return bmp;
             }
         }
@@ -112,7 +112,7 @@ namespace Imagin.Core.Linq
         /// <param name="destination">The destination stream.</param>
         public static void WriteTga(this WriteableBitmap bmp, Stream destination)
         {
-            using (var context = bmp.GetBitmapContext(Paint.ReadWriteMode.ReadOnly))
+            using (var context = bmp.GetBitmapContext(Media.ReadWriteMode.ReadOnly))
             {
                 int width = context.Width;
                 int height = context.Height;

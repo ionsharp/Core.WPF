@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Imagin.Core.Paint
+namespace Imagin.Core.Media
 {
     public struct FileFormat
     {
