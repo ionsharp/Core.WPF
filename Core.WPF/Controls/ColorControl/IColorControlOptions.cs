@@ -1,23 +1,20 @@
 ﻿using Imagin.Core.Collections.Serialization;
-using Imagin.Core.Colors;
-using System.Collections.ObjectModel;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+public interface IColorControlOptions
 {
-    public interface IColorControlOptions
-    {
-        bool AutoSaveLayout { get; }
+    bool AutoSaveLayout { get; }
 
-        IGroupWriter Colors { get; }
+    IGroupWriter Colors { get; }
 
-        ObservableCollection<Namable<WorkingProfile>> Profiles { get; }
+    IWriter Profiles { get; }
         
-        //...
+    //...
 
-        Layouts Layouts { get; }
+    Layouts Layouts { get; }
 
-        //...
+    //...
 
-        void OnLoaded(ColorControl colorPicker);
-    }
+    void OnLoaded(ColorControl colorPicker);
 }

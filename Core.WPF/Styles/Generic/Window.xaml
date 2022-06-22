@@ -62,7 +62,7 @@
                         BorderBrush="{local:ThemeKey ActualKey=WindowFooterBorder}"
                         BorderThickness="0,1,0,0"
                         Padding="10">
-                        <local:ButtonPresenter Content="{Data:Ancestor Window, Path=(Linq:XWindow.FooterButtons)}"/>
+                        <local:ButtonPresenter Content="{Binding}"/>
                     </Border>
                 </DataTemplate>
             </Setter.Value>
@@ -423,7 +423,7 @@
                         HeaderVisibility="Collapsed"
                         Margin="10,2"
                         Orientation="Horizontal"
-                        Source="{local:SourceFilterBinding Core:ToolAttribute}"
+                        Source="{local:SourceBinding Core:ToolAttribute}"
                         VerticalAlignment="Center"/>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:ToolAttribute}}" Value="False">
@@ -461,17 +461,6 @@
         <Setter Property="Width" Value="420"/>
     </Style>
 
-    <Style x:Key="{x:Type local:ComboWindow}" TargetType="{x:Type local:ComboWindow}" BasedOn="{StaticResource {x:Type Window}}">
-        <Setter Property="Linq:XWindow.CanMaximize" Value="False"/>
-        <Setter Property="Linq:XWindow.FooterVisibility" Value="Visible"/>
-        <Setter Property="Linq:XWindow.IsChild" Value="True"/>
-        <Setter Property="Padding" Value="10"/>
-        <Setter Property="Placeholder" Value="{l:Loc Prefix=(, Key=NoSelection, Suffix=)}"/>
-        <Setter Property="ResizeMode" Value="NoResize"/>
-        <Setter Property="SizeToContent" Value="Height"/>
-        <Setter Property="Width" Value="420"/>
-    </Style>
-
     <Style x:Key="{x:Type local:DownloadWindow}" TargetType="{x:Type local:DownloadWindow}" BasedOn="{StaticResource {x:Type Window}}">
         <Setter Property="AutoClose" Value="True"/>
         <Setter Property="AutoStart" Value="True"/>
@@ -482,15 +471,6 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
-    <Style x:Key="{x:Type local:InputWindow}" TargetType="{x:Type local:InputWindow}" BasedOn="{StaticResource {x:Type Window}}">
-        <Setter Property="Linq:XWindow.CanMaximize" Value="False"/>
-        <Setter Property="Linq:XWindow.FooterVisibility" Value="Visible"/>
-        <Setter Property="Linq:XWindow.IsChild" Value="True"/>
-        <Setter Property="ResizeMode" Value="NoResize"/>
-        <Setter Property="SizeToContent" Value="Height"/>
-        <Setter Property="Width" Value="420"/>
     </Style>
 
     <Style x:Key="{x:Type local:LoadWindow}" TargetType="{x:Type local:LoadWindow}" BasedOn="{StaticResource {x:Type Window}}">
@@ -535,19 +515,13 @@
 
     <!-- ... -->
 
-    <Style x:Key="{x:Type local:PropertyWindow}" TargetType="{x:Type local:PropertyWindow}" BasedOn="{StaticResource {x:Type Window}}">
+    <Style x:Key="{x:Type local:MemberWindow}" TargetType="{x:Type local:MemberWindow}" BasedOn="{StaticResource {x:Type Window}}">
         <Setter Property="Height" Value="600"/>
         <Setter Property="Linq:XWindow.CanMaximize" Value="False"/>
         <Setter Property="Linq:XWindow.FooterVisibility" Value="Visible"/>
         <Setter Property="Linq:XWindow.IsChild" Value="True"/>
         <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
         <Setter Property="Width" Value="400"/>
-    </Style>
-
-    <Style x:Key="{x:Type local:OptionsWindow}" TargetType="{x:Type local:OptionsWindow}" BasedOn="{StaticResource {x:Type local:PropertyWindow}}">
-        <Setter Property="Linq:XWindow.CanMaximize" Value="True"/>
-        <Setter Property="Source" Value="{Data:RemoteBinding RemoteSource=Options}"/>
-        <Setter Property="Title" Value="{l:Loc Options}"/>
     </Style>
 
     <!-- ... -->

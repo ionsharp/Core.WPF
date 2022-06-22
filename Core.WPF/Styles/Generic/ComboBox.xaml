@@ -374,7 +374,7 @@
                     </Setter>
                     <Setter Property="ToolTip" Value="{Binding}"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:HiddenConverter.Default}}" Value="True">
+                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:FileHiddenConverter.Default}}" Value="True">
                             <Setter Property="Opacity" Value="{x:Static local:Explorer.HiddenOpacity}"/>
                         </DataTrigger>
                     </Style.Triggers>
@@ -479,7 +479,7 @@
                                                         <DataTrigger Binding="{Binding}" Value="*">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:HiddenConverter.Default}}" Value="True">
+                                                        <DataTrigger Binding="{Binding Converter={x:Static Conversion:FileHiddenConverter.Default}}" Value="True">
                                                             <Setter Property="Opacity" Value="{x:Static local:Explorer.HiddenOpacity}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>

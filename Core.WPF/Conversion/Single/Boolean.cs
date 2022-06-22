@@ -1,4 +1,5 @@
 ﻿using Imagin.Core.Linq;
+using Imagin.Core.Numerics;
 using Imagin.Core.Storage;
 using System;
 using System.Collections;
@@ -29,14 +30,25 @@ namespace Imagin.Core.Conversion
     }
 
     [ValueConversion(typeof(string), typeof(bool))]
-    public class HiddenConverter : Converter<string, bool>
+    public class FileHiddenConverter : Converter<string, bool>
     {
-        public static HiddenConverter Default { get; private set; } = new HiddenConverter();
-        HiddenConverter() { }
+        public static FileHiddenConverter Default { get; private set; } = new FileHiddenConverter();
+        FileHiddenConverter() { }
 
         protected override ConverterValue<bool> ConvertTo(ConverterData<string> input) => Computer.Hidden(input.Value);
 
         protected override ConverterValue<string> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+    }
+
+    [ValueConversion(typeof(Type), typeof(bool))]
+    public class HiddenConverter : Converter<Type, bool>
+    {
+        public static HiddenConverter Default { get; private set; } = new HiddenConverter();
+        public HiddenConverter() { }
+
+        protected override ConverterValue<bool> ConvertTo(ConverterData<Type> input) => input.Value?.IsHidden() == true;
+
+        protected override ConverterValue<Type> ConvertBack(ConverterData<bool> input) => Nothing.Do;
     }
 
     //...

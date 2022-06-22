@@ -1180,14 +1180,6 @@
                                         VerticalAlignment="Top"/>
                                 </local:Element.Options>
                             </local:Element>
-                            <local:Element Category="Window" Type="i:ComboWindow">
-                                <local:Element.Options>
-                                    <Button Content="Show"
-                                        Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=ShowComboWindowCommand}"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"/>
-                                </local:Element.Options>
-                            </local:Element>
                             <local:Element Category="Window" Type="i:DialogWindow">
                                 <local:Element.Options>
                                     <StackPanel
@@ -1217,14 +1209,6 @@
                                     </StackPanel>
                                 </local:Element.Options>
                             </local:Element>
-                            <local:Element Category="Window" Type="i:InputWindow">
-                                <local:Element.Options>
-                                    <Button Content="Show"
-                                        Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=ShowInputWindowCommand}"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"/>
-                                </local:Element.Options>
-                            </local:Element>
                             <local:Element Category="Window" Type="i:LoadWindow">
                                 <local:Element.Options>
                                     <Button Content="Show" 
@@ -1233,18 +1217,10 @@
                                         VerticalAlignment="Top"/>
                                 </local:Element.Options>
                             </local:Element>
-                            <local:Element Category="Window" Type="i:OptionsWindow">
-                                <local:Element.Options>
-                                    <Button Content="Show" 
-                                        Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=ShowOptionsWindowCommand}"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"/>
-                                </local:Element.Options>
-                            </local:Element>
-                            <local:Element Category="Window" Type="i:PropertyWindow">
+                            <local:Element Category="Window" Type="i:MemberWindow">
                                 <local:Element.Options>
                                     <Button Content="Show"
-                                        Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=ShowPropertyWindowCommand}"
+                                        Command="{i:RemoteBinding RemoteSource=MainViewModel, Path=ShowMemberWindowCommand}"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Top"/>
                                 </local:Element.Options>

@@ -16,9 +16,8 @@
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <ItemsControl
+                    <ItemsControl ItemsSource="{Binding}"
                         HorizontalAlignment="Right"
-                        ItemsSource="{Binding}"
                         VerticalAlignment="Center">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -29,7 +28,6 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Spacing" Value="3,0,0,0"/>
     </Style>
 
     <Style x:Key="{x:Type local:DialogPresenter}" TargetType="{x:Type local:DialogPresenter}" BasedOn="{StaticResource {x:Type local:Presenter}}">

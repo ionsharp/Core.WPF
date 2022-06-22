@@ -20,7 +20,11 @@ namespace Imagin.Core.Media;
 [DisplayName("Color")]
 public class ColorViewModel : ViewModel
 {
-    enum Category { Component, Profile }
+    enum Category { Adaptation, Chromacity, Component, Compression, Primary, View }
+
+    enum Views { Components, Profile }
+
+    //...
 
     public event DefaultEventHandler<Color> ColorChanged;
 
@@ -41,7 +45,7 @@ public class ColorViewModel : ViewModel
 
     DoubleMatrix adapt = new(LMS.Transform.Bradford.As<IMatrix>().Values);
     [Assignable(nameof(Adaptations))]
-    [Category(Category.Profile), Index(2), Visible]
+    [Category(Category.Adaptation), DisplayName("Transform"), Index(2), View(Views.Profile), Visible]
     public DoubleMatrix Adapt
     {
         get => adapt;
@@ -63,7 +67,7 @@ public class ColorViewModel : ViewModel
 
     Vector2 chromacity = WorkingProfile.Default.Chromacity;
     [Assignable(nameof(DefaultChromacity))]
-    [Category(Category.Profile), Index(-2), MemberStyle(ObjectStyle.Shallow), Visible]
+    [Category(Category.Chromacity), Index(-2), Object(ObjectLayout.Horizontal), View(Views.Profile), Visible]
     public Vector2 Chromacity
     {
         get => chromacity;
@@ -86,6 +90,9 @@ public class ColorViewModel : ViewModel
         }
     }
 
+    [Hidden]
+    public Colors.Component ActualComponent => componentIndex >= 0 && componentIndex < Components.Count ? Components[componentIndex] : null;
+    
     Component4 component = Component4.X;
     [Hidden]
     public Component4 Component
@@ -107,7 +114,7 @@ public class ColorViewModel : ViewModel
 
     ICompress compress = WorkingProfile.Default.Compress;
     [Assignable(typeof(GammaCompression), typeof(LogGammaCompression), typeof(LCompression), typeof(PQCompression), typeof(Rec709Compression), typeof(Rec2020Compression), typeof(sRGBCompression))]
-    [Category(Category.Profile), Index(1), MemberStyle(ObjectStyle.Shallow), Visible]
+    [Category(Category.Compression), DisplayName("Method"), Index(1), Object, View(Views.Profile), Visible]
     public ICompress Compress
     {
         get => compress;
@@ -159,7 +166,8 @@ public class ColorViewModel : ViewModel
     public bool WVisibility => ModelType?.Inherits<ColorModel4>() == true;
 
     double illuminant = CCT.GetTemperature((xy)WorkingProfile.Default.Chromacity);
-    [Category(Category.Profile), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(-3), Range(2000.0, 30000.0, 100.0), StringFormat("N0"), Visible]
+    [Featured, MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(-3), Range(2000.0, 12000.0, 100.0), StringFormat("N0"), View(Views.Profile), Visible]
+    [Gradient("ff1c00", "FFF", "bbd0ff")]
     [MemberTrigger(nameof(MemberModel.RightText), nameof(IlluminantUnit))]
     public double Illuminant
     {
@@ -170,38 +178,24 @@ public class ColorViewModel : ViewModel
     [Hidden]
     public string IlluminantUnit => "K";
 
-    int model = 0;
+    NamableCategory<Type> model = null;
     [Hidden]
-    public virtual int Model
+    public virtual NamableCategory<Type> Model
     {
         get => model;
         set => this.Change(ref model, value);
     }
 
+    ListCollectionView models = ColorControl.GetModels();
     [Hidden]
-    public IList Models => Colour.Types;
+    public ListCollectionView Models
+    {
+        get => models;
+        private set => models = value;
+    }
 
     [Hidden]
-    public Type ModelType
-    {
-        get => Model >= 0 && Model < Models.Count ? (Type)Models[Model] : null;
-        set
-        {
-            if (value != null)
-            {
-                var i = 0;
-                foreach (var j in Models)
-                {
-                    if (j.Equals(value))
-                    {
-                        Model = i;
-                        break;
-                    }
-                    i++;
-                }
-            }
-        }
-    }
+    public Type ModelType => Model?.Value ?? typeof(RGB);
 
     [Hidden]
     public Vector Maximum => WVisibility ? new(Colour.Components[ModelType][0].Maximum, Colour.Components[ModelType][1].Maximum, Colour.Components[ModelType][2].Maximum, Colour.Components[ModelType][3].Maximum) : new(Colour.Components[ModelType][0].Maximum, Colour.Components[ModelType][1].Maximum, Colour.Components[ModelType][2].Maximum);
@@ -226,7 +220,7 @@ public class ColorViewModel : ViewModel
 
     Primary3 primary = WorkingProfile.Default.Primary;
     [Assignable(nameof(DefaultPrimary))]
-    [Category(Category.Profile), Index(0), MemberStyle(ObjectStyle.Deep), Visible]
+    [Category(Category.Primary), Index(0), Object(ObjectLevel.Low, ObjectLayout.Horizontal), View(Views.Profile), Visible]
     public Primary3 Primary
     {
         get => primary;
@@ -274,8 +268,18 @@ public class ColorViewModel : ViewModel
     [Hidden]
     public Vector Value => new(x, y, z);
 
+    CAM02.ViewingConditions viewingConditions = WorkingProfile.DefaultViewingConditions;
+    [Category(Category.View), DisplayName("Conditions"), View(Views.Profile), Visible]
+    [Object(ObjectLayout.Vertical)]
+    public CAM02.ViewingConditions ViewingConditions
+    {
+        get => viewingConditions;
+        set => this.Change(ref viewingConditions, value);
+    }
+
     Vector3 white = (XYZ)(xyY)(xy)WorkingProfile.Default.Chromacity;
-    [Category(Category.Profile), Index(-1), MemberStyle(ObjectStyle.Shallow), Visible]
+    [Category(Category.Chromacity), Index(-1), View(Views.Profile), Visible]
+    [Object(ObjectLayout.Horizontal)]
     public Vector3 White
     {
         get => white;
@@ -452,6 +456,13 @@ public class ColorViewModel : ViewModel
                 FromColor();
                 break;
 
+            case nameof(Adapt):
+            case nameof(Compress):
+            case nameof(Primary):
+            case nameof(ViewingConditions):
+                Profile = new WorkingProfile(Primary, Chromacity, Compress, new(Adapt), ViewingConditions);
+                break;
+
             case nameof(Chromacity):
                 handle.SafeInvoke(() =>
                 {
@@ -461,6 +472,8 @@ public class ColorViewModel : ViewModel
                 goto case nameof(Compress);
 
             case nameof(Component):
+                this.Changed(() => ActualComponent);
+
                 this.Changed(() => DisplayX);
                 this.Changed(() => DisplayY);
                 this.Changed(() => DisplayZ);
@@ -481,12 +494,6 @@ public class ColorViewModel : ViewModel
                 Component = ComponentIndex < 0 ? Component4.X : (Component4)componentIndex;
                 break;
 
-            case nameof(Compress):
-            case nameof(Primary):
-            case nameof(Adapt):
-                Profile = new WorkingProfile(Primary, Chromacity, Compress, new(Adapt));
-                break;
-
             case nameof(Illuminant):
                 handle.SafeInvoke(() =>
                 {
@@ -498,14 +505,16 @@ public class ColorViewModel : ViewModel
             case nameof(Model):
                 this.Changed(() => ModelType);
                 this.Changed(() => WVisibility);
-                
+                goto case nameof(Component);
+
+            case nameof(ModelType):
                 var cIndex = componentIndex;
 
                 Components.Clear();
                 Colour.Components[ModelType].Each((i, j) => { Components.Add(j); return j; });
 
                 ComponentIndex = !WVisibility && ComponentIndex == 3 ? 2 : cIndex;
-                goto case nameof(Component);
+                break;
 
             case nameof(Profile):
                 break;

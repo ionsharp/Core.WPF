@@ -1,12 +1,16 @@
 ﻿using Imagin.Core.Collections.Generic;
+using Imagin.Core.Collections.ObjectModel;
+using Imagin.Core.Colors;
 using Imagin.Core.Config;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using Imagin.Core.Models;
+using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -25,10 +29,10 @@ namespace Imagin.Core.Controls
             set => SetValue(ActiveDocumentProperty, value);
         }
 
-        public static readonly DependencyProperty AlphaPanelProperty = DependencyProperty.Register(nameof(AlphaPanel), typeof(AlphaPanel), typeof(ColorControl), new FrameworkPropertyMetadata(null));
-        public AlphaPanel AlphaPanel
+        public static readonly DependencyProperty AlphaPanelProperty = DependencyProperty.Register(nameof(AlphaPanel), typeof(ColorAlphaPanel), typeof(ColorControl), new FrameworkPropertyMetadata(null));
+        public ColorAlphaPanel AlphaPanel
         {
-            get => (AlphaPanel)GetValue(AlphaPanelProperty);
+            get => (ColorAlphaPanel)GetValue(AlphaPanelProperty);
             private set => SetValue(AlphaPanelProperty, value);
         }
 
@@ -82,7 +86,7 @@ namespace Imagin.Core.Controls
 
             var panels = new PanelCollection();
 
-            SetCurrentValue(AlphaPanelProperty, new AlphaPanel());
+            SetCurrentValue(AlphaPanelProperty, new ColorAlphaPanel());
 
             panels.Add(AlphaPanel);
 
@@ -92,7 +96,9 @@ namespace Imagin.Core.Controls
             SetCurrentValue(OptionsPanelProperty, new OptionsPanel());
 
             panels.Add(OptionsPanel);
-            panels.Add(new PropertiesPanel());
+            panels.Add(new ColorPanel());
+            panels.Add(new ColorAnalysisPanel());
+            panels.Add(new ColorProfilePanel());
 
             Panels = panels;
             SetCurrentValue(OptionsProperty, defaultOptions);
@@ -146,5 +152,18 @@ namespace Imagin.Core.Controls
 
         ICommand saveNewColorCommand;
         public ICommand SaveNewColorCommand => saveNewColorCommand ??= new RelayCommand(() => colorsPanel?.SelectedGroup.If<GroupCollection<StringColor>>(i => i.Add(ActiveDocument.Color.ActualColor)), () => ActiveDocument != null);
+    
+        public static ListCollectionView GetModels()
+        {
+            var models = new ObservableCollection<NamableCategory<Type>>();
+            Colour.Types.ForEach(i => models.Add(new(i.Name, i.Name.Substring(0, 1).ToUpper(), i)));
+
+            var result = new ListCollectionView(models);
+            result.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+            result.SortDescriptions.Add(new System.ComponentModel.SortDescription("Category", System.ComponentModel.ListSortDirection.Ascending));
+            result.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
+
+            return result;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Imagin.Core.Analytics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -38,7 +39,7 @@ public sealed class MemberAttributes : Dictionary<Type, List<Attribute>>
         {
             var j = GetAll(i.Key);
             if (j?.Count() > 0)
-                i.Value(input, j.FirstOrDefault(), j);
+                Try.Invoke(() => i.Value(input, j.FirstOrDefault(), j), e => Log.Write<MemberAttributes>(e));
         }
     }
 }

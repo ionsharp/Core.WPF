@@ -14,7 +14,9 @@
       <Element xsi:type="DockLayoutDocumentGroup" Width="6*"/>
       <Element xsi:type="DockLayoutPanelGroup" Width="4*">
         <Panels>
-          <DockLayoutPanel IsSelected="true" Name="PropertiesPanel"/>
+          <DockLayoutPanel IsSelected="true" Name="ColorPanel"/>
+          <DockLayoutPanel Name="ColorProfilePanel"/>
+          <DockLayoutPanel Name="ColorAnalysisPanel"/>
         </Panels>
       </Element>
     </Elements>

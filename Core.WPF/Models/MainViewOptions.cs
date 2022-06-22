@@ -299,17 +299,14 @@ namespace Imagin.Core.Models
         [Hidden]
         public virtual ICommand SaveThemeCommand => saveThemeCommand ??= new RelayCommand(() =>
         {
-            var inputWindow = new InputWindow
-            {
-                Placeholder = "File name without extension",
-                Title = "Save theme..."
-            };
-            inputWindow.ShowDialog();
-            if (!inputWindow.Input.NullOrEmpty())
-            {
-                Themes.SaveTheme(inputWindow.Input);
+            var x = new { Name = "File name without extension" };
+            MemberWindow.ShowDialog("Save theme", x, out int result, null, Buttons.SaveCancel);
 
-                theme = Themes.ThemePath(inputWindow.Input);
+            if (result == 0)
+            {
+                Themes.SaveTheme(x.Name);
+
+                theme = Themes.ThemePath(x.Name);
                 this.Changed(() => Theme);
 
                 Dialog.Show("Save theme", "Theme saved!", DialogImage.Information, Buttons.Ok);

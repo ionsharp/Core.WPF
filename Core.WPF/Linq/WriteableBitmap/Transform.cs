@@ -1,9 +1,7 @@
-using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Imagin.Core.Media;
 
 namespace Imagin.Core.Linq
 {

@@ -6,7 +6,6 @@ using Imagin.Core.Linq;
 using Imagin.Core.Storage;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -26,7 +25,7 @@ public abstract class MemberModel : BaseNamable, IComparable
 
     #region Fields
 
-    public readonly MemberCollection Parent;
+    public MemberCollection Parent { get; private set; }
 
     #endregion
 
@@ -85,6 +84,8 @@ public abstract class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.DisplayName = j.As<System.ComponentModel.DisplayNameAttribute>().DisplayName) },
         { typeof(FeaturedAttribute),
             new((i, j, k) => i.IsFeatured = j.As<FeaturedAttribute>().Featured) },
+        { typeof(GradientAttribute),
+            new((i, j, k) => i.Gradient = j.As<GradientAttribute>().Colors) },
         { typeof(HeightAttribute),
             new((i, j, k) =>
             {
@@ -129,6 +130,15 @@ public abstract class MemberModel : BaseNamable, IComparable
                         i.OnTrigger(i.Source.Instance, new(m.As<MemberTriggerAttribute>().SourceName));
                 }
             })
+        },
+        { typeof(ObjectAttribute),
+            new((i, j, k) =>
+            {
+;                i.ObjectLevel 
+                    = j.As<ObjectAttribute>().Level;
+                i.ObjectLayout 
+                    = j.As<ObjectAttribute>().Orientation;
+})
         },
         { typeof(RangeAttribute),
             new((i, j, k) =>
@@ -427,13 +437,6 @@ public abstract class MemberModel : BaseNamable, IComparable
         set => this.Change(ref depthIndex, value);
     }
 
-    public MemberDepth Depth 
-        => Style?.Equals(ObjectStyle.Shallow) == true 
-        ? MemberDepth.Shallow 
-        : Style?.Equals(ObjectStyle.Deep) == true 
-        ? MemberDepth.Deep 
-        : MemberDepth.None;
-
     string description = null;
     public string Description
     {
@@ -460,6 +463,13 @@ public abstract class MemberModel : BaseNamable, IComparable
     {
         get => format;
         set => this.Change(ref format, value);
+    }
+
+    object gradient = null;
+    public object Gradient
+    {
+        get => gradient;
+        set => this.Change(ref gradient, value);
     }
 
     double height = double.NaN;
@@ -668,6 +678,20 @@ public abstract class MemberModel : BaseNamable, IComparable
     {
         get => minimumWidth;
         private set => this.Change(ref minimumWidth, value);
+    }
+
+    ObjectLevel? objectLevel = null;
+    public ObjectLevel? ObjectLevel
+    {
+        get => objectLevel;
+        set => this.Change(ref objectLevel, value);
+    }
+
+    ObjectLayout objectLayout = ObjectLayout.Vertical;
+    public ObjectLayout ObjectLayout
+    {
+        get => objectLayout;
+        set => this.Change(ref objectLayout, value);
     }
 
     string placeholder = null;
@@ -905,12 +929,12 @@ public abstract class MemberModel : BaseNamable, IComparable
     internal void RefreshHard()
     {
         var a = TemplateType == typeof(object) || GetTemplateType(Type) == typeof(object);
-        var b = Depth != MemberDepth.None;
+        var b = ObjectLevel != null;
         var c = false;
 
         EachParent(this, i =>
         {
-            if (i.Style?.Equals(ObjectStyle.Deep) == true)
+            if (i.ObjectLevel?.Equals(Core.ObjectLevel.Low) == true)
                 c = true;
         });
 

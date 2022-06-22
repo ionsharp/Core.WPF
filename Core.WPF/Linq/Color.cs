@@ -9,6 +9,10 @@ namespace Imagin.Core.Linq;
 
 public static partial class XColor
 {
+    public static readonly ResourceKey ComponentToolTipTemplateKey = new();
+
+    public static readonly ResourceKey ModelToolTipTemplateKey = new();
+
     public static readonly ResourceKey ToolTipTemplateKey = new();
 
     #region System.Drawing

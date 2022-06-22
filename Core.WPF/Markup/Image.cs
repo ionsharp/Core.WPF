@@ -1,6 +1,5 @@
 ﻿using Imagin.Core.Linq;
 using System;
-using System.Windows.Media;
 
 namespace Imagin.Core.Markup
 {

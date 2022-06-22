@@ -78,6 +78,7 @@ namespace Imagin.Core.Controls
                 return result;
             });
             Bindings.Add(new Binding() { Path = new(".") });
+            Bindings.Add(new Binding() { Path = new(nameof(MemberModel.DisplayName)) });
             Bindings.Add(new Data.Options(nameof(MainViewOptions.Language)));
         }
 

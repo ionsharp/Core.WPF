@@ -5,7 +5,7 @@ using System;
 namespace Imagin.Core.Controls
 {
     [MemberVisibility(Property: MemberVisibility.Explicit)]
-    public class AlphaPanel : Panel
+    public class ColorAlphaPanel : Panel
     {
         public override Uri Icon => null;
 
@@ -13,6 +13,6 @@ namespace Imagin.Core.Controls
 
         public override bool TitleVisibility => false;
 
-        public AlphaPanel() : base() { }
+        public ColorAlphaPanel() : base() { }
     }
 }

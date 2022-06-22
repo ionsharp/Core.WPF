@@ -47,13 +47,6 @@ public enum ListStyle
     Comma, Bullet,
 }
 
-public enum ObjectStyle
-{
-    Button,
-    Shallow,
-    Deep
-}
-
 public enum StringStyle
 {
     FilePath, FolderPath,
@@ -91,9 +84,6 @@ public class MemberStyleAttribute : Attribute
         : base() => Style = style;
 
     public MemberStyleAttribute(ListStyle style)
-        : base() => Style = style;
-
-    public MemberStyleAttribute(ObjectStyle style)
         : base() => Style = style;
 
     public MemberStyleAttribute(StringStyle style)

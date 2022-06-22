@@ -13,7 +13,7 @@
                         HorizontalAlignment="Stretch">
                         <Expander.Header>
                             <Grid Linq:XGrid.Columns="Auto,*">
-                                <TextBlock FontSize="15">
+                                <TextBlock FontSize="13">
                                 <Run Text="{Binding Name, Mode=OneWay}" 
                                     Foreground="{local:ThemeKey ActualKey=AccentLight}"/>
                                 <Run Text="{Binding ItemCount, Mode=OneWay, StringFormat= ({0})}"
@@ -49,7 +49,7 @@
                 <StackPanel>
                     <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*"
                         Margin="5,0">
-                        <TextBlock FontSize="15">
+                        <TextBlock FontSize="13">
                             <Run Text="{Binding Name, Mode=OneWay}" 
                                 Foreground="{local:ThemeKey ActualKey=AccentLight}"/>
                             <Run Text="{Binding ItemCount, Mode=OneWay, StringFormat= ({0})}"

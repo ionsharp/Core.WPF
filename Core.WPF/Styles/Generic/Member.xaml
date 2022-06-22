@@ -693,8 +693,9 @@
                             <ControlTemplate TargetType="TreeViewItem">
                                 <Expander x:Name="Expander" Header="{Binding DisplayName}"
                                     HeaderTemplate="{TemplateBinding HeaderTemplate}"
-                                    HeaderTemplateSelector="{TemplateBinding HeaderTemplateSelector}">
-                                    <ItemsPresenter x:Name="ItemsPresenter" Margin="0,5"/>
+                                    HeaderTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
+                                    IsExpanded="True">
+                                    <ItemsPresenter x:Name="ItemsPresenter" Margin="22,5,0,5"/>
                                 </Expander>
                                 <ControlTemplate.Triggers>
                                     <DataTrigger Binding="{Data:Self DataContext.Members}" Value="{x:Null}">
@@ -715,11 +716,45 @@
             </TreeView.ItemContainerStyle>
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type Reflection:MemberModel}" ItemsSource="{Binding Members}">
-                    <Grid x:Name="Grid" Margin="0,2,0,0" Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
-                        <local:MemberNamePresenter Content="{Binding}" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                        <local:MemberValuePresenter Content="{Binding}"/>
+                    <Grid x:Name="Grid" Margin="0,2,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <local:MemberNamePresenter x:Name="MemberNamePresenter" 
+                            Content="{Binding}"/>
+                        <local:MemberValuePresenter x:Name="MemberValuePresenter" 
+                            Content="{Binding}"/>
                     </Grid>
                     <HierarchicalDataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Parent.Parent.ObjectLayout}" Value="Horizontal">
+                            <Setter TargetName="MemberNamePresenter" Property="Grid.Column" Value="0"/>
+                            <Setter TargetName="MemberNamePresenter" Property="Grid.ColumnSpan" Value="1"/>
+                            <Setter TargetName="MemberNamePresenter" Property="Grid.Row" Value="0"/>
+                            <Setter TargetName="MemberNamePresenter" Property="Grid.RowSpan" Value="2"/>
+                            <Setter TargetName="MemberNamePresenter" Property="Margin" Value="0,0,5,0"/>
+
+                            <Setter TargetName="MemberValuePresenter" Property="Grid.Column" Value="1"/>
+                            <Setter TargetName="MemberValuePresenter" Property="Grid.ColumnSpan" Value="1"/>
+                            <Setter TargetName="MemberValuePresenter" Property="Grid.Row" Value="0"/>
+                            <Setter TargetName="MemberValuePresenter" Property="Grid.RowSpan" Value="2"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Parent.Parent.ObjectLayout}" Value="Vertical">
+                            <Setter TargetName="MemberNamePresenter" Property="Grid.Column" Value="0"/>
+                            <Setter TargetName="MemberNamePresenter" Property="Grid.ColumnSpan" Value="2"/>
+                            <Setter TargetName="MemberNamePresenter" Property="Grid.Row" Value="0"/>
+                            <Setter TargetName="MemberNamePresenter" Property="Grid.RowSpan" Value="1"/>
+                            <Setter TargetName="MemberNamePresenter" Property="Margin" Value="0,0,0,5"/>
+
+                            <Setter TargetName="MemberValuePresenter" Property="Grid.Column" Value="0"/>
+                            <Setter TargetName="MemberValuePresenter" Property="Grid.ColumnSpan" Value="2"/>
+                            <Setter TargetName="MemberValuePresenter" Property="Grid.Row" Value="1"/>
+                            <Setter TargetName="MemberValuePresenter" Property="Grid.RowSpan" Value="1"/>
+                        </DataTrigger>
                         <DataTrigger Binding="{Data:PreviousData}" Value="{x:Null}">
                             <Setter TargetName="Grid" Property="Margin" Value="0"/>
                         </DataTrigger>
@@ -1028,6 +1063,19 @@
         </local:KeyTemplate>
 
         <!-- ... Imagin.Core.Numerics -->
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedCommon:Matrix}">
+            <StackPanel Margin="5">
+                <Slider
+                    Margin="0,0,0,5"
+                    Maximum="{Data:Ancestor ActualWidth, StackPanel}"
+                    Minimum="32"
+                    Value="{Binding Zoom, ElementName=MatrixControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <local:MatrixControl x:Name="MatrixControl"
+                    HorizontalAlignment="Left"
+                    Matrix="{Binding Value, Converter={x:Static Conversion:MatrixToDoubleMatrixConverter.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Zoom="128"/>
+            </StackPanel>
+        </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:DoubleMatrix}">
             <StackPanel Margin="5">
                 <Slider
@@ -1446,23 +1494,20 @@
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Object}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}" ContentTemplate="{Markup:EmptyTemplate}"/>
             <local:KeyTemplate.Triggers>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ObjectStyle.Button}">
+                <DataTrigger Binding="{Binding ObjectLevel}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding DepthIndex}" Value="0"/>
-                        <Condition Binding="{Binding Style}" Value="{x:Static Reflection:ObjectStyle.Shallow}"/>
+                        <Condition Binding="{Binding ObjectLevel}" Value="{x:Static SharedCommon:ObjectLevel.High}"/>
                     </MultiDataTrigger.Conditions>
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </MultiDataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding DepthIndex}" Value="0"/>
-                        <Condition Binding="{Binding Style}" Value="{x:Static Reflection:ObjectStyle.Deep}"/>
+                        <Condition Binding="{Binding ObjectLevel}" Value="{x:Static SharedCommon:ObjectLevel.Low}"/>
                     </MultiDataTrigger.Conditions>
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </MultiDataTrigger>

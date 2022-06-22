@@ -16,7 +16,7 @@ namespace Imagin.Core.Controls
         {
             if (input.ActualParameter is System.Type type)
             {
-                foreach (var i in MemberCollection.GetMembers(input.Value.GetType()))
+                foreach (var i in MemberCollection.GetMembers(input.Value is System.Type j ? j : input.Value.GetType()))
                 {
                     if (i.HasAttribute(type))
                         return true;

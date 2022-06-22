@@ -3,8 +3,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
+    xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Media="clr-namespace:Imagin.Core.Media">
+    <DataTemplate x:Key="{x:Static Linq:XColor.ComponentToolTipTemplateKey}">
+        <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last" Linq:XPanel.VerticalContentAlignment="Center">
+            <TextBlock FontSize="15" FontWeight="Bold">(<Run Text="{Binding Symbol, Mode=OneWay}"/>) <Run Text="{Binding Name, Mode=OneWay}"/></TextBlock>
+            <TextBlock FontSize="14" Text="{Binding Range}"/>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="{x:Static Linq:XColor.ModelToolTipTemplateKey}">
+        <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last" Linq:XPanel.VerticalContentAlignment="Center">
+            <TextBlock FontSize="15" FontWeight="Bold" Text="{Binding Name}"/>
+            <TextBlock FontSize="13" FontStyle="Italic" Opacity="0.5" Text="{Binding Converter={x:Static local:ColorModelLongNameConverter.Default}}"/>
+        </StackPanel>
+    </DataTemplate>
+    
     <DataTemplate x:Key="{x:Static Linq:XColor.ToolTipTemplateKey}">
         <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*" Linq:XPanel.VerticalContentAlignment="Center">
             <local:ClipBorder
@@ -19,9 +34,7 @@
             </local:ClipBorder>
             <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last">
                 <TextBlock FontWeight="Bold"><Run Text="#"/><Run Text="{Binding Converter={x:Static Conversion:ColorToStringConverter.Default}, Mode=OneWay}"/></TextBlock>
-                <local:AccentLabel>
-                    <TextBlock><Run Text="{Binding R, Mode=OneWay}"/>, <Run Text="{Binding G, Mode=OneWay}"/>, <Run Text="{Binding B, Mode=OneWay}"/></TextBlock>
-                </local:AccentLabel>
+                <TextBlock>(<Run Text="{Binding R, Mode=OneWay}"/>, <Run Text="{Binding G, Mode=OneWay}"/>, <Run Text="{Binding B, Mode=OneWay}"/>)</TextBlock>
             </StackPanel>
         </Grid>
     </DataTemplate>

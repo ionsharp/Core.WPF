@@ -67,7 +67,7 @@
             BorderThickness="0"
             GroupName="Category"
             HeaderVisibility="Visible"
-            Source="{local:SourceFilterBinding DataContext, Core:OptionAttribute, Relative=FindAncestor, RelativeType=HeaderedContentControl}"
+            Source="{local:SourceBinding DataContext, Core:OptionAttribute, Relative=FindAncestor, RelativeType=HeaderedContentControl}"
             ToolVisibility="Collapsed"/>
     </DataTemplate>
 
@@ -79,7 +79,7 @@
                 HeaderVisibility="Collapsed"
                 Margin="4"
                 Orientation="Horizontal"
-                Source="{local:SourceFilterBinding Core:ToolAttribute}"/>
+                Source="{local:SourceBinding Core:ToolAttribute}"/>
         </Border>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding ToolBarPlacement}" Value="Bottom">
@@ -121,7 +121,7 @@
                         HeaderVisibility="Collapsed"
                         Margin="10,2"
                         Orientation="Horizontal"
-                        Source="{local:SourceFilterBinding ActiveDocument.Status, Core:StatusAttribute}"/>
+                        Source="{local:SourceBinding ActiveDocument.Status, Core:StatusAttribute}"/>
                 </Grid>
             </Border>
         </Grid>

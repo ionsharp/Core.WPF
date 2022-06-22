@@ -128,7 +128,7 @@ namespace Imagin.Core.Collections.Serialization
         public ICommand ClearCommand => clearCommand ??= new RelayCommand(() => Clear(), () => Count > 0);
 
         ICommand exportCommand;
-        public ICommand ExportCommand => exportCommand ??= new RelayCommand<T>(i => _ = Export(), i => Count > 0);
+        public ICommand ExportCommand => exportCommand ??= new RelayCommand<T>(i => _ = Export(i), i => i is T);
 
         ICommand exportAllCommand;
         public ICommand ExportAllCommand => exportAllCommand ??= new RelayCommand(() => _ = Export(this), () => Count > 0);

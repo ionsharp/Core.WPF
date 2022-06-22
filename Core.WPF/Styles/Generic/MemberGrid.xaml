@@ -116,23 +116,17 @@
                         <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type Input:ICommand}">
                             <Setter TargetName="TextBlock" Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Data:Ancestor NameColumnVisibility, local:MemberGrid}" Value="Collapsed">
-                            <Setter TargetName="TextBlock" Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
         <Setter Property="Linq:XElement.ToolTipTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ToolTipKey}}"/>
-        <Setter Property="ToolTip" Value="{Binding}"/>
+        <Setter Property="ToolTip" Value="{Data:Self DataContext}"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding Label}" Value="False">
                 <Setter Property="Visibility" Value="Collapsed"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type Input:ICommand}">
-                <Setter Property="Visibility" Value="Collapsed"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Data:Ancestor NameColumnVisibility, local:MemberGrid}" Value="Collapsed">
                 <Setter Property="Visibility" Value="Collapsed"/>
             </DataTrigger>
         </Style.Triggers>
@@ -245,7 +239,7 @@
                         <MultiDataTrigger >
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Data:IsNullBinding Icon}" Value="False"/>
-                                <Condition Binding="{Binding Style}" Value="{x:Static Reflection:ObjectStyle.Button}"/>
+                                <Condition Binding="{Binding StyleLevel}" Value="{x:Null}"/>
                                 <Condition Binding="{Binding TemplateType}" Value="{x:Type System:Object}"/>
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="ImageButton" Property="Visibility" Value="Collapsed"/>
@@ -264,7 +258,7 @@
         </Setter>
         <Setter Property="IsEnabled" Value="False"/>
         <Setter Property="Linq:XElement.ToolTipTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ToolTipKey}}"/>
-        <Setter Property="ToolTip" Value="{Binding}"/>
+        <Setter Property="ToolTip" Value="{Data:Self DataContext}"/>
         <Style.Triggers>
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
@@ -567,6 +561,27 @@
                                 Visibility="{TemplateBinding OptionsButtonVisibility}">
                                 <local:ImageToggleButton.Menu>
                                     <ContextMenu DataContext="{Binding Data, Source={StaticResource MemberGrid}}">
+                                        <ContextMenu.Resources>
+                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Data:TypeBinding}" Value="{x:Type local:MemberView}">
+                                                        <Setter Property="Command" Value="{Binding Data.ViewCommand, Source={StaticResource MemberGrid}}"/>
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                        <Setter Property="Header" Value="{Data:TranslateBinding}"/>
+                                                        <Setter Property="IsCheckable" Value="True"/>
+                                                        <Setter Property="IsChecked">
+                                                            <Setter.Value>
+                                                                <MultiBinding Converter="{x:Static Conversion:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
+                                                                    <Binding Path="Data.View" Source="{StaticResource MemberGrid}"/>
+                                                                    <Binding Path="."/>
+                                                                </MultiBinding>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Setter Property="StaysOpenOnClick" Value="True"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContextMenu.Resources>
                                         <ContextMenu.ItemsSource>
                                             <CompositeCollection>
                                                 <Separator Linq:XSeparator.Header="Filter"/>
@@ -668,40 +683,11 @@
                                                     </MenuItem.Resources>
                                                 </MenuItem>
                                                 <Separator Linq:XSeparator.Header="View"/>
-                                                <MenuItem Header="{l:Loc View}"
-                                                    Icon="{Markup:InternalImage View.png}"
-                                                    InputGestureText="{Binding Data.View, Source={StaticResource MemberGrid}}">
-                                                    <Linq:XMenuItem.InputGestureTextTemplate>
-                                                        <DataTemplate>
-                                                            <local:AccentLabel Content="{Binding}" FontStyle="Italic" HorizontalAlignment="Left"/>
-                                                        </DataTemplate>
-                                                    </Linq:XMenuItem.InputGestureTextTemplate>
-                                                    <MenuItem.ItemsSource>
-                                                        <CompositeCollection>
-                                                            <CollectionContainer Collection="{Markup:Enumerate local:MemberView}"/>
-                                                        </CompositeCollection>
-                                                    </MenuItem.ItemsSource>
-                                                    <MenuItem.ItemContainerStyle>
-                                                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                                                            <Setter Property="Command" Value="{Binding Data.ViewCommand, Source={StaticResource MemberGrid}}"/>
-                                                            <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                            <Setter Property="Header" Value="{Data:TranslateBinding}"/>
-                                                            <Setter Property="IsCheckable" Value="True"/>
-                                                            <Setter Property="IsChecked">
-                                                                <Setter.Value>
-                                                                    <MultiBinding Converter="{x:Static Conversion:ValueEqualsParameterMultiConverter.Default}" Mode="OneWay">
-                                                                        <Binding Path="Data.View" Source="{StaticResource MemberGrid}"/>
-                                                                        <Binding Path="."/>
-                                                                    </MultiBinding>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                            <Setter Property="StaysOpenOnClick" Value="True"/>
-                                                        </Style>
-                                                    </MenuItem.ItemContainerStyle>
-                                                </MenuItem>
-                                                <MenuItem Header="{l:Loc ViewDescription}"
+                                                <MenuItem Header="{l:Loc Description}"
                                                     IsCheckable="True"
                                                     IsChecked="{Data:VisibilityBinding DescriptionVisibility, Mode=TwoWay}"/>
+                                                <Separator/>
+                                                <CollectionContainer Collection="{Markup:Enumerate local:MemberView}"/>
                                             </CompositeCollection>
                                         </ContextMenu.ItemsSource>
                                     </ContextMenu>

@@ -204,10 +204,6 @@ namespace Demo
         public ICommand ShowColorWindowCommand => showColorWindowCommand 
             ??= new RelayCommand(() => new ColorWindow("Select color", Colors.Red).ShowDialog());
 
-        ICommand showComboWindowCommand;
-        public ICommand ShowComboWindowCommand => showComboWindowCommand 
-            ??= new RelayCommand(() => new ComboWindow("Pick something", "Pick something...", typeof(ItemType).GetEnumCollection<ItemType>(Appearance.Visible), new SimpleConverter<ItemType, string>(i => $"{i}")).ShowDialog());
-
         ICommand showDialogWindowCommand;
         public ICommand ShowDialogWindowCommand => showDialogWindowCommand 
             ??= new RelayCommand(() => Dialog.Show("Title", "Message", DialogImage.Information, Buttons.ContinueCancel));
@@ -237,17 +233,13 @@ namespace Demo
         public ICommand ShowGradientWindowCommand => showGradientWindowCommand
             ??= new RelayCommand(() => new GradientWindow("Select gradient", Imagin.Core.Media.Gradient.Default).ShowDialog());
 
-        ICommand showInputWindowCommand;
-        public ICommand ShowInputWindowCommand => showInputWindowCommand 
-            ??= new RelayCommand(() => new InputWindow("Enter something", string.Empty, "Enter whatever...").ShowDialog());
-
         ICommand showLoadWindowCommand;
         public ICommand ShowLoadWindowCommand => showLoadWindowCommand 
             ??= new RelayCommand(() => new LoadWindow().ShowDialog());
 
-        ICommand showPropertyWindowCommand;
-        public ICommand ShowPropertyWindowCommand => showPropertyWindowCommand 
-            ??= new RelayCommand(() => PropertyWindow.ShowDialog(null, View));
+        ICommand showMemberWindowCommand;
+        public ICommand ShowMemberWindowCommand => showMemberWindowCommand 
+            ??= new RelayCommand(() => MemberWindow.ShowDialog(null, View));
 
         #endregion
     }

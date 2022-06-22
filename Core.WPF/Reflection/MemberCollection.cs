@@ -37,7 +37,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     internal readonly MemberGrid Control;
 
-    internal readonly MemberModel Parent;
+    public MemberModel Parent { get; private set; }
 
     #endregion
 
@@ -156,7 +156,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     //... (internal)
 
-    void Load(IDictionary input, Action<MemberModel> onAdded)
+    void Load(IDictionary input, SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
     {
         foreach (DictionaryEntry i in input)
         {
@@ -168,58 +168,64 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
                 result.UpdateValue(i.Value);
 
                 Add(result);
-                Dispatch.Invoke(() => onAdded?.Invoke(result));
+                Dispatch.Invoke(() => onAdded?.Invoke(result, filter));
             }
         }
     }
 
     //...
 
-    internal void LoadSync(Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
+    internal void LoadSync(SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
     {
         var visibility
             = Source.Type.GetAttribute<MemberVisibilityAttribute>() ?? new();
 
-            if (!Cache.Current.ContainsKey(Source.Type))
+        if (!Cache.Current.ContainsKey(Source.Type))
+        {
+            var data = new CacheData();
+            foreach (var i in GetMembers(Source.Type))
             {
-                var data = new CacheData();
-                foreach (var i in GetMembers(Source.Type))
+                if (!Supported(i))
+                    continue;
+
+                bool isImplicit(MemberInfo j)
+                    => !j.HasAttribute<BrowsableAttribute>() && !j.HasAttribute<HiddenAttribute>() && !j.HasAttribute<VisibleAttribute>();
+
+                switch (i.MemberType)
                 {
-                    if (!Supported(i))
-                        continue;
+                    case MemberTypes.Field:
+                        if (visibility.Field == MemberVisibility.Explicit)
+                        {
+                            if (isImplicit(i))
+                                continue;
+                        }
+                        break;
 
-                    bool isImplicit(MemberInfo j)
-                        => !j.HasAttribute<BrowsableAttribute>() && !j.HasAttribute<HiddenAttribute>() && !j.HasAttribute<VisibleAttribute>();
+                    case MemberTypes.Property:
+                        if (visibility.Property == MemberVisibility.Explicit)
+                        {
+                            if (isImplicit(i))
+                                continue;
+                        }
+                        break;
 
-                    switch (i.MemberType)
-                    {
-                        case MemberTypes.Field:
-                            if (visibility.Field == MemberVisibility.Explicit)
-                            {
-                                if (isImplicit(i))
-                                    continue;
-                            }
-                            break;
-
-                        case MemberTypes.Property:
-                            if (visibility.Property == MemberVisibility.Explicit)
-                            {
-                                if (isImplicit(i))
-                                    continue;
-                            }
-                            break;
-
-                        default: continue;
-                    }
-
-                    var attributes = new MemberAttributes(i);
-                    if (attributes.Hidden)
-                        continue;
-
-                    data.Add(i, new(i));
+                    default: continue;
                 }
-                Cache.Current.Add(Source.Type, data);
+
+                if (Source.Type.GetAttribute<IgnoreAttribute>() is IgnoreAttribute ignore)
+                {
+                    if (XCollection.Contains(ignore.Values, i.Name))
+                        continue;
+                }
+
+                var attributes = new MemberAttributes(i);
+                if (attributes.Hidden)
+                    continue;
+
+                data.Add(i, new(i));
             }
+            Cache.Current.Add(Source.Type, data);
+        }
 
         foreach (var i in Cache.Current[Source.Type])
         {
@@ -229,16 +235,30 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
                 default: continue;
             }
 
-            if (filterAttribute != null)
+            if (filter != null)
             {
-                if (!filterAttributeIgnore)
+                bool a, b, c, d;
+                var view = i.Value.GetFirst<ViewAttribute>();
+
+                if (!filter.Ignore)
                 {
-                    if (!i.Value.ContainsKey(filterAttribute))
+                    a = !i.Value.ContainsKey(filter.Type);
+
+                    b = filter.Type == typeof(ViewAttribute);
+                    c = view?.Name != filter.View;
+
+                    if (a || (b && c))
                         continue;
                 }
                 else
                 {
-                    if (i.Value.ContainsKey(filterAttribute))
+                    a = filter.Type != typeof(ViewAttribute);
+                    b = i.Value.ContainsKey(filter.Type);
+
+                    c = !a;
+                    d = view?.Name == filter.View;
+
+                    if ((a && b) || (c && d))
                         continue;
                 }
             }
@@ -265,14 +285,14 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
             }
 
             Add(result);
-            Dispatch.Invoke(() => onAdded?.Invoke(result));
+            Dispatch.Invoke(() => onAdded?.Invoke(result, filter));
         }
 
         if (Source.Instance is IDictionary dictionary)
-            Load(dictionary, onAdded);
+            Load(dictionary, filter, onAdded);
     }
 
-    internal async Task Load(MemberSource source, Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
+    internal async Task Load(MemberSource source, SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
     {
         Loading = true;
 
@@ -283,7 +303,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
         {
             lock (cache)
             {
-                LoadSync(filterAttribute, filterAttributeIgnore, onAdded);
+                LoadSync(filter, onAdded);
             }
         });
 
@@ -291,15 +311,15 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
         Loading = false;
     }
 
-    internal async Task Load(Type filterAttribute, bool filterAttributeIgnore, Action<MemberModel> onAdded)
-        => await Load(Source, filterAttribute, filterAttributeIgnore, onAdded);
+    internal async Task Load(SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
+        => await Load(Source, filter, onAdded);
 
     internal void Load(object input)
     {
         Clear();
         Source = new(new MemberPathSource(input));
 
-        LoadSync(null, false, null);
+        LoadSync(null, null);
         Subscribe();
     }
 

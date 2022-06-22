@@ -1529,78 +1529,92 @@
                                 </DataTemplate.Triggers>
                             </DataTemplate>
                         </Border.Resources>
-                        <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,Auto">
-                            <ContentPresenter Content="{TemplateBinding Document}" Margin="5">
-                                <ContentPresenter.ContentTemplate>
-                                    <DataTemplate DataType="{x:Type local:ColorDocument}">
-                                        <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
-                                        <DataTemplate.Triggers>
-                                            <!-- 3 > 1D -->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Dimension}" Value="One"/>
-                                                    <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template1D}"/>
-                                            </MultiDataTrigger>
-                                            <!-- 3 > 2D -->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Dimension}" Value="Two"/>
-                                                    <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template2D}"/>
-                                            </MultiDataTrigger>
-                                            <!-- 3 > 3D -->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Dimension}" Value="Three"/>
-                                                    <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template3D}"/>
-                                            </MultiDataTrigger>
-                                            <!-- 4 > 1D -->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Dimension}" Value="One"/>
-                                                    <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template1D}"/>
-                                            </MultiDataTrigger>
-                                            <!-- 4 > 2D -->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Dimension}" Value="Two"/>
-                                                    <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template2D}"/>
-                                            </MultiDataTrigger>
-                                            <!-- 4 > 3D -->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Dimension}" Value="Three"/>
-                                                    <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template3D}"/>
-                                            </MultiDataTrigger>
-                                        </DataTemplate.Triggers>
-                                    </DataTemplate>
-                                </ContentPresenter.ContentTemplate>
-                            </ContentPresenter>
-                            <local:TopBorder x:Name="Border2" Height="32">
-                                <local:MemberGrid
-                                    BorderThickness="0"
-                                    GroupName="None"
-                                    HeaderVisibility="Collapsed"
-                                    Margin="2"
-                                    Orientation="Horizontal"
-                                    Source="{TemplateBinding Document}"/>
-                            </local:TopBorder>
+                        <Grid>
+                            <Grid x:Name="Grid" Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,Auto">
+                                <ContentPresenter Content="{TemplateBinding Document}" Margin="5">
+                                    <ContentPresenter.ContentTemplate>
+                                        <DataTemplate DataType="{x:Type local:ColorDocument}">
+                                            <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
+                                            <DataTemplate.Triggers>
+                                                <!-- 3 > 1D -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Dimension}" Value="One"/>
+                                                        <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template1D}"/>
+                                                </MultiDataTrigger>
+                                                <!-- 3 > 2D -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Dimension}" Value="Two"/>
+                                                        <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template2D}"/>
+                                                </MultiDataTrigger>
+                                                <!-- 3 > 3D -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Dimension}" Value="Three"/>
+                                                        <Condition Binding="{Binding Color.WVisibility}" Value="False"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color3Template3D}"/>
+                                                </MultiDataTrigger>
+                                                <!-- 4 > 1D -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Dimension}" Value="One"/>
+                                                        <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template1D}"/>
+                                                </MultiDataTrigger>
+                                                <!-- 4 > 2D -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Dimension}" Value="Two"/>
+                                                        <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template2D}"/>
+                                                </MultiDataTrigger>
+                                                <!-- 4 > 3D -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Dimension}" Value="Three"/>
+                                                        <Condition Binding="{Binding Color.WVisibility}" Value="True"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource Color4Template3D}"/>
+                                                </MultiDataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ContentPresenter.ContentTemplate>
+                                </ContentPresenter>
+                                <local:TopBorder x:Name="Border2" Height="32">
+                                    <local:MemberGrid
+                                        BorderThickness="0"
+                                        GroupName="None"
+                                        HeaderVisibility="Collapsed"
+                                        Margin="2"
+                                        Orientation="Horizontal"
+                                        Source="{TemplateBinding Document}"/>
+                                </local:TopBorder>
+                            </Grid>
+                            <StackPanel x:Name="StackPanel"
+                                Linq:XPanel.Spacing="0,0,0,5"
+                                Linq:XPanel.SpacingExcept="Last"
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed">
+                                <local:ImageElement Source="{Markup:Image Imagin.Core.WPF, Images/256-Error.png}"
+                                    HorizontalAlignment="Center"
+                                    SourceSize="48,48"/>
+                                <TextBlock FontSize="17" Opacity="0.3" Text="{Binding Color.ModelType.Name}"
+                                    HorizontalAlignment="Center"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Data:TemplatedParent Document.Color.ModelType, Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:HiddenAttribute}}" Value="True">
-                            
+                        <DataTrigger Binding="{Data:Self Document.Color.ModelType, Converter={x:Static Conversion:HiddenConverter.Default}}" Value="True">
+                            <Setter TargetName="Grid" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="StackPanel" Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

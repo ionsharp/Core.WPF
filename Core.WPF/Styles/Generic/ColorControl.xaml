@@ -10,6 +10,7 @@
     xmlns:Media="clr-namespace:Imagin.Core.Media"
     xmlns:Models="clr-namespace:Imagin.Core.Models">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="{local:StyleKey Key=ComboBox}"/>
         <ResourceDictionary Source="{local:StyleKey Key=Control}"/>
     </ResourceDictionary.MergedDictionaries>
     <Style x:Key="{x:Type local:ColorControl}" TargetType="{x:Type local:ColorControl}" BasedOn="{StaticResource {x:Type Control}}">
@@ -26,22 +27,7 @@
                             <Data:Reference x:Key="ColorControl" Data="{Data:TemplatedParent}"/>
                         
                             <local:PanelTemplateSelector x:Key="{x:Static local:ColorControl.PanelTemplateSelectorKey}">
-                                <DataTemplate DataType="{x:Type local:AlphaPanel}">
-                                    <local:AlphaSlider x:Name="AlphaSlider"
-                                        Color="{Binding Data.ActiveDocument.Color.ActualColor, Source={StaticResource ColorControl}}"
-                                        Value="{Binding Data.ActiveDocument.Alpha, Mode=TwoWay, Source={StaticResource ColorControl}}"/>
-                                    <DataTemplate.Triggers>
-                                        <DataTrigger Binding="{Binding Data.ActiveDocument, Source={StaticResource ColorControl}}" Value="{x:Null}">
-                                            <Setter TargetName="AlphaSlider" Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </DataTemplate.Triggers>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type Models:OptionsPanel}">
-                                    <local:MemberGrid Source="{Binding Data.Options, Source={StaticResource ColorControl}}"
-                                        BorderThickness="0"
-                                        GroupName="Category"/>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type Models:PropertiesPanel}">
+                                <DataTemplate DataType="{x:Type local:ColorPanel}">
                                     <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,Auto,*,Auto"
                                         Visibility="{Data:VisibilityBinding Data.ActiveDocument, Source={StaticResource ColorControl}}">
                                         <Border BorderBrush="Black" BorderThickness="1" Margin="2">
@@ -79,9 +65,26 @@
                                         <local:BottomBorder Padding="2">
                                             <Grid DataContext="{Binding Data.ActiveDocument.Color, Source={StaticResource ColorControl}}" Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,Auto" Linq:XPanel.Spacing="0,0,5,0" Linq:XPanel.SpacingExcept="Last">
                                                 <ComboBox
+                                                    Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ModelToolTipTemplateKey}}"
+                                                    Linq:XItemsControl.GroupsItself="True"
                                                     ItemsSource="{Binding Models}"
-                                                    SelectedIndex="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
+                                                    SelectedItem="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    ToolTip="{Binding ModelType}">
+                                                    <Linq:XItemsControl.GroupStyle>
+                                                        <GroupStyle ContainerStyle="{StaticResource {x:Type GroupItem}}">
+                                                            <GroupStyle.Panel>
+                                                                <ItemsPanelTemplate>
+                                                                    <StackPanel/>
+                                                                </ItemsPanelTemplate>
+                                                            </GroupStyle.Panel>
+                                                        </GroupStyle>
+                                                    </Linq:XItemsControl.GroupStyle>
+                                                    <ComboBox.ItemContainerStyle>
+                                                        <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                                            <Setter Property="Linq:XElement.ToolTipTemplate" Value="{StaticResource {x:Static Linq:XColor.ModelToolTipTemplateKey}}"/>
+                                                            <Setter Property="ToolTip" Value="{Binding Value}"/>
+                                                        </Style>
+                                                    </ComboBox.ItemContainerStyle>
                                                     <ComboBox.ItemTemplate>
                                                         <DataTemplate>
                                                             <TextBlock Text="{Binding Name}"/>
@@ -89,9 +92,16 @@
                                                     </ComboBox.ItemTemplate>
                                                 </ComboBox>
                                                 <ComboBox
+                                                    Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ComponentToolTipTemplateKey}}"
                                                     ItemsSource="{Binding Components}"
                                                     SelectedIndex="{Binding ComponentIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
+                                                    ToolTip="{Binding ActualComponent}">
+                                                    <ComboBox.ItemContainerStyle>
+                                                        <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                                            <Setter Property="Linq:XElement.ToolTipTemplate" Value="{StaticResource {x:Static Linq:XColor.ComponentToolTipTemplateKey}}"/>
+                                                            <Setter Property="ToolTip" Value="{Binding}"/>
+                                                        </Style>
+                                                    </ComboBox.ItemContainerStyle>
                                                     <ComboBox.ItemTemplate>
                                                         <DataTemplate>
                                                             <TextBlock>(<Run Text="{Binding Symbol, Mode=OneWay}"/>) <Run Text="{Binding Name, Mode=OneWay}"/></TextBlock>
@@ -104,7 +114,7 @@
                                             BorderThickness="0"
                                             GroupName="Category"
                                             HeaderVisibility="Collapsed"
-                                            Source="{Binding Data.ActiveDocument.Color, Source={StaticResource ColorControl}}"/>
+                                            Source="{local:SourceBinding Ignore=True, Path=Data.ActiveDocument.Color, Source={StaticResource ColorControl}, View=Profile}"/>
                                         <local:TopBorder Background="#11000000" Padding="2">
                                             <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,*">
                                                 <Button
@@ -122,6 +132,46 @@
                                             </Grid>
                                         </local:TopBorder>
                                     </Grid>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type local:ColorAlphaPanel}">
+                                    <local:AlphaSlider x:Name="AlphaSlider"
+                                        Color="{Binding Data.ActiveDocument.Color.ActualColor, Source={StaticResource ColorControl}}"
+                                        Value="{Binding Data.ActiveDocument.Alpha, Mode=TwoWay, Source={StaticResource ColorControl}}"/>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Data.ActiveDocument, Source={StaticResource ColorControl}}" Value="{x:Null}">
+                                            <Setter TargetName="AlphaSlider" Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type local:ColorAnalysisPanel}">
+                                    <DataGrid
+                                        AutoGenerateColumns="True"
+                                        BorderThickness="0"
+                                        CanUserAddRows="False"
+                                        CanUserDeleteRows="True"
+                                        CanUserReorderColumns="True"
+                                        CanUserResizeColumns="True"
+                                        CanUserResizeRows="False"
+                                        CanUserSortColumns="True"
+                                        Linq:XDataGrid.DisplayRowNumber="True"
+                                        Linq:XDataGrid.DisplayRowNumberBullet="NumberParenthesis"
+                                        Linq:XDataGrid.DisplayRowNumberOffset="1"
+                                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                        VirtualizingPanel.IsVirtualizing="False"
+                                        VirtualizingPanel.VirtualizationMode="Standard"
+                                        ItemsSource="{Binding Results}"/>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type local:ColorProfilePanel}">
+                                    <local:MemberGrid x:Name="MemberGrid"
+                                        BorderThickness="0"
+                                        GroupName="Category"
+                                        HeaderVisibility="Collapsed"
+                                        Source="{local:SourceBinding Path=Data.ActiveDocument.Color, Source={StaticResource ColorControl}, View=Profile}"/>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type Models:OptionsPanel}">
+                                    <local:MemberGrid Source="{Binding Data.Options, Source={StaticResource ColorControl}}"
+                                        BorderThickness="0"
+                                        GroupName="Category"/>
                                 </DataTemplate>
                             </local:PanelTemplateSelector>
                         </Border.Resources>

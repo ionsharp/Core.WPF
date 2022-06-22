@@ -9,7 +9,7 @@ namespace Imagin.Core.Controls
     {
         static Button New(string label, int i, bool isDefault = false, bool isCancel = false)
         {
-            var result = new Button() { Content = label, IsDefault = isDefault, IsCancel = isCancel };
+            var result = new Button() { Content = label, IsDefault = isDefault, IsCancel = isCancel, Margin = new(2,0,0,0) };
             XButton.SetResult(result, i);
             return result;
         }

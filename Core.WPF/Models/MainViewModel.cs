@@ -143,10 +143,12 @@ namespace Imagin.Core.Models
 
         ICommand showAboutWindowCommand;
         [Hidden]
-        public ICommand ShowAboutWindowCommand => showAboutWindowCommand ??= new RelayCommand(() => new AboutWindow().ShowDialog(), () => true);
+        public ICommand ShowAboutWindowCommand 
+            => showAboutWindowCommand ??= new RelayCommand(() => new AboutWindow().ShowDialog(), () => true);
 
         ICommand showOptionsWindowCommand;
         [Hidden]
-        public ICommand ShowOptionsWindowCommand => showOptionsWindowCommand ??= new RelayCommand(() => new OptionsWindow().Show(), () => true);
+        public ICommand ShowOptionsWindowCommand 
+            => showOptionsWindowCommand ??= new RelayCommand(() => MemberWindow.ShowDialog("Options", Get.Where<IMainViewOptions>(), out int result, null, Buttons.Done), () => true);
     }
 }

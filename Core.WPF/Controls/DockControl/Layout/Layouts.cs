@@ -198,16 +198,14 @@ namespace Imagin.Core.Controls
         [Hidden]
         public virtual ICommand SaveLayoutCommand => saveLayoutCommand ??= new RelayCommand(() =>
         {
-            var inputWindow = new InputWindow
+            var x = new { Name = "File name without extension" };
+            MemberWindow.ShowDialog("Save layout", x, out int result, null, Buttons.Done);
+
+            if (result == 0)
             {
-                Placeholder = "File name without extension",
-                Title = "Save layout..."
-            };
-            inputWindow.ShowDialog();
-            if (!inputWindow.Input.NullOrEmpty())
-            {
-                Save(inputWindow.Input);
-                Update(FilePath(inputWindow.Input));
+                Save(x.Name);
+                Update(FilePath(x.Name));
+
                 Dialog.Show("Save layout", "Layout saved!", DialogImage.Information, Buttons.Ok);
                 return;
             }

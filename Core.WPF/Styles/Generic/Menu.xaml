@@ -49,12 +49,12 @@
                         SnapsToDevicePixels="True">
                         <Grid x:Name="PART_Grid">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition x:Name="Col0" Width="Auto"/>
+                                <ColumnDefinition Width="Auto" x:Name="Col0"/>
                                 <ColumnDefinition Width="*" 
                                     SharedSizeGroup="MenuItemHeaderColumnGroup"/>
                                 <ColumnDefinition Width="Auto" 
                                     SharedSizeGroup="MenuItemGestureColumnGroup"/>
-                                <ColumnDefinition x:Name="Col3" Width="14" />
+                                <ColumnDefinition Width="Auto" x:Name="Col3" />
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="PART_IconGrid"
                                 SnapsToDevicePixels="True"
@@ -83,10 +83,10 @@
                             <ContentPresenter x:Name="PART_InputGesture" Grid.Column="2"
                                 Content="{TemplateBinding InputGestureText}"
                                 ContentTemplate="{Data:TemplatedParent Path=(Linq:XMenuItem.InputGestureTextTemplate)}"
-                                Margin="8,0"
+                                Margin="3,0"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             <Grid x:Name="PART_Arrow" Grid.Column="3" 
-                                Margin="4,0,6,0"
+                                Margin="3,0"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                 <local:RotateElement
                                     Rotate="{Data:TemplatedParent IsSubmenuOpen}"

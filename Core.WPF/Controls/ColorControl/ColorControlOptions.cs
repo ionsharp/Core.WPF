@@ -7,7 +7,6 @@ using Imagin.Core.Models;
 using Imagin.Core.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace Imagin.Core.Controls
@@ -82,11 +81,11 @@ namespace Imagin.Core.Controls
             set => this.Change(ref layouts, value);
         }
 
-        ObservableCollection<Namable<WorkingProfile>> IColorControlOptions.Profiles => profiles;
+        IWriter IColorControlOptions.Profiles => profiles;
         [field: NonSerialized]
-        ObservableCollection<Namable<WorkingProfile>> profiles = new();
+        BinaryWriter<Namable<WorkingProfile>> profiles;
         [Hidden]
-        public ObservableCollection<Namable<WorkingProfile>> Profiles
+        public BinaryWriter<Namable<WorkingProfile>> Profiles
         {
             get => profiles;
             set => this.Change(ref profiles, value);
@@ -100,8 +99,7 @@ namespace Imagin.Core.Controls
 
         #region ColorControlOptions
 
-        public ColorControlOptions() : base() 
-            => XList.ForEach<PropertyInfo>(typeof(WorkingProfiles).GetProperties(BindingFlags.Public | BindingFlags.Static), i => profiles.Add(new(i.GetDisplayName(), (WorkingProfile)i.GetValue(null))));
+        public ColorControlOptions() : base() { }
 
         public ColorControlOptions(string filePath) : this() => FilePath = filePath;
 
@@ -141,10 +139,16 @@ namespace Imagin.Core.Controls
         {
             ColorControl = colorPicker;
 
-            Colors = new GroupWriter<StringColor>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\ColorControl", "Colors", "data", "colors", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
+            Colors = new GroupWriter<StringColor>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Colors", "data", "colors", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
             Colors.Load();
 
-            Layouts = new Layouts($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\ColorControl\Layouts", GetDefaultLayouts());
+            Profiles = new BinaryWriter<Namable<WorkingProfile>>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Profiles", "data", "profile", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
+            Profiles.Load();
+
+            if (Profiles.Count == 0)
+                XList.ForEach<PropertyInfo>(typeof(WorkingProfiles).GetProperties(BindingFlags.Public | BindingFlags.Static), i => profiles.Add(new(i.GetDisplayName(), (WorkingProfile)i.GetValue(null))));
+
+            Layouts = new Layouts($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}\Layouts", GetDefaultLayouts());
             Layouts.Update(layout);
             Layouts.Refresh();
         }
@@ -152,7 +156,8 @@ namespace Imagin.Core.Controls
         public void OnSaved()
         {
             Layout = Layouts.Layout;
-            Colors.Save();
+
+            Colors.Save(); Profiles.Save();
         }
 
         #endregion

@@ -26,10 +26,7 @@ namespace Imagin.Core.Reflection
 
         public MemberVisibilityAttribute(MemberVisibility Field = MemberVisibility.Implicit, MemberVisibility Property = MemberVisibility.Implicit) : base()
         {
-            this.Field
-                = Field;
-            this.Property
-                = Property;
+            this.Field = Field; this.Property = Property;
         }
     }
 }

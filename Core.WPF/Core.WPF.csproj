@@ -136,20 +136,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analytics\LogWriter.cs" />
+    <Compile Include="Controls\ColorControl\ColorModelLongNameConverter - Copy.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Color.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Analysis.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Profile.cs" />
     <Compile Include="Controls\ColorSelector\ColorSelectorView.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector3D.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelectorEllipse.cs" />
-    <Compile Include="Paint\BlendModes.cs" />
-    <Compile Include="Paint\BitmapContext.cs" />
-    <Compile Include="Paint\ClearTypeLetterGlyph.cs" />
-    <Compile Include="Paint\DpiDetector.cs" />
-    <Compile Include="Paint\GrayScaleLetterGlyph.cs" />
-    <Compile Include="Paint\IntGeometry.cs" />
-    <Compile Include="Paint\LetterGlyphTool.cs" />
-    <Compile Include="Paint\NativeMethods.cs" />
-    <Compile Include="Paint\PortableFontDesc.cs" />
-    <Compile Include="Paint\ScrollingTool.cs" />
+    <Compile Include="Conversion\Single\DoubleMatrix.cs" />
+    <Compile Include="Media\BlendModes.cs" />
+    <Compile Include="Media\BitmapContext.cs" />
+    <Compile Include="Media\ClearTypeLetterGlyph.cs" />
+    <Compile Include="Media\DpiDetector.cs" />
+    <Compile Include="Media\GradientAttribute.cs" />
+    <Compile Include="Media\GrayScaleLetterGlyph.cs" />
+    <Compile Include="Media\IntGeometry.cs" />
+    <Compile Include="Media\LetterGlyphTool.cs" />
+    <Compile Include="Media\NativeMethods.cs" />
+    <Compile Include="Media\PortableFontDesc.cs" />
+    <Compile Include="Media\ScrollingTool.cs" />
     <Compile Include="Linq\WriteableBitmap\Antialiasing.cs" />
     <Compile Include="Linq\WriteableBitmap\Base.cs" />
     <Compile Include="Linq\WriteableBitmap\Blit.cs" />
@@ -172,8 +178,7 @@
     <Compile Include="Linq\ColorMatrix.cs" />
     <Compile Include="Controls\ColorControl\ColorViewModel.cs" />
     <Compile Include="Controls\ColorSelector\Slider\BaseComponentSlider.cs" />
-    <Compile Include="Paint\StringColor.cs" />
-    <Compile Include="Reflection\MemberDepth.cs" />
+    <Compile Include="Media\StringColor.cs" />
     <Compile Include="Reflection\MemberSetter.cs" />
     <Compile Include="Reflection\MemberTrigger.cs" />
     <Compile Include="Behavior\Binding.cs" />
@@ -271,7 +276,7 @@
     <Compile Include="Reflection\MemberModel\List-Property.cs" />
     <Compile Include="Reflection\MemberModel\List-Field.cs" />
     <Compile Include="Reflection\MemberPathElement.cs" />
-    <Compile Include="Controls\MemberGrid\SourceFilterBinding.cs" />
+    <Compile Include="Reflection\SourceBinding.cs" />
     <Compile Include="Controls\TabControl\CacheTabControl.cs" />
     <Compile Include="Controls\TextElement\TextInline.cs" />
     <Compile Include="Controls\TextElement\TickInline.cs" />
@@ -279,16 +284,12 @@
     <Compile Include="Controls\TextElement\ImageInline.cs" />
     <Compile Include="Controls\ToggleButton\SwipeButton.cs" />
     <Compile Include="Controls\Control\FindControl.cs" />
-    <Compile Include="Controls\Window\ComboWindow.xaml.cs">
-      <DependentUpon>ComboWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Window\DownloadWindow.xaml.cs">
       <DependentUpon>DownloadWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Window\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Window\OptionsWindow.cs" />
     <Compile Include="Controls\Window\PropertyWindow.xaml.cs">
       <DependentUpon>PropertyWindow.xaml</DependentUpon>
     </Compile>
@@ -358,7 +359,7 @@
     <Compile Include="Linq\TextBoxBase.cs" />
     <Compile Include="Linq\Matrix.Generic.cs" />
     <Compile Include="Markup\False.cs" />
-    <Compile Include="Paint\CheckerBrush.cs" />
+    <Compile Include="Media\CheckerBrush.cs" />
     <Compile Include="Animation\AnimationCache.cs" />
     <Compile Include="Animation\Decoding\GifApplicationExtension.cs" />
     <Compile Include="Animation\Decoding\GifBlock.cs" />
@@ -379,10 +380,10 @@
     <Compile Include="Animation\Decoding\GifTrailer.cs" />
     <Compile Include="Animation\ImageAnimationController.cs" />
     <Compile Include="Animation\ImageBehavior.cs" />
-    <Compile Include="Paint\GradientStepCollection.cs" />
-    <Compile Include="Paint\Shape.cs" />
+    <Compile Include="Media\GradientStepCollection.cs" />
+    <Compile Include="Media\Shape.cs" />
     <Compile Include="Animation\Easing.cs" />
-    <Compile Include="Paint\TransformModes.cs" />
+    <Compile Include="Media\TransformModes.cs" />
     <Compile Include="Models\Document\File.cs" />
     <Compile Include="Models\IDockViewOptions.cs" />
     <Compile Include="Models\IMainViewOptions.cs" />
@@ -391,6 +392,7 @@
     <Compile Include="Models\Panel\Notifications.cs" />
     <Compile Include="Models\PanelOptions.cs" />
     <Compile Include="Imports\WindowMessages.cs" />
+    <Compile Include="Reflection\SourceFilter.cs" />
     <Compile Include="Styles\StyleKeys.cs" />
     <Compile Include="Styles\StyleKey.cs" />
     <Compile Include="Models\Panel\FindSource.cs" />
@@ -503,25 +505,25 @@
     <Compile Include="Markup\Font.cs" />
     <Compile Include="Markup\SpecialFolder.cs" />
     <Compile Include="Markup\Read.cs" />
-    <Compile Include="Paint\DefaultGradients.cs" />
-    <Compile Include="Paint\DefaultColors.cs" />
+    <Compile Include="Media\Gradients.cs" />
+    <Compile Include="Media\Colors.cs" />
     <Compile Include="Controls\ColorControl\ColorDocument.cs" />
     <Compile Include="Controls\ColorControl\Panels\Alpha.cs" />
-    <Compile Include="Paint\Geometry.cs" />
-    <Compile Include="Paint\GradientType.cs" />
-    <Compile Include="Paint\Shades.cs" />
+    <Compile Include="Media\Geometry.cs" />
+    <Compile Include="Media\GradientType.cs" />
+    <Compile Include="Media\Shades.cs" />
     <Compile Include="Controls\StorageWindow\StorageWindowFilterModes.cs" />
     <Compile Include="Controls\Explorer\ExplorerOptions.cs" />
     <Compile Include="Controls\TabControl\TabOverflowPanel.cs" />
     <Compile Include="Controls\TabControl\TabOverflowStretchDirection.cs" />
     <Compile Include="Linq\TabControl.cs" />
-    <Compile Include="Paint\Adaptation.cs" />
-    <Compile Include="Paint\GradientBinding.cs" />
+    <Compile Include="Media\Adaptation.cs" />
+    <Compile Include="Media\GradientBinding.cs" />
     <Compile Include="Models\IMainView.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
     <Compile Include="Models\PanelButton.cs" />
-    <Compile Include="Models\Panel\Colors.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Colors.cs" />
     <Compile Include="Controls\DockControl\PanelTemplateSelector.cs" />
     <Compile Include="Controls\Window\MainWindow.cs" />
     <Compile Include="Controls\PickerWindow\PickerWindow.cs" />
@@ -530,8 +532,8 @@
     <Compile Include="Data\Binding\TranslateBinding.cs" />
     <Compile Include="Linq\ResourceDictionary.cs" />
     <Compile Include="Linq\Separator.cs" />
-    <Compile Include="Paint\Gradient.cs" />
-    <Compile Include="Paint\GradientStep.cs" />
+    <Compile Include="Media\Gradient.cs" />
+    <Compile Include="Media\GradientStep.cs" />
     <Compile Include="Models\DockViewModel.cs" />
     <Compile Include="Models\Panel\Explore.cs" />
     <Compile Include="Models\Panel\Group.cs" />
@@ -638,7 +640,7 @@
     <Compile Include="Linq\Thickness.cs" />
     <Compile Include="Markup\Assembly.cs" />
     <Compile Include="Markup\Uri.cs" />
-    <Compile Include="Paint\ImageFormats.cs" />
+    <Compile Include="Media\ImageFormats.cs" />
     <Compile Include="Models\Panel\Data.cs" />
     <Compile Include="Models\Content.cs" />
     <Compile Include="Models\IDockViewModel.cs" />
@@ -664,10 +666,6 @@
     <Page Include="Controls\Control\Other\GridLines.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Window\ComboWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Window\DownloadWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -777,9 +775,6 @@
     </Compile>
     <Compile Include="Storage\DropHandler.cs" />
     <Compile Include="Controls\Explorer\IExplorer.cs" />
-    <Compile Include="Controls\Window\InputWindow.xaml.cs">
-      <DependentUpon>InputWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Control\Other\ProgressCircle.cs" />
     <Compile Include="Controls\MemberGrid\MemberGrid.cs" />
     <Compile Include="Controls\MemberGrid\MemberGroupName.cs" />
@@ -819,9 +814,9 @@
     <Compile Include="Controls\PickerWindow\GradientWindow.xaml.cs">
       <DependentUpon>GradientWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Paint\Display.cs" />
-    <Compile Include="Paint\Interpolations.cs" />
-    <Compile Include="Paint\PixelFormat.cs" />
+    <Compile Include="Media\Display.cs" />
+    <Compile Include="Media\Interpolations.cs" />
+    <Compile Include="Media\PixelFormat.cs" />
     <Compile Include="Imports\ICONINFO.cs" />
     <Compile Include="Imports\MINMAXINFO.cs" />
     <Compile Include="Imports\MONITORINFO.cs" />
@@ -1088,7 +1083,7 @@
     <Compile Include="Markup\Image.cs" />
     <Compile Include="Animation\ExpanderDoubleAnimation.cs" />
     <Compile Include="Animation\GridLengthAnimation.cs" />
-    <Compile Include="Paint\Pixel.cs" />
+    <Compile Include="Media\Pixel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\Resources.cs" />
     <Compile Include="Config\ApplicationResources.cs" />
@@ -1101,10 +1096,6 @@
     <Page Include="Controls\StorageWindow\ExplorerWindow\ExplorerWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Window\InputWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Menu\SliderMenuItem.xaml">
       <SubType>Designer</SubType>
@@ -1423,6 +1414,9 @@
     <Resource Include="Images\Shortcut.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Trend.png" />
+    <Resource Include="Images\Checkers.png" />
+    <Resource Include="Images\Color.png" />
     <Resource Include="Images\256-Block.png" />
     <Resource Include="Images\256-Bookmark.png" />
     <Resource Include="Images\256-Chat.png" />

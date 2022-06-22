@@ -1,5 +1,4 @@
-﻿using Imagin.Core.Analytics;
-using Imagin.Core.Colors;
+﻿using Imagin.Core.Colors;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
@@ -7,6 +6,8 @@ using Imagin.Core.Models;
 using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
 using System;
+using System.Linq;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Input;
@@ -59,7 +60,7 @@ public class ColorDocument : Document
         set => this.Change(ref depth, value);
     }
 
-    Dimensions dimension = Dimensions.Two;
+    Dimensions dimension = Dimensions.One;
     [Featured(AboveBelow.Above), Index(0), Label(false), Localize(false), Visible]
     public Dimensions Dimension
     {
@@ -152,7 +153,7 @@ public class ColorDocument : Document
     public ColorDocument(System.Windows.Media.Color color, Type model, ColorControlOptions options) : base()
     {
         Color = new(color, options);
-        Color.ModelType = model;
+        Color.Model = Color.Models.SourceCollection.To<IList>().FirstOrDefault<NamableCategory<Type>>(i => i.Value == model);
         Color.ActualColor = color;
     }
 
@@ -162,7 +163,6 @@ public class ColorDocument : Document
 
     public override void Subscribe()
     {
-        Log.Write<ColorDocument>("ColorDocument.Subscribe");
         base.Subscribe();
         Color.ColorChanged += OnColorChanged;
     }
