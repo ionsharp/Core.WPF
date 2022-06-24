@@ -116,11 +116,11 @@
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Vertical">
                 <Setter Property="HorizontalAlignment" Value="Center" />
-                <Setter Property="MinHeight" Value="32" />
+                <Setter Property="MinHeight" Value="48" />
                 <Setter Property="VerticalAlignment" Value="Stretch" />
             </Trigger>
             <Trigger Property="Orientation" Value="Horizontal">
-                <Setter Property="MinWidth" Value="32" />
+                <Setter Property="MinWidth" Value="48" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Cursor" Value="Arrow" />

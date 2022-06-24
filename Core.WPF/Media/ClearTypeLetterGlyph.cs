@@ -38,7 +38,7 @@ namespace Imagin.Core.Media
         }
 
 
-        public static ClearTypeLetterGlyph CreateGlyph(GlyphTypeface glyphTypeface, System.Drawing.Font font, double size, char ch, System.Windows.Media.Color fontColor, System.Windows.Media.Color bgColor)
+        public static ClearTypeLetterGlyph CreateGlyph(GlyphTypeface glyphTypeface, Font font, double size, char ch, System.Windows.Media.Color fontColor, System.Windows.Media.Color bgColor)
         {
             if (ch == ' ') return CreateSpaceGlyph(glyphTypeface, size);
 

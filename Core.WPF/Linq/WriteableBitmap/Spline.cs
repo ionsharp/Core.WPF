@@ -188,7 +188,7 @@ namespace Imagin.Core.Linq
         /// <param name="context">The pixel context.</param>
         /// <param name="w">The width of the bitmap.</param>
         /// <param name="h">The height of the bitmap.</param> 
-        private static void DrawCurveSegment(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, float tension, int color, Media.BitmapContext context, int w, int h)
+        private static void DrawCurveSegment(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, float tension, int color, BitmapContext context, int w, int h)
         {
             // Determine distances between controls points (bounding rect) to find the optimal stepsize
             var minX = Math.Min(x1, Math.Min(x2, Math.Min(x3, x4)));

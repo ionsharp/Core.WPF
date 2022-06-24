@@ -1,7 +1,9 @@
 ﻿using Imagin.Core.Collections.Serialization;
+using Imagin.Core.Colors;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
+using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
 using System;
 using System.Linq;
@@ -45,21 +47,6 @@ namespace Imagin.Core.Models
             if (input != null)
             {
                 Groups = input as GroupWriter<StringColor>;
-                if (!Groups.Contains(i => i is PrimaryColors))
-                    Groups.Add(new PrimaryColors());
-
-                if (!Groups.Contains(i => i is SecondaryColors))
-                    Groups.Add(new SecondaryColors());
-
-                if (!Groups.Contains(i => i is TertiaryColors))
-                    Groups.Add(new TertiaryColors());
-
-                if (!Groups.Contains(i => i is QuaternaryColors))
-                    Groups.Add(new QuaternaryColors());
-
-                if (!Groups.Contains(i => i is QuinaryColors))
-                    Groups.Add(new QuinaryColors());
-
                 if (SelectedGroupIndex == -1)
                     SelectedGroupIndex = 0;
             }

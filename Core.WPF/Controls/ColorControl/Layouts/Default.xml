@@ -16,6 +16,7 @@
         <Panels>
           <DockLayoutPanel IsSelected="true" Name="ColorPanel"/>
           <DockLayoutPanel Name="ColorProfilePanel"/>
+          <DockLayoutPanel Name="ColorHarmonyPanel"/>
           <DockLayoutPanel Name="ColorAnalysisPanel"/>
         </Panels>
       </Element>

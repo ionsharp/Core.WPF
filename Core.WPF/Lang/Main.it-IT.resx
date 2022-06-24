@@ -1107,4 +1107,7 @@
   <data name="Profile" xml:space="preserve">
     <value>Profilo</value>
   </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>Analisi</value>
+  </data>
 </root>

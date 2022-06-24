@@ -50,7 +50,7 @@ namespace Imagin.Core.Controls
 
         double fontSize = 16.0;
         [Range(12.0, 48.0, 1.0)]
-        [MemberSetter(nameof(MemberModel.Format), RangeFormat.Both)]
+        [Setter(nameof(MemberModel.Format), RangeFormat.Both)]
         public double FontSize
         {
             get => fontSize;

@@ -80,7 +80,7 @@ namespace Imagin.Core.Linq
                 var y = 1;
                 while (y < h)
                 {
-                    Media.BitmapContext.BlockCopy(context, 0, context, y * len, blockHeight * len);
+                    BitmapContext.BlockCopy(context, 0, context, y * len, blockHeight * len);
                     y += blockHeight;
                     blockHeight = Math.Min(2 * blockHeight, h - y);
                 }
@@ -111,7 +111,7 @@ namespace Imagin.Core.Linq
                 var result = XBitmap.New(srcContext.Width, srcContext.Height);
                 using (var destContext = result.GetBitmapContext())
                 {
-                    Media.BitmapContext.BlockCopy(srcContext, 0, destContext, 0, srcContext.Length * SizeOfArgb);
+                    BitmapContext.BlockCopy(srcContext, 0, destContext, 0, srcContext.Length * SizeOfArgb);
                 }
                 return result;
             }

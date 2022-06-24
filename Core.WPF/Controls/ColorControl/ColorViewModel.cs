@@ -35,7 +35,7 @@ public class ColorViewModel : ViewModel
     //...
 
     Color actualColor = System.Windows.Media.Colors.White;
-    [MemberSetter(nameof(MemberModel.Format), ColorFormat.TextBox), DisplayName("Color")]
+    [Setter(nameof(MemberModel.Format), ColorFormat.TextBox), DisplayName("Color")]
     [Featured, Label(false), Visible]
     public Color ActualColor
     {
@@ -121,7 +121,7 @@ public class ColorViewModel : ViewModel
         set => this.Change(ref compress, value);
     }
 
-    [MemberSetter(nameof(MemberModel.ClearText), false)]
+    [Setter(nameof(MemberModel.ClearText), false)]
     [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameX))]
     [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitX))]
     [Category(Category.Component), Index(0), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
@@ -131,7 +131,7 @@ public class ColorViewModel : ViewModel
         set => SetDisplayValue(value, 0);
     }
 
-    [MemberSetter(nameof(MemberModel.ClearText), false)]
+    [Setter(nameof(MemberModel.ClearText), false)]
     [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameY))]
     [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitY))]
     [Category(Category.Component), Index(1), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
@@ -141,7 +141,7 @@ public class ColorViewModel : ViewModel
         set => SetDisplayValue(value, 1);
     }
 
-    [MemberSetter(nameof(MemberModel.ClearText), false)]
+    [Setter(nameof(MemberModel.ClearText), false)]
     [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameZ))]
     [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitZ))]
     [Category(Category.Component), Index(2), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
@@ -151,7 +151,7 @@ public class ColorViewModel : ViewModel
         set => SetDisplayValue(value, 2);
     }
 
-    [MemberSetter(nameof(MemberModel.ClearText), false)]
+    [Setter(nameof(MemberModel.ClearText), false)]
     [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameW))]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(WVisibility))]
     [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitW))]
@@ -166,7 +166,7 @@ public class ColorViewModel : ViewModel
     public bool WVisibility => ModelType?.Inherits<ColorModel4>() == true;
 
     double illuminant = CCT.GetTemperature((xy)WorkingProfile.Default.Chromacity);
-    [Featured, MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(-3), Range(2000.0, 12000.0, 100.0), StringFormat("N0"), View(Views.Profile), Visible]
+    [Featured, Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(-3), Range(2000.0, 12000.0, 100.0), StringFormat("N0"), View(Views.Profile), Visible]
     [Gradient("ff1c00", "FFF", "bbd0ff")]
     [MemberTrigger(nameof(MemberModel.RightText), nameof(IlluminantUnit))]
     public double Illuminant
@@ -409,14 +409,15 @@ public class ColorViewModel : ViewModel
     /// </summary>
     void FromColor()
     {
-        handle.SafeInvoke((Action)(() =>
+        handle.SafeInvoke(() =>
         {
+            OnColorChanged(ActualColor);
             return;
             //ActualColor.Convert(out RGB a);
             //var b = Colour.New(ModelType, a, WorkingProfile.Default).Value / 255.0;
             //var c = new Vector3(b[0], b[1], b[2]);
             //X = c.X; Y = c.Y; Z = c.Z;
-        }));
+        });
     }
 
     //...

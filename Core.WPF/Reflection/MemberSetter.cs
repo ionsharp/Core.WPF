@@ -3,13 +3,13 @@
 namespace Imagin.Core.Reflection;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-public class MemberSetterAttribute : Attribute
+public class SetterAttribute : Attribute
 {
     public readonly string PropertyName;
 
     public readonly object Value;
 
-    public MemberSetterAttribute(string propertyName, object value) : base()
+    public SetterAttribute(string propertyName, object value) : base()
     {
         PropertyName = propertyName; Value = value;
     }

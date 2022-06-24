@@ -122,7 +122,7 @@ namespace Imagin.Core.Controls
         [Category(Category.View)]
         [DisplayName("Size")]
         [Range(8.0, 512.0, 4.0)]
-        [MemberSetter(nameof(MemberModel.Format), RangeFormat.Both)]
+        [Setter(nameof(MemberModel.Format), RangeFormat.Both)]
         public double ViewSize
         {
             get => viewSize;

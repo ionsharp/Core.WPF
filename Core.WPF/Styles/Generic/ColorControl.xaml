@@ -161,6 +161,25 @@
                                         VirtualizingPanel.VirtualizationMode="Standard"
                                         ItemsSource="{Binding Results}"/>
                                 </DataTemplate>
+                                <DataTemplate DataType="{x:Type local:ColorHarmonyPanel}">
+                                    <ScrollViewer>
+                                        <ItemsControl
+                                            ItemsSource="{Binding Colors}"
+                                            Margin="2">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,2" >
+                                                        <Button Background="{Binding Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}" 
+                                                            BorderBrush="White" BorderThickness="1"
+                                                            Command="{Binding Data.ActiveDocument.PickCommand, Source={StaticResource ColorControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            MinHeight="32"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </DataTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorProfilePanel}">
                                     <local:MemberGrid x:Name="MemberGrid"
                                         BorderThickness="0"

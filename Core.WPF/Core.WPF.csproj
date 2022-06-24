@@ -127,9 +127,6 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="WriteableBitmapEx.Wpf, Version=1.5.0.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
-      <HintPath>..\packages\WriteableBitmapEx.1.5.0.0\lib\net40\WriteableBitmapEx.Wpf.dll</HintPath>
-    </Reference>
     <Reference Include="XAMLMarkupExtensions, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\XAMLMarkupExtensions.1.2.2\lib\net40\XAMLMarkupExtensions.dll</HintPath>
     </Reference>
@@ -139,6 +136,7 @@
     <Compile Include="Controls\ColorControl\ColorModelLongNameConverter - Copy.cs" />
     <Compile Include="Controls\ColorControl\Panels\Color.cs" />
     <Compile Include="Controls\ColorControl\Panels\Analysis.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Harmony.cs" />
     <Compile Include="Controls\ColorControl\Panels\Profile.cs" />
     <Compile Include="Controls\ColorSelector\ColorSelectorView.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector.cs" />
@@ -1414,6 +1412,7 @@
     <Resource Include="Images\Shortcut.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\ColorWheel.png" />
     <Resource Include="Images\Trend.png" />
     <Resource Include="Images\Checkers.png" />
     <Resource Include="Images\Color.png" />

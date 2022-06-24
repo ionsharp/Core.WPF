@@ -24,7 +24,7 @@ namespace Imagin.Core.Models
         int selectedGroupIndex = -1;
         [Featured, Index(2)]
         [Label(false)]
-        [MemberSetter(nameof(MemberModel.ItemPath), nameof(GroupCollection<T>.Name))]
+        [Setter(nameof(MemberModel.ItemPath), nameof(GroupCollection<T>.Name))]
         [MemberTrigger(nameof(MemberModel.ItemSource), nameof(Groups))]
         [MemberStyle(Int32Style.Index)]
         [Tool, Visible]

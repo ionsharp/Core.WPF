@@ -66,7 +66,7 @@ namespace Imagin.Core.Linq
                     {
                         var srcOff = ((y + line) * srcWidth + x) * SizeOfArgb;
                         var dstOff = line * width * SizeOfArgb;
-                        Media.BitmapContext.BlockCopy(srcContext, srcOff, destContext, dstOff, width * SizeOfArgb);
+                        BitmapContext.BlockCopy(srcContext, srcOff, destContext, dstOff, width * SizeOfArgb);
                     }
 
                     return result;
@@ -105,7 +105,7 @@ namespace Imagin.Core.Linq
                 var result = XBitmap.New(newWidth, newHeight);
                 using (var dstContext = result.GetBitmapContext())
                 {
-                    Media.BitmapContext.BlockCopy(pd, 0, dstContext, 0, SizeOfArgb * pd.Length);
+                    BitmapContext.BlockCopy(pd, 0, dstContext, 0, SizeOfArgb * pd.Length);
                 }
                 return result;
             }
@@ -121,7 +121,7 @@ namespace Imagin.Core.Linq
         /// <param name="newHeight">The new desired height.</param>
         /// <param name="interpolation">The interpolation method that should be used.</param>
         /// <returns>A new bitmap that is a resized version of the input.</returns>
-        public static int[] Resize(Media.BitmapContext input, int oldWidth, int oldHeight, int newWidth, int newHeight, Interpolations interpolation)
+        public static int[] Resize(BitmapContext input, int oldWidth, int oldHeight, int newWidth, int newHeight, Interpolations interpolation)
         {
             return Resize(input.Pixels, oldWidth, oldHeight, newWidth, newHeight, interpolation);
         }

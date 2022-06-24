@@ -62,6 +62,7 @@
         Clouds,
         Color,
         Colors,
+        ColorWheel,
         Columns,
         Computer,
         Console,

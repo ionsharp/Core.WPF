@@ -4,9 +4,11 @@ using Imagin.Core.Colors;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using Imagin.Core.Models;
+using Imagin.Core.Numerics;
 using Imagin.Core.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Imagin.Core.Controls
@@ -140,7 +142,23 @@ namespace Imagin.Core.Controls
             ColorControl = colorPicker;
 
             Colors = new GroupWriter<StringColor>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Colors", "data", "colors", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
-            Colors.Load();
+            var result = Colors.Load();
+
+            if (!result)
+            {
+                Colors.Add(new PrimaryColors());
+                Colors.Add(new SecondaryColors());
+                Colors.Add(new TertiaryColors());
+                Colors.Add(new QuaternaryColors());
+                Colors.Add(new QuinaryColors());
+
+                Colors.Add(new Collections.ObjectModel.GroupCollection<StringColor>("Basic", 
+                    typeof(BasicColors).GetFields().Select(i => new StringColor(new Hexadecimal((string)i.GetValue(null)).Color()))));
+                Colors.Add(new Collections.ObjectModel.GroupCollection<StringColor>("Web (Safe)", 
+                    SafeWebColors.Colors.Select(i => new StringColor(new Hexadecimal(i).Color()))));
+                Colors.Add(new Collections.ObjectModel.GroupCollection<StringColor>("Web (Safest)", 
+                    typeof(SafestWebColors).GetFields().Select(i => new StringColor(new Hexadecimal((string)i.GetValue(null)).Color()))));
+            }
 
             Profiles = new BinaryWriter<Namable<WorkingProfile>>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Profiles", "data", "profile", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
             Profiles.Load();

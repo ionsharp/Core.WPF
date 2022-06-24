@@ -276,7 +276,7 @@ namespace Imagin.Core.Linq
         /// <param name="y2">The y-coordinate of the end point.</param>
         /// <param name="color">The color for the line.</param>
         /// <param name="clipRect">The region in the image to restrict drawing to.</param>
-        public static void DrawLine(Media.BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, int color, Rect? clipRect = null)
+        public static void DrawLine(BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, int color, Rect? clipRect = null)
         {
             // Get clip coordinates
             int clipX1 = 0;
@@ -583,7 +583,7 @@ namespace Imagin.Core.Linq
         /// <param name="x2">The x-coordinate of the end point.</param>
         /// <param name="y2">The y-coordinate of the end point.</param>
         /// <param name="pen">The pen context.</param>
-        public static void DrawLinePenned(Media.BitmapContext context, int w, int h, int x1, int y1, int x2, int y2, Media.BitmapContext pen, Rect? clipRect = null)
+        public static void DrawLinePenned(BitmapContext context, int w, int h, int x1, int y1, int x2, int y2, BitmapContext pen, Rect? clipRect = null)
         {
             // Edge case where lines that went out of vertical bounds clipped instead of disappearing
             if((y1 < 0 && y2 < 0) || (y1 > h && y2 > h))
@@ -781,7 +781,7 @@ namespace Imagin.Core.Linq
             }
         }
 
-        private static void DrawVertically(Media.BitmapContext context, int x, int y1, int y2, int dotSpace, int dotLength, int color) {
+        private static void DrawVertically(BitmapContext context, int x, int y1, int y2, int dotSpace, int dotLength, int color) {
             int width = context.Width;
             int height = context.Height;
 
@@ -815,7 +815,7 @@ namespace Imagin.Core.Linq
             }
         }
 
-        private static void DrawHorizontally(Media.BitmapContext context, int x1, int x2, int y, int dotSpace, int dotLength, int color) {
+        private static void DrawHorizontally(BitmapContext context, int x1, int x2, int y, int dotSpace, int dotLength, int color) {
             int width = context.Width;
             int height = context.Height;
 
@@ -852,7 +852,7 @@ namespace Imagin.Core.Linq
             }
         }
 
-        private static void Draw(Media.BitmapContext context, int x1, int y1, int x2, int y2, int dotSpace, int dotLength, int color) {
+        private static void Draw(BitmapContext context, int x1, int y1, int x2, int y2, int dotSpace, int dotLength, int color) {
             // y = m * x + n
             // y - m * x = n
             
@@ -965,7 +965,7 @@ namespace Imagin.Core.Linq
         /// <param name="sg">Premultiplied green color component</param>
         /// <param name="sb">Premultiplied blue color component</param>
         /// <param name="clipRect">The region in the image to restrict drawing to.</param>
-        public static void DrawLineWu(Media.BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, int sa, int sr, int sg, int sb, Rect? clipRect = null)
+        public static void DrawLineWu(BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, int sa, int sr, int sg, int sb, Rect? clipRect = null)
         {
             // Perform cohen-sutherland clipping if either point is out of the viewport
             if (!CohenSutherlandLineClip(clipRect ?? new Rect(0, 0, pixelWidth, pixelHeight), ref x1, ref y1, ref x2, ref y2)) return;
@@ -1128,7 +1128,7 @@ namespace Imagin.Core.Linq
         /// <param name="color">The color for the line.</param>
         /// <param name="strokeThickness">The stroke thickness of the line.</param>
         /// </summary>
-        public static void DrawLineAa(Media.BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, int color, int strokeThickness, Rect? clipRect = null)
+        public static void DrawLineAa(BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, int color, int strokeThickness, Rect? clipRect = null)
         {
             AAWidthLine(pixelWidth, pixelHeight, context, x1, y1, x2, y2, strokeThickness, color, clipRect);
         }
@@ -1161,7 +1161,7 @@ namespace Imagin.Core.Linq
         /// <param name="color">The color for the line.</param>
         /// <param name="strokeThickness">The stroke thickness of the line.</param>
         /// </summary>
-        public static void DrawLineAa(Media.BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, Color color, int strokeThickness, Rect? clipRect = null)
+        public static void DrawLineAa(BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, Color color, int strokeThickness, Rect? clipRect = null)
         {
             var col = ConvertColor(color);
             AAWidthLine(pixelWidth, pixelHeight, context, x1, y1, x2, y2, strokeThickness, col, clipRect);
@@ -1232,7 +1232,7 @@ namespace Imagin.Core.Linq
         /// <param name="y2">The y-coordinate of the end point.</param>
         /// <param name="color">The color for the line.</param>
         /// </summary> 
-        public static void DrawLineAa(Media.BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, int color, Rect? clipRect = null)
+        public static void DrawLineAa(BitmapContext context, int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2, int color, Rect? clipRect = null)
         {
             if ((x1 == x2) && (y1 == y2)) return; // edge case causing invDFloat to overflow, found by Shai Rubinshtein
 
@@ -1350,7 +1350,7 @@ namespace Imagin.Core.Linq
         /// <param name="sa">Source alpha (0..255)</param> 
         /// <param name="srb">Source non-premultiplied red and blue component in the format 0x00rr00bb</param> 
         /// <param name="sg">Source green component (0..255)</param> 
-        private static void AlphaBlendNormalOnPremultiplied(Media.BitmapContext context, int index, int sa, uint srb, uint sg)
+        private static void AlphaBlendNormalOnPremultiplied(BitmapContext context, int index, int sa, uint srb, uint sg)
         {
             var pixels = context.Pixels;
             var destPixel = (uint)pixels[index];

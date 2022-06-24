@@ -166,7 +166,7 @@ namespace Imagin.Core.Models
         [Featured(AboveBelow.Below)]
         [Image(Images.Search)]
         [Index(int.MaxValue)]
-        [MemberSetter(nameof(MemberModel.Placeholder), "Search...")]
+        [Setter(nameof(MemberModel.Placeholder), "Search...")]
         [Tool]
         [MemberStyle(StringStyle.Search)]
         [Suggestions(nameof(SearchHistory), nameof(SearchSuggestionCommand))]

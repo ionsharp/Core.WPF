@@ -34,7 +34,7 @@ namespace Imagin.Core.Linq
 
                 var len = count * SizeOfArgb;
                 var result = new byte[len]; // ARGB
-                Media.BitmapContext.BlockCopy(context, offset, result, 0, len);
+                BitmapContext.BlockCopy(context, offset, result, 0, len);
                 return result;
             }
         }
@@ -72,7 +72,7 @@ namespace Imagin.Core.Linq
         {
             using (var context = bmp.GetBitmapContext())
             {
-                Media.BitmapContext.BlockCopy(buffer, offset, context, 0, count);
+                BitmapContext.BlockCopy(buffer, offset, context, 0, count);
                 return bmp;
             }
         }

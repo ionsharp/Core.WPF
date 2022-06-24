@@ -205,6 +205,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analysis.
+        /// </summary>
+        internal static string Analysis {
+            get {
+                return ResourceManager.GetString("Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An hour.
         /// </summary>
         internal static string AnHour {

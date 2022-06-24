@@ -106,14 +106,14 @@ public abstract class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.Localize = j.As<LocalizeAttribute>().Localize) },
         { typeof(LockedAttribute),
             new((i, j, k) => i.IsLockable = j.As<LockedAttribute>().Locked) },
-        { typeof(MemberSetterAttribute),
+        { typeof(SetterAttribute),
             new((i, j, k) =>
             {
                 if (k?.Count() > 0)
                 {
                     foreach (var m in k)
                     {
-                        if (m is MemberSetterAttribute n)
+                        if (m is SetterAttribute n)
                             Try.Invoke(() => i.SetPropertyValue(n.PropertyName, n.Value), e => Log.Write<MemberModel>(e));
                     }
                 }

@@ -224,7 +224,7 @@
                 <Border.Resources>
                     <Data:Reference x:Key="Member" Data="{Data:Ancestor DataContext, {x:Type TextBoxBase}}"/>
                 </Border.Resources>
-                <TextBlock Margin="2.5,0" Text="{Binding Data.LeftText, Source={StaticResource Member}}"/>
+                <TextBlock Margin="5,0,2.5,0" Opacity="0.5" Text="{Binding Data.LeftText, Source={StaticResource Member}}"/>
             </Border>
         </DataTemplate>
     </Collections:DataTemplateCollection>
@@ -235,7 +235,7 @@
                 <Border.Resources>
                     <Data:Reference x:Key="Member" Data="{Data:Ancestor DataContext, {x:Type TextBoxBase}}"/>
                 </Border.Resources>
-                <TextBlock Margin="2.5,0" Text="{Binding Data.RightText, Source={StaticResource Member}}"/>
+                <TextBlock Margin="2.5,0,5,0" Opacity="0.5" Text="{Binding Data.RightText, Source={StaticResource Member}}"/>
             </Border>
         </DataTemplate>
     </Collections:DataTemplateCollection>

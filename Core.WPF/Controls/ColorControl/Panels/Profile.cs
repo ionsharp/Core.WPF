@@ -7,7 +7,7 @@ namespace Imagin.Core.Controls
     [MemberVisibility(Property: MemberVisibility.Explicit)]
     public class ColorProfilePanel : Panel
     {
-        public override Uri Icon => Resources.InternalImage(Images.Checkers);
+        public override Uri Icon => Resources.InternalImage(Images.Briefcase);
 
         public override string Title => "Profile";
 

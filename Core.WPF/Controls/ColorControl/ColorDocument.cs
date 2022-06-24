@@ -21,8 +21,11 @@ public class ColorDocument : Document
     #region Events
 
     [field: NonSerialized]
-    public event DefaultEventHandler<System.Windows.Media.Color> ColorSaved;
+    public event DefaultEventHandler<System.Windows.Media.Color> ColorChanged;
 
+    [field: NonSerialized]
+    public event DefaultEventHandler<System.Windows.Media.Color> ColorSaved;
+    
     #endregion
 
     #region Fields
@@ -53,7 +56,7 @@ public class ColorDocument : Document
     }
 
     double depth = 0;
-    [Featured(AboveBelow.Below), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
+    [Featured(AboveBelow.Below), Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
     public double Depth
     {
         get => depth;
@@ -87,7 +90,7 @@ public class ColorDocument : Document
     public readonly ColorControlOptions Options;
 
     double rotateX = 45;
-    [DisplayName("X°"), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [DisplayName("X°"), Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateX
     {
@@ -96,7 +99,7 @@ public class ColorDocument : Document
     }
 
     double rotateY = 45;
-    [DisplayName("Y°"), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [DisplayName("Y°"), Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateY
     {
@@ -105,7 +108,7 @@ public class ColorDocument : Document
     }
 
     double rotateZ = 0;
-    [DisplayName("Z°"), MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [DisplayName("Z°"), Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateZ
     {
@@ -134,7 +137,7 @@ public class ColorDocument : Document
     public override object ToolTip => Color.ActualColor;
 
     double zoom = 1.8;
-    [MemberSetter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
+    [Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
     [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double Zoom
     {
@@ -177,7 +180,11 @@ public class ColorDocument : Document
 
     //...
 
-    void OnColorChanged(object sender, EventArgs<System.Windows.Media.Color> e) => this.Changed(() => Color);
+    void OnColorChanged(object sender, EventArgs<System.Windows.Media.Color> e)
+    {
+        this.Changed(() => Color);
+        ColorChanged?.Invoke(this, new(e.Value));
+    }
 
     public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
@@ -208,6 +215,10 @@ public class ColorDocument : Document
     #endregion
 
     #region Commands
+
+    [field: NonSerialized]
+    ICommand pickCommand;
+    public ICommand PickCommand => pickCommand ??= new RelayCommand<System.Windows.Media.Color>(i => Color.ActualColor = i);
 
     [field: NonSerialized]
     ICommand revertCommand;

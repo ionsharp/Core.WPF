@@ -18,16 +18,19 @@ namespace Imagin.Core.Controls
 {
     public partial class ColorControl : Control
     {
+        public event DefaultEventHandler<ColorDocument> ActiveDocumentChanged;
+
         public static readonly ResourceKey<PanelTemplateSelector> PanelTemplateSelectorKey = new();
 
         readonly ColorsPanel colorsPanel;
 
-        public static readonly DependencyProperty ActiveDocumentProperty = DependencyProperty.Register(nameof(ActiveDocument), typeof(ColorDocument), typeof(ColorControl), new FrameworkPropertyMetadata(null));
+        public static readonly DependencyProperty ActiveDocumentProperty = DependencyProperty.Register(nameof(ActiveDocument), typeof(ColorDocument), typeof(ColorControl), new FrameworkPropertyMetadata(null, OnActiveDocumentChanged));
         public ColorDocument ActiveDocument
         {
             get => (ColorDocument)GetValue(ActiveDocumentProperty);
             set => SetValue(ActiveDocumentProperty, value);
         }
+        static void OnActiveDocumentChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<ColorControl>().OnActiveDocumentChanged(e);
 
         public static readonly DependencyProperty AlphaPanelProperty = DependencyProperty.Register(nameof(AlphaPanel), typeof(ColorAlphaPanel), typeof(ColorControl), new FrameworkPropertyMetadata(null));
         public ColorAlphaPanel AlphaPanel
@@ -98,6 +101,7 @@ namespace Imagin.Core.Controls
             panels.Add(OptionsPanel);
             panels.Add(new ColorPanel());
             panels.Add(new ColorAnalysisPanel());
+            panels.Add(new ColorHarmonyPanel(this));
             panels.Add(new ColorProfilePanel());
 
             Panels = panels;
@@ -116,6 +120,7 @@ namespace Imagin.Core.Controls
                 case NotifyCollectionChangedAction.Add:
                     e.NewItems[0].As<ColorDocument>().ColorSaved += OnColorSaved;
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     e.OldItems[0].As<ColorDocument>().ColorSaved -= OnColorSaved;
                     break;
@@ -134,6 +139,11 @@ namespace Imagin.Core.Controls
             Documents.ForEach(i => i.As<ColorDocument>().ColorSaved -= OnColorSaved);
         }
 
+        protected virtual void OnActiveDocumentChanged(Value<ColorDocument> input)
+        {
+            ActiveDocumentChanged?.Invoke(this, new(input.New));
+        }
+
         protected virtual void OnOptionsChanged(IColorControlOptions input)
         {
             if (input != null)
@@ -143,7 +153,7 @@ namespace Imagin.Core.Controls
                 colorsPanel.Selected += OnColorSelected;
             }
         }
-
+        
         void OnColorSelected(object sender, EventArgs<StringColor> e)
             => ActiveDocument.If(i => i.Color.ActualColor = e.Value);
 

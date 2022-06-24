@@ -53,7 +53,7 @@ public unsafe static partial class XBitmap
     /// <param name="w">The width of the bitmap.</param>
     /// <param name="h">The height of the bitmap.</param> 
     [Obsolete("Obsolete, left for compatibility reasons. Please use List<int> ComputeBezierPoints(int x1, int y1, int cx1, int cy1, int cx2, int cy2, int x2, int y2) instead.")]
-    private static List<int> ComputeBezierPoints(int x1, int y1, int cx1, int cy1, int cx2, int cy2, int x2, int y2, int color, Media.BitmapContext context, int w, int h)
+    private static List<int> ComputeBezierPoints(int x1, int y1, int cx1, int cy1, int cx2, int cy2, int x2, int y2, int color, BitmapContext context, int w, int h)
     {
         return ComputeBezierPoints(x1, y1, cx1, cy1, cx2, cy2, x2, y1);
     }
@@ -378,7 +378,7 @@ public unsafe static partial class XBitmap
     /// <param name="w">The width of the bitmap.</param>
     /// <param name="h">The height of the bitmap.</param> 
     [Obsolete("Obsolete, left for compatibility reasons. Please use List<int> ComputeSegmentPoints(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, float tension) instead.")]
-    private static List<int> ComputeSegmentPoints(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, float tension, int color, Media.BitmapContext context, int w, int h)
+    private static List<int> ComputeSegmentPoints(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, float tension, int color, BitmapContext context, int w, int h)
     {
         return ComputeSegmentPoints(x1, y1, x2, y2, x3, y3, x4, y4, tension);
     }
