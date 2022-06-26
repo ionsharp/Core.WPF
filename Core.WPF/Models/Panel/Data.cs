@@ -94,10 +94,9 @@ namespace Imagin.Core.Models
         public string GroupName => GroupNames?.Count > GroupNameIndex && GroupNameIndex >= 0 ? (string)GroupNames[GroupNameIndex] : null;
 
         int groupNameIndex = 0;
-        [Category(Category.Group), Option]
+        [Category(Category.Group), Option, SelectedIndex]
         [DisplayName(nameof(GroupName))]
-        [MemberTrigger(nameof(MemberModel.ItemSource), nameof(GroupNames))]
-        [MemberStyle(Int32Style.Index)]
+        [Trigger(nameof(MemberModel.ItemSource), nameof(GroupNames))]
         public virtual int GroupNameIndex
         {
             get => groupNameIndex;
@@ -136,10 +135,9 @@ namespace Imagin.Core.Models
         public string SortName => SortNames?.Count > SortNameIndex && SortNameIndex >= 0 ? (string)SortNames[SortNameIndex] : null;
 
         int sortNameIndex = 0;
-        [Category(Category.Sort), Option]
+        [Category(Category.Sort), Option, SelectedIndex]
         [DisplayName(nameof(SortName))]
-        [MemberTrigger(nameof(MemberModel.ItemSource), nameof(SortNames))]
-        [MemberStyle(Int32Style.Index)]
+        [Trigger(nameof(MemberModel.ItemSource), nameof(SortNames))]
         public virtual int SortNameIndex
         {
             get => sortNameIndex;
@@ -281,7 +279,7 @@ namespace Imagin.Core.Models
 
         ICommand refreshCommand;
         [DisplayName("Refresh")]
-        [Featured(AboveBelow.Below)]
+        [Feature(AboveBelow.Below)]
         [Image(Images.Refresh)]
         [Index(int.MaxValue)]
         [Tool]

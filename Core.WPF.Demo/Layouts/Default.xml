@@ -4,7 +4,6 @@
   <Left/>
   <Right>
     <Panel Name="NotificationsPanel"/>
-    <Panel Name="ThemePanel"/>
     <Panel Name="OptionsPanel"/>
   </Right>
   <Bottom/>

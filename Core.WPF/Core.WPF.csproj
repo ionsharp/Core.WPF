@@ -133,15 +133,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analytics\LogWriter.cs" />
-    <Compile Include="Controls\ColorControl\ColorModelLongNameConverter - Copy.cs" />
+    <Compile Include="Controls\ColorControl\Converters\ColorModelLongNameConverter.cs" />
+    <Compile Include="Controls\ColorControl\Objects\NamableIlluminant.cs" />
+    <Compile Include="Controls\ColorControl\Objects\NamableProfile.cs" />
     <Compile Include="Controls\ColorControl\Panels\Color.cs" />
     <Compile Include="Controls\ColorControl\Panels\Analysis.cs" />
     <Compile Include="Controls\ColorControl\Panels\Harmony.cs" />
-    <Compile Include="Controls\ColorControl\Panels\Profile.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Chromacity.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Illuminants.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Profiles.cs" />
+    <Compile Include="Controls\ColorControl\Converters\XYAsVector2ToXYZAsVector3Converter.cs" />
     <Compile Include="Controls\ColorSelector\ColorSelectorView.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector3D.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelectorEllipse.cs" />
+    <Compile Include="Conversion\Multi\GradientMultiConverter.cs" />
     <Compile Include="Conversion\Single\DoubleMatrix.cs" />
     <Compile Include="Media\BlendModes.cs" />
     <Compile Include="Media\BitmapContext.cs" />
@@ -165,9 +171,7 @@
     <Compile Include="Linq\WriteableBitmap\Shape.cs" />
     <Compile Include="Linq\WriteableBitmap\Spline.cs" />
     <Compile Include="Linq\WriteableBitmap\Transform.cs" />
-    <Compile Include="Reflection\MemberFormat.cs" />
     <Compile Include="-\ImageAttribute.cs" />
-    <Compile Include="Reflection\MemberStyle.cs" />
     <Compile Include="-\UpdateSourceTriggerAttribute.cs" />
     <Compile Include="Conversion\Multi\Visibility\AandBorCMultiConverter.cs" />
     <Compile Include="Conversion\Single\One.cs" />
@@ -269,10 +273,8 @@
     <Compile Include="Controls\MemberGrid\Bindings.cs" />
     <Compile Include="Controls\MemberGrid\MemberValuePresenter.cs" />
     <Compile Include="Controls\MemberGrid\MemberView.cs" />
-    <Compile Include="Reflection\MemberModel\ListObject.cs" />
-    <Compile Include="Reflection\MemberModel\List-Member.cs" />
-    <Compile Include="Reflection\MemberModel\List-Property.cs" />
-    <Compile Include="Reflection\MemberModel\List-Field.cs" />
+    <Compile Include="Reflection\MemberModel\List-Item.cs" />
+    <Compile Include="Reflection\MemberModel\-Base-List.cs" />
     <Compile Include="Reflection\MemberPathElement.cs" />
     <Compile Include="Reflection\SourceBinding.cs" />
     <Compile Include="Controls\TabControl\CacheTabControl.cs" />
@@ -391,8 +393,8 @@
     <Compile Include="Models\PanelOptions.cs" />
     <Compile Include="Imports\WindowMessages.cs" />
     <Compile Include="Reflection\SourceFilter.cs" />
-    <Compile Include="Styles\StyleKeys.cs" />
-    <Compile Include="Styles\StyleKey.cs" />
+    <Compile Include="Styles\-StyleKeys.cs" />
+    <Compile Include="Styles\-StyleKey.cs" />
     <Compile Include="Models\Panel\FindSource.cs" />
     <Compile Include="Theme\ThemeKeys.cs" />
     <Compile Include="Theme\ThemeKey.cs" />
@@ -429,8 +431,8 @@
     <Compile Include="Controls\DockControl\Control\DockPanelBar.cs" />
     <Compile Include="Controls\DockControl\Layout\DockLayoutRoot.cs" />
     <Compile Include="Controls\DockControl\Layout\ILayout.cs" />
-    <Compile Include="Controls\ColorControl\ColorControlOptions.cs" />
-    <Compile Include="Controls\ColorControl\IColorControlOptions.cs" />
+    <Compile Include="Controls\ColorControl\Options\ColorControlOptions.cs" />
+    <Compile Include="Controls\ColorControl\Options\IColorControlOptions.cs" />
     <Compile Include="Config\SingleInstanceException.cs" />
     <Compile Include="Controls\TextElement\BulletElement.xaml.cs">
       <DependentUpon>BulletElement.xaml</DependentUpon>
@@ -506,7 +508,6 @@
     <Compile Include="Media\Gradients.cs" />
     <Compile Include="Media\Colors.cs" />
     <Compile Include="Controls\ColorControl\ColorDocument.cs" />
-    <Compile Include="Controls\ColorControl\Panels\Alpha.cs" />
     <Compile Include="Media\Geometry.cs" />
     <Compile Include="Media\GradientType.cs" />
     <Compile Include="Media\Shades.cs" />
@@ -535,7 +536,6 @@
     <Compile Include="Models\DockViewModel.cs" />
     <Compile Include="Models\Panel\Explore.cs" />
     <Compile Include="Models\Panel\Group.cs" />
-    <Compile Include="Models\Panel\Theme.cs" />
     <Compile Include="Models\Panel\Options.cs" />
     <Compile Include="Models\Panel\Properties.cs" />
     <Compile Include="Controls\Console\Console.Commands.cs" />
@@ -568,10 +568,8 @@
     <Compile Include="Storage\IValidate.cs" />
     <Compile Include="Reflection\MemberPath.cs" />
     <Compile Include="Reflection\MemberData.cs" />
-    <Compile Include="Reflection\MemberVisibility.cs" />
     <Compile Include="Reflection\MemberModel\-Field.cs" />
     <Compile Include="Reflection\MemberModel\-Base.cs" />
-    <Compile Include="Reflection\MemberModel\-Entry.cs" />
     <Compile Include="Reflection\MemberSource.cs" />
     <Compile Include="Controls\ToolBar\FavoriteBar.xaml.cs">
       <DependentUpon>FavoriteBar.xaml</DependentUpon>
@@ -681,63 +679,63 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Generic\Color.xaml">
+    <Page Include="Styles\Color.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ColorControl.xaml">
+    <Page Include="Styles\ColorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Generic\Clock.xaml">
+    <Page Include="Styles\Clock.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Member.xaml">
+    <Page Include="Styles\Member.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
-    <Page Include="Styles\Generic\Separator.xaml">
+    <Page Include="Styles\Separator.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Controls.xaml">
+    <Page Include="Styles\Controls.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Control.xaml">
+    <Page Include="Styles\Control.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ContentControl.xaml">
+    <Page Include="Styles\ContentControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ItemsControl.xaml">
+    <Page Include="Styles\ItemsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ColorSelector.xaml">
+    <Page Include="Styles\ColorSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Presenter.xaml">
+    <Page Include="Styles\Presenter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\SplitGrid.xaml">
+    <Page Include="Styles\SplitGrid.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\FlowDocument.xaml">
+    <Page Include="Styles\FlowDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\DatePicker.xaml">
+    <Page Include="Styles\DatePicker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Explorer.xaml">
+    <Page Include="Styles\Explorer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -909,59 +907,59 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Generic\PickerBox.xaml">
+    <Page Include="Styles\PickerBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\PasswordBox.xaml">
+    <Page Include="Styles\PasswordBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\FindControl.xaml">
+    <Page Include="Styles\FindControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ProgressRing.xaml">
+    <Page Include="Styles\ProgressRing.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ProgressCircle.xaml">
+    <Page Include="Styles\ProgressCircle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Canvas.xaml">
+    <Page Include="Styles\Canvas.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\StatusBar.xaml">
+    <Page Include="Styles\StatusBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Generic\Thumbnail.xaml">
+    <Page Include="Styles\Thumbnail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Hyperlink.xaml">
+    <Page Include="Styles\Hyperlink.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Popup.xaml">
+    <Page Include="Styles\Popup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Console.xaml">
+    <Page Include="Styles\Console.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Generic\DockControl.xaml">
+    <Page Include="Styles\DockControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Generic\FrameworkElement.xaml">
+    <Page Include="Styles\FrameworkElement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Generic\Ruler.xaml">
+    <Page Include="Styles\Ruler.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1107,99 +1105,99 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Browser.xaml">
+    <Page Include="Styles\Browser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ComboBox.xaml">
+    <Page Include="Styles\ComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ContextMenu.xaml">
+    <Page Include="Styles\ContextMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\DataGrid.xaml">
+    <Page Include="Styles\DataGrid.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Expander.xaml">
+    <Page Include="Styles\Expander.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\GridSplitter.xaml">
+    <Page Include="Styles\GridSplitter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\GridView.xaml">
+    <Page Include="Styles\GridView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\GroupBox.xaml">
+    <Page Include="Styles\GroupBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\GroupItem.xaml">
+    <Page Include="Styles\GroupItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Label.xaml">
+    <Page Include="Styles\Label.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ListBox.xaml">
+    <Page Include="Styles\ListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ToggleButton.xaml">
+    <Page Include="Styles\ToggleButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Menu.xaml">
+    <Page Include="Styles\Menu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ProgressBar.xaml">
+    <Page Include="Styles\ProgressBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\MemberGrid.xaml">
+    <Page Include="Styles\MemberGrid.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ScrollViewer.xaml">
+    <Page Include="Styles\ScrollViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Slider.xaml">
+    <Page Include="Styles\Slider.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\TabControl.xaml">
+    <Page Include="Styles\TabControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\TextBlock.xaml">
+    <Page Include="Styles\TextBlock.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\TextBox.xaml">
+    <Page Include="Styles\TextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ToolBar.xaml">
+    <Page Include="Styles\ToolBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\ToolTip.xaml">
+    <Page Include="Styles\ToolTip.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\TreeView.xaml">
+    <Page Include="Styles\TreeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Window.xaml">
+    <Page Include="Styles\Window.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1235,19 +1233,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\AngleControl.xaml">
+    <Page Include="Styles\AngleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Border.xaml">
+    <Page Include="Styles\Border.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Button.xaml">
+    <Page Include="Styles\Button.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Generic\Calendar.xaml">
+    <Page Include="Styles\Calendar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1412,6 +1410,12 @@
     <Resource Include="Images\Shortcut.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Thermometer.png" />
+    <Resource Include="Images\XYZ.png" />
+    <Resource Include="Images\LineGraph.png" />
+    <Resource Include="Images\LightBulb.png" />
+    <Resource Include="Images\Channels.png" />
+    <Resource Include="Images\FolderEdit.png" />
     <Resource Include="Images\ColorWheel.png" />
     <Resource Include="Images\Trend.png" />
     <Resource Include="Images\Checkers.png" />

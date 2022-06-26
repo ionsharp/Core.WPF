@@ -348,7 +348,7 @@
     </LinearGradientBrush>
     <SolidColorBrush x:Key="ProgressBarForeground" Color="#25bd5b"/>
 
-    <SolidColorBrush x:Key="ProgressCircleForeground" Color="#008DCC"/>
+    <SolidColorBrush x:Key="ProgressCircleForeground" Color="#25bd5b"/>
 
     <LinearGradientBrush x:Key="MemberGridDescriptionBackground" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#FCFCFC"/>

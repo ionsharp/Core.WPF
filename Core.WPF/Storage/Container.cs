@@ -17,9 +17,9 @@ namespace Imagin.Core.Storage
         }
 
         [DisplayName("Path")]
-        [Featured]
+        [Feature]
+        [FolderPath]
         [ReadOnly]
-        [MemberStyle(StringStyle.FolderPath)]
         public override string Path
         {
             get => base.Path;

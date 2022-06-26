@@ -499,6 +499,14 @@ public static class XWindow
 
     #endregion
 
+    #region TitleIconVisibility
+
+    public static readonly DependencyProperty TitleIconVisibilityProperty = DependencyProperty.RegisterAttached("TitleIconVisibility", typeof(Visibility), typeof(XWindow), new FrameworkPropertyMetadata(Visibility.Visible));
+    public static Visibility GetTitleIconVisibility(Window i) => (Visibility)i.GetValue(TitleIconVisibilityProperty);
+    public static void SetTitleIconVisibility(Window i, Visibility input) => i.SetValue(TitleIconVisibilityProperty, input);
+
+    #endregion
+    
     #region TitleTemplate
 
     public static readonly DependencyProperty TitleTemplateProperty = DependencyProperty.RegisterAttached("TitleTemplate", typeof(DataTemplate), typeof(XWindow), new FrameworkPropertyMetadata(null));

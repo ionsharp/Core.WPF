@@ -137,13 +137,13 @@ public partial class MemberGrid : DataGrid
 
     public static readonly ResourceKey ListImageToggleButtonTemplateKey
         = new();
-        
+
     //...
 
-    public static readonly ResourceKey ObjectTemplateKey
+    public static readonly ResourceKey ObjectButtonTemplateKey
         = new();
 
-    public static readonly ResourceKey ObjectButtonTemplateKey
+    public static readonly ResourceKey ObjectTemplateKey
         = new();
         
     //...
@@ -1100,11 +1100,7 @@ public partial class MemberGrid : DataGrid
                     Clear();
                     await Members.Load(newSource, sourceFilter, OnMemberAdded);
                 }
-                else
-                {
-                    Clear(i => i is EntryModel);
-                    Members.Refresh(newSource);
-                }
+                else Members.Refresh(newSource);
             }
         }
         //Source = null
@@ -1163,31 +1159,28 @@ public partial class MemberGrid : DataGrid
         i.Category
             ??= DefaultCategoryName ?? "General";
 
-        if (i is not EntryModel)
+        if (filter != null)
         {
-            if (filter != null)
-            {
-                //if (!i.Attributes.ContainsKey(filter.Type))
-                    //return;
-            }
-            if (i.IsFeatured)
-            {
-                if (i.Attributes.GetFirst<FeaturedAttribute>()?.Where == AboveBelow.Above)
-                    FeaturedAbove.Add(i);
+            //if (!i.Attributes.ContainsKey(filter.Type))
+                //return;
+        }
+        if (i.IsFeatured)
+        {
+            if (i.Attributes.GetFirst<FeatureAttribute>()?.Where == AboveBelow.Above)
+                FeaturedAbove.Add(i);
 
-                if (i.Attributes.GetFirst<FeaturedAttribute>()?.Where == AboveBelow.Below)
-                    FeaturedBelow.Add(i);
+            if (i.Attributes.GetFirst<FeatureAttribute>()?.Where == AboveBelow.Below)
+                FeaturedBelow.Add(i);
 
-                if (!FeaturedRepeats)
-                    return;
-            }
-            else if (i.IsTool)
+            if (!FeaturedRepeats)
+                return;
+        }
+        else if (i.IsTool)
+        {
+            if (Orientation == Orientation.Vertical)
             {
-                if (Orientation == Orientation.Vertical)
-                {
-                    Tools.Add(i);
-                    return;
-                }
+                Tools.Add(i);
+                return;
             }
         }
 

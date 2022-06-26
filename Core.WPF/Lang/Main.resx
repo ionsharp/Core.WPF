@@ -1104,4 +1104,13 @@
   <data name="Analysis" xml:space="preserve">
     <value>Analysis</value>
   </data>
+  <data name="Harmony" xml:space="preserve">
+    <value>Harmony</value>
+  </data>
+  <data name="Illuminants" xml:space="preserve">
+    <value>Illuminants</value>
+  </data>
+  <data name="Profiles" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
 </root>

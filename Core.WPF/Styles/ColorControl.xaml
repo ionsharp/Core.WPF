@@ -112,9 +112,9 @@
                                         </local:BottomBorder>
                                         <local:MemberGrid x:Name="MemberGrid"
                                             BorderThickness="0"
-                                            GroupName="Category"
+                                            GroupName="None"
                                             HeaderVisibility="Collapsed"
-                                            Source="{local:SourceBinding Ignore=True, Path=Data.ActiveDocument.Color, Source={StaticResource ColorControl}, View=Profile}"/>
+                                            Source="{Binding Data.ActiveDocument.Color, Source={StaticResource ColorControl}}"/>
                                         <local:TopBorder Background="#11000000" Padding="2">
                                             <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,*">
                                                 <Button
@@ -133,16 +133,6 @@
                                         </local:TopBorder>
                                     </Grid>
                                 </DataTemplate>
-                                <DataTemplate DataType="{x:Type local:ColorAlphaPanel}">
-                                    <local:AlphaSlider x:Name="AlphaSlider"
-                                        Color="{Binding Data.ActiveDocument.Color.ActualColor, Source={StaticResource ColorControl}}"
-                                        Value="{Binding Data.ActiveDocument.Alpha, Mode=TwoWay, Source={StaticResource ColorControl}}"/>
-                                    <DataTemplate.Triggers>
-                                        <DataTrigger Binding="{Binding Data.ActiveDocument, Source={StaticResource ColorControl}}" Value="{x:Null}">
-                                            <Setter TargetName="AlphaSlider" Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </DataTemplate.Triggers>
-                                </DataTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorAnalysisPanel}">
                                     <DataGrid
                                         AutoGenerateColumns="True"
@@ -160,6 +150,12 @@
                                         VirtualizingPanel.IsVirtualizing="False"
                                         VirtualizingPanel.VirtualizationMode="Standard"
                                         ItemsSource="{Binding Results}"/>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type local:ColorChromacityPanel}">
+                                    <local:MemberGrid Source="{Binding}"
+                                        BorderThickness="0"
+                                        GroupName="None"
+                                        HeaderVisibility="Collapsed"/>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorHarmonyPanel}">
                                     <ScrollViewer>
@@ -180,12 +176,104 @@
                                         </ItemsControl>
                                     </ScrollViewer>
                                 </DataTemplate>
-                                <DataTemplate DataType="{x:Type local:ColorProfilePanel}">
-                                    <local:MemberGrid x:Name="MemberGrid"
+                                <DataTemplate DataType="{x:Type local:ColorIlluminantsPanel}">
+                                    <ListBox 
                                         BorderThickness="0"
-                                        GroupName="Category"
-                                        HeaderVisibility="Collapsed"
-                                        Source="{local:SourceBinding Path=Data.ActiveDocument.Color, Source={StaticResource ColorControl}, View=Profile}"/>
+                                        ItemsSource="{Binding SelectedGroup}"
+                                        SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
+                                                    <local:ProgressRing
+                                                        Margin="0,0,10,0" 
+                                                        Maximum="12000" 
+                                                        Minimum="2000" 
+                                                        Radius="36"
+                                                        Value="{Binding Value, Mode=OneWay, Converter={x:Static Conversion:ChromacityToKelvinConverter.Default}}">
+                                                        <Linq:XProgressBar.ContentTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock  Foreground="{local:ThemeKey Key=Text}"><Run Text="{Binding Converter={x:Static Conversion:DoubleToStringConverter.Default}, ConverterParameter=N0, Mode=OneWay}"/> K</TextBlock>
+                                                            </DataTemplate>
+                                                        </Linq:XProgressBar.ContentTemplate>
+                                                    </local:ProgressRing>
+                                                    <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last">
+                                                        <local:TitleLabel Content="{Binding Name}" Step="6"/>
+                                                        <TextBlock
+                                                            Text="{Binding Value, Converter={x:Static Conversion:ToStringConverter.Default}}"
+                                                            TextTrimming="CharacterEllipsis"
+                                                            ToolTip="{Data:Self Text}"/>
+                                                        <TextBlock
+                                                            Text="{Binding Value, Converter={x:Static local:XYAsVector2ToXYZAsVector3Converter.Default}}"
+                                                            TextTrimming="CharacterEllipsis"
+                                                            ToolTip="{Data:Self Text}"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type local:ColorProfilesPanel}">
+                                    <ListBox 
+                                        BorderThickness="0"
+                                        ItemsSource="{Binding SelectedGroup}"
+                                        SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
+                                                    <Grid Margin="0,0,10,0" >
+                                                        <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
+                                                            BackgroundStroke="Transparent"
+                                                            Foreground="#900"
+                                                            Maximum="1" Minimum="0"
+                                                            Radius="28" StrokeThickness="4"
+                                                            Value="{Binding Value.Primary.R.X, Mode=OneWay}"/>
+                                                        <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
+                                                            BackgroundStroke="Transparent"
+                                                            Foreground="#090"
+                                                            Maximum="1" Minimum="0" 
+                                                            Radius="32"
+                                                            Value="{Binding Value.Primary.G.X, Mode=OneWay}"/>
+                                                        <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
+                                                            BackgroundStroke="Transparent"
+                                                            Foreground="#009"
+                                                            Maximum="1" Minimum="0" 
+                                                            Radius="36"
+                                                            Value="{Binding Value.Primary.B.X, Mode=OneWay}"/>
+
+                                                        <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
+                                                            BackgroundStroke="Transparent"
+                                                            Foreground="#AADD0000"
+                                                            Maximum="1" Minimum="0" 
+                                                            Radius="28" StrokeThickness="4"
+                                                            Value="{Binding Value.Primary.R.Y, Mode=OneWay}"/>
+                                                        <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
+                                                            BackgroundStroke="Transparent"
+                                                            Foreground="#AA33DD00"
+                                                            Maximum="1" Minimum="0" 
+                                                            Radius="32" StrokeThickness="4"
+                                                            Value="{Binding Value.Primary.G.Y, Mode=OneWay}"/>
+                                                        <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
+                                                            BackgroundStroke="Transparent"
+                                                            Foreground="#AA0055DD"
+                                                            Maximum="1" Minimum="0" 
+                                                            Radius="36" StrokeThickness="4"
+                                                            Value="{Binding Value.Primary.B.Y, Mode=OneWay}"/>
+                                                    </Grid>
+                                                    <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last">
+                                                        <local:TitleLabel Content="{Binding Name}" Step="6"/>
+
+                                                        <TextBlock Text="{Binding Value.Primary, Converter={x:Static Conversion:ToStringConverter.Default}}"
+                                                            TextTrimming="CharacterEllipsis"
+                                                            ToolTip="{Data:Self Text}"/>
+                                                        <TextBlock Text="{Binding Value.Compress, Converter={x:Static Conversion:ToStringConverter.Default}}"
+                                                            Opacity="0.5"
+                                                            TextTrimming="CharacterEllipsis"
+                                                            ToolTip="{Data:Self Text}"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type Models:OptionsPanel}">
                                     <local:MemberGrid Source="{Binding Data.Options, Source={StaticResource ColorControl}}"

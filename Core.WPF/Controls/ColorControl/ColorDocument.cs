@@ -14,7 +14,7 @@ using System.Windows.Input;
 
 namespace Imagin.Core.Controls;
 
-[MemberVisibility(Property: MemberVisibility.Explicit)]
+[Explicit]
 [Serializable]
 public class ColorDocument : Document
 {
@@ -56,7 +56,7 @@ public class ColorDocument : Document
     }
 
     double depth = 0;
-    [Featured(AboveBelow.Below), Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
+    [Feature(AboveBelow.Below), SliderUpDown, Localize(false), Range(0.0, 128.0, 1.0), StringFormat("N0"), Visible, Width(128)]
     public double Depth
     {
         get => depth;
@@ -64,7 +64,7 @@ public class ColorDocument : Document
     }
 
     Dimensions dimension = Dimensions.One;
-    [Featured(AboveBelow.Above), Index(0), Label(false), Localize(false), Visible]
+    [Feature(AboveBelow.Above), Index(0), Label(false), Localize(false), Visible]
     public Dimensions Dimension
     {
         get => dimension;
@@ -90,8 +90,8 @@ public class ColorDocument : Document
     public readonly ColorControlOptions Options;
 
     double rotateX = 45;
-    [DisplayName("X°"), Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
+    [DisplayName("X°"), SliderUpDown, Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [Trigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateX
     {
         get => rotateX;
@@ -99,8 +99,8 @@ public class ColorDocument : Document
     }
 
     double rotateY = 45;
-    [DisplayName("Y°"), Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
+    [DisplayName("Y°"), SliderUpDown, Index(1), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [Trigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateY
     {
         get => rotateY;
@@ -108,8 +108,8 @@ public class ColorDocument : Document
     }
 
     double rotateZ = 0;
-    [DisplayName("Z°"), Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
+    [DisplayName("Z°"), SliderUpDown, Index(2), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
+    [Trigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double RotateZ
     {
         get => rotateZ;
@@ -117,8 +117,8 @@ public class ColorDocument : Document
     }
 
     Shapes2 shape = Shapes2.Square;
-    [Featured(AboveBelow.Above), Index(1), Label(false), Localize(false), Visible]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension12))]
+    [Feature(AboveBelow.Above), Index(1), Label(false), Localize(false), Visible]
+    [Trigger(nameof(MemberModel.IsVisible), nameof(Dimension12))]
     public Shapes2 Shape
     {
         get => shape;
@@ -137,8 +137,8 @@ public class ColorDocument : Document
     public override object ToolTip => Color.ActualColor;
 
     double zoom = 1.8;
-    [Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
+    [SliderUpDown, Index(3), Range(0.0, 5.0, 0.01), StringFormat("P0"), Visible, Width(86)]
+    [Trigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
     public double Zoom
     {
         get => zoom;

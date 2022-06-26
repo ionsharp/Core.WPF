@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace Demo
 {
-    [MemberVisibility(MemberVisibility.Explicit, MemberVisibility.Explicit)]
+    [Explicit]
     public class TestPanel : Panel
     {
         public override Uri Icon => Resources.InternalImage(Images.Phone);

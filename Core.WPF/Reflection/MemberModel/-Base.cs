@@ -1,7 +1,9 @@
 ﻿using Imagin.Core.Analytics;
+using Imagin.Core;
 using Imagin.Core.Controls;
 using Imagin.Core.Conversion;
 using Imagin.Core.Data;
+using Imagin.Core.Numerics;
 using Imagin.Core.Linq;
 using Imagin.Core.Storage;
 using System;
@@ -17,7 +19,7 @@ using System.Windows.Input;
 
 namespace Imagin.Core.Reflection;
 
-public abstract class MemberModel : BaseNamable, IComparable
+public abstract partial class MemberModel : BaseNamable, IComparable
 {
     readonly Handle Handle = false;
 
@@ -29,14 +31,15 @@ public abstract class MemberModel : BaseNamable, IComparable
 
     #endregion
 
-    #region Properties
+    #region Attributes
 
-    #region (readonly) attributes
+    public MemberAttributes Attributes { get; private set; }
 
     /// <summary>[Attribute type] => [Member (i), First attribute (j), All attributes (k)]</summary>
     readonly MemberAttributeHandler attributes = new()
     {
-        { typeof(AssignableAttribute),
+        {
+            typeof(AssignableAttribute),
             new((i, j, k) =>
             {
                 i.Assignable = true;
@@ -56,57 +59,170 @@ public abstract class MemberModel : BaseNamable, IComparable
                     Try.Invoke(() => i.AssignableValues = i.Source.Instance.GetPropertyValue(a.Values), e => Log.Write<MemberModel>(e));
             })
         },
-        { typeof(CategoryAttribute),
-            new((i, j, k) => i.Category = j.As<CategoryAttribute>().Category) },
-        { typeof(System.ComponentModel.CategoryAttribute),
-            new((i, j, k) => i.Category = j.As<System.ComponentModel.CategoryAttribute>().Category) },
-        { typeof(CommandAttribute),
+        {
+            typeof(FilePathAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(FolderPathAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(TokensAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(ThumbnailAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(SearchAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(PasswordAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(MultipleAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(AngleAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(UnitAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(ProgressAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(SelectedIndexAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(BulletsAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(HexadecimalAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(SliderUpDownAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(SliderAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(UpDownAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(CommasAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(CollectionAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(ButtonAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(ToggleButtonAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(CategoryAttribute),
+            new((i, j, k) => i.Category = j.As<CategoryAttribute>().Category)
+        },
+        {
+            typeof(System.ComponentModel.CategoryAttribute),
+            new((i, j, k) => i.Category = j.As<System.ComponentModel.CategoryAttribute>().Category)
+        },
+        {
+            typeof(CommandAttribute),
             new((i, j, k) =>
             {
                 if (j.As<CommandAttribute>()?.CommandName is string commandName)
                     Try.Invoke(() => i.Command = i.Source.Instance.GetPropertyValue(commandName) as ICommand, e => Log.Write<MemberModel>(e));
             })
         },
-        { typeof(ConvertAttribute),
+        {
+            typeof(ConvertAttribute),
             new((i, j, k) =>
             {
                 Try.Invoke(() => i.Converter = j.As<ConvertAttribute>().Converter.Create<IValueConverter>(), e => Log.Write<MemberModel>(e));
                 i.ConverterParameter = j.As<ConvertAttribute>().ConverterParameter;
             })
         },
-        { typeof(DescriptionAttribute),
-            new((i, j, k) => i.Description = j.As<DescriptionAttribute>().Description) },
-        { typeof(System.ComponentModel.DescriptionAttribute),
-            new((i, j, k) => i.Description = j.As<System.ComponentModel.DescriptionAttribute>().Description) },
-        { typeof(DisplayNameAttribute),
-            new((i, j, k) => i.DisplayName = j.As<DisplayNameAttribute>().DisplayName) },
-        { typeof(System.ComponentModel.DisplayNameAttribute),
-            new((i, j, k) => i.DisplayName = j.As<System.ComponentModel.DisplayNameAttribute>().DisplayName) },
-        { typeof(FeaturedAttribute),
-            new((i, j, k) => i.IsFeatured = j.As<FeaturedAttribute>().Featured) },
-        { typeof(GradientAttribute),
-            new((i, j, k) => i.Gradient = j.As<GradientAttribute>().Colors) },
-        { typeof(HeightAttribute),
+        {
+            typeof(DescriptionAttribute),
+            new((i, j, k) => i.Description = j.As<DescriptionAttribute>().Description)
+        },
+        {
+            typeof(System.ComponentModel.DescriptionAttribute),
+            new((i, j, k) => i.Description = j.As<System.ComponentModel.DescriptionAttribute>().Description)
+        },
+        {
+            typeof(DisplayNameAttribute),
+            new((i, j, k) => i.DisplayName = j.As<DisplayNameAttribute>().DisplayName)
+        },
+        {
+            typeof(System.ComponentModel.DisplayNameAttribute),
+            new((i, j, k) => i.DisplayName = j.As<System.ComponentModel.DisplayNameAttribute>().DisplayName)
+        },
+        {
+            typeof(FeatureAttribute),
+            new((i, j, k) => i.IsFeatured = j.As<FeatureAttribute>().Featured)
+        },
+        {
+            typeof(GradientAttribute),
+            new((i, j, k) => i.Gradient = j.As<GradientAttribute>().Colors.Select(l => new Hexadecimal(l).Color()).ToArray())
+        },
+        {
+            typeof(HeightAttribute),
             new((i, j, k) =>
             {
                 i.MaximumHeight = j.As<HeightAttribute>().MaximumHeight; i.MinimumHeight = j.As<HeightAttribute>().MinimumHeight; i.Height = j.As<HeightAttribute>().Height;
             })
         },
-        { typeof(ImageAttribute),
+        {
+            typeof(HorizontalAttribute),
+            new((i, j, k) => i.Orientation = System.Windows.Controls.Orientation.Horizontal)
+        },
+        {
+            typeof(ImageAttribute),
             new((i, j, k) =>
             {
                 i.Icon = j.As<ImageAttribute>().Icon; i.IconColor = j.As<ImageAttribute>().Color;
             })
         },
-        { typeof(IndexAttribute),
-            new((i, j, k) => i.Index = j.As<IndexAttribute>().Index) },
-        { typeof(LabelAttribute),
-            new((i, j, k) => i.Label = j.As<LabelAttribute>().Label) },
-        { typeof(LocalizeAttribute),
-            new((i, j, k) => i.Localize = j.As<LocalizeAttribute>().Localize) },
-        { typeof(LockedAttribute),
-            new((i, j, k) => i.IsLockable = j.As<LockedAttribute>().Locked) },
-        { typeof(SetterAttribute),
+        {
+            typeof(IndexAttribute),
+            new((i, j, k) => i.Index = j.As<IndexAttribute>().Index)
+        },
+        {
+            typeof(LabelAttribute),
+            new((i, j, k) => i.Label = j.As<LabelAttribute>().Label)
+        },
+        {
+            typeof(LocalizeAttribute),
+            new((i, j, k) => i.Localize = j.As<LocalizeAttribute>().Localize)
+        },
+        {
+            typeof(LockedAttribute),
+            new((i, j, k) => i.IsLockable = j.As<LockedAttribute>().Locked)
+        },
+        {
+            typeof(SetterAttribute),
             new((i, j, k) =>
             {
                 if (k?.Count() > 0)
@@ -119,40 +235,38 @@ public abstract class MemberModel : BaseNamable, IComparable
                 }
             })
         },
-        { typeof(MemberStyleAttribute), 
-            new((i, j, k) => i.Style = j.As<MemberStyleAttribute>().Style) },
-        { typeof(MemberTriggerAttribute),
+        {
+            typeof(TriggerAttribute),
             new((i, j, k) =>
             {
                 if (k?.Count() > 0)
                 {
                     foreach (var m in k)
-                        i.OnTrigger(i.Source.Instance, new(m.As<MemberTriggerAttribute>().SourceName));
+                        i.OnTrigger(i.Source.Instance, new(m.As<TriggerAttribute>().SourceName));
                 }
             })
         },
-        { typeof(ObjectAttribute),
-            new((i, j, k) =>
-            {
-;                i.ObjectLevel 
-                    = j.As<ObjectAttribute>().Level;
-                i.ObjectLayout 
-                    = j.As<ObjectAttribute>().Orientation;
-})
-        },
-        { typeof(RangeAttribute),
+        {
+            typeof(RangeAttribute),
             new((i, j, k) =>
             {
                 i.Increment = j.As<RangeAttribute>().Increment; i.Maximum = j.As<RangeAttribute>().Maximum; i.Minimum = j.As<RangeAttribute>().Minimum;
             })
         },
-        { typeof(ReadOnlyAttribute),
-            new((i, j, k) => i.IsReadOnly = j.As<ReadOnlyAttribute>().ReadOnly == true) },
-        { typeof(System.ComponentModel.ReadOnlyAttribute),
-            new((i, j, k) => i.IsReadOnly = j.As<System.ComponentModel.ReadOnlyAttribute>().IsReadOnly == true) },
-        { typeof(StringFormatAttribute), 
-            new((i, j, k) => i.StringFormat = j.As<StringFormatAttribute>().Format) },
-        { typeof(SuggestionsAttribute),
+        {
+            typeof(ReadOnlyAttribute),
+            new((i, j, k) => i.IsReadOnly = j.As<ReadOnlyAttribute>().ReadOnly == true)
+        },
+        {
+            typeof(System.ComponentModel.ReadOnlyAttribute),
+            new((i, j, k) => i.IsReadOnly = j.As<System.ComponentModel.ReadOnlyAttribute>().IsReadOnly == true)
+        },
+        {
+            typeof(StringFormatAttribute),
+            new((i, j, k) => i.StringFormat = j.As<StringFormatAttribute>().Format)
+        },
+        {
+            typeof(SuggestionsAttribute),
             new((i, j, k) =>
             {
                 if (j.As<SuggestionsAttribute>().SourceName is string suggestions)
@@ -166,29 +280,40 @@ public abstract class MemberModel : BaseNamable, IComparable
                 }
             })
         },
-        { typeof(ToolAttribute), 
-            new((i, j, k) => i.IsTool = j.As<ToolAttribute>() != null) },
-        { typeof(UpdateSourceTriggerAttribute), 
-            new((i, j, k) => i.UpdateSourceTrigger = j.As<UpdateSourceTriggerAttribute>().UpdateSourceTrigger) },
-        { typeof(ValidateAttribute), 
+        {
+            typeof(ToolAttribute),
+            new((i, j, k) => i.IsTool = j.As<ToolAttribute>() != null)
+        },
+        {
+            typeof(UpdateSourceTriggerAttribute),
+            new((i, j, k) => i.UpdateSourceTrigger = j.As<UpdateSourceTriggerAttribute>().UpdateSourceTrigger)
+        },
+        {
+            typeof(ValidateAttribute),
             new((i, j, k) =>
             {
                 IValidate validateHandler = null;
                 Try.Invoke(() => validateHandler = j.As<ValidateAttribute>()?.Type.Create<IValidate>(), e => Log.Write<MemberModel>(e));
                 i.ValidateHandler = validateHandler;
 
-            }) 
+            })
         },
-        { typeof(WidthAttribute),
+        {
+            typeof(VerticalAttribute),
+            new((i, j, k) => i.Orientation = System.Windows.Controls.Orientation.Vertical)
+        },
+        {
+            typeof(WidthAttribute),
             new((i, j, k) =>
             {
                 i.MaximumWidth = j.As<WidthAttribute>().MaximumWidth; i.MinimumWidth = j.As<WidthAttribute>().MinimumWidth; i.Width = j.As<WidthAttribute>().Width;
-            }) 
+            })
         },
     };
 
     #endregion
-    public MemberAttributes Attributes { get; private set; }
+
+    #region Properties
 
     public MemberSource Source { get; private set; }
 
@@ -388,6 +513,13 @@ public abstract class MemberModel : BaseNamable, IComparable
         set => this.Change(ref category, value);
     }
 
+    string caption = null;
+    public string Caption
+    {
+        get => caption;
+        set => this.Change(ref caption, value);
+    }
+
     bool clearText = true;
     public bool ClearText
     {
@@ -406,7 +538,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     public object Content
     {
         get => content;
-        private set => this.Change(ref content, value);
+        set => this.Change(ref content, value);
     }
 
     IValueConverter converter = null;
@@ -465,8 +597,8 @@ public abstract class MemberModel : BaseNamable, IComparable
         set => this.Change(ref format, value);
     }
 
-    object gradient = null;
-    public object Gradient
+    System.Windows.Media.Color[] gradient = null;
+    public System.Windows.Media.Color[] Gradient
     {
         get => gradient;
         set => this.Change(ref gradient, value);
@@ -560,7 +692,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     public string ItemPath
     {
         get => itemPath;
-        private set => this.Change(ref itemPath, value);
+        set => this.Change(ref itemPath, value);
     }
 
     object itemSource = null;
@@ -652,6 +784,13 @@ public abstract class MemberModel : BaseNamable, IComparable
         set => this.Change(ref members, value);
     }
 
+    ListCollectionView sortedMembers = null;
+    public ListCollectionView SortedMembers
+    {
+        get => sortedMembers;
+        set => this.Change(ref sortedMembers, value);
+    }
+    
     MemberTypes memberType;
     public MemberTypes MemberType
     {
@@ -680,18 +819,11 @@ public abstract class MemberModel : BaseNamable, IComparable
         private set => this.Change(ref minimumWidth, value);
     }
 
-    ObjectLevel? objectLevel = null;
-    public ObjectLevel? ObjectLevel
+    System.Windows.Controls.Orientation orientation = System.Windows.Controls.Orientation.Vertical;
+    public System.Windows.Controls.Orientation Orientation
     {
-        get => objectLevel;
-        set => this.Change(ref objectLevel, value);
-    }
-
-    ObjectLayout objectLayout = ObjectLayout.Vertical;
-    public ObjectLayout ObjectLayout
-    {
-        get => objectLayout;
-        set => this.Change(ref objectLayout, value);
+        get => orientation;
+        set => this.Change(ref orientation, value);
     }
 
     string placeholder = null;
@@ -715,8 +847,8 @@ public abstract class MemberModel : BaseNamable, IComparable
         private set => this.Change(ref stringFormat, value);
     }
 
-    object style = null;
-    public virtual object Style
+    Type style = null;
+    public Type Style
     {
         get => style;
         set => this.Change(ref style, value);
@@ -768,6 +900,13 @@ public abstract class MemberModel : BaseNamable, IComparable
 
     #region MemberModel
 
+    void DoThis(ITypes input)
+    {
+        ItemTypes = new(new ObservableCollection<Type>(input.GetTypes()));
+        ItemTypes.CustomSort = TypeComparer.Default;
+        ItemTypes.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = CategoryConverter.Default });
+    }
+
     public MemberModel(MemberData data, int depthIndex) : base()
     {
         Parent 
@@ -783,14 +922,13 @@ public abstract class MemberModel : BaseNamable, IComparable
         Attributes = data.Attributes;
         Attributes.Apply(this, attributes);
 
-        IsReadOnly = !CanWrite;
+        IsReadOnly = !CanWrite || IsReadOnly;
 
         if (GetValue() is ITypes i)
-        {
-            ItemTypes = new(new ObservableCollection<Type>(i.GetTypes()));
-            ItemTypes.CustomSort = TypeComparer.Default;
-            ItemTypes.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = CategoryConverter.Default });
-        }
+            DoThis(i);
+        
+        else if (Source.Instance is ITypes j)
+            DoThis(j);
 
         UpdateValue();
         RefreshHard();
@@ -802,7 +940,7 @@ public abstract class MemberModel : BaseNamable, IComparable
 
     void OnTrigger(object sender, PropertyChangedEventArgs e)
     {
-        var triggers = Attributes.GetAll<MemberTriggerAttribute>();
+        var triggers = Attributes.GetAll<TriggerAttribute>();
         if (triggers?.Count() > 0)
         {
             foreach (var i in triggers)
@@ -847,6 +985,53 @@ public abstract class MemberModel : BaseNamable, IComparable
     protected T Info<T>() where T : MemberInfo => (T)Member;
 
     //...
+
+    void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        this.Changed(() => CollectionLength);
+
+        Try.Invoke(() =>
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    e.NewItems.ForEach(i => CreateItem(e.NewStartingIndex, i));
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    var item = SourceCollection[e.OldStartingIndex];
+                    SourceCollection.RemoveAt(e.OldStartingIndex);
+                    SourceCollection.Insert(e.NewStartingIndex, item);
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    e.OldItems?.ForEach(i =>
+                    {
+                        Items[e.OldStartingIndex].Unsubscribe();
+                        Items.RemoveAt(e.OldStartingIndex);
+                    });
+                    break;
+
+                case NotifyCollectionChangedAction.Replace:
+                    if (!ItemType.IsValueType && ItemType != typeof(string))
+                    {
+                        e.OldItems?.ForEach(i =>
+                        {
+                            Items[e.OldStartingIndex].Unsubscribe();
+                            Items.RemoveAt(e.OldStartingIndex);
+                        });
+                        goto case NotifyCollectionChangedAction.Add;
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+                    Items.ForEach(i => i.Unsubscribe());
+                    Items.Clear();
+                    break;
+            }
+        },
+        e => Log.Write<MemberModel>(e));
+    }
 
     void OnValueChanging(object oldValue, object newValue)
     {
@@ -928,23 +1113,19 @@ public abstract class MemberModel : BaseNamable, IComparable
 
     internal void RefreshHard()
     {
-        var a = TemplateType == typeof(object) || GetTemplateType(Type) == typeof(object);
-        var b = ObjectLevel != null;
-        var c = false;
-
-        EachParent(this, i =>
+        var source = Value;
+        if (source != null)
         {
-            if (i.ObjectLevel?.Equals(Core.ObjectLevel.Low) == true)
-                c = true;
-        });
-
-        var value = Value;
-        if (value != null)
-        {
-            if (a && (b || c))
+            if (TemplateType == typeof(object) || GetTemplateType(Type) == typeof(object))
             {
                 Members ??= new(Parent.Control, this, DepthIndex + 1);
-                Members.Load(value);
+                Members.Load(source);
+
+                if (SortedMembers == null)
+                {
+                    SortedMembers = new(Members);
+                    SortedMembers.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Index), ListSortDirection.Ascending));
+                }
             }
         }
     }
@@ -979,7 +1160,7 @@ public abstract class MemberModel : BaseNamable, IComparable
     {
         if (Source.Instance is INotifyPropertyChanged notify)
         {
-            var triggers = Attributes.GetAll<MemberTriggerAttribute>();
+            var triggers = Attributes.GetAll<TriggerAttribute>();
             if (triggers?.Count() > 0)
             {
                 foreach (var trigger in triggers)
@@ -995,13 +1176,26 @@ public abstract class MemberModel : BaseNamable, IComparable
             timer.Elapsed += OnUpdate;
             timer.Start();
         }
+
+        if (Value is INotifyCollectionChanged collection)
+        {
+            Items ??= new();
+            Items.ForEach(i => i.Unsubscribe());
+            Items.Clear();
+
+            SourceCollection.ForEach(i => CreateItem(-1, i));
+            collection.CollectionChanged -= OnCollectionChanged;
+            collection.CollectionChanged += OnCollectionChanged;
+
+            this.Changed(() => CollectionLength);
+        }
     }
 
     public virtual void Unsubscribe()
     {
         if (Source.Instance is INotifyPropertyChanged j)
         {
-            var triggers = Attributes.GetAll<MemberTriggerAttribute>();
+            var triggers = Attributes.GetAll<TriggerAttribute>();
             if (triggers?.Count() > 0)
                 j.PropertyChanged -= OnTrigger;
         }
@@ -1014,6 +1208,14 @@ public abstract class MemberModel : BaseNamable, IComparable
         }
 
         Members?.ForEach(i => i.Unsubscribe());
+
+        if (Items != null)
+        {
+            Items.ForEach(i => i.Unsubscribe());
+            Items.Clear();
+
+            (SourceCollection as INotifyCollectionChanged).CollectionChanged -= OnCollectionChanged;
+        }
     }
 
     //...

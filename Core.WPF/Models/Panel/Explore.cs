@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace Imagin.Core.Models
 {
-    [MemberVisibility(MemberVisibility.Explicit, MemberVisibility.Explicit)]
+    [Explicit]
     [Serializable]
     public class ExplorePanel : Panel
     {

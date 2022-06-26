@@ -73,7 +73,7 @@ namespace Imagin.Core.Models
         #region Save
 
         bool autoSave = false;
-        [DisplayName("Auto save"), Featured, MemberStyle(BooleanStyle.Switch)]
+        [DisplayName("Auto save"), Feature, ToggleButton]
         public bool AutoSave
         {
             get => autoSave;
@@ -284,7 +284,7 @@ namespace Imagin.Core.Models
         [field: NonSerialized]
         ICommand saveCommand;
         [DisplayName("Save")]
-        [Featured(AboveBelow.Below)]
+        [Feature(AboveBelow.Below)]
         public virtual ICommand SaveCommand => saveCommand ??= new RelayCommand(Save);
 
         [field: NonSerialized]

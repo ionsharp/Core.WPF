@@ -8,7 +8,7 @@ namespace Imagin.Core.Controls;
 [ValueConversion(typeof(Type), typeof(string))]
 public class ColorModelLongNameConverter : Conversion.Converter<Type, string>
 {
-    public static ColorModelLongNameConverter Default { get; private set; } = new ColorModelLongNameConverter();
+    public static ColorModelLongNameConverter Default { get; private set; } = new();
     public ColorModelLongNameConverter() { }
 
 

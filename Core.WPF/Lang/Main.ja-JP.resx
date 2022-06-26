@@ -1110,4 +1110,13 @@
   <data name="Analysis" xml:space="preserve">
     <value>分析</value>
   </data>
+  <data name="Harmony" xml:space="preserve">
+    <value>調和</value>
+  </data>
+  <data name="Illuminants" xml:space="preserve">
+    <value>光源</value>
+  </data>
+  <data name="Profiles" xml:space="preserve">
+    <value>プロファイル</value>
+  </data>
 </root>

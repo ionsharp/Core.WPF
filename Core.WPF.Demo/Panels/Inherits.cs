@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Demo
 {
-    [MemberVisibility(MemberVisibility.Explicit, MemberVisibility.Explicit)]
+    [Explicit]
     public class InheritsPanel : Panel
     {
         Element element;

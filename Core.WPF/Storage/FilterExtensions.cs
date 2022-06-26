@@ -17,8 +17,7 @@ namespace Imagin.Core.Storage
         }
 
         string value = string.Empty;
-        [DisplayName("Extensions")]
-        [MemberStyle(StringStyle.Tokens)]
+        [DisplayName("Extensions"), Tokens]
         public string Value
         {
             get => value;

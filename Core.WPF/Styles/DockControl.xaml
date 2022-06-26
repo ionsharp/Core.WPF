@@ -409,45 +409,32 @@
     <!-- ... Default panels -->
 
     <DataTemplate x:Key="{x:Static Models:ColorsPanel.TemplateKey}">
-        <ScrollViewer
-            ClipToBounds="True"
-            HorizontalScrollBarVisibility="Auto"
-            VerticalScrollBarVisibility="Disabled">
-            <ScrollViewer.Resources>
+        <ListBox 
+            BorderThickness="0"
+            ItemsSource="{Binding SelectedGroup}"
+            SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+            <ListBox.Resources>
                 <Data:Reference x:Key="ColorsPanel" Data="{Binding}"/>
-            </ScrollViewer.Resources>
-            <ItemsControl ItemsSource="{Binding SelectedGroup}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Vertical"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type Media:StringColor}">
-                        <Button
-                            Background="{Binding Brush}"
-                            BorderThickness="0"
-                            Command="{Binding Data.SelectColorCommand, Source={StaticResource ColorsPanel}}"
-                            CommandParameter="{Binding}"
-                            Height="32"
-                            Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
-                            Width="32"
-                            ToolTip="{Binding Value}">
-                            <Button.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Clone"
-                                        Command="{Binding Data.CloneColorCommand, Source={StaticResource ColorsPanel}}"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem Header="Delete"
-                                        Command="{Binding Data.DeleteColorCommand, Source={StaticResource ColorsPanel}}"
-                                        CommandParameter="{Binding}"/>
-                                </ContextMenu>
-                            </Button.ContextMenu>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+            </ListBox.Resources>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type Media:StringColor}">
+                    <Button
+                        Background="{Binding Brush}"
+                        BorderThickness="0"
+                        Command="{Binding Data.SelectColorCommand, Source={StaticResource ColorsPanel}}"
+                        CommandParameter="{Binding}"
+                        Height="32"
+                        Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
+                        Width="32"
+                        ToolTip="{Binding Value}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Models:ExplorePanel.TemplateKey}">
@@ -971,15 +958,6 @@
             Source="{Binding Source}"/>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static Models:ThemePanel.TemplateKey}">
-        <local:MemberGrid
-            BorderThickness="0"
-            GroupName="None"
-            HeaderVisibility="Visible"
-            Source="{Data:RemoteBinding CurrentTheme, RemoteSource=Resources}"
-            View="Single"/>
-    </DataTemplate>
-
     <!-- ... Styles -->
     
     <Style x:Key="{x:Static local:DockControl.DocumentStyle}" TargetType="TabItem" BasedOn="{StaticResource {x:Type TabItem}}">
@@ -1085,9 +1063,6 @@
                     </local:KeyTemplate>
                     <local:KeyTemplate DataType="{x:Type Models:PropertiesPanel}">
                         <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static Models:PropertiesPanel.TemplateKey}}"/>
-                    </local:KeyTemplate>
-                    <local:KeyTemplate DataType="{x:Type Models:ThemePanel}">
-                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static Models:ThemePanel.TemplateKey}}"/>
                     </local:KeyTemplate>
                 </local:KeyTemplateCollection>
             </Setter.Value>

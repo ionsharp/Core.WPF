@@ -24,7 +24,7 @@ public class MemberPathChild : MemberPathElement
 
 public class MemberPathItem : MemberPathChild
 {
-    public override string Name => $"{(Member as ListObjectModel).Parent.Name}[]";
+    //public override string Name => $"{(Member as ListItemModel).OtherParent.Name}[]";
 
     public MemberPathItem(MemberModel member) : base(member) { }
 }

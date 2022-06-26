@@ -7,6 +7,7 @@
     xmlns:Behavior="clr-namespace:Imagin.Core.Behavior"
     xmlns:Collections="clr-namespace:Imagin.Core.Collections.ObjectModel"
     xmlns:Common="clr-namespace:Imagin.Core"
+    xmlns:Core="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:Configuration="clr-namespace:Imagin.Core.Config"
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
@@ -147,16 +148,10 @@
     <DataTemplate x:Key="{x:Static local:MemberGrid.ColorTemplateKey}">
         <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Null}">
+            <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBothTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:ColorFormat.Both}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBothTemplateKey}}"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:ColorFormat.ColorBox}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorBoxTemplateKey}}"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:ColorFormat.TextBox}">
+            <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:HexadecimalAttribute}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ColorTextBoxTemplateKey}}"/>
             </DataTrigger>
         </DataTemplate.Triggers>
@@ -564,7 +559,7 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type Reflection:ListObjectModel}">
+                    <DataTemplate DataType="{x:Type Reflection:ListItemModel}">
                         <!--
                         <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
                             <local:BulletElement Bullet="NumberParenthesis"
@@ -684,7 +679,7 @@
     <!-- ... -->
 
     <DataTemplate x:Key="{x:Static local:MemberGrid.ObjectTemplateKey}">
-        <TreeView ItemsSource="{Binding Members}">
+        <TreeView ItemsSource="{Binding SortedMembers}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -715,7 +710,7 @@
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type Reflection:MemberModel}" ItemsSource="{Binding Members}">
+                <HierarchicalDataTemplate DataType="{x:Type Reflection:MemberModel}" ItemsSource="{Binding SortedMembers}">
                     <Grid x:Name="Grid" Margin="0,2,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -731,7 +726,7 @@
                             Content="{Binding}"/>
                     </Grid>
                     <HierarchicalDataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding Parent.Parent.ObjectLayout}" Value="Horizontal">
+                        <DataTrigger Binding="{Binding Parent.Parent.Orientation}" Value="Horizontal">
                             <Setter TargetName="MemberNamePresenter" Property="Grid.Column" Value="0"/>
                             <Setter TargetName="MemberNamePresenter" Property="Grid.ColumnSpan" Value="1"/>
                             <Setter TargetName="MemberNamePresenter" Property="Grid.Row" Value="0"/>
@@ -743,7 +738,7 @@
                             <Setter TargetName="MemberValuePresenter" Property="Grid.Row" Value="0"/>
                             <Setter TargetName="MemberValuePresenter" Property="Grid.RowSpan" Value="2"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Parent.Parent.ObjectLayout}" Value="Vertical">
+                        <DataTrigger Binding="{Binding Parent.Parent.Orientation}" Value="Vertical">
                             <Setter TargetName="MemberNamePresenter" Property="Grid.Column" Value="0"/>
                             <Setter TargetName="MemberNamePresenter" Property="Grid.ColumnSpan" Value="2"/>
                             <Setter TargetName="MemberNamePresenter" Property="Grid.Row" Value="0"/>
@@ -818,6 +813,128 @@
     <!-- ... -->
 
     <DataTemplate x:Key="{x:Static local:MemberGrid.RangeSliderTemplateKey}">
+        <DataTemplate.Resources>
+            <Style x:Key="GradientSliderDecreaseButtonStyle" TargetType="{x:Type RepeatButton}">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <MultiBinding Converter="{x:Static Conversion:GradientMultiConverter.Default}" ConverterParameter="0">
+                            <Data:Ancestor Path="DataContext.Gradient" Type="Slider"/>
+                            <Data:Ancestor Path="Value" Type="Slider"/>
+                            <Data:Ancestor Path="Minimum" Type="Slider"/>
+                            <Data:Ancestor Path="Maximum" Type="Slider"/>
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Height" Value="6"/>
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                            <Border 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                Height="{TemplateBinding Height}"
+                                Width="{TemplateBinding Width}"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="GradientSliderIncreaseButtonStyle" TargetType="{x:Type RepeatButton}">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="Background" Value="#22000000" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Height" Value="6"/>
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                            <Border 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="GradientSliderThumbStyle" TargetType="{x:Type Thumb}">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <MultiBinding Converter="{x:Static Conversion:GradientMultiConverter.Default}" ConverterParameter="1">
+                            <Data:Ancestor Path="DataContext.Gradient" Type="Slider"/>
+                            <Data:Ancestor Path="Value" Type="Slider"/>
+                            <Data:Ancestor Path="Minimum" Type="Slider"/>
+                            <Data:Ancestor Path="Maximum" Type="Slider"/>
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Height" Value="16"/>
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Width" Value="10"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Thumb}">
+                            <Border 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                ClipToBounds="True" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="GradientSliderStyle" TargetType="{x:Type Slider}">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="IsSnapToTickEnabled" Value="True" />
+                <Setter Property="MinWidth" Value="48" />
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Slider}">
+                            <Track x:Name="PART_Track" 
+                                Grid.Row="1" 
+                                Height="{TemplateBinding Height}" 
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}" 
+                                VerticalAlignment="{TemplateBinding VerticalAlignment}" 
+                                Width="{TemplateBinding Width}">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton x:Name="PART_DecreaseRepeatButton" 
+                                        Command="Slider.DecreaseLarge"
+                                        Style="{StaticResource GradientSliderDecreaseButtonStyle}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource GradientSliderThumbStyle}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton x:Name="PART_IncreaseRepeatButton"  
+                                        Command="Slider.IncreaseLarge"
+                                        Style="{StaticResource GradientSliderIncreaseButtonStyle}"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Cursor" Value="Arrow" />
+                        <Setter Property="Opacity" Value="0.6" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </DataTemplate.Resources>
         <Slider x:Name="Slider"
             IsEnabled="False"
             Margin="0,5"
@@ -862,6 +979,9 @@
             </e:Interaction.Behaviors>
         </Slider>
         <DataTemplate.Triggers>
+            <DataTrigger Binding="{Data:IsNullBinding Gradient}" Value="False">
+                <Setter TargetName="Slider" Property="Style" Value="{StaticResource GradientSliderStyle}"/>
+            </DataTrigger>
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
                     <Condition Binding="{Binding IsReadOnly}" Value="False"/>
@@ -919,13 +1039,10 @@
     <DataTemplate x:Key="{x:Static local:MemberGrid.RangeTemplateKey}">
         <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Null}">
+            <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:RangeFormat.None}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:RangeFormat.Both}">
+            <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:SliderUpDownAttribute}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
@@ -938,10 +1055,10 @@
                     </Setter.Value>
                 </Setter>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:RangeFormat.Slider}">
+            <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:SliderAttribute }">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeSliderTemplateKey}}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Format}" Value="{x:Static Reflection:RangeFormat.UpDown}">
+            <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:UpDownAttribute}">
                 <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeUpDownTemplateKey}}"/>
             </DataTrigger>
         </DataTemplate.Triggers>
@@ -1188,10 +1305,10 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ArrayStyle.Bullet}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:BulletsAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ArrayStyle.Comma}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CommasAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
@@ -1215,7 +1332,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:BooleanStyle.Image}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ButtonAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1234,7 +1351,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:BooleanStyle.Switch}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ToggleButtonAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1266,7 +1383,16 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:DoubleStyle.Angle}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:SliderAttribute}">
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:SliderUpDownAttribute}">
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:UpDownAttribute}">
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:AngleAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1280,21 +1406,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:DoubleStyle.Progress}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <ProgressBar>
-                                    <e:Interaction.Behaviors>
-                                        <Behavior:ManualBindingBehavior Property="{x:Static ProgressBar.ValueProperty}"
-                                            Mode="OneWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-                                    </e:Interaction.Behaviors>
-                                </ProgressBar>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:DoubleStyle.ProgressRound}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ProgressAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1308,7 +1420,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:DoubleStyle.Unit}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:UnitAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1348,7 +1460,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumStyle.FlagCheck}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:MultipleAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="{x:Type Reflection:MemberModel}">
@@ -1362,73 +1474,6 @@
                                     <local:FlagGroup.ItemTemplate>
                                         <DataTemplate>
                                             <CheckBox Content="{Binding Value}" IsChecked="{Data:TwoWay IsChecked}"
-                                                Margin="0,0,0,5"/>
-                                        </DataTemplate>
-                                    </local:FlagGroup.ItemTemplate>
-                                </local:FlagGroup>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumStyle.FlagSelect}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
-                                <ComboBox
-                                    ItemsSource="{Data:EnumerateBinding Value}"
-                                    ItemTemplate="{DynamicResource {x:Static local:MemberGrid.EnumItemTemplateKey}}"
-                                    Linq:XComboBox.SelectionMode="Multiple"
-                                    Style="{DynamicResource {x:Static local:MemberGrid.ComboBoxStyleKey}}">
-                                    <e:Interaction.Behaviors>
-                                        <Behavior:ManualBindingBehavior Property="{x:Static Linq:XComboBox.FlagsProperty}" 
-                                            Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-                                    </e:Interaction.Behaviors>
-                                    <Linq:XComboBox.SelectedItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Data:Ancestor ComboBox, Path=(Linq:XComboBox.Flags)}"/>
-                                        </DataTemplate>
-                                    </Linq:XComboBox.SelectedItemTemplate>
-                                </ComboBox>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumStyle.FlagSwitch}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
-                                <local:FlagGroup
-                                    Type="{Data:TypeBinding Value}"
-                                    TypeVisibility="Visible">
-                                    <e:Interaction.Behaviors>
-                                        <Behavior:ManualBindingBehavior Property="{x:Static local:FlagGroup.ValueProperty}" 
-                                            Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-                                    </e:Interaction.Behaviors>
-                                    <local:FlagGroup.ItemTemplate>
-                                        <DataTemplate>
-                                            <local:SwitchButton Content="{Binding Value}" IsChecked="{Data:TwoWay IsChecked}"
-                                                Margin="0,0,0,5"/>
-                                        </DataTemplate>
-                                    </local:FlagGroup.ItemTemplate>
-                                </local:FlagGroup>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumStyle.FlagToggle}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
-                                <local:FlagGroup
-                                    Type="{Data:TypeBinding Value}"
-                                    TypeVisibility="Visible">
-                                    <e:Interaction.Behaviors>
-                                        <Behavior:ManualBindingBehavior Property="{x:Static local:FlagGroup.ValueProperty}" 
-                                            Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-                                    </e:Interaction.Behaviors>
-                                    <local:FlagGroup.ItemTemplate>
-                                        <DataTemplate>
-                                            <local:ImageToggleButton Content="{Binding Value}" IsChecked="{Data:TwoWay IsChecked}"
                                                 Margin="0,0,0,5"/>
                                         </DataTemplate>
                                     </local:FlagGroup.ItemTemplate>
@@ -1458,7 +1503,16 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:Int32Style.Index}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:SliderAttribute}">
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:SliderUpDownAttribute}">
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:UpDownAttribute}">
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.RangeTemplateKey}}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:SelectedIndexAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1494,23 +1548,16 @@
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Object}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}" ContentTemplate="{Markup:EmptyTemplate}"/>
             <local:KeyTemplate.Triggers>
-                <DataTrigger Binding="{Binding ObjectLevel}" Value="{x:Null}">
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding DepthIndex}" Value="0"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Null}"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
+                </MultiDataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ButtonAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding DepthIndex}" Value="0"/>
-                        <Condition Binding="{Binding ObjectLevel}" Value="{x:Static SharedCommon:ObjectLevel.High}"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding DepthIndex}" Value="0"/>
-                        <Condition Binding="{Binding ObjectLevel}" Value="{x:Static SharedCommon:ObjectLevel.Low}"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
-                </MultiDataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsSystem:Single}">
@@ -1534,7 +1581,7 @@
                             </e:Interaction.Behaviors>
                         </TextBox>
                         <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.Search}">
+                            <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:SearchAttribute}">
                                 <Setter TargetName="TextBox" Property="Linq:XTextBox.EnterButtonSource" Value="{Binding Icon}"/>
                                 <Setter TargetName="TextBox" Property="Linq:XTextBox.EnterButtonVisibility" Value="Visible"/>
                             </DataTrigger>
@@ -1550,7 +1597,7 @@
                 </ContentPresenter.ContentTemplate>
             </ContentPresenter>
             <local:KeyTemplate.Triggers>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.FilePath}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:FilePathAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1572,7 +1619,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.FolderPath}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:FolderPathAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1594,49 +1641,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.MultiFiles}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <local:MultiPathBox
-                                    BrowseMode="OpenFolder"
-                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}"
-                                    CanValidate="True"
-                                    IconVisibility="Visible"
-                                    IsReadOnly="{Binding IsReadOnly}"
-                                    Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
-                                    ValidateHandler="{Binding ValidateHandler}">
-                                    <e:Interaction.Behaviors>
-                                        <Behavior:ManualBindingBehavior Property="{x:Static local:MultiPathBox.SourceProperty}" 
-                                            Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-                                    </e:Interaction.Behaviors>
-                                </local:MultiPathBox>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.MultiFolders}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <local:MultiPathBox
-                                    BrowseMode="OpenFolder"
-                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}"
-                                    CanValidate="True"
-                                    IconVisibility="Visible"
-                                    IsReadOnly="{Binding IsReadOnly}"
-                                    Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
-                                    ValidateHandler="{Binding ValidateHandler}">
-                                    <e:Interaction.Behaviors>
-                                        <Behavior:ManualBindingBehavior Property="{x:Static local:MultiPathBox.SourceProperty}" 
-                                            Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-                                    </e:Interaction.Behaviors>
-                                </local:MultiPathBox>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.MultiLines}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:MultipleAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1658,28 +1663,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.MultiPaths}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <local:MultiPathBox
-                                    BrowseMode="OpenFolder"
-                                    CanBrowse="{Binding IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}, Mode=OneWay}"
-                                    CanValidate="True"
-                                    IconVisibility="Visible"
-                                    IsReadOnly="{Binding IsReadOnly}"
-                                    Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
-                                    ValidateHandler="{Binding ValidateHandler}">
-                                    <e:Interaction.Behaviors>
-                                        <Behavior:ManualBindingBehavior Property="{x:Static local:MultiPathBox.SourceProperty}" 
-                                            Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-                                    </e:Interaction.Behaviors>
-                                </local:MultiPathBox>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.Password}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:PasswordAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1693,7 +1677,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.Thumbnail}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ThumbnailAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1702,8 +1686,8 @@
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
-                </DataTrigger> 
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:StringStyle.Tokens}">
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:TokensAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -1778,10 +1762,10 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumerableStyle.Bullet}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:BulletsAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:EnumerableStyle.Comma}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CommasAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
@@ -1792,10 +1776,10 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ListStyle.Bullet}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:BulletsAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:ListStyle.Comma}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CommasAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
@@ -1806,19 +1790,19 @@
                 <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.Bullet}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:BulletsAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.Button}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ButtonAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.Comma}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CommasAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.Default}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CollectionAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListTemplateKey}}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Static Reflection:CollectionStyle.ImageToggleButton}">
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ToggleButtonAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListImageToggleButtonTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>

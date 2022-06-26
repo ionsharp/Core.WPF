@@ -163,12 +163,10 @@ namespace Imagin.Core.Models
         string search = string.Empty;
         [Command(nameof(SearchCommand))]
         [Label(false)]
-        [Featured(AboveBelow.Below)]
+        [Feature(AboveBelow.Below)]
         [Image(Images.Search)]
         [Index(int.MaxValue)]
-        [Setter(nameof(MemberModel.Placeholder), "Search...")]
-        [Tool]
-        [MemberStyle(StringStyle.Search)]
+        [Search, Setter(nameof(MemberModel.Placeholder), "Search..."), Tool]
         [Suggestions(nameof(SearchHistory), nameof(SearchSuggestionCommand))]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]
         [Width(300)]
@@ -195,11 +193,11 @@ namespace Imagin.Core.Models
         };
 
         bool textWrap = true;
+        [Button]
         [Label(false)]
         [Image(Images.ArrowDownLeft)]
         [Index(int.MaxValue - 1)]
         [Tool]
-        [MemberStyle(BooleanStyle.Image)]
         public bool TextWrap
         {
             get => textWrap;

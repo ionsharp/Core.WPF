@@ -9,7 +9,7 @@
     <Style x:Key="{x:Type local:ProgressRing}" TargetType="{x:Type local:ProgressRing}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BackgroundStroke" Value="#22000000"/>
-        <Setter Property="BackgroundStrokeThickness" Value="10"/>
+        <Setter Property="BackgroundStrokeThickness" Value="6"/>
         <Setter Property="Foreground" Value="{local:ThemeKey Key=ProgressCircleForeground}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="InnerRadius" Value="20"/>
@@ -17,14 +17,14 @@
         <Setter Property="Linq:XProgressBar.ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <TextBlock Foreground="{local:ThemeKey Key=Text}"  Text="{Binding StringFormat={}{0:p0}}"/>
+                    <TextBlock Foreground="{local:ThemeKey Key=Text}" Text="{Binding StringFormat={}{0:p0}}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
         <Setter Property="Maximum" Value="1"/>
         <Setter Property="Minimum" Value="0"/>
         <Setter Property="Radius" Value="60"/>
-        <Setter Property="StrokeThickness" Value="10"/>
+        <Setter Property="StrokeThickness" Value="6"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProgressRing">

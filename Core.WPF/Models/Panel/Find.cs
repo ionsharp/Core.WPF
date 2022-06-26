@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace Imagin.Core.Models
 {
-    [MemberVisibility(MemberVisibility.Explicit, MemberVisibility.Explicit)]
+    [Explicit]
     public class FindPanel : Panel, IFrameworkReference
     {
         public static readonly ReferenceKey<FindControl> ControlKey = new();

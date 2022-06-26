@@ -9,7 +9,6 @@ using Imagin.Core.Reflection;
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -20,11 +19,7 @@ namespace Imagin.Core.Media;
 [DisplayName("Color")]
 public class ColorViewModel : ViewModel
 {
-    enum Category { Adaptation, Chromacity, Component, Compression, Primary, View }
-
-    enum Views { Components, Profile }
-
-    //...
+    enum Category { Component, Profile }
 
     public event DefaultEventHandler<Color> ColorChanged;
 
@@ -35,59 +30,11 @@ public class ColorViewModel : ViewModel
     //...
 
     Color actualColor = System.Windows.Media.Colors.White;
-    [Setter(nameof(MemberModel.Format), ColorFormat.TextBox), DisplayName("Color")]
-    [Featured, Label(false), Visible]
+    [DisplayName("Color"), Feature, Hexadecimal, Label(false), Visible]
     public Color ActualColor
     {
         get => actualColor;
         set => this.Change(ref actualColor, value);
-    }
-
-    DoubleMatrix adapt = new(LMS.Transform.Bradford.As<IMatrix>().Values);
-    [Assignable(nameof(Adaptations))]
-    [Category(Category.Adaptation), DisplayName("Transform"), Index(2), View(Views.Profile), Visible]
-    public DoubleMatrix Adapt
-    {
-        get => adapt;
-        set => this.Change(ref adapt, value);
-    }
-
-    [Hidden]
-    public object Adaptations
-    {
-        get
-        {
-            var result = new ObservableCollection<Namable<DoubleMatrix>>();
-            foreach (var i in typeof(LMS.Transform).GetProperties(BindingFlags.Public | BindingFlags.Static))
-                result.Add(new(i.Name, new DoubleMatrix(i.GetValue(null).As<IMatrix>().Values)));
-
-            return result;
-        }
-    }
-
-    Vector2 chromacity = WorkingProfile.Default.Chromacity;
-    [Assignable(nameof(DefaultChromacity))]
-    [Category(Category.Chromacity), Index(-2), Object(ObjectLayout.Horizontal), View(Views.Profile), Visible]
-    public Vector2 Chromacity
-    {
-        get => chromacity;
-        set => this.Change(ref chromacity, value);
-    }
-
-    [Hidden]
-    public object DefaultChromacity
-    {
-        get
-        {
-            var result = new ObservableCollection<Namable<Vector2>>();
-            foreach (var i in typeof(Illuminant2).GetProperties(BindingFlags.Public | BindingFlags.Static))
-                result.Add(new(i.Name + " (2°)", (Vector2)i.GetValue(null)));
-
-            foreach (var i in typeof(Illuminant10).GetProperties(BindingFlags.Public | BindingFlags.Static))
-                result.Add(new(i.Name + " (10°)", (Vector2)i.GetValue(null)));
-
-            return result;
-        }
     }
 
     [Hidden]
@@ -112,18 +59,9 @@ public class ColorViewModel : ViewModel
     [Hidden]
     public ObservableCollection<Colors.Component> Components { get; private set; } = new();
 
-    ICompress compress = WorkingProfile.Default.Compress;
-    [Assignable(typeof(GammaCompression), typeof(LogGammaCompression), typeof(LCompression), typeof(PQCompression), typeof(Rec709Compression), typeof(Rec2020Compression), typeof(sRGBCompression))]
-    [Category(Category.Compression), DisplayName("Method"), Index(1), Object, View(Views.Profile), Visible]
-    public ICompress Compress
-    {
-        get => compress;
-        set => this.Change(ref compress, value);
-    }
-
     [Setter(nameof(MemberModel.ClearText), false)]
-    [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameX))]
-    [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitX))]
+    [Trigger(nameof(MemberModel.DisplayName), nameof(NameX))]
+    [Trigger(nameof(MemberModel.RightText), nameof(UnitX))]
     [Category(Category.Component), Index(0), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayX
     {
@@ -132,8 +70,8 @@ public class ColorViewModel : ViewModel
     }
 
     [Setter(nameof(MemberModel.ClearText), false)]
-    [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameY))]
-    [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitY))]
+    [Trigger(nameof(MemberModel.DisplayName), nameof(NameY))]
+    [Trigger(nameof(MemberModel.RightText), nameof(UnitY))]
     [Category(Category.Component), Index(1), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayY
     {
@@ -142,8 +80,8 @@ public class ColorViewModel : ViewModel
     }
 
     [Setter(nameof(MemberModel.ClearText), false)]
-    [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameZ))]
-    [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitZ))]
+    [Trigger(nameof(MemberModel.DisplayName), nameof(NameZ))]
+    [Trigger(nameof(MemberModel.RightText), nameof(UnitZ))]
     [Category(Category.Component), Index(2), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayZ
     {
@@ -152,9 +90,9 @@ public class ColorViewModel : ViewModel
     }
 
     [Setter(nameof(MemberModel.ClearText), false)]
-    [MemberTrigger(nameof(MemberModel.DisplayName), nameof(NameW))]
-    [MemberTrigger(nameof(MemberModel.IsVisible), nameof(WVisibility))]
-    [MemberTrigger(nameof(MemberModel.RightText), nameof(UnitW))]
+    [Trigger(nameof(MemberModel.DisplayName), nameof(NameW))]
+    [Trigger(nameof(MemberModel.IsVisible), nameof(WVisibility))]
+    [Trigger(nameof(MemberModel.RightText), nameof(UnitW))]
     [Category(Category.Component), Index(3), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayW
     {
@@ -164,19 +102,6 @@ public class ColorViewModel : ViewModel
 
     [Hidden]
     public bool WVisibility => ModelType?.Inherits<ColorModel4>() == true;
-
-    double illuminant = CCT.GetTemperature((xy)WorkingProfile.Default.Chromacity);
-    [Featured, Setter(nameof(MemberModel.Format), Reflection.RangeFormat.Both), Index(-3), Range(2000.0, 12000.0, 100.0), StringFormat("N0"), View(Views.Profile), Visible]
-    [Gradient("ff1c00", "FFF", "bbd0ff")]
-    [MemberTrigger(nameof(MemberModel.RightText), nameof(IlluminantUnit))]
-    public double Illuminant
-    {
-        get => illuminant;
-        set => this.Change(ref illuminant, value);
-    }
-
-    [Hidden]
-    public string IlluminantUnit => "K";
 
     NamableCategory<Type> model = null;
     [Hidden]
@@ -218,26 +143,6 @@ public class ColorViewModel : ViewModel
     [Hidden]
     public readonly ColorControlOptions Options;
 
-    Primary3 primary = WorkingProfile.Default.Primary;
-    [Assignable(nameof(DefaultPrimary))]
-    [Category(Category.Primary), Index(0), Object(ObjectLevel.Low, ObjectLayout.Horizontal), View(Views.Profile), Visible]
-    public Primary3 Primary
-    {
-        get => primary;
-        set => this.Change(ref primary, value);
-    }
-
-    [Hidden]
-    public object DefaultPrimary
-    {
-        get
-        {
-            var result = new ObservableCollection<Namable<Primary3>>();
-            typeof(WorkingProfiles).GetProperties(BindingFlags.Public | BindingFlags.Static).ForEach(i => result.Add(new(i.GetDisplayName(), i.GetValue(null).As<WorkingProfile>().Primary)));
-            return result;
-        }
-    }
-
     WorkingProfile profile = WorkingProfile.Default;
     [Hidden]
     public WorkingProfile Profile
@@ -253,6 +158,43 @@ public class ColorViewModel : ViewModel
         }
     }
 
+    int profileIndex = 0;
+    [Index(1), Label(false), SelectedIndex, Tool, Visible]
+    [Setter(nameof(MemberModel.ItemPath), "Name")]
+    [Trigger(nameof(MemberModel.ItemSource), nameof(SelectedProfileGroup))]
+    public int ProfileIndex
+    {
+        get => profileIndex;
+        set => this.Change(ref profileIndex, value);
+    }
+
+    int profileGroupIndex = 0;
+    [DisplayName("Profile"), Index(0), SelectedIndex, Tool, Visible]
+    [Setter(nameof(MemberModel.ItemPath), "Name")]
+    [Trigger(nameof(MemberModel.ItemSource), nameof(ProfileGroups))]
+    public int ProfileGroupIndex
+    {
+        get => profileGroupIndex;
+        set => this.Change(ref profileGroupIndex, value);
+    }
+
+    [Hidden]
+    public object SelectedProfileGroup
+    {
+        get
+        {
+            if (Options != null)
+            {
+                if (ProfileGroupIndex >= 0 && ProfileGroupIndex < Options.Profiles.Count)
+                    return Options.Profiles[ProfileGroupIndex];
+            }
+            return null;
+        }
+    }
+
+    [Hidden]
+    public object ProfileGroups => Options?.Profiles;
+
     [Hidden]
     public string UnitX => $"{Colour.Components[ModelType][0].Unit}";
 
@@ -267,24 +209,6 @@ public class ColorViewModel : ViewModel
 
     [Hidden]
     public Vector Value => new(x, y, z);
-
-    CAM02.ViewingConditions viewingConditions = WorkingProfile.DefaultViewingConditions;
-    [Category(Category.View), DisplayName("Conditions"), View(Views.Profile), Visible]
-    [Object(ObjectLayout.Vertical)]
-    public CAM02.ViewingConditions ViewingConditions
-    {
-        get => viewingConditions;
-        set => this.Change(ref viewingConditions, value);
-    }
-
-    Vector3 white = (XYZ)(xyY)(xy)WorkingProfile.Default.Chromacity;
-    [Category(Category.Chromacity), Index(-1), View(Views.Profile), Visible]
-    [Object(ObjectLayout.Horizontal)]
-    public Vector3 White
-    {
-        get => white;
-        set => this.Change(ref white, value);
-    }
 
     One x = default;
     [Hidden]
@@ -320,7 +244,7 @@ public class ColorViewModel : ViewModel
 
     #endregion
 
-    #region ColorModel
+    #region ColorViewModel
 
     public ColorViewModel(Color defaultColor, ColorControlOptions options) : base()
     {
@@ -411,12 +335,23 @@ public class ColorViewModel : ViewModel
     {
         handle.SafeInvoke(() =>
         {
+            ActualColor.Convert(out RGB rgb);
+
+            var result = Colour.New(ModelType, rgb, Profile);
+
+            if (result is ColorModel3 result3)
+            {
+                var color3 = result3.Normalize();
+                X = color3.X; Y = color3.Y; Z = color3.Z;
+            }
+
+            else if (result is ColorModel4 result4)
+            {
+                var color4 = result4.Normalize();
+                X = color4.X; Y = color4.Y; Z = color4.Z; W = color4.W;
+            }
+
             OnColorChanged(ActualColor);
-            return;
-            //ActualColor.Convert(out RGB a);
-            //var b = Colour.New(ModelType, a, WorkingProfile.Default).Value / 255.0;
-            //var c = new Vector3(b[0], b[1], b[2]);
-            //X = c.X; Y = c.Y; Z = c.Z;
         });
     }
 
@@ -453,25 +388,13 @@ public class ColorViewModel : ViewModel
         base.OnPropertyChanged(propertyName);
         switch (propertyName)
         {
+            #region ActualColor
             case nameof(ActualColor):
                 FromColor();
                 break;
+            #endregion
 
-            case nameof(Adapt):
-            case nameof(Compress):
-            case nameof(Primary):
-            case nameof(ViewingConditions):
-                Profile = new WorkingProfile(Primary, Chromacity, Compress, new(Adapt), ViewingConditions);
-                break;
-
-            case nameof(Chromacity):
-                handle.SafeInvoke(() =>
-                {
-                    Illuminant = CCT.GetTemperature((xy)chromacity);
-                    White = (XYZ)(xyY)(xy)chromacity;
-                });
-                goto case nameof(Compress);
-
+            #region Component
             case nameof(Component):
                 this.Changed(() => ActualComponent);
 
@@ -490,24 +413,22 @@ public class ColorViewModel : ViewModel
                 this.Changed(() => UnitZ);
                 this.Changed(() => UnitW);
                 break;
+            #endregion
 
+            #region ComponentIndex
             case nameof(ComponentIndex):
                 Component = ComponentIndex < 0 ? Component4.X : (Component4)componentIndex;
                 break;
+            #endregion
 
-            case nameof(Illuminant):
-                handle.SafeInvoke(() =>
-                {
-                    Chromacity = CCT.GetChromacity(illuminant);
-                    White = (XYZ)(xyY)(xy)chromacity;
-                });
-                goto case nameof(Compress);
-
+            #region Model
             case nameof(Model):
                 this.Changed(() => ModelType);
                 this.Changed(() => WVisibility);
                 goto case nameof(Component);
+            #endregion
 
+            #region ModelType
             case nameof(ModelType):
                 var cIndex = componentIndex;
 
@@ -516,18 +437,28 @@ public class ColorViewModel : ViewModel
 
                 ComponentIndex = !WVisibility && ComponentIndex == 3 ? 2 : cIndex;
                 break;
+            #endregion
 
-            case nameof(Profile):
+            #region ProfileGroupIndex
+            case nameof(ProfileGroupIndex):
+                this.Changed(() => SelectedProfileGroup);
                 break;
+            #endregion
 
-            case nameof(White):
-                handle.SafeInvoke(() =>
+            #region ProfileIndex
+            case nameof(ProfileIndex):
+                if (SelectedProfileGroup is IList selectedProfileGroup)
                 {
-                    Chromacity = (xy)(xyY)(XYZ)white;
-                    Illuminant = CCT.GetTemperature((xy)chromacity);
-                });
-                goto case nameof(Primary);
+                    if (ProfileIndex >= 0 && ProfileIndex < selectedProfileGroup.Count)
+                    {
+                        if (selectedProfileGroup[ProfileIndex] is NamableProfile selectedProfile)
+                            Profile = selectedProfile.Value;
+                    }
+                }
+                break;
+            #endregion
 
+            #region X, Y, Z, w
             case nameof(X):
                 this.Changed(() => DisplayX);
                 ToColor();
@@ -544,6 +475,7 @@ public class ColorViewModel : ViewModel
                 this.Changed(() => DisplayW);
                 ToColor();
                 break;
+            #endregion
         }
     }
 

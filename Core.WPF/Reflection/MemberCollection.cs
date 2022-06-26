@@ -3,7 +3,6 @@ using Imagin.Core.Controls;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -156,29 +155,10 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     //... (internal)
 
-    void Load(IDictionary input, SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
-    {
-        foreach (DictionaryEntry i in input)
-        {
-            if (i.Value != null)
-            {
-                var memberData = new MemberData(this, Source, null, null);
-
-                var result = new EntryModel(memberData) { Name = i.Key.ToString() };
-                result.UpdateValue(i.Value);
-
-                Add(result);
-                Dispatch.Invoke(() => onAdded?.Invoke(result, filter));
-            }
-        }
-    }
-
-    //...
-
     internal void LoadSync(SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
     {
-        var visibility
-            = Source.Type.GetAttribute<MemberVisibilityAttribute>() ?? new();
+        var isExplicit
+            = Source.Type.GetAttribute<ExplicitAttribute>() != null;
 
         if (!Cache.Current.ContainsKey(Source.Type))
         {
@@ -194,7 +174,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
                 switch (i.MemberType)
                 {
                     case MemberTypes.Field:
-                        if (visibility.Field == MemberVisibility.Explicit)
+                        if (isExplicit)
                         {
                             if (isImplicit(i))
                                 continue;
@@ -202,7 +182,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
                         break;
 
                     case MemberTypes.Property:
-                        if (visibility.Property == MemberVisibility.Explicit)
+                        if (isExplicit)
                         {
                             if (isImplicit(i))
                                 continue;
@@ -264,32 +244,16 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
             }
 
             var data = new MemberData(this, Source, i.Key, i.Value);
-
-            MemberModel result = null;
-            if (i.Key is FieldInfo field)
-            {
-                var templateType = MemberModel.GetTemplateType(field.FieldType);
-
-                result = templateType == typeof(INotifyCollectionChanged)
-                ? new ListFieldModel(data, Depth)
-                : new FieldModel(data, Depth);
-            }
-
-            else if (i.Key is PropertyInfo property)
-            {
-                var templateType = MemberModel.GetTemplateType(property.PropertyType);
-
-                result = templateType == typeof(INotifyCollectionChanged)
-                ? new ListPropertyModel(data, Depth)
-                : new PropertyModel(data, Depth);
-            }
+            MemberModel result 
+                = i.Key is FieldInfo 
+                ? new FieldModel(data, Depth) 
+                : i.Key is PropertyInfo 
+                ? new PropertyModel(data, Depth) 
+                : null;
 
             Add(result);
             Dispatch.Invoke(() => onAdded?.Invoke(result, filter));
         }
-
-        if (Source.Instance is IDictionary dictionary)
-            Load(dictionary, filter, onAdded);
     }
 
     internal async Task Load(MemberSource source, SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
@@ -329,15 +293,6 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     public void Refresh(MemberSource newSource)
     {
-        for (var i = Count - 1; i >= 0; i--)
-        {
-            if (this[i] is EntryModel j)
-            {
-                j.Unsubscribe();
-                RemoveAt(i);
-            }
-        }
-
         Unsubscribe();
         Source = newSource;
 

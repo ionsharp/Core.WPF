@@ -19,7 +19,7 @@ namespace Imagin.Core.Controls
         }
 
         string backgroundImage = string.Empty;
-        [MemberStyle(StringStyle.FilePath)]
+        [FilePath]
         public string BackgroundImage
         {
             get => backgroundImage;
@@ -50,7 +50,7 @@ namespace Imagin.Core.Controls
 
         double fontSize = 16.0;
         [Range(12.0, 48.0, 1.0)]
-        [Setter(nameof(MemberModel.Format), RangeFormat.Both)]
+        [SliderUpDown]
         public double FontSize
         {
             get => fontSize;

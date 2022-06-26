@@ -8,8 +8,10 @@ public interface IColorControlOptions
 
     IGroupWriter Colors { get; }
 
-    IWriter Profiles { get; }
-        
+    IGroupWriter Illuminants { get; }
+
+    IGroupWriter Profiles { get; }
+    
     //...
 
     Layouts Layouts { get; }

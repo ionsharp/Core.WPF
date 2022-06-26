@@ -14,7 +14,7 @@ public class MemberPath : ObservableCollection<MemberPathElement>
         if (newValue == null || ReferenceEquals(oldValue, newValue))
             return null;
 
-        if (newValue is ListObjectModel a)
+        if (newValue is ListItemModel a)
             newValue = new MemberPathItem(a);
 
         else if (newValue is MemberModel b)
@@ -75,12 +75,13 @@ public class MemberPath : ObservableCollection<MemberPathElement>
             else
             {
                 goto skip;
+                /*
                 MemberModel parentMember = child.Member;
                 while (parentMember != null)
                 {
-                    if (parentMember is ListObjectModel listItem)
+                    if (parentMember is ListItemModel listItem)
                     {
-                        parentMember = listItem.Parent;
+                        parentMember = listItem.OtherParent;
                     }
                     else if (child.Member.Parent.Parent == null)
                     {
@@ -94,7 +95,7 @@ public class MemberPath : ObservableCollection<MemberPathElement>
                     if (!this.Contains<MemberPathChild>(i => ReferenceEquals(i.Member, parentMember)))
                     {
                         MemberPathChild result = null;
-                        if (parentMember is ListObjectModel)
+                        if (parentMember is ListItemModel)
                             result = new MemberPathItem(parentMember);
 
                         else result = new MemberPathChild(parentMember);
@@ -102,6 +103,7 @@ public class MemberPath : ObservableCollection<MemberPathElement>
                     }
                     else break;
                 }
+                */
             }
         }
         skip: append.Add(input);

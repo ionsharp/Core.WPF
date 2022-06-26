@@ -125,7 +125,7 @@ namespace Imagin.Core.Models
             private set => this.Change(ref modified, value);
         }
 
-        [Featured]
+        [Feature]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]
         [XmlIgnore]
         public string Name
@@ -173,9 +173,7 @@ namespace Imagin.Core.Models
         [Hidden]
         [Index(-1)]
         [Label(false)]
-        [MemberStyle(StringStyle.Thumbnail)]
-        [Status]
-        [XmlIgnore]
+        [Status, Thumbnail, XmlIgnore]
         public string Path
         {
             get => path;

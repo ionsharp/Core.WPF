@@ -3,12 +3,10 @@ using Imagin.Core.Markup;
 
 namespace Imagin.Core.Controls
 {
-    /// <summary>
-    /// See <see cref="StyleKeys"/>.
-    /// </summary>
+    /// <summary>See <see cref="StyleKeys"/>.</summary>
     public class StyleKey : Uri
     {
-        public const string KeyFormat = "Styles/Generic/{0}.xaml";
+        public const string KeyFormat = "Styles/{0}.xaml";
 
         public StyleKeys Key
         {

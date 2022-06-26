@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace Imagin.Core.Media;
 
-[Serializable]
+[Explicit, Serializable]
 public class StringColor : Base
 {
     //[field: NonSerialized]
@@ -30,7 +30,7 @@ public class StringColor : Base
         }
     }
 
-    [XmlIgnore]
+    [DisplayName("Color"), Visible, XmlIgnore]
     public Color Value
     {
         get => Convert(this);

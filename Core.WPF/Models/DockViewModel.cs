@@ -173,8 +173,6 @@ namespace Imagin.Core.Models
                 new NotificationsPanel(Get.Where<BaseApplication>().Notifications);
             yield return
                 new OptionsPanel();
-            yield return
-                new ThemePanel();
         }
 
         public virtual IEnumerable<Panel> GetPanels() => Enumerable.Empty<Panel>();

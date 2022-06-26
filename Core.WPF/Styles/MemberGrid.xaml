@@ -136,95 +136,98 @@
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate DataType="{x:Type Reflection:MemberModel}">
-                    <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto">
-                        <Grid.Resources>
-                            <Data:Reference x:Key="Member" 
-                                Data="{Binding}"/>
-                            <Data:Reference x:Key="MemberGrid"
-                                Data="{Data:Ancestor local:MemberGrid}"/>
-                        </Grid.Resources>
-                        <ContentPresenter x:Name="ContentPresenter" Content="{Binding TemplateType}">
-                            <ContentPresenter.ContentTemplate>
-                                <DataTemplate>
-                                    <ContentPresenter x:Name="ContentPresenter" Content="{Binding Data, Source={StaticResource Member}}" 
-                                        ContentTemplateSelector="{StaticResource MemberTemplateSelector}"/>
-                                    <DataTemplate.Triggers>
-                                        <!-- Value = null -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Data.Value, Source={StaticResource Member}}" Value="{x:Null}"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.NullTemplateKey}}"/>
-                                            <Setter TargetName="ContentPresenter" Property="ContentTemplateSelector" Value="{x:Null}"/>
-                                        </MultiDataTrigger>
-                                        <!-- Converter != null & IsReadOnly -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Data:IsNullBinding Data.Converter, Source={StaticResource Member}}" Value="False"/>
-                                                <Condition Binding="{Binding Data.IsReadOnly, Source={StaticResource Member}}" Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ReadOnlyTemplateKey}}"/>
-                                            <Setter TargetName="ContentPresenter" Property="ContentTemplateSelector" Value="{x:Null}"/>
-                                        </MultiDataTrigger>
-                                    </DataTemplate.Triggers>
-                                </DataTemplate>
-                            </ContentPresenter.ContentTemplate>
-                        </ContentPresenter>
-                        <local:ImageButton x:Name="ImageButton"
-                            ButtonVisibility="Visible"
-                            Margin="1,0,0,0"
-                            ToolTip="{l:Loc Options}"
-                            VerticalAlignment="Center"
-                            Visibility="{Data:VisibilityBinding Assignable}">
-                            <local:ImageButton.Menu>
-                                <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}">
-                                    <ContextMenu.Resources>
-                                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                                            <Style.Triggers>
-                                                <Trigger Property="Tag" Value="{x:Null}">
-                                                    <Setter Property="Command" Value="{Binding Data.MemberNewCommand, Source={StaticResource MemberGrid}}"/>
-                                                </Trigger>
-                                                <DataTrigger Binding="{Data:IsBinding Type={x:Type Core:BaseNamable}}" Value="True">
-                                                    <Setter Property="CommandParameter">
-                                                        <Setter.Value>
-                                                            <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding Value}"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Setter Property="Header" Value="{Binding Name}"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Data:IsBinding Type={x:Type System:Type}}" Value="True">
-                                                    <Setter Property="CommandParameter">
-                                                        <Setter.Value>
-                                                            <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding}"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Setter Property="Header" Value="{Data:DisplayNameBinding}"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ContextMenu.Resources>
-                                    <ContextMenu.ItemsSource>
-                                        <CompositeCollection>
-                                            <MenuItem Tag="0" Header="{l:Loc Default}"
-                                                Command="{Binding Data.MemberDefaultCommand, Source={StaticResource MemberGrid}}"
-                                                CommandParameter="{Binding}"/>
-                                            <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableTypes.Count}"/>
-                                            <CollectionContainer Collection="{Binding Data.AssignableTypes, Source={StaticResource Member}}"/>
-                                            <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableValues.Count}"/>
-                                            <CollectionContainer Collection="{Binding Data.AssignableValues, Source={StaticResource Member}}"/>
-                                            <Separator/>
-                                            <MenuItem Tag="0" Header="{l:Loc Reset}"
-                                                Command="{Binding Data.MemberResetCommand, Source={StaticResource MemberGrid}}"
-                                                CommandParameter="{Binding}"/>
-                                            <MenuItem Tag="0" Header="{l:Loc Clear}"
-                                                Command="{Binding Data.MemberClearCommand, Source={StaticResource MemberGrid}}"
-                                                CommandParameter="{Binding}"
-                                                Visibility="{Data:VisibilityBinding IsEnabled, Relative=Self}"/>
-                                        </CompositeCollection>
-                                    </ContextMenu.ItemsSource>
-                                </ContextMenu>
-                            </local:ImageButton.Menu>
-                        </local:ImageButton>
+                    <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*">
+                        <TextBlock Margin="0,0,0,5" Text="{Binding Caption}" Visibility="{Data:VisibilityBinding Caption}"/>
+                        <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto">
+                            <Grid.Resources>
+                                <Data:Reference x:Key="Member" 
+                                    Data="{Binding}"/>
+                                <Data:Reference x:Key="MemberGrid"
+                                    Data="{Data:Ancestor local:MemberGrid}"/>
+                            </Grid.Resources>
+                            <ContentPresenter x:Name="ContentPresenter" Content="{Binding TemplateType}">
+                                <ContentPresenter.ContentTemplate>
+                                    <DataTemplate>
+                                        <ContentPresenter x:Name="ContentPresenter" Content="{Binding Data, Source={StaticResource Member}}" 
+                                            ContentTemplateSelector="{StaticResource MemberTemplateSelector}"/>
+                                        <DataTemplate.Triggers>
+                                            <!-- Value = null -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Data.Value, Source={StaticResource Member}}" Value="{x:Null}"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.NullTemplateKey}}"/>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplateSelector" Value="{x:Null}"/>
+                                            </MultiDataTrigger>
+                                            <!-- Converter != null & IsReadOnly -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Data:IsNullBinding Data.Converter, Source={StaticResource Member}}" Value="False"/>
+                                                    <Condition Binding="{Binding Data.IsReadOnly, Source={StaticResource Member}}" Value="True"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ReadOnlyTemplateKey}}"/>
+                                                <Setter TargetName="ContentPresenter" Property="ContentTemplateSelector" Value="{x:Null}"/>
+                                            </MultiDataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ContentPresenter.ContentTemplate>
+                            </ContentPresenter>
+                            <local:ImageButton x:Name="ImageButton"
+                                ButtonVisibility="Visible"
+                                Margin="1,0,0,0"
+                                ToolTip="{l:Loc Options}"
+                                VerticalAlignment="Center"
+                                Visibility="{Data:VisibilityBinding Assignable}">
+                                <local:ImageButton.Menu>
+                                    <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}">
+                                        <ContextMenu.Resources>
+                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="Tag" Value="{x:Null}">
+                                                        <Setter Property="Command" Value="{Binding Data.MemberNewCommand, Source={StaticResource MemberGrid}}"/>
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Data:IsBinding Type={x:Type Core:BaseNamable}}" Value="True">
+                                                        <Setter Property="CommandParameter">
+                                                            <Setter.Value>
+                                                                <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding Value}"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Setter Property="Header" Value="{Binding Name}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Data:IsBinding Type={x:Type System:Type}}" Value="True">
+                                                        <Setter Property="CommandParameter">
+                                                            <Setter.Value>
+                                                                <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding}"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Setter Property="Header" Value="{Data:DisplayNameBinding}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContextMenu.Resources>
+                                        <ContextMenu.ItemsSource>
+                                            <CompositeCollection>
+                                                <MenuItem Tag="0" Header="{l:Loc Default}"
+                                                    Command="{Binding Data.MemberDefaultCommand, Source={StaticResource MemberGrid}}"
+                                                    CommandParameter="{Binding}"/>
+                                                <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableTypes.Count}"/>
+                                                <CollectionContainer Collection="{Binding Data.AssignableTypes, Source={StaticResource Member}}"/>
+                                                <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableValues.Count}"/>
+                                                <CollectionContainer Collection="{Binding Data.AssignableValues, Source={StaticResource Member}}"/>
+                                                <Separator/>
+                                                <MenuItem Tag="0" Header="{l:Loc Reset}"
+                                                    Command="{Binding Data.MemberResetCommand, Source={StaticResource MemberGrid}}"
+                                                    CommandParameter="{Binding}"/>
+                                                <MenuItem Tag="0" Header="{l:Loc Clear}"
+                                                    Command="{Binding Data.MemberClearCommand, Source={StaticResource MemberGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Data:VisibilityBinding IsEnabled, Relative=Self}"/>
+                                            </CompositeCollection>
+                                        </ContextMenu.ItemsSource>
+                                    </ContextMenu>
+                                </local:ImageButton.Menu>
+                            </local:ImageButton>
+                        </Grid>
                     </Grid>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding IsLocked}" Value="True">

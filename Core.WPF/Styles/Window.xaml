@@ -145,7 +145,8 @@
                                     <ContentPresenter Grid.Column="0"
                                         x:Name="PART_Icon"
                                         Content="{Markup:True}"
-                                        Margin="10,0,0,0"/>
+                                        Margin="10,0,0,0"
+                                        Visibility="{Data:TemplatedParent Path=(Linq:XWindow.TitleIconVisibility)}"/>
 
                                     <ContentPresenter Grid.Column="1"
                                         x:Name="PART_Title"
@@ -156,7 +157,7 @@
                                     <ContentPresenter Grid.Column="1"
                                         x:Name="PART_Menu"
                                         Content="{Data:TemplatedParent Path=(Linq:XWindow.Menu)}"
-                                        Margin="2,0,0,0"
+                                        Margin="6,0,0,0"
                                         VerticalAlignment="Center"
                                         WindowChrome.IsHitTestVisibleInChrome="True"/>
 
@@ -516,11 +517,13 @@
     <!-- ... -->
 
     <Style x:Key="{x:Type local:MemberWindow}" TargetType="{x:Type local:MemberWindow}" BasedOn="{StaticResource {x:Type Window}}">
-        <Setter Property="Height" Value="600"/>
+        <Setter Property="Linq:XWindow.AutoCenter" Value="True"/>
         <Setter Property="Linq:XWindow.CanMaximize" Value="False"/>
         <Setter Property="Linq:XWindow.FooterVisibility" Value="Visible"/>
         <Setter Property="Linq:XWindow.IsChild" Value="True"/>
+        <Setter Property="MaxHeight" Value="540"/>
         <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
+        <Setter Property="SizeToContent" Value="Height"/>
         <Setter Property="Width" Value="400"/>
     </Style>
 

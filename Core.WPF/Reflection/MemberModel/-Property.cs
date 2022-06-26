@@ -1,14 +1,11 @@
-﻿using Imagin.Core.Linq;
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace Imagin.Core.Reflection
 {
     public class PropertyModel : MemberModel
     {
-        DependencyValue internalValue;
-
-        public override bool CanWrite => Member.GetSetMethod(true) != null;
+        public override bool CanWrite => Member.CanWrite && Member.GetSetMethod(true) != null;
 
         new public PropertyInfo Member => (PropertyInfo)base.Member;
 
@@ -19,25 +16,5 @@ namespace Imagin.Core.Reflection
         protected override void SetValue(object source, object value) => Member.SetValue(source, value, null);
 
         protected override object GetValue(object input) => Member.GetValue(input);
-
-        public override void Subscribe()
-        {
-            base.Subscribe();
-            return;
-            internalValue = new();
-            //internalValue.Bind(DependencyValue.ValueProperty, new PropertyPath("(0)", Property), Source.First);
-            //internalValue.ValueChanged += OnValueChanged;
-        }
-
-        public override void Unsubscribe()
-        {
-            base.Unsubscribe();
-            if (internalValue != null)
-            {
-                //internalValue.ValueChanged -= OnValueChanged;
-                internalValue.Unbind(DependencyValue.ValueProperty);
-                internalValue = null;
-            }
-        }
     }
 }

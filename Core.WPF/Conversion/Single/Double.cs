@@ -26,6 +26,17 @@ namespace Imagin.Core.Conversion
 
         protected override ConverterValue<long> ConvertBack(ConverterData<double> input) => Nothing.Do;
     }
+    
+    [ValueConversion(typeof(Vector2), typeof(double))]
+    public class ChromacityToKelvinConverter : Converter<Vector2, double>
+    {
+        public static ChromacityToKelvinConverter Default { get; private set; } = new();
+        public ChromacityToKelvinConverter() { }
+
+        protected override ConverterValue<double> ConvertTo(ConverterData<Vector2> input) => CCT.GetTemperature((xy)input.Value);
+
+        protected override ConverterValue<Vector2> ConvertBack(ConverterData<double> input) => (Vector2)CCT.GetChromacity(input.Value);
+    }
 
     [ValueConversion(typeof(Component4), typeof(double))]
     public class Component4ToDoubleConverter : Converter<Component4, double>
@@ -47,6 +58,21 @@ namespace Imagin.Core.Conversion
         protected override ConverterValue<double> ConvertTo(ConverterData<double> input) => 1 - Clamp(input.Value, 1);
 
         protected override ConverterValue<double> ConvertBack(ConverterData<double> input) => 1 - Clamp(input.Value, 1);
+    }
+
+    [ValueConversion(typeof(double), typeof(Vector2))]
+    public class KelvinToChromacityConverter : Converter<double, Vector2>
+    {
+        public static KelvinToChromacityConverter Default { get; private set; } = new();
+        public KelvinToChromacityConverter() { }
+
+        protected override ConverterValue<Vector2> ConvertTo(ConverterData<double> input)
+        {
+            var result = (Vector2)CCT.GetChromacity(input.Value);
+            return result.Transform((i, j) => input.ActualParameter != null ? j.Round(input.Parameter) : j);
+        }
+
+        protected override ConverterValue<double> ConvertBack(ConverterData<Vector2> input) => CCT.GetTemperature((xy)input.Value);
     }
 
     [ValueConversion(typeof(double), typeof(double))]

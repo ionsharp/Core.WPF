@@ -44,11 +44,11 @@ public abstract class ColorAnalysis : Base
 
 public enum ColorAnalysisType
 {
-    [DisplayName("🞳 🡪 RGB 🡪 🞳 (Accuracy)")]
+    [DisplayName("🡪 RGB 🡪")]
     Accuracy,
-    [DisplayName("🞳 🡪 RGB (Range)")]
+    [DisplayName("🡪 RGB")]
     Range,
-    [DisplayName("RGB 🡪 🞳 (Range)")]
+    [DisplayName("RGB 🡪")]
     RangeInverse
 }
 
@@ -155,15 +155,15 @@ public class ColorRangeInverseAnalysis : ColorRangeAnalysis
 
 #region ColorAnalysisPanel
 
-[MemberVisibility(Property: MemberVisibility.Explicit)]
+[Explicit]
 public class ColorAnalysisPanel : Panel
 {
-    public override Uri Icon => Resources.InternalImage(Images.Trend);
+    public override Uri Icon => Resources.InternalImage(Images.LineGraph);
 
     public override string Title => "Analysis";
         
     int depth = 10;
-    [DisplayName("# of colors"), Setter(nameof(MemberModel.Format), RangeFormat.Both), Setter(nameof(MemberModel.RightText), "^3"), Range(1, 255, 1)]
+    [DisplayName("# of colors"), SliderUpDown, Setter(nameof(MemberModel.RightText), "^3"), Range(1, 255, 1)]
     [Locked, Tool, Visible]
     public int Depth
     {
@@ -188,7 +188,7 @@ public class ColorAnalysisPanel : Panel
         CResults { get; private set; } = new();
 
     int precision = 3;
-    [Setter(nameof(MemberModel.Format), RangeFormat.Both), Range(1, 8, 1)]
+    [SliderUpDown, Range(1, 8, 1)]
     [Locked, Tool, Visible]
     public int Precision
     {
@@ -197,7 +197,7 @@ public class ColorAnalysisPanel : Panel
     }
 
     ColorAnalysisType type = ColorAnalysisType.Accuracy;
-    [Featured(AboveBelow.Above), Label(false), Locked, Localize(false), Tool, Visible]
+    [Feature(AboveBelow.Above), Label(false), Locked, Localize(false), Tool, Visible]
     public ColorAnalysisType Type
     {
         get => type;
@@ -248,9 +248,23 @@ public class ColorAnalysisPanel : Panel
         }
     }
 
-    ICommand analyzeCommand;
-    [DisplayName("Analyze"), Featured(AboveBelow.Below), Image(Images.ArrowE), Index(2), Locked, Tool, Visible]
-    public ICommand AnalyzeCommand => analyzeCommand ??= new RelayCommand(async () =>
+    ICommand copyCommand;
+    [DisplayName("Copy"), Feature(AboveBelow.Below), Image(Images.Copy), Index(1), Locked, Tool, Visible]
+    public ICommand CopyCommand => copyCommand ??= new RelayCommand(() =>
+    {
+        var result = new StringBuilder();
+        Results.As<IList>().ForEach(i => result.AppendLine($"{i}\n"));
+        Clipboard.SetText(result.ToString());
+    },
+    () => Results?.As<IList>().Count > 0);
+
+    ICommand clearCommand;
+    [DisplayName("Clear"), Feature(AboveBelow.Below), Image(Images.XRound), Index(0), Locked, Tool, Visible]
+    public ICommand ClearCommand => clearCommand ??= new RelayCommand(() => Results?.As<IList>().Clear(), () => Results?.As<IList>().Count > 0);
+
+    ICommand refreshCommand;
+    [DisplayName("Refresh"), Feature(AboveBelow.Below), Image(Images.Refresh), Index(2), Locked, Tool, Visible]
+    public ICommand RefreshCommand => refreshCommand ??= new RelayCommand(async () =>
     {
         IsBusy = true;
         IsLocked = true;
@@ -287,20 +301,6 @@ public class ColorAnalysisPanel : Panel
         IsLocked = false;
         IsBusy = false;
     });
-
-    ICommand copyCommand;
-    [DisplayName("Copy"), Featured(AboveBelow.Below), Image(Images.Copy), Index(1), Locked, Tool, Visible]
-    public ICommand CopyCommand => copyCommand ??= new RelayCommand(() =>
-    {
-        var result = new StringBuilder();
-        Results.As<IList>().ForEach(i => result.AppendLine($"{i}\n"));
-        Clipboard.SetText(result.ToString());
-    },
-    () => Results?.As<IList>().Count > 0);
-
-    ICommand clearCommand;
-    [DisplayName("Clear"), Featured(AboveBelow.Below), Image(Images.XRound), Index(0), Locked, Tool, Visible]
-    public ICommand ClearCommand => clearCommand ??= new RelayCommand(() => Results?.As<IList>().Clear(), () => Results?.As<IList>().Count > 0);
 }
 
 #endregion

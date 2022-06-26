@@ -56,12 +56,12 @@ namespace Imagin.Core.Models
         public override string TitleKey => "Notifications";
 
         bool textWrap = true;
+        [Button]
         [Category(Category.Text)]
         [Label(false)]
         [Image(Images.ArrowDownLeft)]
         [Index(int.MaxValue - 1)]
         [Tool]
-        [MemberStyle(BooleanStyle.Image)]
         public bool TextWrap
         {
             get => textWrap;

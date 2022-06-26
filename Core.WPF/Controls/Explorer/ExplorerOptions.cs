@@ -75,7 +75,7 @@ namespace Imagin.Core.Controls
 
         string defaultPath = StoragePath.Root;
         [Category(Category.General)]
-        [MemberStyle(StringStyle.FolderPath)]
+        [FolderPath]
         public string DefaultPath
         {
             get => defaultPath;

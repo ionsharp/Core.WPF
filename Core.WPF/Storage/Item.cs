@@ -115,7 +115,7 @@ namespace Imagin.Core.Storage
 
         protected string path;
         [DisplayName("Path")]
-        [Featured]
+        [Feature]
         [ReadOnly]
         public virtual string Path
         {

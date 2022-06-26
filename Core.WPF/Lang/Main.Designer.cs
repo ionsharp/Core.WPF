@@ -1339,6 +1339,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Harmony.
+        /// </summary>
+        internal static string Harmony {
+            get {
+                return ResourceManager.GetString("Harmony", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Header alignment.
         /// </summary>
         internal static string HeaderAlignment {
@@ -1470,6 +1479,15 @@ namespace Imagin.Core.Lang {
         internal static string Ignore {
             get {
                 return ResourceManager.GetString("Ignore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illuminants.
+        /// </summary>
+        internal static string Illuminants {
+            get {
+                return ResourceManager.GetString("Illuminants", resourceCulture);
             }
         }
         
@@ -2136,6 +2154,15 @@ namespace Imagin.Core.Lang {
         internal static string Profile {
             get {
                 return ResourceManager.GetString("Profile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profiles.
+        /// </summary>
+        internal static string Profiles {
+            get {
+                return ResourceManager.GetString("Profiles", resourceCulture);
             }
         }
         

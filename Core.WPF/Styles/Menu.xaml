@@ -56,10 +56,11 @@
                                     SharedSizeGroup="MenuItemGestureColumnGroup"/>
                                 <ColumnDefinition Width="Auto" x:Name="Col3" />
                             </Grid.ColumnDefinitions>
+                            
                             <Grid x:Name="PART_IconGrid"
                                 SnapsToDevicePixels="True"
                                 Visibility="{Data:TemplatedParent Path=(Linq:XMenuItem.IconVisibility)}">
-                                <local:FillElement Fill="#0A000000"/>
+                                <local:FillElement x:Name="PART_IconBackground" Fill="#0A000000"/>
                                 <local:ImageElement x:Name="PART_IconDot"
                                     HorizontalAlignment="Center"
                                     Source="{Markup:InternalImage Dot.png}"
@@ -86,7 +87,7 @@
                                 Margin="3,0"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             <Grid x:Name="PART_Arrow" Grid.Column="3" 
-                                Margin="3,0"
+                                Margin="3,0,5,0"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                 <local:RotateElement
                                     Rotate="{Data:TemplatedParent IsSubmenuOpen}"
@@ -174,8 +175,12 @@
                                 Property="Width" Value="Auto" />
                             <Setter TargetName="PART_Arrow" 
                                 Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="PART_IconTemplate" 
+                            <Setter TargetName="PART_IconBackground"
                                 Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_IconTemplate" 
+                                Property="Margin" Value="2,0,0,0" />
+                            <Setter TargetName="PART_IconTemplate" 
+                                Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_InputGesture" 
                                 Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_Submenu" 
@@ -190,8 +195,12 @@
                                 Property="Width" Value="Auto" />
                             <Setter TargetName="PART_Arrow"
                                 Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="PART_IconTemplate"
+                            <Setter TargetName="PART_IconBackground"
                                 Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_IconTemplate" 
+                                Property="Margin" Value="2,0,0,0" />
+                            <Setter TargetName="PART_IconTemplate"
+                                Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_InputGesture" 
                                 Property="Visibility" Value="Collapsed" />
                         </Trigger>
@@ -202,11 +211,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Style.Triggers>
             <Trigger Property="Icon" Value="{x:Null}">
-                <Setter Property="Linq:XMenuItem.IconTemplate">
-                    <Setter.Value>
-                        <DataTemplate/>
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="Linq:XMenuItem.IconTemplate" Value="{Markup:EmptyTemplate}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Opacity" Value="{x:Static Linq:XElement.DisabledOpacity}" />
@@ -218,9 +223,11 @@
                 <Setter Property="DockPanel.Dock" Value="Top" />
             </Trigger>
             <Trigger Property="Role" Value="TopLevelHeader">
+                <Setter Property="Margin" Value="0,0,5,0" />
                 <Setter Property="Padding" Value="10,2" />
             </Trigger>
             <Trigger Property="Role" Value="TopLevelItem">
+                <Setter Property="Margin" Value="0,0,5,0" />
                 <Setter Property="Padding" Value="10,4" />
             </Trigger>
             <!-- ... -->

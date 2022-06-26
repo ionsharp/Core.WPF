@@ -1,11 +1,9 @@
 ﻿using Imagin.Core.Analytics;
-using Imagin.Core.Controls;
-using Imagin.Core.Reflection;
 using Imagin.Core.Collections;
 using Imagin.Core.Conversion;
-using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -22,7 +20,7 @@ namespace Imagin.Core.Models
     {
         public static readonly ResourceKey TemplateKey = new();
 
-        enum Category { Category0, Commands0, Filter, Group, Sort, Text, View }
+        enum Category { Category0, Commands0, Group, Sort, Text, View }
 
         [Serializable]
         public enum Views { Rows, Text }
@@ -128,13 +126,12 @@ namespace Imagin.Core.Models
         }
 
         bool filterError = true;
-        [Category(Category.Filter)]
+        [Button, Feature]
         [Label(false)]
         [Image(Images.XRound, ThemeKeys.ResultError)]
         [Index(-5)]
-        [MemberTrigger(nameof(MemberModel.Content), nameof(ErrorCount))]
+        [Trigger(nameof(MemberModel.Content), nameof(ErrorCount))]
         [Tool]
-        [MemberStyle(BooleanStyle.Image)]
         public bool FilterError
         {
             get => filterError;
@@ -142,13 +139,12 @@ namespace Imagin.Core.Models
         }
 
         bool filterMessage = true;
-        [Category(Category.Filter)]
+        [Button, Feature]
         [Label(false)]
         [Image(Images.Info, ThemeKeys.ResultMessage)]
         [Index(-4)]
-        [MemberTrigger(nameof(MemberModel.Content), nameof(MessageCount))]
+        [Trigger(nameof(MemberModel.Content), nameof(MessageCount))]
         [Tool]
-        [MemberStyle(BooleanStyle.Image)]
         public bool FilterMessage
         {
             get => filterMessage;
@@ -156,13 +152,12 @@ namespace Imagin.Core.Models
         }
 
         bool filterSuccess = true;
-        [Category(Category.Filter)]
+        [Button, Feature]
         [Label(false)]
         [Image(Images.CheckmarkRound, ThemeKeys.ResultSuccess)]
         [Index(-3)]
-        [MemberTrigger(nameof(MemberModel.Content), nameof(SuccessCount))]
+        [Trigger(nameof(MemberModel.Content), nameof(SuccessCount))]
         [Tool]
-        [MemberStyle(BooleanStyle.Image)]
         public bool FilterSuccess
         {
             get => filterSuccess;
@@ -170,28 +165,16 @@ namespace Imagin.Core.Models
         }
 
         bool filterWarning = true;
-        [Category(Category.Filter)]
+        [Button, Feature]
         [Label(false)]
         [Image(Images.Warning, ThemeKeys.ResultWarning)]
         [Index(-2)]
-        [MemberTrigger(nameof(MemberModel.Content), nameof(WarningCount))]
+        [Trigger(nameof(MemberModel.Content), nameof(WarningCount))]
         [Tool]
-        [MemberStyle(BooleanStyle.Image)]
         public bool FilterWarning
         {
             get => filterWarning;
             set => this.Change(ref filterWarning, value);
-        }
-
-        ResultLevel filterLevel = ResultLevel.All;
-        [Category(Category.Category0)]
-        [DisplayName("Level")]
-        [Tool]
-        [MemberStyle(EnumStyle.FlagSelect)]
-        public ResultLevel FilterLevel
-        {
-            get => filterLevel;
-            set => this.Change(ref filterLevel, value);
         }
 
         [Hidden]
@@ -212,15 +195,14 @@ namespace Imagin.Core.Models
         string search = string.Empty;
         [Command(nameof(SearchCommand))]
         [Label(false)]
-        [Featured(AboveBelow.Below)]
-        [Image(Images.Search)]
+        [Feature(AboveBelow.Below)]
+        [Hidden, Image(Images.Search)]
         [Index(int.MaxValue)]
-        [Setter(nameof(MemberModel.Placeholder), "Search...")]
-        [Tool]
-        [MemberStyle(StringStyle.Search)]
+        [Search, Setter(nameof(MemberModel.Placeholder), "Search...")]
         [Suggestions(nameof(SearchHistory), nameof(SearchSuggestionCommand))]
+        [Tool]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]
-        [Width(300)]
+        [Width(180)]
         public string Search
         {
             get => search;
@@ -255,12 +237,12 @@ namespace Imagin.Core.Models
         }
 
         bool textWrap = false;
+        [Button]
         [Category(Category.Text)]
         [Label(false)]
         [Image(Images.ArrowDownLeft)]
         [Index(int.MaxValue - 1)]
         [Tool]
-        [MemberStyle(BooleanStyle.Image)]
         public bool TextWrap
         {
             get => textWrap;
@@ -295,7 +277,7 @@ namespace Imagin.Core.Models
         
         string Format(LogEntry i)
         {
-            var result = $"";
+            var result = $"{Bullet.ToString(Data.As<IList>().IndexOf(i) + 1)} ";
             if (i.Result is Error parent)
             {
                 result += $"{parent.Name} ({i.Sender}.{i.Member}, Line {i.Line}): {parent.Text}";
@@ -326,11 +308,10 @@ namespace Imagin.Core.Models
             }
         }
 
-        string GetText() => Data.Select<object, LogEntry>(i => i as LogEntry).Where(i => Filter.HasFlag(i.Result.Type))?.ToString("\n", Format);
+        string GetText() => Data.Select<object, LogEntry>(i => i as LogEntry).Where(i => Filter.HasFlag(i.Result.Type) && (Search.NullOrEmpty() || i.Result.Text.ToLower().StartsWith(Search.ToLower())))?.ToString("\n", Format);
 
         void UpdateText()
         {
-            //i => Filter.HasFlag(i.Result.Type) && FilterLevel.HasFlag(i.Level) && (Search.NullOrEmpty() || i.Result.Text.ToLower().StartsWith(Search.ToLower()))
             if (View == Views.Text)
             {
                 Text = Data?.Count > 0
@@ -380,7 +361,6 @@ namespace Imagin.Core.Models
                     break;
 
                 case nameof(Filter):
-                case nameof(FilterLevel):
                     UpdateText();
                     break;
 
@@ -443,14 +423,17 @@ namespace Imagin.Core.Models
         public ICommand CopySingleCommand
             => copySingleCommand ??= new RelayCommand<LogEntry>(i => Clipboard.SetText(Format(i)), i => i != null);
 
+        [Hidden]
+        public override ICommand RefreshCommand => base.RefreshCommand;
+
         ICommand searchCommand;
         [Hidden]
-        public ICommand SearchCommand => searchCommand ??= new RelayCommand(() =>
+        public ICommand SearchCommand => searchCommand ??= new RelayCommand<string>(i =>
         {
-            UpdateSearch(Search);
+            UpdateSearch(i);
             UpdateText();
         },
-        () => !Search.NullOrEmpty());
+        i => !i.NullOrEmpty());
 
         ICommand searchSuggestionCommand;
         [Hidden]

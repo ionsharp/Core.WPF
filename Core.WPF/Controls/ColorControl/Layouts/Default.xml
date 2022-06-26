@@ -3,10 +3,9 @@
   <Top/>
   <Left/>
   <Right>
-    <Panel Name="ColorsPanel"/>
+    <Panel Name="ColorAnalysisPanel"/>
     <Panel Name="LogPanel"/>
     <Panel Name="OptionsPanel"/>
-    <Panel Name="ThemePanel"/>
   </Right>
   <Bottom/>
   <Root xsi:type="DockLayoutGroup" Orientation="Horizontal">
@@ -15,9 +14,11 @@
       <Element xsi:type="DockLayoutPanelGroup" Width="4*">
         <Panels>
           <DockLayoutPanel IsSelected="true" Name="ColorPanel"/>
-          <DockLayoutPanel Name="ColorProfilePanel"/>
+          <DockLayoutPanel Name="ColorsPanel"/>
+          <DockLayoutPanel Name="ColorProfilesPanel"/>
+          <DockLayoutPanel Name="ColorIlluminantsPanel"/>
           <DockLayoutPanel Name="ColorHarmonyPanel"/>
-          <DockLayoutPanel Name="ColorAnalysisPanel"/>
+          <DockLayoutPanel Name="ColorChromacityPanel"/>
         </Panels>
       </Element>
     </Elements>
