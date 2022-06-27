@@ -67,7 +67,7 @@
             BorderThickness="0"
             GroupName="Category"
             HeaderVisibility="Visible"
-            Source="{local:SourceBinding DataContext, Core:OptionAttribute, Relative=FindAncestor, RelativeType=HeaderedContentControl}"
+            Source="{local:SourceBinding Core:OptionAttribute}"
             ToolVisibility="Collapsed"/>
     </DataTemplate>
 
@@ -283,39 +283,27 @@
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static local:DockControl.PanelBodyTemplateKey}">
-        <local:TransitionControl x:Name="TransitionControl" Transition="LeftReplace">
-            <local:TransitionControl.ContentTemplateSelector>
-                <local:TypeTemplateSelector Default="{StaticResource {x:Static local:DockControl.PanelOptionsTemplateKey}}" Strict="False">
-                    <DataTemplate DataType="{x:Type Models:Panel}">
-                        <Grid>
-                            <HeaderedContentControl x:Name="HeaderedContentControl"
-                                Content="{Binding}"
-                                ContentTemplate="{Data:Ancestor DockControl.PanelTemplate, local:DockRootControl}"
-                                ContentTemplateSelector="{Data:Ancestor DockControl.PanelTemplateSelector, local:DockRootControl}"
-                                Linq:XHeaderedContentControl.HeaderPlacement="{Binding ToolBarPlacement}"
-                                Linq:XHeaderedContentControl.HeaderVisibility="Collapsed"
-                                Linq:XHeaderedContentControl.HorizontalHeaderAlignment="Stretch"
-                                Linq:XHeaderedContentControl.VerticalHeaderAlignment="Stretch"/>
-                            <ContentPresenter Content="{Binding}"
-                                ContentTemplate="{StaticResource {x:Static local:DockControl.FindTemplateKey}}"/>
-                        </Grid>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:ToolAttribute}}" Value="True">
-                                <Setter TargetName="HeaderedContentControl" Property="Header" Value="{Binding}"/>
-                                <Setter TargetName="HeaderedContentControl" Property="HeaderTemplate" Value="{StaticResource {x:Static local:DockControl.PanelToolsTemplateKey}}"/>
-                                <Setter TargetName="HeaderedContentControl" Property="Linq:XHeaderedContentControl.HeaderVisibility" Value="Visible"/>
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </local:TypeTemplateSelector>
-            </local:TransitionControl.ContentTemplateSelector>
-        </local:TransitionControl>
+        <Grid>
+            <Grid Visibility="{Data:VisibilityBinding IsOptionsVisible, Invert=True}">
+                <HeaderedContentControl x:Name="HeaderedContentControl"
+                    Content="{Binding}"
+                    ContentTemplate="{Data:Ancestor DockControl.PanelTemplate, local:DockRootControl}"
+                    ContentTemplateSelector="{Data:Ancestor DockControl.PanelTemplateSelector, local:DockRootControl}"
+                    Linq:XHeaderedContentControl.HeaderPlacement="{Binding ToolBarPlacement}"
+                    Linq:XHeaderedContentControl.HeaderVisibility="Collapsed"
+                    Linq:XHeaderedContentControl.HorizontalHeaderAlignment="Stretch"
+                    Linq:XHeaderedContentControl.VerticalHeaderAlignment="Stretch"/>
+                <ContentPresenter Content="{Binding}"
+                    ContentTemplate="{StaticResource {x:Static local:DockControl.FindTemplateKey}}"/>
+            </Grid>
+            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static local:DockControl.PanelOptionsTemplateKey}}"
+                Visibility="{Data:VisibilityBinding IsOptionsVisible}"/>
+        </Grid>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding IsOptionsVisible}" Value="True">
-                <Setter TargetName="TransitionControl" Property="Content" Value="{x:Null}"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding IsOptionsVisible}" Value="False">
-                <Setter TargetName="TransitionControl" Property="Content" Value="{Binding}"/>
+            <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:ToolAttribute}}" Value="True">
+                <Setter TargetName="HeaderedContentControl" Property="Header" Value="{Binding}"/>
+                <Setter TargetName="HeaderedContentControl" Property="HeaderTemplate" Value="{StaticResource {x:Static local:DockControl.PanelToolsTemplateKey}}"/>
+                <Setter TargetName="HeaderedContentControl" Property="Linq:XHeaderedContentControl.HeaderVisibility" Value="Visible"/>
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
@@ -441,12 +429,10 @@
         <local:Explorer 
             BorderThickness="0"
             BrowserOptions="{Binding ExplorerOptions.BrowserOptions}"
-            Favorites="{Binding ExplorerOptions.Favorites, Mode=OneWay}"
             FileOpenedCommand="{Binding OpenedFileCommand}"
             History="{Binding ExplorerOptions.History, Mode=OneWay}"
             Linq:XExplorer.Path="{Binding ExplorerOptions.Path, Mode=TwoWay}"
-            Padding="0"
-            ShowFavoriteBar="{Binding ExplorerOptions.ShowFavoriteBar}"/>
+            Padding="0"/>
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Models:FindPanel.TemplateKey}">

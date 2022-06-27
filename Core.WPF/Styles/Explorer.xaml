@@ -129,7 +129,7 @@
                         <Border.Resources>
                             <Data:Reference x:Key="Explorer" Data="{Data:TemplatedParent}"/>
                         </Border.Resources>
-                        <Grid Linq:XGrid.Rows="Auto,Auto,*"
+                        <Grid Linq:XGrid.Rows="Auto,*"
                             Linq:XPanel.Spacing="5,0,5,5"
                             Linq:XPanel.SpacingExcept="Last"
                             Margin="0,5,0,0">
@@ -138,7 +138,6 @@
                                 Linq:XPanel.Spacing="0,0,5,0"
                                 Linq:XPanel.SpacingExcept="Last">
                                 <local:AddressBox Grid.Column="0" Linq:XElement.Name="{x:Static local:Explorer.AddressBoxKey}"
-                                    Favorites="{TemplateBinding Favorites}"
                                     History="{Data:TemplatedParent History, Mode=TwoWay}"
                                     Linq:XExplorer.Path="{Data:TemplatedParent Path=(Linq:XExplorer.Path), Mode=TwoWay}"/>
                                 <local:ImageToggleButton Grid.Column="1"
@@ -354,25 +353,6 @@
                                     </local:ImageToggleButton.Menu>
                                 </local:ImageToggleButton>
                             </Grid>
-                            <local:FavoriteBar Grid.Row="1" Linq:XElement.Name="{x:Static local:Explorer.FavoriteBarKey}"
-                                ItemsSource="{TemplateBinding Favorites}"
-                                Linq:XItemsControl.SortDirection="{TemplateBinding FavoriteSortDirection}"
-                                Linq:XItemsControl.SortName="{TemplateBinding FavoriteSortName, Converter={x:Static Conversion:ToStringConverter.Default}}">
-                                <local:FavoriteBar.Style>
-                                    <Style TargetType="{x:Type local:FavoriteBar}" BasedOn="{StaticResource {x:Type local:FavoriteBar}}">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Data.ShowFavoriteBar, Source={StaticResource Explorer}}" Value="True"/>
-                                                    <Condition Binding="{Binding Data.Favorites.IsEmpty, Source={StaticResource Explorer}}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </local:FavoriteBar.Style>
-                            </local:FavoriteBar>
                             <local:TopBorder Grid.Row="2">
                                 <local:Browser Linq:XElement.Name="{x:Static local:Explorer.BrowserKey}"
                                     FileAttributes="{Data:TemplatedParent BrowserOptions.FileAttributes}"

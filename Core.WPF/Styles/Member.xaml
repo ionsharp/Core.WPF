@@ -254,20 +254,7 @@
         </local:ByteUpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:MemberGrid.DateTimeUpDownKey}">
-        <local:DateTimeUpDown x:Name="DateTimeUpDown"
-            IsReadOnly="{Binding IsReadOnly}"
-            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
-            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
-            Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
-            Maximum="{Binding Maximum}"
-            Minimum="{Binding Minimum}">
-            <e:Interaction.Behaviors>
-                <Behavior:ManualBindingBehavior Property="{x:Static local:DateTimeUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Conversion:DateTimeToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-            </e:Interaction.Behaviors>
-        </local:DateTimeUpDown>
-    </DataTemplate>
+    <DataTemplate x:Key="{x:Static local:MemberGrid.DateTimeUpDownKey}"/>
 
     <DataTemplate x:Key="{x:Static local:MemberGrid.DecimalUpDownKey}">
         <local:DecimalUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
@@ -371,23 +358,8 @@
         </local:SingleUpDown>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:MemberGrid.TimeSpanUpDownKey}">
-        <local:TimeSpanUpDown x:Name="TimeSpanUpDown"
-            CanUpDown="{Data:Self IsReadOnly, Converter={x:Static Conversion:InverseBooleanConverter.Default}}"
-            Increment="{Binding Increment}"
-            IsReadOnly="{Binding IsReadOnly}"
-            Linq:XTextBoxBase.Left="{StaticResource LeftTextTemplate}"
-            Linq:XTextBoxBase.Right="{StaticResource RightTextTemplate}"
-            Linq:XTextBoxBase.Placeholder="{local:MemberPlaceholder}"
-            Maximum="{Binding Maximum}"
-            Minimum="{Binding Minimum}">
-            <e:Interaction.Behaviors>
-                <Behavior:ManualBindingBehavior Property="{x:Static local:TimeSpanUpDown.TextProperty}" ConverterParameter="{Binding StringFormat}"
-                    Converter="{x:Static Conversion:TimeSpanToStringConverter.Default}" Mode="TwoWay" Path="Value" Source="{Binding}" UpdateSourceTrigger="{Binding UpdateSourceTrigger}" />
-            </e:Interaction.Behaviors>
-        </local:TimeSpanUpDown>
-    </DataTemplate>
-    
+    <DataTemplate x:Key="{x:Static local:MemberGrid.TimeSpanUpDownKey}"/>
+
     <DataTemplate x:Key="{x:Static local:MemberGrid.UDoubleUpDownKey}">
         <local:UDoubleUpDown CanUpDown="{Data:InvertBinding IsReadOnly}"
             Increment="{Binding Increment}"
@@ -679,7 +651,45 @@
     <!-- ... -->
 
     <DataTemplate x:Key="{x:Static local:MemberGrid.ObjectTemplateKey}">
-        <TreeView ItemsSource="{Binding SortedMembers}">
+        <TreeView ItemsSource="{Binding SortedMembers}"
+            Linq:XItemsControl.GroupsItself="True">
+            <Linq:XItemsControl.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="GroupItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander x:Name="Expander"
+                                            IsExpanded="True" 
+                                            HorizontalAlignment="Stretch">
+                                            <Expander.Header>
+                                                <Grid Linq:XGrid.Columns="Auto,*">
+                                                    <TextBlock FontSize="13">
+                                                        <Run Text="{Binding Name, Mode=OneWay}" 
+                                                            Foreground="{local:ThemeKey ActualKey=AccentLight}"/>
+                                                        <Run Text="{Binding ItemCount, Mode=OneWay, StringFormat= ({0})}"
+                                                             Foreground="{local:ThemeKey ActualKey=Text}"/>
+                                                    </TextBlock>
+                                                    <local:LineElement Grid.Column="1"
+                                                        Margin="5,0,0,0"
+                                                        Orientation="Horizontal"/>
+                                                </Grid>
+                                            </Expander.Header>
+                                            <ItemsPresenter Margin="20,0,0,0"/>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                    <GroupStyle.Panel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </GroupStyle.Panel>
+                </GroupStyle>
+            </Linq:XItemsControl.GroupStyle>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="OverridesDefaultStyle" Value="True"/>

@@ -24,13 +24,6 @@ namespace Imagin.Core.Controls
 
         readonly internal Handle handleFolder = false;
 
-        public static readonly DependencyProperty FavoritesProperty = DependencyProperty.Register(nameof(Favorites), typeof(Favorites), typeof(Console), new FrameworkPropertyMetadata(null));
-        public Favorites Favorites
-        {
-            get => (Favorites)GetValue(FavoritesProperty);
-            set => SetValue(FavoritesProperty, value);
-        }
-
         public static readonly DependencyProperty HelpButtonTemplateProperty = DependencyProperty.Register(nameof(HelpButtonTemplate), typeof(DataTemplate), typeof(Console), new FrameworkPropertyMetadata(null));
         public DataTemplate HelpButtonTemplate
         {

@@ -1,10 +1,9 @@
 ﻿using Imagin.Core.Analytics;
-using Imagin.Core;
 using Imagin.Core.Controls;
 using Imagin.Core.Conversion;
 using Imagin.Core.Data;
-using Imagin.Core.Numerics;
 using Imagin.Core.Linq;
+using Imagin.Core.Numerics;
 using Imagin.Core.Storage;
 using System;
 using System.Collections;
@@ -24,12 +23,6 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     readonly Handle Handle = false;
 
     System.Timers.Timer timer;
-
-    #region Fields
-
-    public MemberCollection Parent { get; private set; }
-
-    #endregion
 
     #region Attributes
 
@@ -314,6 +307,10 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     #endregion
 
     #region Properties
+
+    public MemberCollection Parent { get; private set; }
+
+    public MemberModel ParentMember { get; private set; }
 
     public MemberSource Source { get; private set; }
 
@@ -900,21 +897,18 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
     #region MemberModel
 
-    void DoThis(ITypes input)
+    internal MemberModel(MemberModel parent, MemberData data, int depthIndex)
     {
-        ItemTypes = new(new ObservableCollection<Type>(input.GetTypes()));
-        ItemTypes.CustomSort = TypeComparer.Default;
-        ItemTypes.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = CategoryConverter.Default });
-    }
+        ParentMember
+            = parent;
+        Parent
+            = data.Collection; Source = data.Source; Member = data.Member;
 
-    public MemberModel(MemberData data, int depthIndex) : base()
-    {
-        Parent 
-            = data.Collection; Source = data.Source; Member = data.Member; 
-        
-        DepthIndex 
+        Dispatch.Invoke(() => Category = Parent.Control.DefaultCategoryName);
+
+        DepthIndex
             = depthIndex;
-        DisplayName 
+        DisplayName
             = Name;
 
         Increment = DefaultIncrement; Maximum = DefaultMaximum; Minimum = DefaultMinimum;
@@ -922,45 +916,23 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         Attributes = data.Attributes;
         Attributes.Apply(this, attributes);
 
-        IsReadOnly = !CanWrite || IsReadOnly;
+        IsReadOnly = !CanWrite || IsReadOnly || Parent.Parent?.IsReadOnly == true;
 
         if (GetValue() is ITypes i)
-            DoThis(i);
-        
+            GetItemTypes(i);
+
         else if (Source.Instance is ITypes j)
-            DoThis(j);
+            GetItemTypes(j);
 
         UpdateValue();
         RefreshHard();
     }
 
+    public MemberModel(MemberData data, int depthIndex) : this(null, data, depthIndex) { }
+
     #endregion
 
     #region Methods
-
-    void OnTrigger(object sender, PropertyChangedEventArgs e)
-    {
-        var triggers = Attributes.GetAll<TriggerAttribute>();
-        if (triggers?.Count() > 0)
-        {
-            foreach (var i in triggers)
-            {
-                if (e.PropertyName == i.SourceName)
-                {
-                    Try.Invoke(() =>
-                    {
-                        var result = sender.GetPropertyValue(e.PropertyName);
-                        this.SetPropertyValue(i.TargetName, result);
-                    },
-                    e => Log.Write<MemberModel>(e));
-                }
-            }
-        }
-    }
-
-    void OnUpdate(object sender, System.Timers.ElapsedEventArgs e) => UpdateValue();
-
-    //...
 
     int IComparable.CompareTo(object a)
     {
@@ -980,11 +952,12 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         }
     }
 
-    //...
-
-    protected T Info<T>() where T : MemberInfo => (T)Member;
-
-    //...
+    void GetItemTypes(ITypes input)
+    {
+        ItemTypes = new(new ObservableCollection<Type>(input.GetTypes()));
+        ItemTypes.CustomSort = TypeComparer.Default;
+        ItemTypes.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = CategoryConverter.Default });
+    }
 
     void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
@@ -1063,86 +1036,35 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         }
     }
 
-    protected virtual void OnValueChanged(object input) { }
-
-    //...
-
-    #region GetValue
-
-    public object GetValue()
+    void OnTrigger(object sender, PropertyChangedEventArgs e)
     {
-        object result = null;
-        Dispatch.Invoke(() => Try.Invoke(() => result = GetValue(Source.Instance)));
-        return result;
-    }
-
-    protected abstract object GetValue(object input);
-
-    #endregion
-
-    #region SetValue
-
-    protected void SetValue(object value) => Handle.Invoke(() => SetValue(Source.Instance, value));
-
-    protected abstract void SetValue(object source, object value);
-
-    #endregion
-
-    #region UpdateSource
-
-    internal void UpdateSource(MemberSource input)
-    {
-        Unsubscribe();
-        Source = input;
-        Subscribe();
-    }
-
-    #endregion
-
-    #region UpdateValue
-
-    internal void UpdateValue() => UpdateValue(GetValue());
-
-    internal void UpdateValue(object input) => this.Change(ref value, input, () => Value);
-    
-    internal void UpdateValueSafe() => Handle.SafeInvoke(RefreshSoft);
-
-    #endregion
-
-    //...
-
-    internal void RefreshHard()
-    {
-        var source = Value;
-        if (source != null)
+        var triggers = Attributes.GetAll<TriggerAttribute>();
+        if (triggers?.Count() > 0)
         {
-            if (TemplateType == typeof(object) || GetTemplateType(Type) == typeof(object))
+            foreach (var i in triggers)
             {
-                Members ??= new(Parent.Control, this, DepthIndex + 1);
-                Members.Load(source);
-
-                if (SortedMembers == null)
+                if (e.PropertyName == i.SourceName)
                 {
-                    SortedMembers = new(Members);
-                    SortedMembers.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Index), ListSortDirection.Ascending));
+                    Try.Invoke(() =>
+                    {
+                        var result = sender.GetPropertyValue(e.PropertyName);
+                        this.SetPropertyValue(i.TargetName, result);
+                    },
+                    e => Log.Write<MemberModel>(e));
                 }
             }
         }
     }
 
-    internal void RefreshSoft()
-    {
-        UpdateValue();
-        if (Members != null)
-        {
-            var newValue = GetValue();
-            foreach (var i in Members)
-            {
-                i.UpdateSource(new(new MemberPathSource(newValue)));
-                i.RefreshSoft();
-            }
-        }
-    }
+    void OnUpdate(object sender, System.Timers.ElapsedEventArgs e) => UpdateValue();
+
+    //...
+
+    protected virtual void OnValueChanged(object input) { }
+
+    protected T Info<T>() where T : MemberInfo => (T)Member;
+
+    //...
 
     public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
@@ -1153,68 +1075,6 @@ public abstract partial class MemberModel : BaseNamable, IComparable
                 ActualType = value?.GetType();
                 this.Changed(() => TemplateType);
                 break;
-        }
-    }
-
-    public virtual void Subscribe()
-    {
-        if (Source.Instance is INotifyPropertyChanged notify)
-        {
-            var triggers = Attributes.GetAll<TriggerAttribute>();
-            if (triggers?.Count() > 0)
-            {
-                foreach (var trigger in triggers)
-                    OnTrigger(notify, new(trigger.SourceName));
-            }
-
-            notify.PropertyChanged += OnTrigger;
-        }
-
-        if (Attributes.GetFirst<UpdateAttribute>() is UpdateAttribute update)
-        {
-            timer = new() { Interval = update.Seconds * 1000 };
-            timer.Elapsed += OnUpdate;
-            timer.Start();
-        }
-
-        if (Value is INotifyCollectionChanged collection)
-        {
-            Items ??= new();
-            Items.ForEach(i => i.Unsubscribe());
-            Items.Clear();
-
-            SourceCollection.ForEach(i => CreateItem(-1, i));
-            collection.CollectionChanged -= OnCollectionChanged;
-            collection.CollectionChanged += OnCollectionChanged;
-
-            this.Changed(() => CollectionLength);
-        }
-    }
-
-    public virtual void Unsubscribe()
-    {
-        if (Source.Instance is INotifyPropertyChanged j)
-        {
-            var triggers = Attributes.GetAll<TriggerAttribute>();
-            if (triggers?.Count() > 0)
-                j.PropertyChanged -= OnTrigger;
-        }
-
-        if (timer != null)
-        {
-            timer.Stop();
-            timer.Elapsed -= OnUpdate;
-            timer.Dispose();
-        }
-
-        Members?.ForEach(i => i.Unsubscribe());
-
-        if (Items != null)
-        {
-            Items.ForEach(i => i.Unsubscribe());
-            Items.Clear();
-
-            (SourceCollection as INotifyCollectionChanged).CollectionChanged -= OnCollectionChanged;
         }
     }
 
@@ -1252,6 +1112,163 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
         return typeof(object); //input.IsClass || input.IsValueType
     }
+
+    #region GetValue
+
+    public object GetValue()
+    {
+        object result = null;
+        Dispatch.Invoke(() => Try.Invoke(() => result = GetValue(Source.Instance)));
+        return result;
+    }
+
+    protected abstract object GetValue(object input);
+
+    #endregion
+
+    #region SetValue
+
+    protected void SetValue(object value) => Handle.Invoke(() => SetValue(Source.Instance, value));
+
+    protected abstract void SetValue(object source, object value);
+
+    #endregion
+
+    #region Refresh
+
+    internal void RefreshHard()
+    {
+        var source = Value;
+        if (source != null)
+        {
+            if (TemplateType == typeof(object) || GetTemplateType(Type) == typeof(object))
+            {
+                Members ??= new(Parent.Control, this, DepthIndex + 1);
+                Members.Load(source);
+
+                if (SortedMembers == null)
+                {
+                    var categorize = Attributes.GetFirst<CategorizeAttribute>()?.Categorize == true;
+
+                    SortedMembers = new(Members);
+
+                    if (categorize)
+                        SortedMembers.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Category), ListSortDirection.Ascending));
+
+                    SortedMembers.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Index), ListSortDirection.Ascending));
+                    //SortedMembers.CustomSort = new MemberSortComparer(Parent.Control);
+
+                    if (categorize)
+                        SortedMembers.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = MemberGroupConverterSelector.Default.Select(MemberGroupName.Category) });
+                }
+            }
+        }
+    }
+
+    internal void RefreshSoft()
+    {
+        UpdateValue();
+        if (Members != null)
+        {
+            var newValue = GetValue();
+            foreach (var i in Members)
+            {
+                i.UpdateSource(new(new MemberPathSource(newValue)));
+                i.RefreshSoft();
+            }
+        }
+    }
+
+    #endregion
+
+    #region Subscribe, Unsubscribe
+
+    public virtual void Subscribe()
+    {
+        if (Source.Instance is INotifyPropertyChanged notify)
+        {
+            var triggers = Attributes.GetAll<TriggerAttribute>();
+            if (triggers?.Count() > 0)
+            {
+                foreach (var trigger in triggers)
+                    OnTrigger(notify, new(trigger.SourceName));
+            }
+
+            notify.PropertyChanged += OnTrigger;
+        }
+
+        if (Attributes.GetFirst<UpdateAttribute>() is UpdateAttribute update)
+        {
+            timer = new() { Interval = update.Seconds * 1000 };
+            timer.Elapsed += OnUpdate;
+            timer.Start();
+        }
+
+        if (Value is INotifyCollectionChanged collection)
+        {
+            return;
+            Items ??= new();
+            Items.ForEach(i => i.Unsubscribe());
+            Items.Clear();
+
+            SourceCollection.ForEach(i => CreateItem(-1, i));
+            collection.CollectionChanged -= OnCollectionChanged;
+            collection.CollectionChanged += OnCollectionChanged;
+
+            this.Changed(() => CollectionLength);
+        }
+    }
+
+    public virtual void Unsubscribe()
+    {
+        if (Source.Instance is INotifyPropertyChanged j)
+        {
+            var triggers = Attributes.GetAll<TriggerAttribute>();
+            if (triggers?.Count() > 0)
+                j.PropertyChanged -= OnTrigger;
+        }
+
+        if (timer != null)
+        {
+            timer.Stop();
+            timer.Elapsed -= OnUpdate;
+            timer.Dispose();
+        }
+
+        Members?.ForEach(i => i.Unsubscribe());
+
+        if (Items != null)
+        {
+            return;
+            Items.ForEach(i => i.Unsubscribe());
+            Items.Clear();
+
+            (SourceCollection as INotifyCollectionChanged).CollectionChanged -= OnCollectionChanged;
+        }
+    }
+
+    #endregion
+
+    #region UpdateSource
+
+    internal void UpdateSource(MemberSource input)
+    {
+        Unsubscribe();
+        Source = input;
+        Subscribe();
+    }
+
+    #endregion
+
+    #region UpdateValue
+
+    internal void UpdateValue() => UpdateValue(GetValue());
+
+    internal void UpdateValue(object input) => this.Change(ref value, input, () => Value);
+    
+    internal void UpdateValueSafe() => Handle.SafeInvoke(RefreshSoft);
+
+    #endregion
 
     #endregion
 }

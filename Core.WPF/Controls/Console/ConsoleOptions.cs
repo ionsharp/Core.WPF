@@ -1,6 +1,4 @@
-﻿using Imagin.Core.Data;
-using Imagin.Core.Media;
-using Imagin.Core.Reflection;
+﻿using Imagin.Core.Media;
 using System;
 using System.Windows;
 using System.Windows.Media;

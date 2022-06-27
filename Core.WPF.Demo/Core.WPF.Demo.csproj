@@ -137,9 +137,6 @@
     <Resource Include="Layouts\Default.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Matrix.gif" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Logo.ico" />
   </ItemGroup>
   <ItemGroup>

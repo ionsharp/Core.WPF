@@ -155,7 +155,7 @@ public class ColorRangeInverseAnalysis : ColorRangeAnalysis
 
 #region ColorAnalysisPanel
 
-[Explicit]
+[DisplayName("Analysis"), Explicit]
 public class ColorAnalysisPanel : Panel
 {
     public override Uri Icon => Resources.InternalImage(Images.LineGraph);

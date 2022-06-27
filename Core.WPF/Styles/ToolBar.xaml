@@ -89,8 +89,4 @@
     <Style x:Key="{x:Type ToolBarTray}" TargetType="{x:Type ToolBarTray}">
         <Setter Property="Background" Value="{local:ThemeKey Key=ToolBarTray.Background}" />
     </Style>
-
-    <Style x:Key="{x:Type local:FavoriteBar}" TargetType="{x:Type local:FavoriteBar}" BasedOn="{StaticResource {x:Type ToolBar}}">
-        <Setter Property="BorderThickness" Value="0"/>
-    </Style>
 </ResourceDictionary>

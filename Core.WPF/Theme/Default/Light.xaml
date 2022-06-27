@@ -369,8 +369,6 @@
     <SolidColorBrush x:Key="RadioGroupCheckedBackground" Color="#FF007ACC"/>
     <SolidColorBrush x:Key="RadioGroupCheckedForeground" Color="#FFF"/>
 
-    <SolidColorBrush x:Key="RippleDecoratorBorder" Color="#007acc"/>
-
     <SolidColorBrush x:Key="RulerBackground" Color="#11000000"/>
     <SolidColorBrush x:Key="RulerBorder" Color="Transparent"/>
     <SolidColorBrush x:Key="RulerForeground" Color="#666"/>

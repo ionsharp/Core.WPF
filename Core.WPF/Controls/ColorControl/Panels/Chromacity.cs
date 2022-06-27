@@ -9,7 +9,8 @@ using System.Runtime.CompilerServices;
 
 namespace Imagin.Core.Controls;
 
-[Explicit, Serializable]
+[DisplayName("Chromacity"), Explicit]
+[Serializable]
 public class ColorChromacityPanel : Panel
 {
     readonly Handle handle = false;

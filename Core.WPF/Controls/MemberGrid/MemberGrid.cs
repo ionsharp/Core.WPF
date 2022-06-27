@@ -1156,9 +1156,6 @@ public partial class MemberGrid : DataGrid
 
     void OnMemberAdded(MemberModel i, SourceFilter filter)
     {
-        i.Category
-            ??= DefaultCategoryName ?? "General";
-
         if (filter != null)
         {
             //if (!i.Attributes.ContainsKey(filter.Type))

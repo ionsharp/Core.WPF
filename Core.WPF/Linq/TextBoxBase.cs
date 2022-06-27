@@ -411,9 +411,6 @@ public static class XTextBoxBase
         if (sender is TextBoxBase control)
         {
             var result = GetSuggestionHandler(control).Convert(e.Parameter);
-            if (sender is MultiPathBox a)
-            {
-            }
 
             if (sender is PathBox b)
                 b.SetCurrentValue(PathBox.TextProperty, result);
@@ -501,11 +498,8 @@ public static class XTextBoxBase
         foreach (var i in GetSuggestions(control))
         {
             string result = default;
-            if (control is MultiPathBox a)
-            {
-            }
 
-            else if (control is PathBox b)
+            if (control is PathBox b)
                 result = b.Text;
 
             else if (control is RichTextBox c)

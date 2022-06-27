@@ -436,7 +436,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"/>
-                            <Grid Linq:XGrid.Columns="Auto,Auto,*,Auto,Auto,Auto,Auto"
+                            <Grid Linq:XGrid.Columns="Auto,Auto,*,Auto,Auto,Auto"
                                 Margin="{Data:TemplatedParent Padding}"
                                 Linq:XPanel.Spacing="0,0,5,0"
                                 Linq:XPanel.SpacingExcept="Last"
@@ -576,12 +576,6 @@
                                     </local:ImageButton.Style>
                                 </local:ImageButton>
                                 <local:ImageToggleButton Grid.Column="5"
-                                    CheckedToolTip="{l:Loc Unfavorite}"
-                                    IsChecked="{Data:TemplatedParent IsFavorite, Mode=TwoWay}"
-                                    Source="{Markup:InternalImage Star.png}"
-                                    ToolTip="{l:Loc Favorite}"
-                                    Visibility="{Data:TemplatedParent Favorites, Converter={x:Static Conversion:ObjectToVisibilityConverter.Default}}"/>
-                                <local:ImageToggleButton Grid.Column="6"
                                     ButtonSource="{Markup:InternalImage 32-ArrowDown.png}"
                                     ButtonVisibility="Visible"
                                     Focusable="False"

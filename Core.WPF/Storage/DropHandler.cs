@@ -60,19 +60,6 @@ namespace Imagin.Core.Storage
 
     #endregion
 
-    #region MultiPathBox
-
-    public class MultiPathBoxDropHandler : DropHandler<MultiPathBox>
-    {
-        public MultiPathBoxDropHandler(MultiPathBox parent) : base(parent) { }
-
-        protected override DragDropEffects DragOver(IEnumerable<Item> source, UIElement target) => DragDropEffects.Copy;
-
-        protected override void Drop(IEnumerable<Item> source, UIElement target) => Parent.SetCurrentValue(MultiPathBox.SourceProperty, $"{Parent.Source};{source.Select(i => i.Path).ToString(";")}");
-    }
-
-    #endregion
-
     //...
 
     #region ExplorerDropHandler<T>

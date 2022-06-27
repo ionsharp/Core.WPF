@@ -104,11 +104,6 @@ namespace Imagin.Core.Linq
                         -= AutoSizeColumns_SizeChanged;
                 });
             }
-            else if (sender is TreeView treeView)
-            {
-                var l = (bool)e.NewValue ? new GridLength(1.0, GridUnitType.Star) : new GridLength(1.0, GridUnitType.Auto);
-                XTreeView.GetColumns(treeView)?.ForEach(i => i.Width = l);
-            }
         }
 
         static void AutoSizeColumns_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -400,12 +395,6 @@ namespace Imagin.Core.Linq
                     listView.FindVisualChildOfType<GridViewHeaderRowPresenter>().If(i => i != null, i => i.ContextMenu = result);
                 }
 
-                if (control is TreeView treeView)
-                {
-                    result = CreateMenu(treeView);
-                    treeView.FindVisualChildOfType<TreeViewColumnHeaderPresenter>().If(i => i != null, i => i.ContextMenu = result);
-                }
-
                 if (result != null)
                 {
                     SetColumnMenu(control, result);
@@ -456,17 +445,6 @@ namespace Imagin.Core.Linq
                 );
             }
             return default;
-        }
-
-        static ContextMenu CreateMenu(TreeView treeView)
-        {
-            return CreateMenu<TreeViewColumn>
-            (
-                treeView,
-                XTreeView.GetColumns(treeView),
-                i => $"{i.Header}",
-                i => $"{i.SortName}"
-            );
         }
 
         //...
@@ -583,9 +561,6 @@ namespace Imagin.Core.Linq
                             if (listView.View is GridView gridView)
                                 gridView.Columns[i].SetCurrentValue(GridViewColumn.WidthProperty, list[i]);
                         }
-
-                        if (control is TreeView treeView)
-                            XTreeView.GetColumns(treeView)[i].SetCurrentValue(TreeViewColumn.WidthProperty, list[i]);
                     }
                 }
             }
@@ -1035,12 +1010,6 @@ namespace Imagin.Core.Linq
                     {
                         if (e.OriginalSource.FindParent<TreeViewItem>() is not null)
                             return;
-
-                        if (control is TreeViewBox)
-                        {
-                            if (!e.OriginalSource.HasParent<Popup>())
-                                return;
-                        }
                     }
                     if (e.OriginalSource.FindParent<ScrollBar>() is null)
                     {

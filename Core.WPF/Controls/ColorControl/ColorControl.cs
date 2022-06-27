@@ -8,6 +8,7 @@ using Imagin.Core.Media;
 using Imagin.Core.Models;
 using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -99,6 +100,8 @@ public partial class ColorControl : Control
 
     #region ColorControl
 
+    public readonly ColorPanel ColorPanel;
+
     public ColorControl() : base()
     {
         this.RegisterHandler(OnLoaded, OnUnloaded);
@@ -116,7 +119,12 @@ public partial class ColorControl : Control
         SetCurrentValue(OptionsPanelProperty, new OptionsPanel());
 
         panels.Add(OptionsPanel);
-        panels.Add(new ColorPanel());
+
+        ColorPanel = new ColorPanel();
+        panels.Add(ColorPanel);
+
+        ColorPanel.PropertyChanged += OnColorPanelChanged;
+
         panels.Add(new ColorAnalysisPanel());
         panels.Add(new ColorChromacityPanel());
         panels.Add(new ColorHarmonyPanel(this));
@@ -135,6 +143,20 @@ public partial class ColorControl : Control
 
     #region Methods
 
+    void OnColorPanelChanged(object sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(ColorPanel.ComponentNormalize):
+                Documents.ForEach<ColorDocument>(i => i.Color.Normalize = ColorPanel.ComponentNormalize);
+                break;
+
+            case nameof(ColorPanel.ComponentPrecision):
+                Documents.ForEach<ColorDocument>(i => i.Color.Precision = ColorPanel.ComponentPrecision);
+                break;
+        }
+    }
+
     void OnColorSaved(object sender, EventArgs<Color> e)
     {
         ColorsPanel?.SelectedGroup.If(i => i.Add(e.Value));
@@ -148,7 +170,12 @@ public partial class ColorControl : Control
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
-                e.NewItems[0].As<ColorDocument>().ColorSaved += OnColorSaved;
+                if (e.NewItems[0] is ColorDocument a)
+                {
+                    a.ColorSaved += OnColorSaved;
+                    a.Color.Normalize = ColorPanel.ComponentNormalize;
+                    a.Color.Precision = ColorPanel.ComponentPrecision;
+                }
                 break;
 
             case NotifyCollectionChangedAction.Remove:
@@ -161,12 +188,16 @@ public partial class ColorControl : Control
     {
         Documents.CollectionChanged += OnDocumentsChanged;
         Documents.ForEach(i => i.As<ColorDocument>().ColorSaved += OnColorSaved);
+
+        ColorPanel.If(i => { i.PropertyChanged -= OnColorPanelChanged; i.PropertyChanged += OnColorPanelChanged; });
     }
 
     void OnUnloaded()
     {
         Documents.CollectionChanged -= OnDocumentsChanged;
         Documents.ForEach(i => i.As<ColorDocument>().ColorSaved -= OnColorSaved);
+
+        ColorPanel.If(i => i.PropertyChanged -= OnColorPanelChanged);
     }
 
     protected virtual void OnActiveDocumentChanged(Value<ColorDocument> input)
@@ -185,6 +216,8 @@ public partial class ColorControl : Control
             IlluminantsPanel?.Update(input.Illuminants);
 
             ProfilesPanel?.Update(input.Profiles);
+
+            Documents.ForEach<ColorDocument>(i => i.Color.ProfileGroups = input.Profiles);
         }
     }
 

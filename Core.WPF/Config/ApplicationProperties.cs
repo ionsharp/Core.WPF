@@ -66,7 +66,7 @@ namespace Imagin.Core.Config
         public string GetFolderPath(string folderName) => $@"{FolderPath}\{folderName}";
     }
 
-    public class ApplicationProperties<TMainView, TMainViewModel, TMainViewOptions> : ApplicationProperties where TMainView : IMainView where TMainViewModel : IMainViewModel where TMainViewOptions : IMainViewOptions
+    public class ApplicationProperties<TMainView, TMainViewModel, TMainViewOptions> : ApplicationProperties where TMainView : IMainView where TMainViewModel : IMainViewModel where TMainViewOptions : MainViewOptions
     {
         public override Type MainView => typeof(TMainView);
 

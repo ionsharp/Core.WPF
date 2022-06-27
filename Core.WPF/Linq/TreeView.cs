@@ -52,66 +52,10 @@ namespace Imagin.Core.Linq
 
         #endregion
 
-        #region ColumnHeaderStyle
-
-        public static readonly DependencyProperty ColumnHeaderStyleProperty = DependencyProperty.RegisterAttached("ColumnHeaderStyle", typeof(Style), typeof(XTreeView), new FrameworkPropertyMetadata(null));
-        public static Style GetColumnHeaderStyle(TreeView i) => (Style)i.GetValue(ColumnHeaderStyleProperty);
-        public static void SetColumnHeaderStyle(TreeView i, Style input) => i.SetValue(ColumnHeaderStyleProperty, input);
-
-        #endregion
-
-        #region ColumnHeaderStyleSelector
-
-        public static readonly DependencyProperty ColumnHeaderStyleSelectorProperty = DependencyProperty.RegisterAttached("ColumnHeaderStyleSelector", typeof(StyleSelector), typeof(XTreeView), new FrameworkPropertyMetadata(null));
-        public static StyleSelector GetColumnHeaderStyleSelector(TreeView i) => (StyleSelector)i.GetValue(ColumnHeaderStyleSelectorProperty);
-        public static void SetColumnHeaderStyleSelector(TreeView i, StyleSelector input) => i.SetValue(ColumnHeaderStyleSelectorProperty, input);
-
-        #endregion
-
-        #region ColumnHeaderTemplate
-
-        public static readonly DependencyProperty ColumnHeaderTemplateProperty = DependencyProperty.RegisterAttached("ColumnHeaderTemplate", typeof(DataTemplate), typeof(XTreeView), new FrameworkPropertyMetadata(null));
-        public static DataTemplate GetColumnHeaderTemplate(TreeView i) => (DataTemplate)i.GetValue(ColumnHeaderTemplateProperty);
-        public static void SetColumnHeaderTemplate(TreeView i, DataTemplate input) => i.SetValue(ColumnHeaderTemplateProperty, input);
-
-        #endregion
-
-        #region ColumnHeaderTemplateSelector
-
-        public static readonly DependencyProperty ColumnHeaderTemplateSelectorProperty = DependencyProperty.RegisterAttached("ColumnHeaderTemplateSelector", typeof(DataTemplateSelector), typeof(XTreeView), new FrameworkPropertyMetadata(null));
-        public static DataTemplateSelector GetColumnHeaderTemplateSelector(TreeView i) => (DataTemplateSelector)i.GetValue(ColumnHeaderTemplateSelectorProperty);
-        public static void SetColumnHeaderTemplateSelector(TreeView i, DataTemplateSelector input) => i.SetValue(ColumnHeaderTemplateSelectorProperty, input);
-
-        #endregion
-
-        #region ColumnHeaderStringFormat
-
-        public static readonly DependencyProperty ColumnHeaderStringFormatProperty = DependencyProperty.RegisterAttached("ColumnHeaderStringFormat", typeof(ContextMenu), typeof(XTreeView), new FrameworkPropertyMetadata(null));
-        public static ContextMenu GetColumnHeaderStringFormat(TreeView i) => (ContextMenu)i.GetValue(ColumnHeaderStringFormatProperty);
-        public static void SetColumnHeaderStringFormat(TreeView i, ContextMenu input) => i.SetValue(ColumnHeaderStringFormatProperty, input);
-
-        #endregion
-
-        #region Columns
-
-        public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached("Columns", typeof(TreeViewColumnCollection), typeof(XTreeView), new FrameworkPropertyMetadata(null));
-        public static TreeViewColumnCollection GetColumns(TreeView i) => (TreeViewColumnCollection)i.GetValue(ColumnsProperty);
-        public static void SetColumns(TreeView i, TreeViewColumnCollection input) => i.SetValue(ColumnsProperty, input);
-
-        #endregion
-
         #region (private) HandleSelection
 
         static readonly DependencyProperty HandleSelectionProperty = DependencyProperty.RegisterAttached("HandleSelection", typeof(Handle), typeof(XTreeView), new FrameworkPropertyMetadata(null));
         static Handle GetHandleSelection(TreeView i) => i.GetValueOrSetDefault<Handle>(HandleSelectionProperty, () => false);
-
-        #endregion
-
-        #region Mode
-
-        public static readonly DependencyProperty ModeProperty = DependencyProperty.RegisterAttached("Mode", typeof(TreeViewModes), typeof(XTreeView), new FrameworkPropertyMetadata(TreeViewModes.Default));
-        public static TreeViewModes GetMode(TreeView i) => (TreeViewModes)i.GetValue(ModeProperty);
-        public static void SetMode(TreeView i, TreeViewModes input) => i.SetValue(ModeProperty, input);
 
         #endregion
 

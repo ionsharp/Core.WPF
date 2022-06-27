@@ -17,8 +17,8 @@ using System.Windows.Markup;
 [assembly: AssemblyTitle("Imagin.Core.Wpf")]
 
 //[assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("6.6.1.0")]
-[assembly: AssemblyVersion("6.6.1.0")]
+[assembly: AssemblyFileVersion("7.1.0.0")]
+[assembly: AssemblyVersion("7.1.0.0")]
 
 //Setting ComVisible to false makes the types in this assembly not visible to COM components.  If you need to access a type in this assembly from COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]

@@ -445,32 +445,6 @@ public partial class Console
         protected override void Execute(string name, string[] arguments, char[] flags) => Environment.Exit(0);
     }
 
-    public class FavoriteCommand : BaseCommand
-    {
-        public override string Description => "Favorite or unfavorite the current folder.";
-
-        public override IEnumerable<string> Names()
-        {
-            yield return "Favorite";
-            yield return "Unfavorite";
-        }
-
-        public override IEnumerable<string> Usage()
-        {
-            yield return $"[{AllNames} <current folder>]";
-        }
-
-        protected override void Execute(string name, string[] arguments, char[] flags)
-        {
-            if (arguments.Length == 0)
-            {
-                Console.Favorites.Is(name == "favorite", Path);
-                return;
-            }
-            throw new ArgumentOutOfRangeException();
-        }
-    }
-
     public class HelpCommand : BaseCommand
     {
         public override string Description => "Show list of available commands.";

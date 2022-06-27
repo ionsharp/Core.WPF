@@ -74,14 +74,6 @@ namespace Imagin.Core.Linq
 
         #endregion
 
-        #region ParentHasColumns
-
-        public static readonly DependencyProperty ParentHasColumnsProperty = DependencyProperty.RegisterAttached("ParentHasColumns", typeof(bool), typeof(XTreeViewItem), new FrameworkPropertyMetadata(false));
-        public static bool GetParentHasColumns(TreeViewItem i) => (bool)i.GetValue(ParentHasColumnsProperty);
-        public static void SetParentHasColumns(TreeViewItem i, bool value) => i.SetValue(ParentHasColumnsProperty, value);
-
-        #endregion
-
         #endregion
 
         #region Methods

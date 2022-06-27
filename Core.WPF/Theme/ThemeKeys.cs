@@ -311,8 +311,6 @@
         RadioGroupCheckedBackground,
         RadioGroupCheckedForeground,
         //...
-        RippleDecoratorBorder,
-        //...
         RulerBackground,
         RulerBorder,
         RulerForeground,

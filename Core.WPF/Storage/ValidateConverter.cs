@@ -5,8 +5,6 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-using static Imagin.Core.Numerics.M;
-
 namespace Imagin.Core.Storage
 {
     public class ValidateConverter : MultiConverter<bool>

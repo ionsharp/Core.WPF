@@ -22,8 +22,6 @@ namespace Imagin.Core.Controls
 
         readonly Handle handle = false;
 
-        readonly Handle handleFavorite = false;
-
         //...
 
         public event RoutedEventHandler Refreshed;
@@ -49,28 +47,12 @@ namespace Imagin.Core.Controls
 
         public AddressBoxDropHandler DropHandler { get; private set; } = null;
 
-        public static readonly DependencyProperty FavoritesProperty = DependencyProperty.Register(nameof(Favorites), typeof(Favorites), typeof(AddressBox), new FrameworkPropertyMetadata(null, OnFavoritesChanged));
-        public Favorites Favorites
-        {
-            get => (Favorites)GetValue(FavoritesProperty);
-            set => SetValue(FavoritesProperty, value);
-        }
-        static void OnFavoritesChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<AddressBox>().OnFavoritesChanged(new Value<Favorites>(e));
-
         public static readonly DependencyProperty HistoryProperty = DependencyProperty.Register(nameof(History), typeof(History), typeof(AddressBox), new FrameworkPropertyMetadata(null));
         public History History
         {
             get => (History)GetValue(HistoryProperty);
             set => SetValue(HistoryProperty, value);
         }
-
-        public static readonly DependencyProperty IsFavoriteProperty = DependencyProperty.Register(nameof(IsFavorite), typeof(bool), typeof(AddressBox), new FrameworkPropertyMetadata(false, OnIsFavoriteChanged));
-        public bool IsFavorite
-        {
-            get => (bool)GetValue(IsFavoriteProperty);
-            set => SetValue(IsFavoriteProperty, value);
-        }
-        static void OnIsFavoriteChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<AddressBox>().OnIsFavoriteChanged(new Value<bool>(e));
 
         public string Path
         {
@@ -127,10 +109,7 @@ namespace Imagin.Core.Controls
                     i = System.IO.Path.GetDirectoryName(i);
                 }
             });
-            UpdateFavorite();
         }
-
-        void UpdateFavorite() => handleFavorite.SafeInvoke(() => SetCurrentValue(IsFavoriteProperty, Favorites?.FirstOrDefault(i => i.Path == Path) != null));
 
         //...
 
@@ -156,11 +135,6 @@ namespace Imagin.Core.Controls
             base.OnSelectionChanged(e);
             Path = SelectedItem.ToString();
         }
-
-        protected virtual void OnFavoritesChanged(Value<Favorites> input) => UpdateFavorite();
-
-        protected virtual void OnIsFavoriteChanged(Value<bool> input)
-            => handleFavorite.SafeInvoke(() => Favorites?.Is(input.New, Path));
 
         //...
 

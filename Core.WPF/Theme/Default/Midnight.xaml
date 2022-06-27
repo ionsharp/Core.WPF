@@ -327,8 +327,6 @@
     <SolidColorBrush x:Key="RichTextBoxBorder" Color="#282828"/>
     <SolidColorBrush x:Key="RichTextBoxForeground" Color="#FFF"/>
 
-    <SolidColorBrush x:Key="RippleDecoratorBorder" Color="#ecb610"/>
-
     <SolidColorBrush x:Key="RulerBackground" Color="#11000000"/>
     <SolidColorBrush x:Key="RulerBorder" Color="Transparent"/>
     <SolidColorBrush x:Key="RulerForeground" Color="#FFF"/>

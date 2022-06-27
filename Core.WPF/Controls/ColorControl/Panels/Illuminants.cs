@@ -5,7 +5,8 @@ using System;
 
 namespace Imagin.Core.Controls;
 
-[Explicit, Serializable]
+[DisplayName("Illuminants"), Explicit]
+[Serializable]
 public class ColorIlluminantsPanel : GroupPanel<NamableIlluminant>
 {
     public override Uri Icon => Resources.InternalImage(Images.LightBulb);

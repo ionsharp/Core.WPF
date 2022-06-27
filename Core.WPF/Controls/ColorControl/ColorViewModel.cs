@@ -8,7 +8,6 @@ using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
 using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -19,15 +18,13 @@ namespace Imagin.Core.Media;
 [DisplayName("Color")]
 public class ColorViewModel : ViewModel
 {
-    enum Category { Component, Profile }
-
     public event DefaultEventHandler<Color> ColorChanged;
 
-    #region Properties
+    //...
 
     readonly Handle handle = false;
 
-    //...
+    #region Properties
 
     Color actualColor = System.Windows.Media.Colors.White;
     [DisplayName("Color"), Feature, Hexadecimal, Label(false), Visible]
@@ -38,7 +35,8 @@ public class ColorViewModel : ViewModel
     }
 
     [Hidden]
-    public Colors.Component ActualComponent => componentIndex >= 0 && componentIndex < Components.Count ? Components[componentIndex] : null;
+    public Component ActualComponent 
+        => componentIndex >= 0 && componentIndex < Components.Count ? Components[componentIndex] : null;
     
     Component4 component = Component4.X;
     [Hidden]
@@ -57,43 +55,43 @@ public class ColorViewModel : ViewModel
     }
 
     [Hidden]
-    public ObservableCollection<Colors.Component> Components { get; private set; } = new();
+    public ObservableCollection<Component> Components { get; private set; } = new();
 
+    [Index(0), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     [Setter(nameof(MemberModel.ClearText), false)]
     [Trigger(nameof(MemberModel.DisplayName), nameof(NameX))]
     [Trigger(nameof(MemberModel.RightText), nameof(UnitX))]
-    [Category(Category.Component), Index(0), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayX
     {
         get => GetDisplayValue(0);
         set => SetDisplayValue(value, 0);
     }
 
+    [Index(1), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     [Setter(nameof(MemberModel.ClearText), false)]
     [Trigger(nameof(MemberModel.DisplayName), nameof(NameY))]
     [Trigger(nameof(MemberModel.RightText), nameof(UnitY))]
-    [Category(Category.Component), Index(1), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayY
     {
         get => GetDisplayValue(1);
         set => SetDisplayValue(value, 1);
     }
 
+    [Index(2), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     [Setter(nameof(MemberModel.ClearText), false)]
     [Trigger(nameof(MemberModel.DisplayName), nameof(NameZ))]
     [Trigger(nameof(MemberModel.RightText), nameof(UnitZ))]
-    [Category(Category.Component), Index(2), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayZ
     {
         get => GetDisplayValue(2);
         set => SetDisplayValue(value, 2);
     }
 
+    [Index(3), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     [Setter(nameof(MemberModel.ClearText), false)]
     [Trigger(nameof(MemberModel.DisplayName), nameof(NameW))]
     [Trigger(nameof(MemberModel.IsVisible), nameof(WVisibility))]
     [Trigger(nameof(MemberModel.RightText), nameof(UnitW))]
-    [Category(Category.Component), Index(3), UpdateSourceTrigger(UpdateSourceTrigger.LostFocus), Visible]
     public string DisplayW
     {
         get => WVisibility ? GetDisplayValue(3) : "0";
@@ -140,8 +138,21 @@ public class ColorViewModel : ViewModel
     [Hidden]
     public string NameW => WVisibility ? $"({Colour.Components[ModelType][3].Symbol}) {Colour.Components[ModelType][3].Name}" : "";
 
+    bool normalize = false;
     [Hidden]
-    public readonly ColorControlOptions Options;
+    public bool Normalize
+    {
+        get => normalize;
+        set => this.Change(ref normalize, value);
+    }
+
+    int precision = 2;
+    [Hidden]
+    public int Precision
+    {
+        get => precision;
+        set => this.Change(ref precision, value);
+    }
 
     WorkingProfile profile = WorkingProfile.Default;
     [Hidden]
@@ -183,17 +194,22 @@ public class ColorViewModel : ViewModel
     {
         get
         {
-            if (Options != null)
+            if (ProfileGroups is IList groups)
             {
-                if (ProfileGroupIndex >= 0 && ProfileGroupIndex < Options.Profiles.Count)
-                    return Options.Profiles[ProfileGroupIndex];
+                if (ProfileGroupIndex >= 0 && ProfileGroupIndex < groups.Count)
+                    return groups[ProfileGroupIndex];
             }
             return null;
         }
     }
 
+    object profileGroups = null;
     [Hidden]
-    public object ProfileGroups => Options?.Profiles;
+    public object ProfileGroups
+    {
+        get => profileGroups;
+        set => this.Change(ref profileGroups, value);
+    }
 
     [Hidden]
     public string UnitX => $"{Colour.Components[ModelType][0].Unit}";
@@ -246,12 +262,9 @@ public class ColorViewModel : ViewModel
 
     #region ColorViewModel
 
-    public ColorViewModel(Color defaultColor, ColorControlOptions options) : base()
+    public ColorViewModel(Color defaultColor, object profiles) : base()
     {
-        ActualColor = defaultColor;
-
-        Options = options;
-        Options.If(i => i.PropertyChanged += OnOptionsChanged);
+        ActualColor = defaultColor; ProfileGroups = profiles;
     }
 
     #endregion
@@ -293,7 +306,7 @@ public class ColorViewModel : ViewModel
 
         var aRange = new DoubleRange(0, 1);
         var bRange = new DoubleRange(Minimum[index], Maximum[index]);
-        return (Options?.ComponentNormalize == true ? (double)result : aRange.Convert(bRange.Minimum, bRange.Maximum, result)).Round(Options?.ComponentPrecision ?? 2).ToString();
+        return (Normalize == true ? (double)result : aRange.Convert(bRange.Minimum, bRange.Maximum, result)).Round(Precision).ToString();
     }
 
     void SetDisplayValue(string input, int index)
@@ -301,7 +314,7 @@ public class ColorViewModel : ViewModel
         var aRange = new DoubleRange(0, 1);
         var bRange = new DoubleRange(Minimum[index], Maximum[index]);
 
-        var result = Options?.ComponentNormalize == true ? (One)(input?.Double() ?? 0) : (One)bRange.Convert(aRange.Minimum, aRange.Maximum, input?.Double() ?? 0);
+        var result = Normalize == true ? (One)(input?.Double() ?? 0) : (One)bRange.Convert(aRange.Minimum, aRange.Maximum, input?.Double() ?? 0);
         switch (index)
         {
             case 0: X = result; break;
@@ -358,20 +371,6 @@ public class ColorViewModel : ViewModel
     //...
 
     void OnColorChanged(Color color) => ColorChanged?.Invoke(this, new(color));
-
-    void OnOptionsChanged(object sender, PropertyChangedEventArgs e)
-    {
-        switch (e.PropertyName)
-        {
-            case nameof(ColorControlOptions.ComponentNormalize):
-            case nameof(ColorControlOptions.ComponentPrecision):
-                this.Changed(() => DisplayX);
-                this.Changed(() => DisplayY);
-                this.Changed(() => DisplayZ);
-                this.Changed(() => DisplayW);
-                break;
-        }
-    }
 
     void OnProfileChanged(Value<WorkingProfile> input)
     {
@@ -439,7 +438,18 @@ public class ColorViewModel : ViewModel
                 break;
             #endregion
 
-            #region ProfileGroupIndex
+            #region Normalize, Precision
+            case nameof(Normalize):
+            case nameof(Precision):
+                this.Changed(() => DisplayX);
+                this.Changed(() => DisplayY);
+                this.Changed(() => DisplayZ);
+                this.Changed(() => DisplayW);
+                break;
+            #endregion
+
+            #region ProfileGroups, ProfileGroupIndex
+            case nameof(ProfileGroups):
             case nameof(ProfileGroupIndex):
                 this.Changed(() => SelectedProfileGroup);
                 break;

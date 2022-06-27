@@ -20,23 +20,19 @@ namespace Imagin.Core.Controls
                     {
                         case MemberGroupName.Category:
                             result = i.Category?.CompareTo(j.Category) ?? 0;
-                            if (result != 0) return result;
-                            break;
+                            if (result != 0) return result; break;
 
                         case MemberGroupName.DeclaringType:
                             result = i.DeclaringType?.FullName.CompareTo(j.DeclaringType?.FullName) ?? 0;
-                            if (result != 0) return result;
-                            break;
+                            if (result != 0) return result; break;
 
                         case MemberGroupName.DisplayName:
                             result = i.DisplayName?.CompareTo(j.DisplayName) ?? 0;
-                            if (result != 0) return result;
-                            break;
+                            if (result != 0) return result; break;
 
                         case MemberGroupName.Type:
                             result = i.Type?.FullName.CompareTo(j.Type?.FullName) ?? 0;
-                            if (result != 0) return result;
-                            break;
+                            if (result != 0) return result; break;
                     }
 
                     result = i.Index.CompareTo(j.Index);

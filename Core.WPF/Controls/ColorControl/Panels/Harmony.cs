@@ -12,7 +12,7 @@ using static System.Math;
 
 namespace Imagin.Core.Controls;
 
-[Explicit]
+[DisplayName("Harmony"), Explicit]
 public class ColorHarmonyPanel : Panel
 {
     public enum Steps

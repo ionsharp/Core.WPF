@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:g="http://wpfanimatedgif.codeplex.com"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Animation="clr-namespace:Imagin.Core.Animation"
@@ -57,14 +58,14 @@
                                         <Image x:Name="Image"/>
                                         <local:KeyTemplate.Triggers>
                                             <DataTrigger Binding="{Binding Data.IsSourceGif, Source={StaticResource Thumbnail}}" Value="True">
-                                                <Setter TargetName="Image" Property="Animation:ImageBehavior.AnimatedSource" Value="{Binding Data.Source, Source={StaticResource Thumbnail}}"/>
-                                                <Setter TargetName="Image" Property="Animation:ImageBehavior.AnimationDuration" Value="0:0:3"/>
-                                                <Setter TargetName="Image" Property="Animation:ImageBehavior.RepeatBehavior" Value="Forever"/>
-                                                <Setter TargetName="Image" Property="Animation:ImageBehavior.AutoStart" Value="True"/>
+                                                <Setter TargetName="Image" Property="g:ImageBehavior.AnimatedSource" Value="{Binding Data.Source, Source={StaticResource Thumbnail}}"/>
+                                                <Setter TargetName="Image" Property="g:ImageBehavior.AnimationDuration" Value="0:0:3"/>
+                                                <Setter TargetName="Image" Property="g:ImageBehavior.RepeatBehavior" Value="Forever"/>
+                                                <Setter TargetName="Image" Property="g:ImageBehavior.AutoStart" Value="True"/>
                                                 <Setter TargetName="Image" Property="Source" Value="{x:Null}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Data.IsSourceGif, Source={StaticResource Thumbnail}}" Value="False">
-                                                <Setter TargetName="Image" Property="Animation:ImageBehavior.AnimatedSource" Value="{x:Null}"/>
+                                                <Setter TargetName="Image" Property="g:ImageBehavior.AnimatedSource" Value="{x:Null}"/>
                                                 <Setter TargetName="Image" Property="Source" Value="{Binding Data.Source, Source={StaticResource Thumbnail}}"/>
                                             </DataTrigger>
                                         </local:KeyTemplate.Triggers>

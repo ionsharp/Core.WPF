@@ -140,7 +140,7 @@ namespace Imagin.Core.Collections.Serialization
 
         public async Task<Result> Export() => await Export(XArray.New<T>(this));
 
-        public async Task<Result> Export(T i) => await Export(XArray.New<T>(i));
+        public async Task<Result> Export(T i) => await Export(XArray.New(i));
 
         public async Task<Result> Export(IEnumerable<T> items)
         {
@@ -168,25 +168,24 @@ namespace Imagin.Core.Collections.Serialization
 
             if (StorageWindow.Show(out string[] paths, nameof(Import), StorageWindowModes.OpenFile, new[] { SingleFileExtension, FileExtension }, FilePath))
             {
-                foreach (var i in paths)
+                if (paths?.Length > 0)
                 {
-                    var result = Deserialize(i, out object j);
-
-                    if (!result)
+                    foreach (var i in paths)
                     {
-                        e++;
-                        continue;
-                    }
-                    
-                    if (j is IEnumerable<T> list)
-                        list.ForEach(k => Add(k));
+                        var result = Deserialize(i, out object j);
 
-                    else if (j is T item)
-                        Add(item);
+                        if (!result) { e++; continue; }
+
+                        if (j is IEnumerable<T> list)
+                            list.ForEach(k => Add(k));
+
+                        else if (j is T item)
+                            Add(item);
+                    }
                 }
             }
 
-            return e == 0 ? new Success() : new Error(new Exception()) as Result;
+            return e == 0 ? new Success() : new Error(new Exception());
         }
     }
 }

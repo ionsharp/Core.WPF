@@ -6,16 +6,16 @@ using Imagin.Core.Models;
 using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
 using System;
-using System.Linq;
 using System.Collections;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Imagin.Core.Controls;
 
-[Explicit]
-[Serializable]
+[Explicit, Serializable]
 public class ColorDocument : Document
 {
     #region Events
@@ -151,12 +151,12 @@ public class ColorDocument : Document
 
     public ColorDocument() : this(DefaultNewColor, DefaultModel, null) { }
 
-    public ColorDocument(ColorControlOptions options) : this(DefaultNewColor, DefaultModel, options) { }
+    public ColorDocument(object profiles) : this(DefaultNewColor, DefaultModel, profiles) { }
 
-    public ColorDocument(System.Windows.Media.Color color, Type model, ColorControlOptions options) : base()
+    public ColorDocument(Color color, Type model, object profiles) : base()
     {
-        Color = new(color, options);
-        Color.Model = Color.Models.SourceCollection.To<IList>().FirstOrDefault<NamableCategory<Type>>(i => i.Value == model);
+        Color = new(color, profiles);
+        Color.Model = Color.Models.SourceCollection.To<IList>().FirstOrDefault<NamableCategory<Type>>(i => i.Value == (model ?? DefaultModel));
         Color.ActualColor = color;
     }
 
@@ -180,7 +180,7 @@ public class ColorDocument : Document
 
     //...
 
-    void OnColorChanged(object sender, EventArgs<System.Windows.Media.Color> e)
+    void OnColorChanged(object sender, EventArgs<Color> e)
     {
         this.Changed(() => Color);
         ColorChanged?.Invoke(this, new(e.Value));

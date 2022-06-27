@@ -53,13 +53,6 @@ namespace Imagin.Core.Controls
             set => SetValue(BrowseFileExtensionsProperty, value);
         }
 
-        public static readonly DependencyProperty BrowseFilterModeProperty = DependencyProperty.Register(nameof(BrowseFilterMode), typeof(StorageWindowFilterModes), typeof(PathBox), new FrameworkPropertyMetadata(StorageWindowFilterModes.Single));
-        public StorageWindowFilterModes BrowseFilterMode
-        {
-            get => (StorageWindowFilterModes)GetValue(BrowseFilterModeProperty);
-            set => SetValue(BrowseFilterModeProperty, value);
-        }
-
         public static readonly DependencyProperty BrowseModeProperty = DependencyProperty.Register(nameof(BrowseMode), typeof(StorageWindowModes), typeof(PathBox), new FrameworkPropertyMetadata(StorageWindowModes.OpenFolder, OnBrowseModeChanged, OnBrowseModeCoerced));
         public StorageWindowModes BrowseMode
         {
@@ -170,7 +163,7 @@ namespace Imagin.Core.Controls
         public void Browse()
         {
             Focus();
-            if (StorageWindow.Show(out string path, BrowseTitle, BrowseMode, BrowseFileExtensions.Values, Text, BrowseFilterMode))
+            if (StorageWindow.Show(out string path, BrowseTitle, BrowseMode, BrowseFileExtensions.Values, Text))
                 SetCurrentValue(TextProperty, path);
 
             MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));

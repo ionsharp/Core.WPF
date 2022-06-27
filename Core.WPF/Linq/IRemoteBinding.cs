@@ -14,7 +14,7 @@ namespace Imagin.Core.Linq
                 RemoteBindingSource.MainViewModel 
                     => Get.Where<IMainViewModel>(),
                 RemoteBindingSource.Options 
-                    => Get.Where<IMainViewOptions>(),
+                    => Get.Where<MainViewOptions>(),
                 RemoteBindingSource.Resources 
                     => Get.Current<Config.ApplicationResources>(),
                 _ => null,

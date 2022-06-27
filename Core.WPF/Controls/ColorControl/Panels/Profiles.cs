@@ -5,7 +5,8 @@ using System;
 
 namespace Imagin.Core.Controls;
 
-[Explicit, Serializable]
+[DisplayName("Profiles"), Explicit]
+[Serializable]
 public class ColorProfilesPanel : GroupPanel<NamableProfile>
 {
     public override Uri Icon => Resources.InternalImage(Images.Channels);

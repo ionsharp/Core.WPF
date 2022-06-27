@@ -6,7 +6,8 @@ using System.Windows.Input;
 
 namespace Imagin.Core.Models;
 
-[Explicit, Serializable]
+[DisplayName("Colors"), Explicit]
+[Serializable]
 public class ColorsPanel : GroupPanel<StringColor>
 {
     public static readonly ResourceKey TemplateKey = new();

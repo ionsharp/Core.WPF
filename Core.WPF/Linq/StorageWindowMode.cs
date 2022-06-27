@@ -1,5 +1,4 @@
-﻿using Imagin.Core.Controls;
-using Imagin.Core.Storage;
+﻿using Imagin.Core.Storage;
 using System;
 
 namespace Imagin.Core.Linq

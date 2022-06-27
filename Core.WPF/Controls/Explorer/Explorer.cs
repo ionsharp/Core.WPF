@@ -19,8 +19,6 @@ namespace Imagin.Core.Controls
 
         public static readonly ReferenceKey<Browser> BrowserKey = new();
 
-        public static readonly ReferenceKey<FavoriteBar> FavoriteBarKey = new();
-
         //...
 
         public static readonly Limit DefaultLimit = new(50);
@@ -46,27 +44,6 @@ namespace Imagin.Core.Controls
         {
             get => (BrowserOptions)GetValue(BrowserOptionsProperty);
             set => SetValue(BrowserOptionsProperty, value);
-        }
-        
-        public static readonly DependencyProperty FavoritesProperty = DependencyProperty.Register(nameof(Favorites), typeof(Favorites), typeof(Explorer), new FrameworkPropertyMetadata(null));
-        public Favorites Favorites
-        {
-            get => (Favorites)GetValue(FavoritesProperty);
-            set => SetValue(FavoritesProperty, value);
-        }
-
-        public static readonly DependencyProperty FavoriteSortDirectionProperty = DependencyProperty.Register(nameof(FavoriteSortDirection), typeof(ListSortDirection), typeof(Explorer), new FrameworkPropertyMetadata(ListSortDirection.Ascending));
-        public ListSortDirection FavoriteSortDirection
-        {
-            get => (ListSortDirection)GetValue(FavoriteSortDirectionProperty);
-            set => SetValue(FavoriteSortDirectionProperty, value);
-        }
-
-        public static readonly DependencyProperty FavoriteSortNameProperty = DependencyProperty.Register(nameof(FavoriteSortName), typeof(ItemProperty), typeof(Explorer), new FrameworkPropertyMetadata(ItemProperty.Name));
-        public ItemProperty FavoriteSortName
-        {
-            get => (ItemProperty)GetValue(FavoriteSortNameProperty);
-            set => SetValue(FavoriteSortNameProperty, value);
         }
         
         public static readonly DependencyProperty FileExtensionsProperty = DependencyProperty.Register(nameof(FileExtensions), typeof(string), typeof(Explorer), new FrameworkPropertyMetadata(null));
@@ -112,13 +89,6 @@ namespace Imagin.Core.Controls
             set => SetValue(SelectionModeProperty, value);
         }
 
-        public static readonly DependencyProperty ShowFavoriteBarProperty = DependencyProperty.Register(nameof(ShowFavoriteBar), typeof(bool), typeof(Explorer), new FrameworkPropertyMetadata(true));
-        public bool ShowFavoriteBar
-        {
-            get => (bool)GetValue(ShowFavoriteBarProperty);
-            set => SetValue(ShowFavoriteBarProperty, value);
-        }
-
         public static readonly DependencyProperty ViewFilesProperty = DependencyProperty.Register(nameof(ViewFiles), typeof(bool), typeof(Explorer), new FrameworkPropertyMetadata(true));
         public bool ViewFiles
         {
@@ -142,9 +112,6 @@ namespace Imagin.Core.Controls
                     += OnFilesOpened;
                 this.GetChild(BrowserKey).SelectionChanged
                     += OnSelectionChanged;
-
-                this.GetChild(FavoriteBarKey).Clicked
-                    += OnFavoriteClicked;
             },
             i =>
             {
@@ -155,15 +122,10 @@ namespace Imagin.Core.Controls
                     -= OnFilesOpened;
                 this.GetChild(BrowserKey).SelectionChanged
                     -= OnSelectionChanged;
-
-                this.GetChild(FavoriteBarKey).Clicked
-                    -= OnFavoriteClicked;
             });
         }
 
         //...
-
-        void OnFavoriteClicked(object sender, EventArgs<string> e) => Path = e.Value;
 
         void OnFileOpened(object sender, EventArgs<string> e)
         {

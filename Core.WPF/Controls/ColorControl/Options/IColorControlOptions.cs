@@ -10,12 +10,10 @@ public interface IColorControlOptions
 
     IGroupWriter Illuminants { get; }
 
-    IGroupWriter Profiles { get; }
-    
-    //...
-
     Layouts Layouts { get; }
 
+    IGroupWriter Profiles { get; }
+    
     //...
 
     void OnLoaded(ColorControl colorPicker);

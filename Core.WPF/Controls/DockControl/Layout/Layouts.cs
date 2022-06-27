@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
 
@@ -198,8 +199,8 @@ namespace Imagin.Core.Controls
         [Hidden]
         public virtual ICommand SaveLayoutCommand => saveLayoutCommand ??= new RelayCommand(() =>
         {
-            var x = new { Name = "File name without extension" };
-            MemberWindow.ShowDialog("Save layout", x, out int result, null, Buttons.Done);
+            var x = new BaseNamable("File name without extension");
+            MemberWindow.ShowDialog("Save layout", x, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; }, Buttons.SaveCancel);
 
             if (result == 0)
             {

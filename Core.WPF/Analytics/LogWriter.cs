@@ -8,7 +8,7 @@ namespace Imagin.Core.Analytics
     {
         public static Limit DefaultLimit = new(5000, Limit.Actions.ClearAndArchive);
 
-        public bool Enabled => Get.Where<IMainViewOptions>()?.LogEnable == true;
+        public bool Enabled => Get.Where<MainViewOptions>()?.LogEnable == true;
 
         public LogWriter(string folderPath, Limit limit) : base(nameof(Log), folderPath, nameof(Log), "xml", "xml", limit, typeof(Error), typeof(LogEntry), typeof(Message), typeof(Success), typeof(Warning), typeof(Result), typeof(ResultTypes), typeof(ResultLevel))
             => Get.Register<ILog>(this);

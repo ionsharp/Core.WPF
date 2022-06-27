@@ -12,22 +12,20 @@ using System.Linq;
 
 namespace Imagin.Core.Controls;
 
-[DisplayName("Color control options")]
-[Serializable]
-public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISerialize
+[DisplayName("Options"), Serializable]
+public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
 {
-    enum Category { Component, Layouts, Window }
+    enum Category { Window }
+
+    public IEnumerable<Uri> GetDefaultLayouts()
+    {
+        yield return Resources.Uri(AssemblyProperties.Name, "Controls/ColorControl/Layouts/2.xml");
+        yield return Resources.Uri(AssemblyProperties.Name, "Controls/ColorControl/Layouts/1.xml");
+    }
 
     #region Properties
 
-    bool autoSaveLayout = true;
-    [Category(Category.Layouts)]
-    [DisplayName("Auto save")]
-    public bool AutoSaveLayout
-    {
-        get => autoSaveLayout;
-        set => this.Change(ref autoSaveLayout, value);
-    }
+    #region Other
 
     [Hidden]
     [field: NonSerialized]
@@ -43,27 +41,6 @@ public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISeriali
         set => this.Change(ref colors, value);
     }
 
-    bool componentNormalize = false;
-    [Category(Category.Component)]
-    [DisplayName("Normalize")]
-    public bool ComponentNormalize
-    {
-        get => componentNormalize;
-        set => this.Change(ref componentNormalize, value);
-    }
-
-    int componentPrecision = 2;
-    [Category(Category.Component)]
-    [DisplayName("Precision")]
-    public int ComponentPrecision
-    {
-        get => componentPrecision;
-        set => this.Change(ref componentPrecision, value);
-    }
-
-    [Hidden]
-    public string FilePath { get; private set; }
-
     IGroupWriter IColorControlOptions.Illuminants => illuminants;
     [field: NonSerialized]
     GroupWriter<NamableIlluminant> illuminants;
@@ -72,24 +49,6 @@ public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISeriali
     {
         get => illuminants;
         set => this.Change(ref illuminants, value);
-    }
-
-    string layout = string.Empty;
-    [Hidden]
-    public virtual string Layout
-    {
-        get => layout;
-        set => this.Change(ref layout, value);
-    }
-
-    [NonSerialized]
-    Layouts layouts = null;
-    [Category(Category.Layouts)]
-    [DisplayName("Layout")]
-    public virtual Layouts Layouts
-    {
-        get => layouts;
-        set => this.Change(ref layouts, value);
     }
 
     IGroupWriter IColorControlOptions.Profiles => profiles;
@@ -102,9 +61,42 @@ public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISeriali
         set => this.Change(ref profiles, value);
     }
 
+    #endregion
+
+    #region Window
+
+    bool autoSaveLayout = true;
+    [Category(Category.Window)]
+    [DisplayName("Auto save")]
+    public bool AutoSaveLayout
+    {
+        get => autoSaveLayout;
+        set => this.Change(ref autoSaveLayout, value);
+    }
+
+    string layout = string.Empty;
+    [Hidden]
+    public virtual string Layout
+    {
+        get => layout;
+        set => this.Change(ref layout, value);
+    }
+
+    [NonSerialized]
+    Layouts layouts = null;
+    [Category(Category.Window)]
+    [DisplayName("Layout")]
+    public virtual Layouts Layouts
+    {
+        get => layouts;
+        set => this.Change(ref layouts, value);
+    }
+
     [Category(Category.Window)]
     [DisplayName("Panels")]
     public PanelCollection Panels => ColorControl?.Panels;
+
+    #endregion
 
     #endregion
 
@@ -118,6 +110,12 @@ public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISeriali
 
     #region Methods
 
+    protected override void OnSaved()
+    {
+        Layout = Layouts.Layout;
+        Colors.Save(); Illuminants.Save(); Profiles.Save();
+    }
+
     public static Result Load(string filePath, out ColorControlOptions data)
     {
         var result = BinarySerializer.Deserialize(filePath, out object options);
@@ -128,23 +126,6 @@ public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISeriali
     public Result Deserialize(string filePath, out object data) => BinarySerializer.Deserialize(filePath, out data);
 
     //...
-
-    public Result Save() => Serialize(this);
-
-    public Result Serialize(object data) => Serialize(FilePath, data);
-
-    public Result Serialize(string filePath, object data)
-    {
-        OnSaved();
-        return BinarySerializer.Serialize(filePath, data);
-    }
-
-    //...
-
-    public IEnumerable<Uri> GetDefaultLayouts()
-    {
-        yield return Resources.Uri(AssemblyProperties.Name, "Controls/ColorControl/Layouts/Default.xml");
-    }
 
     public void OnLoaded(ColorControl colorPicker)
     {
@@ -210,13 +191,6 @@ public class ColorControlOptions : Base, IColorControlOptions, ILayout, ISeriali
         Layouts = new Layouts($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}\Layouts", GetDefaultLayouts());
         Layouts.Update(layout);
         Layouts.Refresh();
-    }
-
-    public void OnSaved()
-    {
-        Layout = Layouts.Layout;
-
-        Colors.Save(); Illuminants.Save(); Profiles.Save();
     }
 
     #endregion

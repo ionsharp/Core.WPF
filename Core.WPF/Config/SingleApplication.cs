@@ -1,21 +1,20 @@
 ﻿using System.Collections.Generic;
 
-namespace Imagin.Core.Config
+namespace Imagin.Core.Config;
+
+public abstract class SingleApplication : BaseApplication, ISingleApplication
 {
-    public abstract class SingleApplication : BaseApplication, ISingleApplication
+    public event ReopenedEventHandler Reopened;
+
+    public SingleApplication() : base() { }
+
+    public virtual void OnReopened(IList<string> arguments)
     {
-        public event ReopenedEventHandler Reopened;
+        MainWindow.Activate();
 
-        public SingleApplication() : base() { }
+        if (arguments?.Count > 0)
+            arguments.RemoveAt(0);
 
-        public virtual void OnReopened(IList<string> arguments)
-        {
-            MainWindow.Activate();
-
-            if (arguments?.Count > 0)
-                arguments.RemoveAt(0);
-
-            Reopened?.Invoke(this, new ReopenedEventArgs(arguments));
-        }
+        Reopened?.Invoke(this, new ReopenedEventArgs(arguments));
     }
 }
