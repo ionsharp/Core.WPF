@@ -1,4 +1,5 @@
-﻿using Imagin.Core.Media;
+﻿using Imagin.Core.Linq;
+using Imagin.Core.Numerics;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -9,11 +10,15 @@ namespace Imagin.Core.Controls
     [Serializable]
     public class ConsoleOptions : ControlOptions<Console>
     {
-        StringColor background = System.Windows.Media.Colors.Black;
+        ByteVector4 background = new(0, 0, 0, 255);
         public SolidColorBrush Background
         {
-            get => background.Brush;
-            set => this.Change(ref background, value.Color);
+            get => XSolidColorBrush.Convert(background);
+            set
+            {
+                value.Convert(out ByteVector4 result);
+                this.Change(ref background, result);
+            }
         }
 
         string backgroundImage = string.Empty;
@@ -55,11 +60,15 @@ namespace Imagin.Core.Controls
             set => this.Change(ref fontSize, value);
         }
 
-        StringColor foreground = System.Windows.Media.Colors.White;
+        ByteVector4 foreground = new(255);
         public SolidColorBrush Foreground
         {
-            get => foreground.Brush;
-            set => this.Change(ref foreground, value.Color);
+            get => XSolidColorBrush.Convert(foreground);
+            set
+            {
+                value.Convert(out ByteVector4 result);
+                this.Change(ref foreground, result);
+            }
         }
 
         string output = string.Empty;

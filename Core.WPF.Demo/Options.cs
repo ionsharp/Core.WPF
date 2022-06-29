@@ -24,11 +24,6 @@ namespace Demo
 
         #region Properties
 
-        [Hidden]
-        public Favorites Favorites => explorerOptions.Favorites;
-
-        #region Controls
-
         ExplorerOptions explorerOptions = new();
         [Category(Category.Explorer)]
         [DisplayName("Options")]
@@ -40,24 +35,11 @@ namespace Demo
 
         #endregion
 
-        #endregion
-
         #region Methods
-
-        protected override IEnumerable<IWriter> GetData()
-        {
-            yield return ExplorerOptions.Favorites;
-        }
 
         public override IEnumerable<Uri> GetDefaultLayouts()
         {
             yield return Resources.Uri(nameof(Demo), Layouts.DefaultPath);
-        }
-
-        protected override void OnLoaded()
-        {
-            ExplorerOptions.Favorites = new Favorites($@"{ApplicationProperties.GetFolderPath(DataFolders.Documents)}\{nameof(Explorer)}", new Limit(250, Limit.Actions.RemoveFirst));
-            base.OnLoaded();
         }
 
         #endregion

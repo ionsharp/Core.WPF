@@ -6,6 +6,7 @@ using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using Imagin.Core.Models;
+using Imagin.Core.Numerics;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -159,11 +160,15 @@ public partial class ColorControl : Control
 
     void OnColorSaved(object sender, EventArgs<Color> e)
     {
-        ColorsPanel?.SelectedGroup.If(i => i.Add(e.Value));
+        ColorsPanel?.SelectedGroup.If(i =>
+        {
+            e.Value.Convert(out ByteVector4 j);
+            i.Add(j);
+        });
     }
 
-    void OnColorSelected(object sender, EventArgs<StringColor> e)
-        => ActiveDocument.If(i => i.Color.ActualColor = e.Value);
+    void OnColorSelected(object sender, EventArgs<ByteVector4> e)
+        => ActiveDocument.If(i => i.Color.ActualColor = Color.FromArgb(e.Value.A, e.Value.R, e.Value.G, e.Value.B));
 
     void OnDocumentsChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
@@ -239,10 +244,20 @@ public partial class ColorControl : Control
     #region Commands
 
     ICommand saveOldColorCommand;
-    public ICommand SaveOldColorCommand => saveOldColorCommand ??= new RelayCommand(() => ColorsPanel?.SelectedGroup.If<GroupCollection<StringColor>>(i => i.Add(ActiveDocument.OldColor)), () => ActiveDocument != null);
+    public ICommand SaveOldColorCommand => saveOldColorCommand ??= new RelayCommand(() => ColorsPanel?.SelectedGroup.If(i =>
+    {
+        ActiveDocument.OldColor.Convert(out ByteVector4 j);
+        i.Add(j);
+    }), 
+    () => ActiveDocument != null);
 
     ICommand saveNewColorCommand;
-    public ICommand SaveNewColorCommand => saveNewColorCommand ??= new RelayCommand(() => ColorsPanel?.SelectedGroup.If<GroupCollection<StringColor>>(i => i.Add(ActiveDocument.Color.ActualColor)), () => ActiveDocument != null);
+    public ICommand SaveNewColorCommand => saveNewColorCommand ??= new RelayCommand(() => ColorsPanel?.SelectedGroup.If(i =>
+    {
+        ActiveDocument.Color.ActualColor.Convert(out ByteVector4 j);
+        i.Add(j);
+    }), 
+    () => ActiveDocument != null);
 
     #endregion
 }

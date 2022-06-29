@@ -81,10 +81,8 @@
                         <Conversion:DefaultConverterSelector>
                             <Conversion:ConverterContainer DataKey="{x:Type Color}" 
                                 Converter="{x:Null}"/>
-                            <Conversion:ConverterContainer DataKey="{x:Type Media:StringColor}" 
-                                Converter="{x:Static Conversion:StringColorConverter.Default}"/>
-                            <Conversion:ConverterContainer DataKey="{x:Type SharedMath:Hexadecimal}" 
-                                Converter="{x:Static Conversion:HexadecimalToColorConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type Numerics:ByteVector4}" 
+                                Converter="{x:Static Conversion:ByteVector4ToColorConverter.Default}"/>
                             <Conversion:ConverterContainer DataKey="{x:Type SolidColorBrush}" 
                                 Converter="{x:Static Conversion:SolidColorBrushToColorConverter.Default}"/>
                             <Conversion:ConverterContainer DataKey="{x:Type SystemDrawing:Color}" 
@@ -117,10 +115,8 @@
                         <Conversion:DefaultConverterSelector>
                             <Conversion:ConverterContainer DataKey="{x:Type Color}" 
                                 Converter="{x:Static Conversion:ColorToStringConverter.Default}"/>
-                            <Conversion:ConverterContainer DataKey="{x:Type Media:StringColor}" 
-                                Converter="{x:Static Conversion:StringColorToStringConverter.Default}"/>
-                            <Conversion:ConverterContainer DataKey="{x:Type SharedMath:Hexadecimal}" 
-                                Converter="{x:Static Conversion:HexadecimalToStringConverter.Default}"/>
+                            <Conversion:ConverterContainer DataKey="{x:Type Numerics:ByteVector4}" 
+                                Converter="{x:Static Conversion:ByteVector4ToStringConverter.Default}"/>
                             <Conversion:ConverterContainer DataKey="{x:Type SolidColorBrush}" 
                                 Converter="{x:Static Conversion:SolidColorBrushToStringConverter.Default}"/>
                             <Conversion:ConverterContainer DataKey="{x:Type SystemDrawing:Color}" 
@@ -1203,7 +1199,7 @@
                     Zoom="128"/>
             </StackPanel>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:DoubleMatrix}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Numerics:DoubleMatrix}">
             <StackPanel Margin="5">
                 <Slider
                     Margin="0,0,0,5"
@@ -1216,10 +1212,7 @@
                     Zoom="128"/>
             </StackPanel>
         </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:Hexadecimal}">
-            <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorTemplateKey}}"/>
-        </local:KeyTemplate>
-        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type SharedMath:Int32Pattern}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Numerics:Int32Pattern}">
             <local:PatternControl
                 BorderThickness="0"
                 CanvasLength="180"
@@ -1261,7 +1254,7 @@
             <local:GradientControl Gradient="{Binding Value}"/>
         </local:KeyTemplate>
 
-        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Media:StringColor}">
+        <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type Numerics:ByteVector4}">
             <ContentPresenter Content="{Binding}" ContentTemplate="{DynamicResource {x:Static local:MemberGrid.ColorTemplateKey}}"/>
         </local:KeyTemplate>
 

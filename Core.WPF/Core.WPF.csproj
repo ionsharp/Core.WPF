@@ -162,31 +162,12 @@
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector3D.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelectorEllipse.cs" />
+    <Compile Include="Media\BlendModes.cs" />
     <Compile Include="Storage\StorageWindowModes.cs" />
     <Compile Include="Conversion\Multi\GradientMultiConverter.cs" />
     <Compile Include="Conversion\Single\DoubleMatrix.cs" />
-    <Compile Include="Media\BlendModes.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\BitmapContext.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\ClearTypeLetterGlyph.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\DpiDetector.cs" />
     <Compile Include="Media\GradientAttribute.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\GrayScaleLetterGlyph.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\IntGeometry.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\LetterGlyphTool.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\NativeMethods.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\PortableFontDesc.cs" />
-    <Compile Include="Linq\WriteableBitmap\Other\ScrollingTool.cs" />
-    <Compile Include="Linq\WriteableBitmap\Antialiasing.cs" />
-    <Compile Include="Linq\WriteableBitmap\Base.cs" />
-    <Compile Include="Linq\WriteableBitmap\Blit.cs" />
-    <Compile Include="Linq\WriteableBitmap\Context.cs" />
-    <Compile Include="Linq\WriteableBitmap\Convert.cs" />
-    <Compile Include="Linq\WriteableBitmap\Fill.cs" />
-    <Compile Include="Linq\WriteableBitmap\Filter.cs" />
-    <Compile Include="Linq\WriteableBitmap\Line.cs" />
-    <Compile Include="Linq\WriteableBitmap\Shape.cs" />
-    <Compile Include="Linq\WriteableBitmap\Spline.cs" />
-    <Compile Include="Linq\WriteableBitmap\Transform.cs" />
+    <Compile Include="Linq\WriteableBitmap.cs" />
     <Compile Include="-\ImageAttribute.cs" />
     <Compile Include="-\UpdateSourceTriggerAttribute.cs" />
     <Compile Include="Conversion\Multi\Visibility\AandBorCMultiConverter.cs" />
@@ -196,7 +177,6 @@
     <Compile Include="Linq\ColorMatrix.cs" />
     <Compile Include="Controls\ColorControl\ColorViewModel.cs" />
     <Compile Include="Controls\ColorSelector\Slider\BaseComponentSlider.cs" />
-    <Compile Include="Media\StringColor.cs" />
     <Compile Include="Reflection\MemberSetter.cs" />
     <Compile Include="Reflection\MemberTrigger.cs" />
     <Compile Include="Behavior\Binding.cs" />
@@ -375,7 +355,6 @@
     <Compile Include="Media\GradientStepCollection.cs" />
     <Compile Include="Media\Shape.cs" />
     <Compile Include="Media\Easing.cs" />
-    <Compile Include="Media\TransformModes.cs" />
     <Compile Include="Models\Documents\File.cs" />
     <Compile Include="Models\Panels\Find.cs" />
     <Compile Include="Models\Panels\FindResults.cs" />
@@ -484,7 +463,7 @@
     <Compile Include="Markup\SpecialFolder.cs" />
     <Compile Include="Markup\Uri.Read.cs" />
     <Compile Include="Media\Gradients.cs" />
-    <Compile Include="Media\Colors.cs" />
+    <Compile Include="Controls\ColorControl\Colors.cs" />
     <Compile Include="Controls\ColorControl\ColorDocument.cs" />
     <Compile Include="Media\Geometry.cs" />
     <Compile Include="Media\GradientType.cs" />
@@ -562,7 +541,7 @@
     <Compile Include="Conversion\Single\SolidColorBrush.cs" />
     <Compile Include="Conversion\Single\String.cs" />
     <Compile Include="Conversion\Single\Visibility.cs" />
-    <Compile Include="Conversion\Single\Hexadecimal.cs" />
+    <Compile Include="Conversion\Single\ByteVector4.cs" />
     <Compile Include="Conversion\Single\ImageSource.cs" />
     <Compile Include="Conversion\ConverterValue.cs" />
     <Compile Include="Data\Binding\PanelBinding.cs" />
@@ -607,7 +586,7 @@
     <Compile Include="Linq\Thickness.cs" />
     <Compile Include="Markup\Assembly.cs" />
     <Compile Include="Markup\Uri.cs" />
-    <Compile Include="Media\ImageFormats.cs" />
+    <Compile Include="Media\ImageFormat.cs" />
     <Compile Include="Models\Panels\Data.cs" />
     <Compile Include="Models\Content.cs" />
     <Compile Include="Models\MainView\IDockViewModel.cs" />
@@ -770,14 +749,12 @@
     <Compile Include="Linq\Cursor.cs" />
     <Compile Include="Linq\Encoding.cs" />
     <Compile Include="Linq\ImageSource.cs" />
-    <Compile Include="Linq\PixelFormat.cs" />
     <Compile Include="Controls\PickerBox\GradientBox.cs" />
     <Compile Include="Controls\PickerWindow\GradientWindow.xaml.cs">
       <DependentUpon>GradientWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Media\Display.cs" />
+    <Compile Include="Input\Display.cs" />
     <Compile Include="Media\Interpolations.cs" />
-    <Compile Include="Media\PixelFormat.cs" />
     <Compile Include="Imports\ICONINFO.cs" />
     <Compile Include="Imports\MINMAXINFO.cs" />
     <Compile Include="Imports\MONITORINFO.cs" />
@@ -802,38 +779,37 @@
     <Compile Include="Config\SingleInstance.cs" />
     <Compile Include="-\DependencyProperty.Generic.cs" />
     <Compile Include="Input\DirectionalNavigation.cs" />
-    <Compile Include="Input\Global\BaseHookListener.cs" />
-    <Compile Include="Input\Global\HookType.cs" />
-    <Compile Include="Input\Global\HotKeys\HotKeyArgs.cs" />
-    <Compile Include="Input\Global\HotKeys\HotKeySet.cs" />
-    <Compile Include="Input\Global\HotKeys\HotKeySetCollection.cs" />
-    <Compile Include="Input\Global\HotKeys\HotKeySetsListener.cs" />
-    <Compile Include="Input\Global\KeyboardHookListener.cs" />
-    <Compile Include="Input\Global\KeyboardState.cs" />
-    <Compile Include="Input\Global\KeyEventArgsExt.cs" />
-    <Compile Include="Input\Global\KeyPressEventArgsExt.cs" />
-    <Compile Include="Input\Global\MouseEventExtArgs.cs" />
-    <Compile Include="Input\Global\MouseHookListener.cs" />
-    <Compile Include="Input\Global\MouseKeyEventProvider.cs">
+    <Compile Include="Input\Trace\BaseHookListener.cs" />
+    <Compile Include="Input\Trace\HookType.cs" />
+    <Compile Include="Input\Trace\HotKeys\HotKeyArgs.cs" />
+    <Compile Include="Input\Trace\HotKeys\HotKeySet.cs" />
+    <Compile Include="Input\Trace\HotKeys\HotKeySetCollection.cs" />
+    <Compile Include="Input\Trace\HotKeys\HotKeySetsListener.cs" />
+    <Compile Include="Input\Trace\KeyboardHookListener.cs" />
+    <Compile Include="Input\Trace\KeyboardState.cs" />
+    <Compile Include="Input\Trace\KeyEventArgsExt.cs" />
+    <Compile Include="Input\Trace\KeyPressEventArgsExt.cs" />
+    <Compile Include="Input\Trace\MouseEventExtArgs.cs" />
+    <Compile Include="Input\Trace\MouseHookListener.cs" />
+    <Compile Include="Input\Trace\MouseKeyEventProvider.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Input\Global\WinApi\AppHooker.cs" />
-    <Compile Include="Input\Global\WinApi\GlobalHooker.cs" />
-    <Compile Include="Input\Global\WinApi\HookCallback.cs" />
-    <Compile Include="Input\Global\WinApi\Hooker.cs" />
-    <Compile Include="Input\Global\WinApi\HookNativeMethods.cs" />
-    <Compile Include="Input\Global\WinApi\KeyboardHookStruct.cs" />
-    <Compile Include="Input\Global\WinApi\KeyboardNativeMethods.cs" />
-    <Compile Include="Input\Global\WinApi\Messages.cs" />
-    <Compile Include="Input\Global\WinApi\MouseNativeMethods.cs" />
-    <Compile Include="Input\Global\WinApi\MouseStructures.cs" />
-    <Compile Include="Input\Global\WinApi\Point.cs" />
-    <Compile Include="Input\Global\WinApi\ThreadNativeMethods.cs" />
+    <Compile Include="Input\Trace\WinApi\AppHooker.cs" />
+    <Compile Include="Input\Trace\WinApi\GlobalHooker.cs" />
+    <Compile Include="Input\Trace\WinApi\HookCallback.cs" />
+    <Compile Include="Input\Trace\WinApi\Hooker.cs" />
+    <Compile Include="Input\Trace\WinApi\HookNativeMethods.cs" />
+    <Compile Include="Input\Trace\WinApi\KeyboardHookStruct.cs" />
+    <Compile Include="Input\Trace\WinApi\KeyboardNativeMethods.cs" />
+    <Compile Include="Input\Trace\WinApi\Messages.cs" />
+    <Compile Include="Input\Trace\WinApi\MouseNativeMethods.cs" />
+    <Compile Include="Input\Trace\WinApi\MouseStructures.cs" />
+    <Compile Include="Input\Trace\WinApi\Point.cs" />
+    <Compile Include="Input\Trace\WinApi\ThreadNativeMethods.cs" />
     <Compile Include="Behavior\AutoPositionPopup.cs" />
     <Compile Include="Linq\DataGrid.cs" />
     <Compile Include="Linq\FlowDocument.cs" />
     <Compile Include="Linq\Grid.cs" />
-    <Compile Include="Linq\Hexadecimal.cs" />
     <Compile Include="Linq\Icon.cs" />
     <Compile Include="Linq\ItemsControl.cs" />
     <Compile Include="Linq\ListBox.cs" />
@@ -999,18 +975,18 @@
     <Compile Include="Conversion\Multi\Bool\ValueEqualsParameter.cs" />
     <Compile Include="Data\Reference.cs" />
     <Compile Include="Data\Binding\Local\Convert\Enumerate.cs" />
-    <Compile Include="Input\DelegateCommand.cs" />
-    <Compile Include="Input\IExecuteWithObject.cs" />
-    <Compile Include="Input\IExecuteWithObjectAndResult.cs" />
+    <Compile Include="Input\Relay\DelegateCommand.cs" />
+    <Compile Include="Input\Relay\IExecuteWithObject.cs" />
+    <Compile Include="Input\Relay\IExecuteWithObjectAndResult.cs" />
     <Compile Include="Imports\MapType.cs" />
     <Compile Include="Input\MouseEvent.cs" />
-    <Compile Include="Input\RelayCommand.cs" />
-    <Compile Include="Input\RelayCommand.Generic.cs" />
-    <Compile Include="Input\WeakAction.cs" />
-    <Compile Include="Input\WeakAction.Generic.cs" />
-    <Compile Include="Input\WeakEventHandlerManager.cs" />
-    <Compile Include="Input\WeakFunc.cs" />
-    <Compile Include="Input\WeakFunc.Generic.cs" />
+    <Compile Include="Input\Relay\RelayCommand.cs" />
+    <Compile Include="Input\Relay\RelayCommand.Generic.cs" />
+    <Compile Include="Input\Relay\WeakAction.cs" />
+    <Compile Include="Input\Relay\WeakAction.Generic.cs" />
+    <Compile Include="Input\Relay\WeakEventHandlerManager.cs" />
+    <Compile Include="Input\Relay\WeakFunc.cs" />
+    <Compile Include="Input\Relay\WeakFunc.Generic.cs" />
     <Compile Include="Linq\Boolean.cs" />
     <Compile Include="Linq\Brush.cs" />
     <Compile Include="Linq\Color.cs" />
@@ -1028,7 +1004,6 @@
     <Compile Include="Markup\Uri.Image.cs" />
     <Compile Include="Media\ExpanderDoubleAnimation.cs" />
     <Compile Include="Media\GridLengthAnimation.cs" />
-    <Compile Include="Media\Pixel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\Resources.cs" />
     <Compile Include="Config\ApplicationResources.cs" />
@@ -1586,6 +1561,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="..\..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="LICENSE" />
     <Resource Include="Effects\ColorModelEffect.ps" />
     <None Include="packages.config" />

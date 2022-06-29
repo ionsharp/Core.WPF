@@ -1,4 +1,5 @@
 ﻿using Imagin.Core.Colors;
+using Imagin.Core.Media;
 using Imagin.Core.Models;
 using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;

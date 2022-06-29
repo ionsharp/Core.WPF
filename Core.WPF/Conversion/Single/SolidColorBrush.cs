@@ -1,10 +1,22 @@
 ﻿using Imagin.Core.Colors;
 using Imagin.Core.Linq;
+using Imagin.Core.Numerics;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Imagin.Core.Conversion
 {
+    [ValueConversion(typeof(ByteVector4), typeof(SolidColorBrush))]
+    public class ByteVector4ToSolidColorBrushConverter : Converter<ByteVector4, SolidColorBrush>
+    {
+        public static ByteVector4ToSolidColorBrushConverter Default { get; private set; } = new();
+        public ByteVector4ToSolidColorBrushConverter() : base() { }
+
+        protected override ConverterValue<SolidColorBrush> ConvertTo(ConverterData<ByteVector4> input) => new SolidColorBrush(Color.FromArgb(input.Value.A, input.Value.R, input.Value.G, input.Value.B));
+
+        protected override ConverterValue<ByteVector4> ConvertBack(ConverterData<SolidColorBrush> input) => new ByteVector4(input.Value.Color.R, input.Value.Color.G, input.Value.Color.B, input.Value.Color.A);
+    }
+    
     [ValueConversion(typeof(double), typeof(SolidColorBrush))]
     public class ColorTemperatureConverter : Converter<double, Color>
     {
@@ -14,7 +26,7 @@ namespace Imagin.Core.Conversion
         protected override ConverterValue<Color> ConvertTo(ConverterData<double> input) => GetColor(input.Value);
 
         protected override ConverterValue<double> ConvertBack(ConverterData<Color> input) => Nothing.Do;
-    
+
         public static Color GetColor(double input)
             => Linq.XColor.Convert(new RGB());
     }

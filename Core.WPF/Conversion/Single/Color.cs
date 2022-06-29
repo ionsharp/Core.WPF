@@ -6,6 +6,21 @@ using System.Windows.Media;
 
 namespace Imagin.Core.Conversion
 {
+    [ValueConversion(typeof(ByteVector4), typeof(Color))]
+    public class ByteVector4ToColorConverter : Converter<ByteVector4, Color>
+    {
+        public static ByteVector4ToColorConverter Default { get; private set; } = new ByteVector4ToColorConverter();
+        ByteVector4ToColorConverter() { }
+
+        protected override ConverterValue<Color> ConvertTo(ConverterData<ByteVector4> input) => XColor.Convert(input.Value);
+
+        protected override ConverterValue<ByteVector4> ConvertBack(ConverterData<Color> input)
+        {
+            input.Value.Convert(out ByteVector4 j);
+            return j;
+        }
+    }
+
     [ValueConversion(typeof(Color), typeof(Color))]
     public class ColorWithoutAlphaConverter : Converter<Color, Color>
     {
@@ -36,21 +51,6 @@ namespace Imagin.Core.Conversion
         }
     }
     
-    [ValueConversion(typeof(Hexadecimal), typeof(Color))]
-    public class HexadecimalToColorConverter : Converter<Hexadecimal, Color>
-    {
-        public static HexadecimalToColorConverter Default { get; private set; } = new HexadecimalToColorConverter();
-        HexadecimalToColorConverter() { }
-
-        protected override ConverterValue<Color> ConvertTo(ConverterData<Hexadecimal> input) => input.Value.Color();
-
-        protected override ConverterValue<Hexadecimal> ConvertBack(ConverterData<Color> input)
-        {
-            input.Value.Convert(out Hexadecimal result);
-            return result;
-        }
-    }
-
     [ValueConversion(typeof(SolidColorBrush), typeof(Color))]
     public class SolidColorBrushToColorConverter : Converter<SolidColorBrush, Color>
     {
@@ -60,16 +60,5 @@ namespace Imagin.Core.Conversion
         protected override ConverterValue<Color> ConvertTo(ConverterData<SolidColorBrush> input) => input.Value.Color;
 
         protected override ConverterValue<SolidColorBrush> ConvertBack(ConverterData<Color> input) => new SolidColorBrush(input.Parameter == 0 ? input.Value : input.Value.A(255));
-    }
-
-    [ValueConversion(typeof(StringColor), typeof(Color))]
-    public class StringColorConverter : Converter<StringColor, Color>
-    {
-        public static StringColorConverter Default { get; private set; } = new StringColorConverter();
-        StringColorConverter() { }
-
-        protected override ConverterValue<Color> ConvertTo(ConverterData<StringColor> input) => input.Value.Value;
-
-        protected override ConverterValue<StringColor> ConvertBack(ConverterData<Color> input) => new StringColor(input.Value);
     }
 }

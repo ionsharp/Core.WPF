@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Imagin.Core.Numerics;
+using System;
+using System.Windows.Media;
 using System.Xml.Serialization;
 
 namespace Imagin.Core.Media
@@ -6,9 +8,9 @@ namespace Imagin.Core.Media
     [Serializable]
     public class GradientStep : Base
     {
-        StringColor color = default;
+        ByteVector4 color = default;
         [XmlElement]
-        public StringColor Color
+        public ByteVector4 Color
         {
             get => color;
             set => this.Change(ref color, value);
@@ -24,10 +26,12 @@ namespace Imagin.Core.Media
 
         public GradientStep() : base() { }
 
-        public GradientStep(double offset, StringColor color) : this()
+        public GradientStep(double offset, ByteVector4 color) : this()
         {
             Offset = offset;
             Color = color;
         }
+
+        public GradientStep(double offset, Color color) : this(offset, new ByteVector4(color.R, color.G, color.B, color.A)) { }
     }
 }

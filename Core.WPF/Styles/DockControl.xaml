@@ -9,8 +9,8 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
-    xmlns:Media="clr-namespace:Imagin.Core.Media"
     xmlns:Models="clr-namespace:Imagin.Core.Models"
+    xmlns:Numerics="clr-namespace:Imagin.Core.Numerics;assembly=Imagin.Core"
     xmlns:SharedAnalytics="clr-namespace:Imagin.Core.Analytics;assembly=Imagin.Core">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="{local:StyleKey Key=Color}"/>
@@ -410,16 +410,16 @@
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type Media:StringColor}">
+                <DataTemplate DataType="{x:Type Numerics:ByteVector4}">
                     <Button
-                        Background="{Binding Brush}"
+                        Background="{Binding Converter={x:Static Conversion:ByteVector4ToSolidColorBrushConverter.Default}}"
                         BorderThickness="0"
                         Command="{Binding Data.SelectColorCommand, Source={StaticResource ColorsPanel}}"
                         CommandParameter="{Binding}"
                         Height="32"
                         Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
                         Width="32"
-                        ToolTip="{Binding Value}"/>
+                        ToolTip="{Binding}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

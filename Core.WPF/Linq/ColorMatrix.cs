@@ -9,11 +9,13 @@ public static partial class XColorMatrix
     public static ColorMatrix Convert(WriteableBitmap input)
     {
         var result = new ColorMatrix(input.PixelHeight.UInt32(), input.PixelWidth.UInt32());
+        /*
         input.ForEach((x, y, color) =>
         {
             result.SetValue(y.UInt32(), x.UInt32(), new(M.Normalize(color.A), M.Normalize(color.R), M.Normalize(color.G), M.Normalize(color.B)));
             return color;
         });
+        */
         return result;
     }
 

@@ -1,6 +1,7 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Collections.Generic;
 using Imagin.Core.Media;
+using Imagin.Core.Numerics;
 using System;
 using System.Collections;
 using System.Windows;
@@ -18,7 +19,7 @@ namespace Imagin.Core.Linq
                 if (i.Key is string key)
                 {
                     if (i.Value is SolidColorBrush solidColorBrush)
-                        result.Add(key, new StringColor(solidColorBrush.Color));
+                        result.Add(key, new ByteVector4(solidColorBrush.Color.R, solidColorBrush.Color.G, solidColorBrush.Color.B, solidColorBrush.Color.A));
 
                     else if (i.Value is LinearGradientBrush linearGradientBrush)
                         result.Add(key, new Gradient(linearGradientBrush));
@@ -35,8 +36,8 @@ namespace Imagin.Core.Linq
             var result = new ResourceDictionary();
             foreach (var i in input)
             {
-                if (i.Value is StringColor stringColor)
-                    result.Add(i.Key, new SolidColorBrush(stringColor.Value));
+                if (i.Value is ByteVector4 color)
+                    result.Add(i.Key, new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B)));
 
                 else if (i.Value is Gradient linearGradient)
                     result.Add(i.Key, linearGradient.LinearBrush());

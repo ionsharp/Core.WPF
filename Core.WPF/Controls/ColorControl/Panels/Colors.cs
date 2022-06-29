@@ -1,6 +1,6 @@
 ﻿using Imagin.Core.Collections.Serialization;
 using Imagin.Core.Input;
-using Imagin.Core.Media;
+using Imagin.Core.Numerics;
 using System;
 using System.Windows.Input;
 
@@ -8,12 +8,12 @@ namespace Imagin.Core.Models;
 
 [DisplayName("Colors"), Explicit]
 [Serializable]
-public class ColorsPanel : GroupPanel<StringColor>
+public class ColorsPanel : GroupPanel<ByteVector4>
 {
     public static readonly ResourceKey TemplateKey = new();
 
     [field: NonSerialized]
-    public event EventHandler<EventArgs<StringColor>> Selected;
+    public event EventHandler<EventArgs<ByteVector4>> Selected;
 
     //...
 
@@ -25,8 +25,8 @@ public class ColorsPanel : GroupPanel<StringColor>
 
     public ColorsPanel(IGroupWriter input) : base(input) { }
 
-    protected virtual void OnSelected(StringColor input) => Selected?.Invoke(this, new EventArgs<StringColor>(input));
+    protected virtual void OnSelected(ByteVector4 input) => Selected?.Invoke(this, new EventArgs<ByteVector4>(input));
 
     ICommand selectColorCommand;
-    public ICommand SelectColorCommand => selectColorCommand ??= new RelayCommand<StringColor>(i => OnSelected(i), i => i != null);
+    public ICommand SelectColorCommand => selectColorCommand ??= new RelayCommand<ByteVector4>(i => OnSelected(i), i => i != null);
 }

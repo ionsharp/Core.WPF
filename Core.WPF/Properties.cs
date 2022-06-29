@@ -20,9 +20,6 @@ public static class AssemblyProperties
         public const string Analytics
             = Core + $".{nameof(Imagin.Core.Analytics)}";
 
-        public const string Animation
-            = Core + $".{nameof(Imagin.Core.Animation)}";
-
         public const string Behavior
             = Core + $".{nameof(Imagin.Core.Behavior)}";
 

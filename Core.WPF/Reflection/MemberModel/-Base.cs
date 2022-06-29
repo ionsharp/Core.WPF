@@ -3,6 +3,7 @@ using Imagin.Core.Controls;
 using Imagin.Core.Conversion;
 using Imagin.Core.Data;
 using Imagin.Core.Linq;
+using Imagin.Core.Media;
 using Imagin.Core.Numerics;
 using Imagin.Core.Storage;
 using System;
@@ -178,7 +179,7 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         },
         {
             typeof(GradientAttribute),
-            new((i, j, k) => i.Gradient = j.As<GradientAttribute>().Colors.Select(l => new Hexadecimal(l).Color()).ToArray())
+            new((i, j, k) => i.Gradient = j.As<GradientAttribute>().Colors.Select(l => XColor.Convert(new ByteVector4($"{l}"))).ToArray())
         },
         {
             typeof(HeightAttribute),

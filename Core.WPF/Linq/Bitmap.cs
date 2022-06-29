@@ -108,9 +108,9 @@ namespace Imagin.Core.Linq
         /// <returns></returns>
         public static string Hexadecimal(this Bitmap input) => new System.Runtime.Remoting.Metadata.W3cXsd2001.SoapHexBinary(input.Bytes()).ToString();
 
-        public static Bitmap PixelFormat(this Bitmap input, Media.PixelFormat format)
+        public static Bitmap PixelFormat(this Bitmap input, PixelFormat format)
         {
-            var result = new Bitmap(input.Width, input.Height, format.Imaging());
+            var result = new Bitmap(input.Width, input.Height, format);
 
             using (var g = Graphics.FromImage(result))
                 g.DrawImage(input, new Rectangle(0, 0, result.Width, result.Height));
@@ -145,6 +145,7 @@ namespace Imagin.Core.Linq
             var colors = new List<System.Windows.Media.Color>();
             var Bitmap = input.WriteableBitmap();
 
+            /*
             Bitmap.ForEach((x, y, color) =>
             {
                 if (!colors.Contains(color))
@@ -152,7 +153,7 @@ namespace Imagin.Core.Linq
 
                 return color;
             });
-
+            */
             return colors.Count;
         }
 

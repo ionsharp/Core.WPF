@@ -3,7 +3,6 @@
     xmlns:g="http://wpfanimatedgif.codeplex.com"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
-    xmlns:Animation="clr-namespace:Imagin.Core.Animation"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup">
     <Style x:Key="{x:Type local:Thumbnail}" TargetType="{x:Type local:Thumbnail}">

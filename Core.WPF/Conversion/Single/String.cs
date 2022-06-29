@@ -248,6 +248,17 @@ namespace Imagin.Core.Conversion
         protected override ConverterValue<byte> ConvertBack(ConverterData<string> input) => input.Value.Byte();
     }
 
+    [ValueConversion(typeof(ByteVector4), typeof(string))]
+    public class ByteVector4ToStringConverter : Converter<ByteVector4, string>
+    {
+        public static ByteVector4ToStringConverter Default { get; private set; } = new();
+        ByteVector4ToStringConverter() { }
+
+        protected override ConverterValue<string> ConvertTo(ConverterData<ByteVector4> input) => input.Value.ToString(true);
+
+        protected override ConverterValue<ByteVector4> ConvertBack(ConverterData<string> input) => new ByteVector4(input.Value);
+    }
+
     [ValueConversion(typeof(char), typeof(string))]
     public class CharacterToStringConverter : Converter<char, string>
     {
@@ -267,11 +278,11 @@ namespace Imagin.Core.Conversion
 
         protected override ConverterValue<string> ConvertTo(ConverterData<Color> input)
         {
-            input.Value.Convert(out Hexadecimal result, input.Parameter == 1);
+            input.Value.Convert(out ByteVector4 result);
             return result.ToString(input.Parameter == 1);
         }
 
-        protected override ConverterValue<Color> ConvertBack(ConverterData<string> input) => new Hexadecimal(input.Value).Color().A(i => input.Parameter == 1 ? i : input.Parameter == 0 ? (byte)255 : throw new NotSupportedException());
+        protected override ConverterValue<Color> ConvertBack(ConverterData<string> input) => XColor.Convert(new ByteVector4(input.Value)).A(i => input.Parameter == 1 ? i : input.Parameter == 0 ? (byte)255 : throw new NotSupportedException());
     }
 
     [ValueConversion(typeof(DateTime), typeof(string))]
@@ -322,17 +333,6 @@ namespace Imagin.Core.Conversion
         }
     }
 
-    [ValueConversion(typeof(Hexadecimal), typeof(string))]
-    public class HexadecimalToStringConverter : Converter<Hexadecimal, string>
-    {
-        public static HexadecimalToStringConverter Default { get; private set; } = new HexadecimalToStringConverter();
-        HexadecimalToStringConverter() { }
-
-        protected override ConverterValue<string> ConvertTo(ConverterData<Hexadecimal> input) => input.Value.ToString(true);
-
-        protected override ConverterValue<Hexadecimal> ConvertBack(ConverterData<string> input) => (Hexadecimal)input.Value;
-    }
-
     [ValueConversion(typeof(short), typeof(string))]
     public class Int16ToStringConverter : Converter<short, string>
     {
@@ -353,13 +353,13 @@ namespace Imagin.Core.Conversion
         protected override ConverterValue<string> ConvertTo(ConverterData<System.Drawing.Color> input)
         {
             input.Value.Convert(out Color color);
-            color.Convert(out Hexadecimal result, input.Parameter == 1);
+            color.Convert(out ByteVector4 result);
             return result.ToString(input.Parameter == 1);
         }
 
         protected override ConverterValue<System.Drawing.Color> ConvertBack(ConverterData<string> input)
         {
-            var color = new Hexadecimal(input.Value).Color().A(i => input.Parameter == 1 ? i : input.Parameter == 0 ? (byte)255 : throw new NotSupportedException());
+            var color = XColor.Convert(new ByteVector4(input.Value)).A(i => input.Parameter == 1 ? i : input.Parameter == 0 ? (byte)255 : throw new NotSupportedException());
             color.Convert(out System.Drawing.Color result);
             return result;
         }
@@ -406,26 +406,11 @@ namespace Imagin.Core.Conversion
 
         protected override ConverterValue<string> ConvertTo(ConverterData<SolidColorBrush> input)
         {
-            input.Value.Color.Convert(out Hexadecimal result);
+            input.Value.Color.Convert(out ByteVector4 result);
             return result.ToString(true);
         }
 
-        protected override ConverterValue<SolidColorBrush> ConvertBack(ConverterData<string> input) => new Hexadecimal(input.Value).SolidColorBrush();
-    }
-
-    [ValueConversion(typeof(StringColor), typeof(string))]
-    public class StringColorToStringConverter : Converter<StringColor, string>
-    {
-        public static StringColorToStringConverter Default { get; private set; } = new();
-        StringColorToStringConverter() { }
-
-        protected override ConverterValue<string> ConvertTo(ConverterData<StringColor> input)
-        {
-            input.Value.Value.Convert(out Hexadecimal result);
-            return result.ToString(true);
-        }
-
-        protected override ConverterValue<StringColor> ConvertBack(ConverterData<string> input) => new(new Hexadecimal(input.Value).Color());
+        protected override ConverterValue<SolidColorBrush> ConvertBack(ConverterData<string> input) => new SolidColorBrush(XColor.Convert(new ByteVector4(input.Value)));
     }
 
     [ValueConversion(typeof(TimeSpan), typeof(string))]

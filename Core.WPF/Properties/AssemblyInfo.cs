@@ -31,7 +31,6 @@ using System.Windows.Markup;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.None)]
 
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Analytics)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Animation)]
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Behavior)]
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Collections)]
 [assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.CollectionsConcurrent)]

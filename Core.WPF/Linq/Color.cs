@@ -1,6 +1,6 @@
 ﻿using Imagin.Core.Colors;
-using Imagin.Core.Numerics;
 using Imagin.Core.Media;
+using Imagin.Core.Numerics;
 using System;
 using System.Windows.Media;
 using static Imagin.Core.Numerics.M;
@@ -330,11 +330,11 @@ public static partial class XColor
 
     #region Convert
 
+    public static void Convert(this Color input, out ByteVector4 result)
+        => result = new(input.R, input.G, input.B, input.A);
+
     public static void Convert(this Color input, out System.Drawing.Color result)
         => result = System.Drawing.Color.FromArgb(input.A, input.R, input.G, input.B);
-
-    public static void Convert(this Color input, out Hexadecimal result, bool a = true)
-        => result = new(input.R, input.G, input.B, a ? input.A : (byte)255);
 
     public static void Convert(this Color input, out RGB result)
         => result = Colour.New<RGB>(input.R.Double(), input.G.Double(), input.B.Double());
@@ -352,6 +352,8 @@ public static partial class XColor
         => result = new(Normalize(input.A), Normalize(input.R), Normalize(input.G), Normalize(input.B));
 
     //...
+
+    public static Color Convert(ByteVector4 input) => Color.FromArgb(input.A, input.R, input.G, input.B);
 
     public static Color Convert(Vector3 input)
         => Color.FromArgb(255, Denormalize(input.X), Denormalize(input.Y), Denormalize(input.Z));

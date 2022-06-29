@@ -30,9 +30,9 @@ public class ColorDocument : Document
 
     #region Fields
 
-    public static readonly System.Windows.Media.Color DefaultOldColor = System.Windows.Media.Colors.Black;
+    public static readonly Color DefaultOldColor = System.Windows.Media.Colors.Black;
 
-    public static readonly System.Windows.Media.Color DefaultNewColor = System.Windows.Media.Colors.White;
+    public static readonly Color DefaultNewColor = System.Windows.Media.Colors.White;
 
     public static readonly Type DefaultModel = typeof(HSB);
 
@@ -79,11 +79,11 @@ public class ColorDocument : Document
     [Hidden]
     public bool Dimension3 => Dimension == Dimensions.Three;
 
-    StringColor oldColor = DefaultOldColor;
-    public System.Windows.Media.Color OldColor
+    ByteVector4 oldColor = new(DefaultOldColor.R, DefaultOldColor.G, DefaultOldColor.B, DefaultOldColor.A);
+    public Color OldColor
     {
-        get => oldColor.Value;
-        set => this.Change(ref oldColor, new StringColor(value));
+        get => System.Windows.Media.Color.FromArgb(oldColor.A, oldColor.R, oldColor.G, oldColor.B);
+        set => this.Change(ref oldColor, new ByteVector4(value.R, value.G, value.B, value.A));
     }
 
     [Hidden]
@@ -129,7 +129,7 @@ public class ColorDocument : Document
     {
         get
         {
-            Color.ActualColor.Convert(out Hexadecimal color);
+            Color.ActualColor.Convert(out ByteVector4 color);
             return $"#{color}";
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using Imagin.Core.Numerics;
 
 namespace Imagin.Core.Linq
 {
@@ -13,21 +14,21 @@ namespace Imagin.Core.Linq
             {
                 return new LinearGradientBrush(a.GradientStops)
                 {
-                    StartPoint 
+                    StartPoint
                         = a.StartPoint,
-                    EndPoint 
+                    EndPoint
                         = a.EndPoint,
-                    MappingMode 
+                    MappingMode
                         = a.MappingMode,
-                    Opacity 
+                    Opacity
                         = a.Opacity,
-                    ColorInterpolationMode 
+                    ColorInterpolationMode
                         = a.ColorInterpolationMode,
-                    SpreadMethod 
+                    SpreadMethod
                         = a.SpreadMethod,
-                    RelativeTransform 
+                    RelativeTransform
                         = a.RelativeTransform,
-                    Transform 
+                    Transform
                         = a.Transform
                 };
             }
@@ -35,21 +36,28 @@ namespace Imagin.Core.Linq
             {
                 return new RadialGradientBrush(b.GradientStops)
                 {
-                    MappingMode 
+                    MappingMode
                         = b.MappingMode,
-                    Opacity 
+                    Opacity
                         = b.Opacity,
-                    ColorInterpolationMode 
+                    ColorInterpolationMode
                         = b.ColorInterpolationMode,
-                    SpreadMethod 
+                    SpreadMethod
                         = b.SpreadMethod,
-                    RelativeTransform 
+                    RelativeTransform
                         = b.RelativeTransform,
-                    Transform 
+                    Transform
                         = b.Transform
                 };
             }
             return default;
         }
+    }
+
+    public static class XSolidColorBrush
+    {
+        public static void Convert(this SolidColorBrush input, out ByteVector4 result) => input.Color.Convert(out result);
+
+        public static SolidColorBrush Convert(ByteVector4 input) => new(XColor.Convert(input));
     }
 }

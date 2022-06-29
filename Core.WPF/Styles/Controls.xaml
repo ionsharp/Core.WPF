@@ -484,7 +484,7 @@
                                     Width="75"/>
 
                                 <local:ColorBox Grid.Column="0" Grid.Row="1" 
-                                    Value="{Data:TemplatedParent SelectedStep.Color, Converter={x:Static Conversion:StringColorConverter.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Value="{Data:TemplatedParent SelectedStep.Color, Converter={x:Static Conversion:ByteVector4ToColorConverter.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     VerticalAlignment="Center"/>
                                 <Slider Grid.Column="1" Grid.Row="1"
                                     Height="22"

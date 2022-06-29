@@ -33,9 +33,9 @@ public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
 
     IGroupWriter IColorControlOptions.Colors => colors;
     [field: NonSerialized]
-    GroupWriter<StringColor> colors;
+    GroupWriter<ByteVector4> colors;
     [Hidden]
-    public GroupWriter<StringColor> Colors
+    public GroupWriter<ByteVector4> Colors
     {
         get => colors;
         set => this.Change(ref colors, value);
@@ -131,7 +131,7 @@ public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
     {
         ColorControl = colorPicker;
 
-        Colors = new GroupWriter<StringColor>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Colors", "data", "colors", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
+        Colors = new GroupWriter<ByteVector4>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Colors", "data", "colors", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
         var result = Colors.Load();
 
         if (!result)
@@ -142,14 +142,14 @@ public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
             Colors.Add(new QuaternaryColors());
             Colors.Add(new QuinaryColors());
 
-            Colors.Add(new Collections.ObjectModel.GroupCollection<StringColor>("Basic", 
-                typeof(BasicColors).GetFields().Select(i => new StringColor(new Hexadecimal((string)i.GetValue(null)).Color()))));
-            Colors.Add(new Collections.ObjectModel.GroupCollection<StringColor>("Web (CSS)",
-                typeof(CSSColors).GetFields().Select(i => new StringColor(new Hexadecimal((string)i.GetValue(null)).Color()))));
-            Colors.Add(new Collections.ObjectModel.GroupCollection<StringColor>("Web (Safe)", 
-                SafeWebColors.Colors.Select(i => new StringColor(new Hexadecimal(i).Color()))));
-            Colors.Add(new Collections.ObjectModel.GroupCollection<StringColor>("Web (Safest)",
-                typeof(SafestWebColors).GetFields().Select(i => new StringColor(new Hexadecimal((string)i.GetValue(null)).Color()))));
+            Colors.Add(new Collections.ObjectModel.GroupCollection<ByteVector4>("Basic", 
+                typeof(BasicColors).GetFields().Select(i => new ByteVector4((string)i.GetValue(null)))));
+            Colors.Add(new Collections.ObjectModel.GroupCollection<ByteVector4>("Web (CSS)",
+                typeof(CSSColors).GetFields().Select(i => new ByteVector4((string)i.GetValue(null)))));
+            Colors.Add(new Collections.ObjectModel.GroupCollection<ByteVector4>("Web (Safe)", 
+                SafeWebColors.Colors.Select(i => new ByteVector4(i))));
+            Colors.Add(new Collections.ObjectModel.GroupCollection<ByteVector4>("Web (Safest)",
+                typeof(SafestWebColors).GetFields().Select(i => new ByteVector4((string)i.GetValue(null)))));
         }
 
         Illuminants = new GroupWriter<NamableIlluminant>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Illuminants", "data", "illuminants", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));

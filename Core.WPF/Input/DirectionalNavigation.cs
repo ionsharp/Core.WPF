@@ -1,11 +1,9 @@
 ﻿using System;
 
-namespace Imagin.Core
+namespace Imagin.Core.Input;
+
+[Serializable]
+public enum DirectionalNavigation
 {
-    [Serializable]
-    public enum DirectionalNavigation
-    {
-        Circular,
-        Linear
-    }
+    Circular, Linear
 }
