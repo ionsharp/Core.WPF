@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -44,11 +45,11 @@ public abstract class ColorAnalysis : Base
 
 public enum ColorAnalysisType
 {
-    [DisplayName("🡪 RGB 🡪")]
+    [DisplayName("XYZ 🡪 RGB 🡪 XYZ")]
     Accuracy,
-    [DisplayName("🡪 RGB")]
+    [DisplayName("XYZ 🡪 RGB")]
     Range,
-    [DisplayName("RGB 🡪")]
+    [DisplayName("RGB 🡪 XYZ")]
     RangeInverse
 }
 
@@ -178,6 +179,14 @@ public class ColorAnalysisPanel : Panel
         set => this.Change(ref results, value);
     }
 
+    GroupItemModel profile = null;
+    [Index(-1), Locked, Tool, Visible]
+    public GroupItemModel Profile
+    {
+        get => profile;
+        set => this.Change(ref profile, value);
+    }
+
     public ObservableCollection<ColorAccuracyAnalysis> 
         AResults { get; private set; } = new();
 
@@ -204,9 +213,55 @@ public class ColorAnalysisPanel : Panel
         set => this.Change(ref type, value);
     }
 
-    public ColorAnalysisPanel() : base() 
+    readonly Threading.CancelTask refresh;
+
+    public ColorAnalysisPanel(Collections.Serialization.IGroupWriter profiles) : base() 
     {
         Results = AResults;
+        refresh = new(Refresh, false);
+
+        Profile = new(profiles, 0, 0);
+    }
+
+    async Task Refresh(CancellationToken token)
+    {
+        IsBusy = true; IsLocked = true;
+
+        var results = this.results as IList;
+        results.Clear();
+
+        var profile = Profile?.SelectedItem.As<WorkingProfileModel>()?.Value ?? WorkingProfile.Default;
+
+        await Task.Run(() =>
+        {
+            Colour.Types.ForEach(i =>
+            {
+                if (token.IsCancellationRequested)
+                    return;
+
+                ColorAnalysis result = null;
+                switch (Type)
+                {
+                    case ColorAnalysisType.Accuracy:
+                        var a = Colour.Analysis.GetAccuracy(i, profile, (uint)depth, precision, true);
+                        result = new ColorAccuracyAnalysis(i.Name, $"{a}%", GetStatus(a));
+                        break;
+
+                    case ColorAnalysisType.Range:
+                        var b = Colour.Analysis.GetRange(i, profile, out double x, true, (uint)depth, precision, true);
+                        result = new ColorRangeAnalysis(i.Name, $"{x.Round(precision)}%", GetStatus(x), b.Minimum, b.Maximum);
+                        break;
+
+                    case ColorAnalysisType.RangeInverse:
+                        var c = Colour.Analysis.GetRange(i, profile, out double y, false, (uint)depth, precision, true);
+                        result = new ColorRangeInverseAnalysis(i.Name, $"{y.Round(precision)}%", GetStatus(y), c.Minimum, c.Maximum, Colour.Minimum(i), Colour.Maximum(i));
+                        break;
+                }
+                Dispatch.Invoke(() => results.Add(result));
+            });
+        });
+
+        IsLocked = false; IsBusy = false;
     }
 
     Quality GetStatus(double input)
@@ -248,8 +303,12 @@ public class ColorAnalysisPanel : Panel
         }
     }
 
+    ICommand cancelCommand;
+    [Below, DisplayName("Cancel"), Image(Images.StopRound), Index(1), Tool, Trigger(nameof(MemberModel.IsVisible), nameof(IsBusy)), Visible]
+    public ICommand CancelCommand => cancelCommand ??= new RelayCommand(() => refresh.Cancel(), () => refresh.Started);
+
     ICommand copyCommand;
-    [DisplayName("Copy"), Feature(AboveBelow.Below), Image(Images.Copy), Index(1), Locked, Tool, Visible]
+    [Below, DisplayName("Copy"), Image(Images.Copy), Index(1), Locked, Tool, Visible]
     public ICommand CopyCommand => copyCommand ??= new RelayCommand(() =>
     {
         var result = new StringBuilder();
@@ -263,44 +322,8 @@ public class ColorAnalysisPanel : Panel
     public ICommand ClearCommand => clearCommand ??= new RelayCommand(() => Results?.As<IList>().Clear(), () => Results?.As<IList>().Count > 0);
 
     ICommand refreshCommand;
-    [DisplayName("Refresh"), Feature(AboveBelow.Below), Image(Images.Refresh), Index(2), Locked, Tool, Visible]
-    public ICommand RefreshCommand => refreshCommand ??= new RelayCommand(async () =>
-    {
-        IsBusy = true;
-        IsLocked = true;
-
-        var Results = results as IList;
-        Results.Clear();
-
-        await Task.Run(() =>
-        {
-            Colour.Types.ForEach(i =>
-            {
-                ColorAnalysis result = null;
-                switch (Type)
-                {
-                    case ColorAnalysisType.Accuracy:
-                        var a = Colour.Analysis.GetAccuracy(i, WorkingProfile.Default, (uint)depth, precision, true);
-                        result = new ColorAccuracyAnalysis(i.Name, $"{a}%", GetStatus(a));
-                        break;
-
-                    case ColorAnalysisType.Range:
-                        var b = Colour.Analysis.GetRange(i, WorkingProfile.Default, out double x, true, (uint)depth, precision, true);
-                        result = new ColorRangeAnalysis(i.Name, $"{x.Round(precision)}%", GetStatus(x), b.Minimum, b.Maximum);
-                        break;
-
-                    case ColorAnalysisType.RangeInverse:
-                        var c = Colour.Analysis.GetRange(i, WorkingProfile.Default, out double y, false, (uint)depth, precision, true);
-                        result = new ColorRangeInverseAnalysis(i.Name, $"{y.Round(precision)}%", GetStatus(y), c.Minimum, c.Maximum, Colour.Minimum(i), Colour.Maximum(i));
-                        break;
-                }
-                Dispatch.Invoke(() => Results.Add(result));
-            });
-        });
-
-        IsLocked = false;
-        IsBusy = false;
-    });
+    [DisplayName("Refresh"), Feature(AboveBelow.Below), Image(Images.Refresh), Index(2), Locked, Tool, Trigger(nameof(MemberModel.IsVisible), nameof(IsNotBusy)), Visible]
+    public ICommand RefreshCommand => refreshCommand ??= new RelayCommand(() => _ = refresh.Start(), () => !refresh.Started);
 }
 
 #endregion

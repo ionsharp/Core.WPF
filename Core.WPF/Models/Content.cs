@@ -20,8 +20,14 @@ namespace Imagin.Core.Models
         public bool IsBusy
         {
             get => isBusy;
-            set => this.Change(ref isBusy, value);
+            set
+            {
+                this.Change(ref isBusy, value);
+                this.Changed(() => IsNotBusy);
+            }
         }
+
+        public bool IsNotBusy => !IsBusy;
 
         [Hidden, XmlIgnore]
         public virtual string Title { get; }

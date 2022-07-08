@@ -38,7 +38,10 @@ namespace Imagin.Core.Controls
         {
             SetCurrentValue(DocumentsProperty, new DocumentCollection());
 
-            ColorControlOptions.Load($@"{ApplicationProperties.GetFolderPath(DataFolders.Documents)}\{nameof(ColorWindow)}\Options.data", out options);
+            options = new ColorControlOptions($@"{ApplicationProperties.GetFolderPath(DataFolders.Documents)}\{nameof(ColorWindow)}\Options.data", Documents);
+            options.Load(out BaseSavable newOptions);
+            options = newOptions as ColorControlOptions;
+
             SetCurrentValue(OptionsProperty, options);
 
             var document = new ColorDocument(options.Profiles) { CanClose = false, CanFloat = false };

@@ -24,17 +24,15 @@ public abstract class DockViewOptions : MainViewOptions
 }
 
 [Serializable]
-public abstract class DockViewOptions<T> : DockViewOptions, ILayout where T : class, IDockViewModel
+public abstract class DockViewOptions<T> : DockViewOptions where T : class, IDockViewModel
 {
     enum Category { Documents, Window }
-
-    Dictionary<string, PanelOptions> PanelOptions = new();
 
     #region Properties
 
     #region Documents
 
-    protected virtual bool SaveDocuments => true;
+    protected virtual bool RememberDocuments => true;
 
     List<Document> documents = new();
     [Hidden]
@@ -76,6 +74,8 @@ public abstract class DockViewOptions<T> : DockViewOptions, ILayout where T : cl
     [Category(nameof(Category.Window)), DisplayName("Panels")]
     public virtual PanelCollection Panels => Get.Where<T>().Panels;
 
+    Dictionary<string, PanelOptions> PanelOptions = new();
+
     #endregion
 
     #endregion
@@ -91,7 +91,7 @@ public abstract class DockViewOptions<T> : DockViewOptions, ILayout where T : cl
     protected override void OnLoaded()
     {
         base.OnLoaded();
-        Layouts = new Layouts($@"{Get.Where<IApplication>().Properties.FolderPath}\Layouts", GetDefaultLayouts());
+        Layouts = new Layouts($@"{Get.Where<IApplication>().Properties.FolderPath}\Layouts", GetDefaultLayouts(), 0);
         Layouts.Update(layout);
         Layouts.Refresh();
     }
@@ -99,9 +99,9 @@ public abstract class DockViewOptions<T> : DockViewOptions, ILayout where T : cl
     protected override void OnSaving()
     {
         base.OnSaving();
-        Layout = Layouts?.Layout;
+        Layout = Layouts?.Layout is string layout ? layout : Layout;
 
-        if (SaveDocuments)
+        if (RememberDocuments)
         {
             Documents.Clear();
             Get.Where<T>()?.Documents.ForEach(i => Documents.Add(i));
@@ -131,25 +131,6 @@ public abstract class DockViewOptions<T> : DockViewOptions, ILayout where T : cl
                 PanelOptions[i.Name].Load(i);
         }
     }
-
-    //...
-
-    [field: NonSerialized]
-    ICommand openLayoutsFolder;
-    [Category(nameof(Layouts))]
-    [DisplayName("Open")]
-    public virtual ICommand OpenLayoutsFolder => openLayoutsFolder ??= new RelayCommand(() => Storage.Computer.OpenInWindowsExplorer(Layouts.Path), () => true);
-
-    [field: NonSerialized]
-    ICommand resetLayout;
-    [Category(nameof(Layouts))]
-    [DisplayName("Reset")]
-    public virtual ICommand ResetLayout => resetLayout ??= new RelayCommand(() => Layouts.Layout = null, () => true);
-
-    [field: NonSerialized]
-    ICommand saveLayout;
-    [Hidden]
-    public virtual ICommand SaveLayout => saveLayout ??= new RelayCommand(() => Layouts.SaveLayoutCommand?.Execute(), () => Layouts != null);
 
     #endregion
 }

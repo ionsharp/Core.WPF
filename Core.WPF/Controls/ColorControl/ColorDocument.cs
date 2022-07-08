@@ -86,9 +86,6 @@ public class ColorDocument : Document
         set => this.Change(ref oldColor, new ByteVector4(value.R, value.G, value.B, value.A));
     }
 
-    [Hidden]
-    public readonly ColorControlOptions Options;
-
     double rotateX = 45;
     [DisplayName("X°"), SliderUpDown, Index(0), Localize(false), Range(0.0, 360.0, 1.0), StringFormat("N0"), Visible, Width(86)]
     [Trigger(nameof(MemberModel.IsVisible), nameof(Dimension3))]
@@ -130,7 +127,7 @@ public class ColorDocument : Document
         get
         {
             Color.ActualColor.Convert(out ByteVector4 color);
-            return $"#{color}";
+            return $"#{color.ToString(false)}";
         }
     }
 

@@ -14,12 +14,12 @@ using System.Xml.Serialization;
 
 namespace Imagin.Core.Controls
 {
-    public class LayoutEventArgs : EventArgs<string>
+    public class LayoutEventArgs : EventArgs<object>
     {
-        public LayoutEventArgs(string filePath) : base(filePath) { }
+        public LayoutEventArgs(object filePath) : base(filePath) { }
     }
 
-    public class LayoutSavedEventArgs : LayoutEventArgs
+    public class LayoutSavedEventArgs : EventArgs<string>
     {
         public LayoutSavedEventArgs(string filePath) : base(filePath) { }
     }
@@ -42,9 +42,9 @@ namespace Imagin.Core.Controls
 
         //...
 
-        string layout = string.Empty;
+        object layout = null;
         [Hidden]
-        public virtual string Layout
+        public object Layout
         {
             get => layout;
             set
@@ -57,13 +57,19 @@ namespace Imagin.Core.Controls
         //...
 
         [Hidden]
+        public readonly int DefaultLayout;
+
+        [Hidden]
         public ObservableCollection<Uri> DefaultLayouts { get; private set; } = new();
 
         //...
 
-        public Layouts(string folderPath, IEnumerable<Uri> defaultLayouts) : base(folderPath, new Filter(ItemType.File, "xml")) 
+        public Layouts(string folderPath, IEnumerable<Uri> defaultLayouts, int defaultLayout) : base(folderPath, new Filter(ItemType.File, "xml")) 
         {
             defaultLayouts.ForEach(i => DefaultLayouts.Add(i));
+
+            DefaultLayout = defaultLayout;
+            layout = DefaultLayouts[defaultLayout];
         }
 
         //...
@@ -97,7 +103,6 @@ namespace Imagin.Core.Controls
             }
             catch (Exception e)
             {
-                System.Console.WriteLine($"<DockControl> {e.Message}...");
                 Log.Write<Layouts>(e);
                 result = e;
             }
@@ -116,12 +121,21 @@ namespace Imagin.Core.Controls
             Success<DockLayout> success = null;
             await Task.Run(() =>
             {
-                if (!layout.NullOrEmpty())
-                    result = Apply(layout);
+                //> string
+                if (layout is string i && !i.Empty())
+                    result = Apply(i);
+
+                //> Uri
+                else if (layout is Uri j)
+                    result = Apply(Resources.Stream(j));
 
                 success = result ? result as Success<DockLayout> : success;
+                //> Uri (default!)
                 if (success == null)
-                    result = Apply(Resources.Stream(DefaultLayouts[0]));
+                {
+                    var defaultLayout = DefaultLayout >= 0 && DefaultLayout < DefaultLayouts.Count ? DefaultLayout : 0;
+                    result = Apply(Resources.Stream(DefaultLayouts[defaultLayout]));
+                }
 
                 success = result ? result as Success<DockLayout> : success;
             });
@@ -131,7 +145,7 @@ namespace Imagin.Core.Controls
 
         //...
 
-        protected virtual void OnApplied(string filePath) => Applied?.Invoke(this, new LayoutEventArgs(filePath));
+        protected virtual void OnApplied(object filePath) => Applied?.Invoke(this, new LayoutEventArgs(filePath));
 
         protected virtual void OnSaved(string filePath) => Saved?.Invoke(this, new LayoutSavedEventArgs(filePath));
 
@@ -172,8 +186,6 @@ namespace Imagin.Core.Controls
 
         //...
 
-        public void Save() => OnSaved(layout);
-
         public void Save(string nameWithoutExtension) => OnSaved(FilePath(nameWithoutExtension));
 
         public void Update(string filePath)
@@ -187,29 +199,47 @@ namespace Imagin.Core.Controls
         [field: NonSerialized]
         ICommand deleteLayoutCommand;
         [Hidden]
-        public virtual ICommand DeleteLayoutCommand => deleteLayoutCommand ??= new RelayCommand(() => Computer.Recycle(Layout), () =>
+        public virtual ICommand DeleteLayoutCommand => deleteLayoutCommand ??= new RelayCommand(() => Computer.Recycle((string)layout), () =>
         {
             var result = false;
-            Try.Invoke(() => result = Storage.File.Long.Exists(Layout));
+            if (layout is string i)
+                Try.Invoke(() => result = Storage.File.Long.Exists(i));
+
             return result;
         });
 
         [field: NonSerialized]
-        ICommand saveLayoutCommand;
+        ICommand exportCommand;
         [Hidden]
-        public virtual ICommand SaveLayoutCommand => saveLayoutCommand ??= new RelayCommand(() =>
+        public virtual ICommand ExportCommand => exportCommand ??= new RelayCommand(() =>
         {
             var x = new BaseNamable("File name without extension");
-            MemberWindow.ShowDialog("Save layout", x, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; }, Buttons.SaveCancel);
+            MemberWindow.ShowDialog("Export layout", x, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; }, Buttons.SaveCancel);
 
             if (result == 0)
             {
                 Save(x.Name);
                 Update(FilePath(x.Name));
 
-                Dialog.Show("Save layout", "Layout saved!", DialogImage.Information, Buttons.Ok);
+                Log.Write<Layouts>(new Success("Exported layout."));
                 return;
             }
         }, () => true);
+
+        [field: NonSerialized]
+        ICommand importCommand;
+        [Hidden]
+        public virtual ICommand ImportCommand => importCommand ??= new RelayCommand(() =>
+        {
+            if (StorageWindow.Show(out string[] paths, "Import layout(s)", StorageWindowModes.OpenFile, new[] { "xml" }, Path))
+            {
+                if (paths?.Length > 0)
+                {
+                    foreach (var i in paths)
+                        System.IO.File.Move(i, $@"{Path}\{System.IO.Path.GetFileName(i)}");
+                }
+            }
+        }, 
+        () => true);
     }
 }

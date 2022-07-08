@@ -2,6 +2,7 @@
 using Imagin.Core.Controls;
 using Imagin.Core.Conversion;
 using Imagin.Core.Data;
+using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using Imagin.Core.Numerics;
@@ -33,6 +34,14 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     readonly MemberAttributeHandler attributes = new()
     {
         {
+            typeof(AboveAttribute),
+            new((i, j, k) => i.IsFeatured = true)
+        },
+        {
+            typeof(AngleAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
             typeof(AssignableAttribute),
             new((i, j, k) =>
             {
@@ -54,83 +63,15 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             })
         },
         {
-            typeof(FilePathAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(FolderPathAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(TokensAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(ThumbnailAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(SearchAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(PasswordAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(MultipleAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(AngleAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(UnitAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(ProgressAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(SelectedIndexAttribute),
-            new((i, j, k) => i.Style = j.GetType())
+            typeof(BelowAttribute),
+            new((i, j, k) => i.IsFeatured = true)
         },
         {
             typeof(BulletsAttribute),
             new((i, j, k) => i.Style = j.GetType())
         },
         {
-            typeof(HexadecimalAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(SliderUpDownAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(SliderAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(UpDownAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(CommasAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(CollectionAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
             typeof(ButtonAttribute),
-            new((i, j, k) => i.Style = j.GetType())
-        },
-        {
-            typeof(ToggleButtonAttribute),
             new((i, j, k) => i.Style = j.GetType())
         },
         {
@@ -142,6 +83,10 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.Category = j.As<System.ComponentModel.CategoryAttribute>().Category)
         },
         {
+            typeof(ObjectAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
             typeof(CommandAttribute),
             new((i, j, k) =>
             {
@@ -150,12 +95,20 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             })
         },
         {
+            typeof(CommasAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
             typeof(ConvertAttribute),
             new((i, j, k) =>
             {
                 Try.Invoke(() => i.Converter = j.As<ConvertAttribute>().Converter.Create<IValueConverter>(), e => Log.Write<MemberModel>(e));
                 i.ConverterParameter = j.As<ConvertAttribute>().ConverterParameter;
             })
+        },
+        {
+            typeof(DefaultValueAttribute),
+            new((i, j, k) => i.DefaultValue = j.As<DefaultValueAttribute>().Value)
         },
         {
             typeof(DescriptionAttribute),
@@ -178,6 +131,14 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.IsFeatured = j.As<FeatureAttribute>().Featured)
         },
         {
+            typeof(FilePathAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(FolderPathAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
             typeof(GradientAttribute),
             new((i, j, k) => i.Gradient = j.As<GradientAttribute>().Colors.Select(l => XColor.Convert(new ByteVector4($"{l}"))).ToArray())
         },
@@ -187,6 +148,10 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             {
                 i.MaximumHeight = j.As<HeightAttribute>().MaximumHeight; i.MinimumHeight = j.As<HeightAttribute>().MinimumHeight; i.Height = j.As<HeightAttribute>().Height;
             })
+        },
+        {
+            typeof(HexadecimalAttribute),
+            new((i, j, k) => i.Style = j.GetType())
         },
         {
             typeof(HorizontalAttribute),
@@ -216,29 +181,20 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.IsLockable = j.As<LockedAttribute>().Locked)
         },
         {
-            typeof(SetterAttribute),
-            new((i, j, k) =>
-            {
-                if (k?.Count() > 0)
-                {
-                    foreach (var m in k)
-                    {
-                        if (m is SetterAttribute n)
-                            Try.Invoke(() => i.SetPropertyValue(n.PropertyName, n.Value), e => Log.Write<MemberModel>(e));
-                    }
-                }
-            })
+            typeof(MultipleAttribute),
+            new((i, j, k) => i.Style = j.GetType())
         },
         {
-            typeof(TriggerAttribute),
-            new((i, j, k) =>
-            {
-                if (k?.Count() > 0)
-                {
-                    foreach (var m in k)
-                        i.OnTrigger(i.Source.Instance, new(m.As<TriggerAttribute>().SourceName));
-                }
-            })
+            typeof(NullableAttribute),
+            new((i, j, k) => i.IsNullable = true)
+        },
+        {
+            typeof(PasswordAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(ProgressAttribute),
+            new((i, j, k) => i.Style = j.GetType())
         },
         {
             typeof(RangeAttribute),
@@ -254,6 +210,36 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         {
             typeof(System.ComponentModel.ReadOnlyAttribute),
             new((i, j, k) => i.IsReadOnly = j.As<System.ComponentModel.ReadOnlyAttribute>().IsReadOnly == true)
+        },
+        {
+            typeof(SearchAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(SelectedIndexAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(SetterAttribute),
+            new((i, j, k) =>
+            {
+                if (k?.Count() > 0)
+                {
+                    foreach (var m in k)
+                    {
+                        if (m is SetterAttribute n)
+                            Try.Invoke(() => i.SetPropertyValue(n.PropertyName, n.Value), e => Log.Write<MemberModel>(e));
+                    }
+                }
+            })
+        },
+        {
+            typeof(SliderAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(SliderUpDownAttribute),
+            new((i, j, k) => i.Style = j.GetType())
         },
         {
             typeof(StringFormatAttribute),
@@ -275,8 +261,39 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             })
         },
         {
+            typeof(ThumbnailAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(ToggleButtonAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(TokensAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
             typeof(ToolAttribute),
             new((i, j, k) => i.IsTool = j.As<ToolAttribute>() != null)
+        },
+        {
+            typeof(TriggerAttribute),
+            new((i, j, k) =>
+            {
+                if (k?.Count() > 0)
+                {
+                    foreach (var m in k)
+                        i.OnTrigger(i.Source.Instance, new(m.As<TriggerAttribute>().SourceName));
+                }
+            })
+        },
+        {
+            typeof(UnitAttribute),
+            new((i, j, k) => i.Style = j.GetType())
+        },
+        {
+            typeof(UpDownAttribute),
+            new((i, j, k) => i.Style = j.GetType())
         },
         {
             typeof(UpdateSourceTriggerAttribute),
@@ -318,6 +335,49 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     //...
 
     public abstract bool CanWrite { get; }
+
+    //...
+
+    Type actualType;
+    public Type ActualType
+    {
+        get => actualType;
+        private set => this.Change(ref actualType, value);
+    }
+
+    public Type BaseType 
+        => Type?.BaseType;
+
+    public virtual Type DeclaringType 
+        => Member?.DeclaringType;
+
+    public Type TemplateType => ActualType is Type i ? GetTemplateType(i) : null;
+
+    public abstract Type Type { get; }
+
+    //...
+
+    public IList Collection => Value as IList;
+
+    public int CollectionLength
+    {
+        get => Collection.Count;
+        set
+        {
+            Resize(value);
+            this.Changed(() => CollectionLength);
+        }
+    }
+
+    readonly Type[] CollectionTypes = XArray.New(typeof(Array), typeof(IEnumerable), typeof(IList), typeof(INotifyCollectionChanged));
+
+    public bool IsCollectionType => TemplateType.EqualsAny(CollectionTypes) || GetTemplateType(Type).EqualsAny(CollectionTypes);
+
+    //...
+
+    readonly Type[] ReferenceTypes = XArray.New(typeof(Array), typeof(IEnumerable), typeof(IList), typeof(INotifyCollectionChanged), typeof(object));
+
+    public bool IsReferenceType => TemplateType.EqualsAny(ReferenceTypes) || GetTemplateType(Type).EqualsAny(ReferenceTypes);
 
     //...
 
@@ -464,25 +524,6 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
     //...
 
-    Type actualType;
-    public Type ActualType
-    {
-        get => actualType;
-        private set => this.Change(ref actualType, value);
-    }
-
-    public Type BaseType 
-        => Type?.BaseType;
-
-    public virtual Type DeclaringType 
-        => Member?.DeclaringType;
-
-    public Type TemplateType => ActualType is Type i ? GetTemplateType(i) : null;
-
-    public abstract Type Type { get; }
-
-    //...
-
     bool assignable = false;
     public bool Assignable
     {
@@ -551,6 +592,13 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     {
         get => converterParameter;
         private set => this.Change(ref converterParameter, value);
+    }
+
+    object defaultValue = null;
+    public object DefaultValue
+    {
+        get => defaultValue;
+        private set => this.Change(ref defaultValue, value);
     }
 
     char delimiter = ';';
@@ -663,6 +711,13 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     {
         get => isLocked;
         internal set => this.Change(ref isLocked, value);
+    }
+
+    bool isNullable = false;
+    public virtual bool IsNullable
+    {
+        get => isNullable;
+        private set => this.Change(ref isNullable, value);
     }
 
     bool isReadOnly = false;
@@ -963,52 +1018,13 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         this.Changed(() => CollectionLength);
-
-        Try.Invoke(() =>
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    e.NewItems.ForEach(i => CreateItem(e.NewStartingIndex, i));
-                    break;
-
-                case NotifyCollectionChangedAction.Move:
-                    var item = SourceCollection[e.OldStartingIndex];
-                    SourceCollection.RemoveAt(e.OldStartingIndex);
-                    SourceCollection.Insert(e.NewStartingIndex, item);
-                    break;
-
-                case NotifyCollectionChangedAction.Remove:
-                    e.OldItems?.ForEach(i =>
-                    {
-                        Items[e.OldStartingIndex].Unsubscribe();
-                        Items.RemoveAt(e.OldStartingIndex);
-                    });
-                    break;
-
-                case NotifyCollectionChangedAction.Replace:
-                    if (!ItemType.IsValueType && ItemType != typeof(string))
-                    {
-                        e.OldItems?.ForEach(i =>
-                        {
-                            Items[e.OldStartingIndex].Unsubscribe();
-                            Items.RemoveAt(e.OldStartingIndex);
-                        });
-                        goto case NotifyCollectionChangedAction.Add;
-                    }
-                    break;
-
-                case NotifyCollectionChangedAction.Reset:
-                    Items.ForEach(i => i.Unsubscribe());
-                    Items.Clear();
-                    break;
-            }
-        },
-        e => Log.Write<MemberModel>(e));
     }
 
     void OnValueChanging(object oldValue, object newValue)
     {
+        if (Type == typeof(ByteVector4))
+            Log.Write<MemberModel>($"Old value = {oldValue}, new value = {newValue}");
+
         if (!isReadOnly)
         {
             var oldType = oldValue?.GetType();
@@ -1072,8 +1088,14 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         base.OnPropertyChanged(propertyName);
         switch (propertyName)
         {
+            case nameof(TemplateType):
+                this.Changed(() => IsCollectionType);
+                this.Changed(() => IsReferenceType);
+                break;
+
             case nameof(Value):
                 ActualType = value?.GetType();
+                this.Changed(() => Collection);
                 this.Changed(() => TemplateType);
                 break;
         }
@@ -1139,30 +1161,32 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
     internal void RefreshHard()
     {
-        var source = Value;
-        if (source != null)
+        var currentValue = Value;
+        if (currentValue != null && IsReferenceType)
         {
-            if (TemplateType == typeof(object) || GetTemplateType(Type) == typeof(object))
+            Members ??= new(Parent.Control, this, DepthIndex + 1);
+            Members.Load(currentValue);
+
+            if (SortedMembers == null)
             {
-                Members ??= new(Parent.Control, this, DepthIndex + 1);
-                Members.Load(source);
+                var categorize = Attributes.GetFirst<CategorizeAttribute>()?.Categorize == true;
 
-                if (SortedMembers == null)
-                {
-                    var categorize = Attributes.GetFirst<CategorizeAttribute>()?.Categorize == true;
+                SortedMembers = new(Members);
 
-                    SortedMembers = new(Members);
+                if (categorize)
+                    SortedMembers.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Category), ListSortDirection.Ascending));
 
-                    if (categorize)
-                        SortedMembers.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Category), ListSortDirection.Ascending));
+                SortedMembers.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Index), ListSortDirection.Ascending));
+                //SortedMembers.CustomSort = new MemberSortComparer(Parent.Control);
 
-                    SortedMembers.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Index), ListSortDirection.Ascending));
-                    //SortedMembers.CustomSort = new MemberSortComparer(Parent.Control);
-
-                    if (categorize)
-                        SortedMembers.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = MemberGroupConverterSelector.Default.Select(MemberGroupName.Category) });
-                }
+                if (categorize)
+                    SortedMembers.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = MemberGroupConverterSelector.Default.Select(MemberGroupName.Category) });
             }
+        }
+        else
+        {
+            Members?.Clear();
+            Members = null;
         }
     }
 
@@ -1207,16 +1231,8 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
         if (Value is INotifyCollectionChanged collection)
         {
-            return;
-            Items ??= new();
-            Items.ForEach(i => i.Unsubscribe());
-            Items.Clear();
-
-            SourceCollection.ForEach(i => CreateItem(-1, i));
             collection.CollectionChanged -= OnCollectionChanged;
             collection.CollectionChanged += OnCollectionChanged;
-
-            this.Changed(() => CollectionLength);
         }
     }
 
@@ -1238,14 +1254,8 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
         Members?.ForEach(i => i.Unsubscribe());
 
-        if (Items != null)
-        {
-            return;
-            Items.ForEach(i => i.Unsubscribe());
-            Items.Clear();
-
-            (SourceCollection as INotifyCollectionChanged).CollectionChanged -= OnCollectionChanged;
-        }
+        if (Value is INotifyCollectionChanged collection)
+            collection.CollectionChanged -= OnCollectionChanged;
     }
 
     #endregion
@@ -1272,4 +1282,101 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     #endregion
 
     #endregion
+
+    int selectedIndex = -1;
+    public int SelectedIndex
+    {
+        get => selectedIndex;
+        set => this.Change(ref selectedIndex, value);
+    }
+
+    //...
+
+    object CreateItem(Type type)
+    {
+        type ??= ItemType;
+        return type == typeof(string) ? "" : type.Create<object>();
+    }
+
+    object GetSelectedItem()
+        => Collection is IList i && i.Count > SelectedIndex && SelectedIndex >= 0 ? i[SelectedIndex] : null;
+
+    //...
+
+    protected virtual void InsertAbove(int index, Type type)
+        => Try.Invoke(() => CreateItem(type).If(i => Collection.Insert(index == -1 ? 0 : index, i)), e => Log.Write<MemberModel>(e));
+
+    protected virtual void InsertBelow(int index, Type type)
+        => Try.Invoke(() => CreateItem(type).If(i =>
+        {
+            var newIndex = index + 1;
+            if (index != -1 && newIndex < Collection.Count)
+                Collection.Insert(newIndex, i);
+
+            else Collection.Add(i);
+        }), e => Log.Write<MemberModel>(e));
+
+    void Resize(int length)
+    {
+        if (length == Collection?.Count)
+            return;
+
+        Try.Invoke(() =>
+        {
+            if (length == 0)
+                Collection.Clear();
+
+            else if (length > Collection.Count)
+            {
+                var j = length - Collection.Count;
+                for (var i = 0; i < j; i++)
+                    Collection.Add(CreateItem(null));
+            }
+            else
+            {
+                var j = Collection.Count - length;
+                for (var i = Collection.Count - 1; i >= length; i--)
+                    Collection.RemoveAt(i);
+            }
+        },
+        e => Log.Write<MemberModel>(e));
+    }
+
+    //...
+
+    ICommand insertAboveCommand;
+    public ICommand InsertAboveCommand
+        => insertAboveCommand
+        ??= new RelayCommand<Type>(i => InsertAbove(SelectedIndex, i),
+            i => Collection != null);
+
+    ICommand insertBelowCommand;
+    public ICommand InsertBelowCommand
+        => insertBelowCommand
+        ??= new RelayCommand<Type>(i => InsertBelow(SelectedIndex, i),
+            i => Collection != null);
+
+    ICommand moveDownCommand;
+    public ICommand MoveDownCommand
+        => moveDownCommand
+        ??= new RelayCommand(() => Try.Invoke(() => Collection.MoveDown(SelectedIndex, true)),
+            () => GetSelectedItem() != null);
+
+    ICommand moveUpCommand;
+    public ICommand MoveUpCommand
+        => moveUpCommand
+        ??= new RelayCommand(() => Try.Invoke(() => Collection.MoveUp(SelectedIndex, true)),
+            () => GetSelectedItem() != null);
+
+    ICommand removeCommand;
+    public ICommand RemoveCommand
+        => removeCommand
+        ??= new RelayCommand(() => Try.Invoke(() => Collection.RemoveAt(SelectedIndex)),
+            () => GetSelectedItem() != null);
+
+    ICommand resetCommand;
+    public ICommand ResetCommand
+        => resetCommand
+        ??= new RelayCommand(() => Try.Invoke(() => GetSelectedItem().If<IReset>(i => i.Reset())),
+            () => GetSelectedItem() is IReset);
 }

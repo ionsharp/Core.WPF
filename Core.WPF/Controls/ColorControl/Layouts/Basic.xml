@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="Imagin.Core.Controls">
+  <Top/>
+  <Left/>
+  <Right>
+    <Panel Name="OptionsPanel"/>
+  </Right>
+  <Bottom/>
+  <Root xsi:type="DockLayoutGroup" Orientation="Horizontal">
+    <Elements>
+      <Element xsi:type="DockLayoutDocumentGroup" Width="6*"/>
+      <Element xsi:type="DockLayoutPanelGroup" Width="4*">
+        <Panels>
+          <DockLayoutPanel IsSelected="true" Name="ColorPanel"/>
+          <DockLayoutPanel Name="ColorsPanel"/>
+        </Panels>
+      </Element>
+    </Elements>
+  </Root>
+</Layout>

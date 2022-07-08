@@ -1,10 +1,8 @@
 ﻿using Imagin.Core.Collections.Generic;
-using Imagin.Core.Collections.ObjectModel;
 using Imagin.Core.Colors;
 using Imagin.Core.Config;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
-using Imagin.Core.Media;
 using Imagin.Core.Models;
 using Imagin.Core.Numerics;
 using System;
@@ -95,26 +93,36 @@ public partial class ColorControl : Control
         set => SetValue(SaveCommandProperty, value);
     }
 
-    readonly ColorControlOptions defaultOptions = null;
+    readonly ColorControlOptions options = null;
 
     #endregion
 
     #region ColorControl
+    
+    public readonly ColorAnalysisPanel AnalysisPanel;
 
     public readonly ColorPanel ColorPanel;
+
+    public readonly ColorDifferencePanel DifferencePanel;
+    
+    public readonly ColorHarmonyPanel HarmonyPanel;
+
+    public readonly ColorMatrixPanel MatrixPanel;
 
     public ColorControl() : base()
     {
         this.RegisterHandler(OnLoaded, OnUnloaded);
 
-        ColorControlOptions.Load($@"{ApplicationProperties.GetFolderPath(DataFolders.Documents)}\{nameof(ColorControl)}\Options.data", out defaultOptions);
+        SetCurrentValue(DocumentsProperty, new DocumentCollection());
 
-        SetCurrentValue(DocumentsProperty,
-            new DocumentCollection());
+        options = new ColorControlOptions($@"{ApplicationProperties.GetFolderPath(DataFolders.Documents)}\{nameof(ColorControl)}\Options.data", Documents);
+        options.Load(out BaseSavable newOptions);
+        options = newOptions as ColorControlOptions;
 
         var panels = new PanelCollection();
 
-        ColorsPanel = new ColorsPanel(defaultOptions.Colors);
+        ColorsPanel = new ColorsPanel(options.Colors);
+        ColorsPanel.Selected += OnColorSelected;
         panels.Add(ColorsPanel);
 
         SetCurrentValue(OptionsPanelProperty, new OptionsPanel());
@@ -126,18 +134,28 @@ public partial class ColorControl : Control
 
         ColorPanel.PropertyChanged += OnColorPanelChanged;
 
-        panels.Add(new ColorAnalysisPanel());
         panels.Add(new ColorChromacityPanel());
-        panels.Add(new ColorHarmonyPanel(this));
 
-        IlluminantsPanel = new ColorIlluminantsPanel(defaultOptions.Illuminants);
+        AnalysisPanel = new ColorAnalysisPanel(options.Profiles);
+        panels.Add(AnalysisPanel);
+
+        DifferencePanel = new ColorDifferencePanel(options.Profiles);
+        panels.Add(DifferencePanel);
+
+        HarmonyPanel = new ColorHarmonyPanel(this);
+        panels.Add(HarmonyPanel);
+
+        IlluminantsPanel = new ColorIlluminantsPanel(options.Illuminants);
         panels.Add(IlluminantsPanel);
 
-        ProfilesPanel = new ColorProfilesPanel(defaultOptions.Profiles);
+        MatrixPanel = new ColorMatrixPanel(options.Matrices);
+        panels.Add(MatrixPanel);
+
+        ProfilesPanel = new ColorProfilesPanel(options.Profiles);
         panels.Add(ProfilesPanel);
 
         Panels = panels;
-        SetCurrentValue(OptionsProperty, defaultOptions);
+        SetCurrentValue(OptionsProperty, options);
     }
 
     #endregion
@@ -189,12 +207,36 @@ public partial class ColorControl : Control
         }
     }
 
+    void OnHarmonySaved(object sender, EventArgs<Color[]> e)
+    {
+        if (e.Value?.Length > 0)
+        {
+            var selectedGroup = new GroupItemWithNoValue(Options.Colors, ColorsPanel.SelectedGroupIndex);
+            MemberWindow.ShowDialog("Add colors to", selectedGroup, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; i.NameColumnVisibility = Visibility.Collapsed; }, Buttons.SaveCancel);
+            if (result == 0)
+            {
+                if (selectedGroup.GroupIndex >= 0)
+                {
+                    e.Value.ForEach(i =>
+                    {
+                        i.Convert(out ByteVector4 j);
+                        ColorsPanel.Groups[selectedGroup.GroupIndex].Add(j);
+                    });
+                }
+            }
+        }
+    }
+
+    //...
+
     void OnLoaded()
     {
         Documents.CollectionChanged += OnDocumentsChanged;
         Documents.ForEach(i => i.As<ColorDocument>().ColorSaved += OnColorSaved);
 
         ColorPanel.If(i => { i.PropertyChanged -= OnColorPanelChanged; i.PropertyChanged += OnColorPanelChanged; });
+
+        HarmonyPanel.Saved -= OnHarmonySaved; HarmonyPanel.Saved += OnHarmonySaved;
     }
 
     void OnUnloaded()
@@ -203,7 +245,11 @@ public partial class ColorControl : Control
         Documents.ForEach(i => i.As<ColorDocument>().ColorSaved -= OnColorSaved);
 
         ColorPanel.If(i => i.PropertyChanged -= OnColorPanelChanged);
+
+        HarmonyPanel.Saved -= OnHarmonySaved;
     }
+
+    //...
 
     protected virtual void OnActiveDocumentChanged(Value<ColorDocument> input)
     {
@@ -215,12 +261,20 @@ public partial class ColorControl : Control
         if (input != null)
         {
             input.OnLoaded(this);
-            ColorsPanel?.Update(input.Colors);
-            ColorsPanel.Selected += OnColorSelected;
 
-            IlluminantsPanel?.Update(input.Illuminants);
+            ColorsPanel
+                ?.Update(input.Colors);
+            IlluminantsPanel
+                ?.Update(input.Illuminants);
+            MatrixPanel
+                ?.Update(input.Matrices);
+            ProfilesPanel
+                ?.Update(input.Profiles);
 
-            ProfilesPanel?.Update(input.Profiles);
+            AnalysisPanel.Profile = new(input.Profiles, 0, 0);
+
+            DifferencePanel.Profile1 = new(input.Profiles, 0, 0);
+            DifferencePanel.Profile2 = new(input.Profiles, 0, 0);
 
             Documents.ForEach<ColorDocument>(i => i.Color.ProfileGroups = input.Profiles);
         }

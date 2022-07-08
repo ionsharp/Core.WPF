@@ -2,11 +2,12 @@
 using Imagin.Core.Numerics;
 using System;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace Imagin.Core.Media;
 
-[Image(Images.Gradient), Serializable]
+[ContentProperty(nameof(Steps)), Image(Images.Gradient), Serializable]
 public class Gradient : Base, ICloneable
 {
     public static Gradient Default => new(new GradientStep(0, System.Windows.Media.Colors.White), new GradientStep(1, System.Windows.Media.Colors.Black));

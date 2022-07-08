@@ -7,13 +7,15 @@ namespace Imagin.Core.Controls;
 
 [DisplayName("Profiles"), Explicit]
 [Serializable]
-public class ColorProfilesPanel : GroupPanel<NamableProfile>
+public class ColorProfilesPanel : GroupPanel<WorkingProfileModel>
 {
     public override Uri Icon => Resources.InternalImage(Images.Channels);
+
+    public override string ItemName => "profile";
 
     public override string Title => "Profiles";
 
     public ColorProfilesPanel(IGroupWriter input) : base(input) { }
 
-    protected override NamableProfile GetNewItem() => new("Untitled profile", WorkingProfile.Default);
+    protected override WorkingProfileModel GetNewItem() => new("Untitled profile", "", WorkingProfile.Default);
 }

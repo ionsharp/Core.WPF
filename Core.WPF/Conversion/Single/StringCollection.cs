@@ -14,7 +14,10 @@ namespace Imagin.Core.Conversion
         protected override ConverterValue<StringCollection> ConvertTo(ConverterData<object> input)
         {
             var result = new StringCollection();
-            if (input.Value is IEnumerable a)
+            if (input.Value is string c)
+                c.Split(XArray.New(';'), System.StringSplitOptions.RemoveEmptyEntries).ForEach(i => result.Add(i.ToString())); 
+            
+            else if (input.Value is IEnumerable a)
                 a.ForEach(i => result.Add(i.ToString()));
 
             else if (input.Value is IList b)

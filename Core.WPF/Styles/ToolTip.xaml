@@ -59,5 +59,16 @@
             </Setter.Value>
         </Setter>
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Data:Self Path=PlacementTarget.(Linq:XElement.ToolTipTemplate)}" Value="{x:Null}">
+                <Setter Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={x:Static Conversion:ToStringConverter.Default}}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

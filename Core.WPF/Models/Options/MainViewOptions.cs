@@ -103,7 +103,7 @@ public abstract class MainViewOptions : BaseSavable, IApplicationReady
     }
 
     bool saveWithDialog = true;
-    [Category(Category.Save), DisplayName("With dialog")]
+    [Hidden]
     public bool SaveWithDialog
     {
         get => saveWithDialog;

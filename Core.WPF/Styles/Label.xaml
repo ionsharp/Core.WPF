@@ -73,33 +73,33 @@
         <Setter Property="BorderBrush" Value="#11000000"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=Accent}"/>
-        <Setter Property="Padding" Value="0,0,0,5"/>
         <Style.Triggers>
             <Trigger Property="Step" Value="1">
                 <Setter Property="BorderThickness" Value="0,0,0,1"/>
                 <Setter Property="FontSize" Value="32"/>
+                <Setter Property="Padding" Value="0,0,0,5"/>
             </Trigger>
             <Trigger Property="Step" Value="2">
                 <Setter Property="FontSize" Value="28"/>
-                <Setter Property="FontStyle" Value="Italic"/>
+                <Setter Property="Padding" Value="0"/>
             </Trigger>
             <Trigger Property="Step" Value="3">
                 <Setter Property="FontSize" Value="26"/>
-                <Setter Property="FontStyle" Value="Italic"/>
                 <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Padding" Value="0"/>
             </Trigger>
             <Trigger Property="Step" Value="4">
                 <Setter Property="FontSize" Value="22"/>
-                <Setter Property="FontStyle" Value="Italic"/>
+                <Setter Property="Padding" Value="0"/>
             </Trigger>
             <Trigger Property="Step" Value="5">
                 <Setter Property="FontSize" Value="20"/>
-                <Setter Property="FontStyle" Value="Italic"/>
                 <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Padding" Value="0"/>
             </Trigger>
             <Trigger Property="Step" Value="6">
                 <Setter Property="FontSize" Value="16"/>
-                <Setter Property="FontStyle" Value="Italic"/>
+                <Setter Property="Padding" Value="0"/>
             </Trigger>
         </Style.Triggers>
     </Style>

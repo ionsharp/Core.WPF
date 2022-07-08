@@ -5,22 +5,29 @@ using Imagin.Core.Linq;
 using Imagin.Core.Media;
 using Imagin.Core.Models;
 using Imagin.Core.Numerics;
-using Imagin.Core.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Imagin.Core.Controls;
 
 [DisplayName("Options"), Serializable]
-public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
+public class ColorControlOptions : BaseSavable, IColorControlOptions
 {
-    enum Category { Window }
+    enum Category { Color, Documents, Window }
+
+    enum LayoutNames { Analyze, Basic, Collect, Everything, Explore }
+
+    public int DefaultLayout => (int)LayoutNames.Everything;
 
     public IEnumerable<Uri> GetDefaultLayouts()
     {
-        yield return Resources.Uri(AssemblyProperties.Name, "Controls/ColorControl/Layouts/2.xml");
-        yield return Resources.Uri(AssemblyProperties.Name, "Controls/ColorControl/Layouts/1.xml");
+        yield return Resources.Uri(AssemblyProperties.Name, $"{nameof(Controls)}/{nameof(ColorControl)}/Layouts/{LayoutNames.Analyze}.xml");
+        yield return Resources.Uri(AssemblyProperties.Name, $"{nameof(Controls)}/{nameof(ColorControl)}/Layouts/{LayoutNames.Basic}.xml");
+        yield return Resources.Uri(AssemblyProperties.Name, $"{nameof(Controls)}/{nameof(ColorControl)}/Layouts/{LayoutNames.Collect}.xml");
+        yield return Resources.Uri(AssemblyProperties.Name, $"{nameof(Controls)}/{nameof(ColorControl)}/Layouts/{LayoutNames.Everything}.xml");
+        yield return Resources.Uri(AssemblyProperties.Name, $"{nameof(Controls)}/{nameof(ColorControl)}/Layouts/{LayoutNames.Explore}.xml");
     }
 
     #region Properties
@@ -28,11 +35,10 @@ public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
     #region Other
 
     [Hidden]
-    [field: NonSerialized]
     public ColorControl ColorControl { get; private set; }
 
     IGroupWriter IColorControlOptions.Colors => colors;
-    [field: NonSerialized]
+    [NonSerialized]
     GroupWriter<ByteVector4> colors;
     [Hidden]
     public GroupWriter<ByteVector4> Colors
@@ -42,24 +48,57 @@ public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
     }
 
     IGroupWriter IColorControlOptions.Illuminants => illuminants;
-    [field: NonSerialized]
-    GroupWriter<NamableIlluminant> illuminants;
+    [NonSerialized]
+    GroupWriter<ChromacityModel> illuminants;
     [Hidden]
-    public GroupWriter<NamableIlluminant> Illuminants
+    public GroupWriter<ChromacityModel> Illuminants
     {
         get => illuminants;
         set => this.Change(ref illuminants, value);
     }
 
-    IGroupWriter IColorControlOptions.Profiles => profiles;
-    [field: NonSerialized]
-    GroupWriter<NamableProfile> profiles;
+    IGroupWriter IColorControlOptions.Matrices => matrices;
+    [NonSerialized]
+    GroupWriter<AdaptationModel> matrices;
     [Hidden]
-    public GroupWriter<NamableProfile> Profiles
+    public GroupWriter<AdaptationModel> Matrices
+    {
+        get => matrices;
+        set => this.Change(ref matrices, value);
+    }
+
+    IGroupWriter IColorControlOptions.Profiles => profiles;
+    [NonSerialized]
+    GroupWriter<WorkingProfileModel> profiles;
+    [Hidden]
+    public GroupWriter<WorkingProfileModel> Profiles
     {
         get => profiles;
         set => this.Change(ref profiles, value);
     }
+
+    #endregion
+
+    #region Documents
+
+    bool autoSaveDocuments = true;
+    [Category(Category.Documents)]
+    [DisplayName("Auto save")]
+    public bool AutoSaveDocuments
+    {
+        get => autoSaveDocuments;
+        set => this.Change(ref autoSaveDocuments, value);
+    }
+
+    [Hidden]
+    public bool RememberDocuments => true;
+
+    [NonSerialized]
+    IList Documents;
+    [Hidden]
+    IList IColorControlOptions.Documents => Documents;
+
+    readonly List<Document> rememberedDocuments = new();
 
     #endregion
 
@@ -96,6 +135,11 @@ public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
     [DisplayName("Panels")]
     public PanelCollection Panels => ColorControl?.Panels;
 
+    [Hidden]
+    IList IColorControlOptions.Panels => Panels;
+
+    Dictionary<string, PanelOptions> PanelOptions = new();
+
     #endregion
 
     #endregion
@@ -104,26 +148,59 @@ public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
 
     public ColorControlOptions() : base() { }
 
-    public ColorControlOptions(string filePath) : this() => FilePath = filePath;
+    public ColorControlOptions(string filePath, IList documents) : this()
+    {
+        FilePath = filePath;
+        Documents = documents;
+    }
 
     #endregion
 
     #region Methods
 
-    protected override void OnSaved()
+    public override Result Load(out BaseSavable output)
     {
-        Layout = Layouts.Layout;
-        Colors.Save(); Illuminants.Save(); Profiles.Save();
-    }
+        var result = base.Load(out output);
+        if (output is ColorControlOptions options && options.rememberedDocuments.Count > 0)
+        {
+            options.Documents = Documents;
+            options.rememberedDocuments.ForEach(i => Documents?.Add(i));
+            options.rememberedDocuments.Clear();
+        }
 
-    public static Result Load(string filePath, out ColorControlOptions data)
-    {
-        var result = BinarySerializer.Deserialize(filePath, out object options);
-        data = options as ColorControlOptions ?? new ColorControlOptions(filePath);
+        if (Panels != null)
+        {
+            foreach (var i in Panels)
+            {
+                if (PanelOptions.ContainsKey(i.Name))
+                    PanelOptions[i.Name].Load(i);
+            }
+        }
         return result;
     }
 
-    public Result Deserialize(string filePath, out object data) => BinarySerializer.Deserialize(filePath, out data);
+    protected override void OnSaved()
+    {
+        Layout = Layouts.Layout is string layout ? layout : Layout;
+        Colors.Save(); Illuminants.Save(); Profiles.Save();
+    }
+
+    protected override void OnSaving()
+    {
+        base.OnSaving();
+        if (RememberDocuments)
+        {
+            rememberedDocuments.Clear();
+            Documents?.ForEach(i => rememberedDocuments.Add(i as Document));
+        }
+
+        PanelOptions.Clear();
+        foreach (var i in Panels)
+        {
+            PanelOptions.Add(i.Name, new());
+            PanelOptions[i.Name].Save(i);
+        }
+    }
 
     //...
 
@@ -152,43 +229,52 @@ public class ColorControlOptions : BaseSavable, IColorControlOptions, ILayout
                 typeof(SafestWebColors).GetFields().Select(i => new ByteVector4((string)i.GetValue(null)))));
         }
 
-        Illuminants = new GroupWriter<NamableIlluminant>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Illuminants", "data", "illuminants", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
+        Illuminants = new GroupWriter<ChromacityModel>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Illuminants", "data", "illuminants", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
         result = Illuminants.Load();
 
         if (!result)
         {
-            Illuminants.Add(new Collections.ObjectModel.GroupCollection<NamableIlluminant>("Daylight (2°)",
-                typeof(Illuminant2).GetProperties().Where(i => i.Name.StartsWith("D")).Select(i => new NamableIlluminant(i.Name, (Vector2)i.GetValue(null)))));
-            Illuminants.Add(new Collections.ObjectModel.GroupCollection<NamableIlluminant>("Daylight (10°)",
-                typeof(Illuminant10).GetProperties().Where(i => i.Name.StartsWith("D")).Select(i => new NamableIlluminant(i.Name, (Vector2)i.GetValue(null)))));
+            Illuminants.Add(new Collections.ObjectModel.GroupCollection<ChromacityModel>("Daylight (2°)",
+                typeof(Illuminant2).GetProperties().Where(i => i.Name.StartsWith("D")).Select(i => new ChromacityModel(i.Name, i.GetDescription(), (Vector2)i.GetValue(null)))));
+            Illuminants.Add(new Collections.ObjectModel.GroupCollection<ChromacityModel>("Daylight (10°)",
+                typeof(Illuminant10).GetProperties().Where(i => i.Name.StartsWith("D")).Select(i => new ChromacityModel(i.Name, i.GetDescription(), (Vector2)i.GetValue(null)))));
                 
-            Illuminants.Add(new Collections.ObjectModel.GroupCollection<NamableIlluminant>("Equal energy",
-                typeof(Illuminant).GetProperties().Where(i => i.Name == "E").Select(i => new NamableIlluminant(i.Name, (Vector2)i.GetValue(null)))));
+            Illuminants.Add(new Collections.ObjectModel.GroupCollection<ChromacityModel>("Equal energy",
+                typeof(Illuminant).GetProperties().Where(i => i.Name == "E").Select(i => new ChromacityModel(i.Name, i.GetDescription(), (Vector2)i.GetValue(null)))));
                 
-            Illuminants.Add(new Collections.ObjectModel.GroupCollection<NamableIlluminant>("Flourescent (2°)",
-                typeof(Illuminant2).GetProperties().Where(i => i.Name.StartsWith("F")).Select(i => new NamableIlluminant(i.Name, (Vector2)i.GetValue(null)))));
-            Illuminants.Add(new Collections.ObjectModel.GroupCollection<NamableIlluminant>("Flourescent (10°)",
-                typeof(Illuminant10).GetProperties().Where(i => i.Name.StartsWith("F")).Select(i => new NamableIlluminant(i.Name, (Vector2)i.GetValue(null)))));
+            Illuminants.Add(new Collections.ObjectModel.GroupCollection<ChromacityModel>("Flourescent (2°)",
+                typeof(Illuminant2).GetProperties().Where(i => i.Name.StartsWith("F")).Select(i => new ChromacityModel(i.Name, i.GetDescription(), (Vector2)i.GetValue(null)))));
+            Illuminants.Add(new Collections.ObjectModel.GroupCollection<ChromacityModel>("Flourescent (10°)",
+                typeof(Illuminant10).GetProperties().Where(i => i.Name.StartsWith("F")).Select(i => new ChromacityModel(i.Name, i.GetDescription(), (Vector2)i.GetValue(null)))));
 
-            Illuminants.Add(new Collections.ObjectModel.GroupCollection<NamableIlluminant>("Incandescent (2°)",
-                typeof(Illuminant2).GetProperties().Where(i => i.Name == "A" || i.Name == "B" || i.Name == "C").Select(i => new NamableIlluminant(i.Name, (Vector2)i.GetValue(null)))));
-            Illuminants.Add(new Collections.ObjectModel.GroupCollection<NamableIlluminant>("Incandescent (10°)",
-                typeof(Illuminant10).GetProperties().Where(i => i.Name == "A" || i.Name == "B" || i.Name == "C").Select(i => new NamableIlluminant(i.Name, (Vector2)i.GetValue(null)))));
+            Illuminants.Add(new Collections.ObjectModel.GroupCollection<ChromacityModel>("Incandescent (2°)",
+                typeof(Illuminant2).GetProperties().Where(i => i.Name == "A" || i.Name == "B" || i.Name == "C").Select(i => new ChromacityModel(i.Name, i.GetDescription(), (Vector2)i.GetValue(null)))));
+            Illuminants.Add(new Collections.ObjectModel.GroupCollection<ChromacityModel>("Incandescent (10°)",
+                typeof(Illuminant10).GetProperties().Where(i => i.Name == "A" || i.Name == "B" || i.Name == "C").Select(i => new ChromacityModel(i.Name, i.GetDescription(), (Vector2)i.GetValue(null)))));
 
-            Illuminants.Add(new Collections.ObjectModel.GroupCollection<NamableIlluminant>("LED (2°)",
-                typeof(Illuminant2).GetProperties().Where(i => i.Name.StartsWith("LED")).Select(i => new NamableIlluminant(i.Name, (Vector2)i.GetValue(null)))));
+            Illuminants.Add(new Collections.ObjectModel.GroupCollection<ChromacityModel>("LED (2°)",
+                typeof(Illuminant2).GetProperties().Where(i => i.Name.StartsWith("LED")).Select(i => new ChromacityModel(i.Name, i.GetDescription(), (Vector2)i.GetValue(null)))));
         }
 
-        Profiles = new GroupWriter<NamableProfile>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Profiles", "data", "profiles", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
+        Matrices = new GroupWriter<AdaptationModel>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Matrices", "data", "matrices", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
+        result = Matrices.Load();
+
+        if (!result)
+        {
+            Matrices.Add(new Collections.ObjectModel.GroupCollection<AdaptationModel>("LMS", 
+                typeof(ChromaticAdaptationTransform).GetProperties().Where(i => i.Name != nameof(ChromaticAdaptationTransform.Default)).Select(i => new AdaptationModel(i.GetDisplayName(), i.GetDescription(), (Matrix)i.GetValue(null)))));
+        }
+
+        Profiles = new GroupWriter<WorkingProfileModel>($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}", "Profiles", "data", "profiles", new Collections.Limit(250, Collections.Limit.Actions.RemoveFirst));
         result = Profiles.Load();
 
         if (!result)
         {
-            Profiles.Add(new Collections.ObjectModel.GroupCollection<NamableProfile>("Default",
-                typeof(WorkingProfiles).GetProperties().Select(i => new NamableProfile(i.GetDisplayName(), (WorkingProfile)i.GetValue(null)))));
+            typeof(WorkingProfiles).GetProperties()
+                .GroupBy(i => i.GetCategory()).ForEach(i => Profiles.Add(new Collections.ObjectModel.GroupCollection<WorkingProfileModel>(i.Key, i.Select(j => new WorkingProfileModel(j.GetDisplayName(), j.GetDescription(), (WorkingProfile)j.GetValue(null))))));
         }
 
-        Layouts = new Layouts($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}\Layouts", GetDefaultLayouts());
+        Layouts = new Layouts($@"{Config.ApplicationProperties.GetFolderPath(Config.DataFolders.Documents)}\{nameof(ColorControl)}\Layouts", GetDefaultLayouts(), DefaultLayout);
         Layouts.Update(layout);
         Layouts.Refresh();
     }

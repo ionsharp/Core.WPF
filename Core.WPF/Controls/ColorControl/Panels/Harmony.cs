@@ -6,15 +6,19 @@ using Imagin.Core.Models;
 using Imagin.Core.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using System.Windows.Media;
 using static System.Math;
 
 namespace Imagin.Core.Controls;
 
 [DisplayName("Harmony"), Explicit]
-public class ColorHarmonyPanel : Panel
+public class ColorHarmonyPanel : ViewPanel
 {
+    public event DefaultEventHandler<Color[]> Saved;
+
     public enum Steps
     {
         Darkness,
@@ -28,6 +32,7 @@ public class ColorHarmonyPanel : Panel
 
     public override string Title => "Harmony";
 
+    [NonSerialized]
     public readonly ColorControl Control;
 
     public ColorDocument ActiveDocument { get; private set; }
@@ -56,7 +61,7 @@ public class ColorHarmonyPanel : Panel
     }
 
     double range = 1;
-    [Range(0.0, 1.0, 0.01), SliderUpDown, Tool, Visible]
+    [Range(0.0, 100.0, 1.0), Setter(nameof(MemberModel.RightText), "%"), SliderUpDown, Tool, Visible]
     public double Range
     {
         get => range;
@@ -71,12 +76,20 @@ public class ColorHarmonyPanel : Panel
         set => this.Change(ref reverse, value);
     }
 
-    Steps step = Steps.Random;
+    Steps step = Steps.Darkness;
     [Tool, Visible]
     public Steps Step
     {
         get => step;
         set => this.Change(ref step, value);
+    }
+
+    bool sync = false;
+    [Tool, Visible]
+    public bool Sync
+    {
+        get => sync;
+        set => this.Change(ref sync, value);
     }
 
     //...
@@ -130,6 +143,8 @@ public class ColorHarmonyPanel : Panel
 
         var color = ActiveDocument.Color.ActualColor;
         double h = color.GetHue(), saturation = color.GetSaturation(), lightness = color.GetBrightness();
+
+        var range = Range / 100.0;
 
         double[] hues = null;
         switch (Harmony)
@@ -217,7 +232,8 @@ public class ColorHarmonyPanel : Panel
 
     void OnColorChanged(object sender, EventArgs<Color> e)
     {
-        Update();
+        if (sync)
+            Update();
     }
 
     public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
@@ -227,10 +243,21 @@ public class ColorHarmonyPanel : Panel
         {
             case nameof(Count):
             case nameof(Harmony):
+            case nameof(Range):
             case nameof(Reverse):
             case nameof(Step):
                 Update();
                 break;
+
+            case nameof(Sync):
+                if (sync)
+                    Update();
+
+                break;
         }
     }
+
+    ICommand saveCommand;
+    [DisplayName("Save"), Feature(AboveBelow.Below), Image(Images.Save), Tool, Visible]
+    public ICommand SaveCommand => saveCommand ??= new RelayCommand(() => Saved?.Invoke(this, new(colors.ToArray<Color>())), () => colors.Count > 0);
 }

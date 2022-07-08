@@ -172,90 +172,9 @@
                                     </DataTemplate>
                                 </ContentPresenter.ContentTemplate>
                             </ContentPresenter>
-                            <local:ImageButton x:Name="ImageButton"
-                                ButtonVisibility="Visible"
-                                Margin="1,0,0,0"
-                                ToolTip="{l:Loc Options}"
-                                VerticalAlignment="Center"
-                                Visibility="{Data:VisibilityBinding Assignable}">
-                                <local:ImageButton.Menu>
-                                    <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}">
-                                        <ContextMenu.Resources>
-                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                                                <Style.Triggers>
-                                                    <Trigger Property="Tag" Value="{x:Null}">
-                                                        <Setter Property="Command" Value="{Binding Data.MemberNewCommand, Source={StaticResource MemberGrid}}"/>
-                                                    </Trigger>
-                                                    <DataTrigger Binding="{Data:IsBinding Type={x:Type Core:BaseNamable}}" Value="True">
-                                                        <Setter Property="CommandParameter">
-                                                            <Setter.Value>
-                                                                <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding Value}"/>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Setter Property="Header" Value="{Binding Name}"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Data:IsBinding Type={x:Type System:Type}}" Value="True">
-                                                        <Setter Property="CommandParameter">
-                                                            <Setter.Value>
-                                                                <Data:DoubleReference First="{Binding Data, Source={StaticResource Member}}" Second="{Binding}"/>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Setter Property="Header" Value="{Data:DisplayNameBinding}"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ContextMenu.Resources>
-                                        <ContextMenu.ItemsSource>
-                                            <CompositeCollection>
-                                                <MenuItem Tag="0" Header="{l:Loc Default}"
-                                                    Command="{Binding Data.MemberDefaultCommand, Source={StaticResource MemberGrid}}"
-                                                    CommandParameter="{Binding}"/>
-                                                <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableTypes.Count}"/>
-                                                <CollectionContainer Collection="{Binding Data.AssignableTypes, Source={StaticResource Member}}"/>
-                                                <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableValues.Count}"/>
-                                                <CollectionContainer Collection="{Binding Data.AssignableValues, Source={StaticResource Member}}"/>
-                                                <Separator/>
-                                                <MenuItem Tag="0" Header="{l:Loc Reset}"
-                                                    Command="{Binding Data.MemberResetCommand, Source={StaticResource MemberGrid}}"
-                                                    CommandParameter="{Binding}"/>
-                                                <MenuItem Tag="0" Header="{l:Loc Clear}"
-                                                    Command="{Binding Data.MemberClearCommand, Source={StaticResource MemberGrid}}"
-                                                    CommandParameter="{Binding}"
-                                                    Visibility="{Data:VisibilityBinding IsEnabled, Relative=Self}"/>
-                                            </CompositeCollection>
-                                        </ContextMenu.ItemsSource>
-                                    </ContextMenu>
-                                </local:ImageButton.Menu>
-                            </local:ImageButton>
+                            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static local:MemberGrid.MemberOptionsTemplate}}"/>
                         </Grid>
                     </Grid>
-                    <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding IsLocked}" Value="True">
-                            <Setter TargetName="ImageButton" Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsReadOnly}" Value="True">
-                            <Setter TargetName="ImageButton" Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type SystemInput:ICommand}">
-                            <Setter TargetName="ImageButton" Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                        <MultiDataTrigger >
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Data:IsNullBinding Icon}" Value="False"/>
-                                <Condition Binding="{Binding StyleLevel}" Value="{x:Null}"/>
-                                <Condition Binding="{Binding TemplateType}" Value="{x:Type System:Object}"/>
-                            </MultiDataTrigger.Conditions>
-                            <Setter TargetName="ImageButton" Property="Visibility" Value="Collapsed"/>
-                        </MultiDataTrigger>
-                        <MultiDataTrigger >
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Data:IsNullBinding Icon}" Value="False"/>
-                                <Condition Binding="{Binding Style}" Value="{x:Null}"/>
-                                <Condition Binding="{Binding TemplateType}" Value="{x:Type System:Object}"/>
-                            </MultiDataTrigger.Conditions>
-                            <Setter TargetName="ImageButton" Property="Visibility" Value="Collapsed"/>
-                        </MultiDataTrigger>
-                    </DataTemplate.Triggers>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -350,8 +269,7 @@
 
             <ComboBox Grid.Column="1"
                 Linq:XItemsControl.GroupStyle="{Data:TemplatedParent Path=(Linq:XItemsControl.GroupStyle)}"
-                Margin="0,0,0,10"
-                SelectedItem="{Data:TemplatedParent ViewMember, Mode=TwoWay}">
+                Margin="0,0,0,10">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                         <TextBlock Text="{Binding DisplayName}"/>
@@ -362,9 +280,24 @@
                         <Style.Triggers>
                             <DataTrigger Binding="{Data:TemplatedParent View}" Value="{x:Static local:MemberView.All}">
                                 <Setter Property="ItemsSource" Value="{x:Null}"/>
+                                <Setter Property="ItemTemplate">
+                                    <Setter.Value><DataTemplate DataType="{x:Type Reflection:MemberModel}"><TextBlock Text="{Binding DisplayName}"/></DataTemplate></Setter.Value>
+                                </Setter>
+                                <Setter Property="SelectedItem" Value="{Data:TemplatedParent SelectedMember, Mode=TwoWay}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Data:TemplatedParent View}" Value="{x:Static local:MemberView.Category}">
+                                <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewCategory.Categories.View}"/>
+                                <Setter Property="ItemTemplate">
+                                    <Setter.Value><DataTemplate><TextBlock Text="{Binding}"/></DataTemplate></Setter.Value>
+                                </Setter>
+                                <Setter Property="SelectedIndex" Value="{Data:TemplatedParent SelectedCategory, Mode=TwoWay}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Data:TemplatedParent View}" Value="{x:Static local:MemberView.Single}">
-                                <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewAll}"/>
+                                <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewAll.View}"/>
+                                <Setter Property="ItemTemplate">
+                                    <Setter.Value><DataTemplate DataType="{x:Type Reflection:MemberModel}"><TextBlock Text="{Binding DisplayName}"/></DataTemplate></Setter.Value>
+                                </Setter>
+                                <Setter Property="SelectedItem" Value="{Data:TemplatedParent SelectedMember, Mode=TwoWay}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -376,25 +309,30 @@
                             Converter="{x:Static Conversion:IsNullConverter.Default}"
                             ConverterParameter="1"/>
                         <Data:TemplatedParent Path="View"
-                            Converter="{x:Static Conversion:ValueEqualsParameterConverter.Default}"
-                            ConverterParameter="{x:Static local:MemberView.Single}"/>
+                            Converter="{x:Static Conversion:ValueNotEqualToParameterConverter.Default}"
+                            ConverterParameter="{x:Static local:MemberView.All}"/>
                     </MultiBinding>
                 </ComboBox.Visibility>
             </ComboBox>
 
             <!-- ... Featured (Above) -->
-            <ContentPresenter Grid.Column="2"
-                Content="{Data:TemplatedParent FeaturedAbove}"
-                ContentTemplate="{TemplateBinding FeaturedTemplate}"
-                Margin="0,0,5,0">
-                <ContentPresenter.Visibility>
+            <Border Grid.Column="2"
+                Background="#10000000"
+                BorderBrush="#22000000"
+                BorderThickness="0,0,1,0"
+                Margin="0,0,5,0"
+                Padding="2">
+                <Border.Visibility>
                     <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
                         <Data:TemplatedParent Path="FeaturedAbove.IsEmpty"
                             Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
                         <Data:TemplatedParent Path="FeaturedVisibility"/>
                     </MultiBinding>
-                </ContentPresenter.Visibility>
-            </ContentPresenter>
+                </Border.Visibility>
+                <ContentPresenter
+                    Content="{Data:TemplatedParent FeaturedAbove}"
+                    ContentTemplate="{TemplateBinding FeaturedTemplate}"/>
+            </Border>
 
             <!-- ... Loader -->
             <ContentPresenter Grid.Column="2" Grid.ColumnSpan="3"
@@ -434,10 +372,13 @@
                     <Style TargetType="{x:Type ToolBar}" BasedOn="{StaticResource {x:Type ToolBar}}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Data:TemplatedParent View}" Value="All">
-                                <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewAll}"/>
+                                <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewAll.View}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Data:TemplatedParent View}" Value="Category">
+                                <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewCategory.Members.View}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Data:TemplatedParent View}" Value="Single">
-                                <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewSingle}"/>
+                                <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewSingle.View}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -686,11 +627,11 @@
                                                     </MenuItem.Resources>
                                                 </MenuItem>
                                                 <Separator Linq:XSeparator.Header="View"/>
+                                                <CollectionContainer Collection="{Markup:Enumerate local:MemberView}"/>
+                                                <Separator/>
                                                 <MenuItem Header="{l:Loc Description}"
                                                     IsCheckable="True"
                                                     IsChecked="{Data:VisibilityBinding DescriptionVisibility, Mode=TwoWay}"/>
-                                                <Separator/>
-                                                <CollectionContainer Collection="{Markup:Enumerate local:MemberView}"/>
                                             </CompositeCollection>
                                         </ContextMenu.ItemsSource>
                                     </ContextMenu>
@@ -703,13 +644,13 @@
                     <local:BottomBorder Grid.Row="1">
                         <local:BottomBorder.Visibility>
                             <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
-                                <Data:VisibilityBinding Path="Tools.Count" Relative="TemplatedParent"/>
+                                <Data:VisibilityBinding Path="Tools.Source.Count" Relative="TemplatedParent"/>
                                 <Data:TemplatedParent Path="ToolVisibility"/>
                             </MultiBinding>
                         </local:BottomBorder.Visibility>
                         <ToolBar
                             BorderThickness="0"
-                            ItemsSource="{Data:TemplatedParent ViewTools}"
+                            ItemsSource="{Data:TemplatedParent Tools.View}"
                             ItemTemplate="{StaticResource ToolBarItemTemplate}"
                             Margin="5">
                             <ToolBar.GroupStyle>
@@ -744,48 +685,77 @@
                     </local:BottomBorder>
 
                     <!-- ... -->
-                    <ComboBox Grid.Row="3"
-                        Linq:XItemsControl.GroupsItself="True"
-                        Margin="5"
-                        SelectedItem="{Data:TemplatedParent ViewMember, Mode=TwoWay}">
-                        <Linq:XItemsControl.GroupStyle>
-                            <GroupStyle ContainerStyle="{StaticResource {x:Type GroupItem}}">
-                                <GroupStyle.Panel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel/>
-                                    </ItemsPanelTemplate>
-                                </GroupStyle.Panel>
-                            </GroupStyle>
-                        </Linq:XItemsControl.GroupStyle>
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
-                                <TextBlock Text="{Binding DisplayName}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                        <ComboBox.Style>
-                            <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Data:TemplatedParent View}" Value="{x:Static local:MemberView.All}">
-                                        <Setter Property="ItemsSource" Value="{x:Null}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Data:TemplatedParent View}" Value="{x:Static local:MemberView.Single}">
-                                        <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewAll}"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ComboBox.Style>
-                        <!-- XItemsControl static constructor does not affect this if visible initially; IsEmpty will always be true! No fix yet... -->
-                        <ComboBox.Visibility>
+                    <Grid Grid.Row="3"
+                        Margin="5">
+                        <Grid.Visibility>
                             <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
                                 <Data:TemplatedParent Path="Source"
                                     Converter="{x:Static Conversion:IsNullConverter.Default}"
                                     ConverterParameter="1"/>
                                 <Data:TemplatedParent Path="View"
-                                    Converter="{x:Static Conversion:ValueEqualsParameterConverter.Default}"
-                                    ConverterParameter="{x:Static local:MemberView.Single}"/>
+                                    Converter="{x:Static Conversion:ValueNotEqualToParameterConverter.Default}"
+                                    ConverterParameter="{x:Static local:MemberView.All}"/>
                             </MultiBinding>
-                        </ComboBox.Visibility>
-                    </ComboBox>
+                        </Grid.Visibility>
+                        <ComboBox Linq:XItemsControl.GroupsItself="True">
+                            <Linq:XItemsControl.GroupStyle>
+                                <GroupStyle ContainerStyle="{StaticResource {x:Type GroupItem}}">
+                                    <GroupStyle.Panel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel/>
+                                        </ItemsPanelTemplate>
+                                    </GroupStyle.Panel>
+                                </GroupStyle>
+                            </Linq:XItemsControl.GroupStyle>
+                            <ComboBox.Style>
+                                <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Data:TemplatedParent View}" Value="{x:Static local:MemberView.All}">
+                                            <Setter Property="ItemsSource" Value="{x:Null}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Data:TemplatedParent View}" Value="{x:Static local:MemberView.Single}">
+                                            <Setter Property="ItemsSource" Value="{Data:TemplatedParent ViewAll.View}"/>
+                                            <Setter Property="ItemTemplate">
+                                                <Setter.Value><DataTemplate DataType="{x:Type Reflection:MemberModel}"><TextBlock Text="{Binding DisplayName}"/></DataTemplate></Setter.Value>
+                                            </Setter>
+                                            <Setter Property="SelectedItem" Value="{Data:TemplatedParent SelectedMember, Mode=TwoWay}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                            <!-- XItemsControl static constructor does not affect this if visible initially; IsEmpty will always be true! No fix yet... -->
+                            <ComboBox.Visibility>
+                                <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
+                                    <Data:TemplatedParent Path="Source"
+                                        Converter="{x:Static Conversion:IsNullConverter.Default}"
+                                        ConverterParameter="1"/>
+                                    <Data:TemplatedParent Path="View"
+                                        Converter="{x:Static Conversion:ValueEqualsParameterConverter.Default}"
+                                        ConverterParameter="{x:Static local:MemberView.Single}"/>
+                                </MultiBinding>
+                            </ComboBox.Visibility>
+                        </ComboBox>
+                        <TabControl 
+                            ItemsSource="{Data:TemplatedParent ViewCategory.Categories.View}" 
+                            Linq:XTabControl.ContentVisibility="Collapsed"
+                            SelectedIndex="{Data:TemplatedParent SelectedCategory, Mode=TwoWay}">
+                            <TabControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"/>
+                                </DataTemplate>
+                            </TabControl.ItemTemplate>
+                            <TabControl.Visibility>
+                                <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
+                                    <Data:TemplatedParent Path="Source"
+                                        Converter="{x:Static Conversion:IsNullConverter.Default}"
+                                        ConverterParameter="1"/>
+                                    <Data:TemplatedParent Path="View"
+                                        Converter="{x:Static Conversion:ValueEqualsParameterConverter.Default}"
+                                        ConverterParameter="{x:Static local:MemberView.Category}"/>
+                                </MultiBinding>
+                            </TabControl.Visibility>
+                        </TabControl>
+                    </Grid>
 
                     <!-- ... Content -->
                     <local:EmptyPresenter Grid.Row="4"/>

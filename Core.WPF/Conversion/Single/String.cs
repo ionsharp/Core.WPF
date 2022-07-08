@@ -1,5 +1,5 @@
-﻿using Imagin.Core.Linq;
-using Imagin.Core.Media;
+﻿using Imagin.Core.Colors;
+using Imagin.Core.Linq;
 using Imagin.Core.Numerics;
 using System;
 using System.Collections;
@@ -9,6 +9,21 @@ using System.Windows.Media;
 
 namespace Imagin.Core.Conversion
 {
+    [ValueConversion(typeof(Color), typeof(string))]
+    public class ColorNameConverter : Converter<Color, string>
+    {
+        public static ColorNameConverter Default { get; private set; } = new ColorNameConverter();
+        ColorNameConverter() { }
+
+        protected override ConverterValue<string> ConvertTo(ConverterData<Color> input) 
+        {
+            input.Value.Convert(out ByteVector4 result);
+            return Colour.FindName(result); 
+        }
+
+        protected override ConverterValue<Color> ConvertBack(ConverterData<string> input) => Nothing.Do;
+    }
+
     [ValueConversion(typeof(IList), typeof(string))]
     public class ListToStringConverter : Converter<IList, string>
     {
@@ -254,7 +269,7 @@ namespace Imagin.Core.Conversion
         public static ByteVector4ToStringConverter Default { get; private set; } = new();
         ByteVector4ToStringConverter() { }
 
-        protected override ConverterValue<string> ConvertTo(ConverterData<ByteVector4> input) => input.Value.ToString(true);
+        protected override ConverterValue<string> ConvertTo(ConverterData<ByteVector4> input) => input.Value.ToString(false);
 
         protected override ConverterValue<ByteVector4> ConvertBack(ConverterData<string> input) => new ByteVector4(input.Value);
     }
@@ -283,6 +298,30 @@ namespace Imagin.Core.Conversion
         }
 
         protected override ConverterValue<Color> ConvertBack(ConverterData<string> input) => XColor.Convert(new ByteVector4(input.Value)).A(i => input.Parameter == 1 ? i : input.Parameter == 0 ? (byte)255 : throw new NotSupportedException());
+    }
+
+    [ValueConversion(typeof(Color), typeof(string))]
+    public class ColorToShortStringConverter : Converter<Color, string>
+    {
+        public static ColorToShortStringConverter Default { get; private set; } = new();
+        ColorToShortStringConverter() { }
+
+        protected override ConverterValue<string> ConvertTo(ConverterData<Color> input)
+        {
+            input.Value.Convert(out ByteVector4 i);
+            var j = i.ToString(false);
+            if (j?.Length == 6)
+            {
+                if (j[0] == j[1] && j[2] == j[3] && j[4] == j[5])
+                {
+                    var k = $"{j[0]}{j[2]}{j[4]}";
+                    return input.ActualParameter?.ToString().F(k) ?? k;
+                }
+            }
+            return "";
+        }
+
+        protected override ConverterValue<Color> ConvertBack(ConverterData<string> input) => Nothing.Do;
     }
 
     [ValueConversion(typeof(DateTime), typeof(string))]

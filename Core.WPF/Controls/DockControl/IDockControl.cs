@@ -1,13 +1,12 @@
-﻿namespace Imagin.Core.Controls
+﻿namespace Imagin.Core.Controls;
+
+public interface IDockControl
 {
-    public interface IDockControl
-    {
-        double ActualHeight { get; }
+    double ActualHeight { get; }
 
-        double ActualWidth { get; }
+    double ActualWidth { get; }
 
-        DockControl DockControl { get; }
+    DockControl DockControl { get; }
 
-        DockRootControl Root { get; }
-    }
+    DockRootControl Root { get; }
 }

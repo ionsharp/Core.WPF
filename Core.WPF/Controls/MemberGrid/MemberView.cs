@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+[Serializable]
+public enum MemberView
 {
-    [Serializable]
-    public enum MemberView
-    {
-        All, Single
-    }
+    All, Category, Single
 }

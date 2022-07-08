@@ -10,14 +10,14 @@ namespace Imagin.Core.Models;
 [Serializable]
 public class ColorsPanel : GroupPanel<ByteVector4>
 {
-    public static readonly ResourceKey TemplateKey = new();
-
     [field: NonSerialized]
     public event EventHandler<EventArgs<ByteVector4>> Selected;
 
     //...
 
     public override Uri Icon => Resources.InternalImage(Images.Colors);
+
+    public override string ItemName => "color";
 
     public override string Title => "Colors";
 

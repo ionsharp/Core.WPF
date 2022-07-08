@@ -86,19 +86,19 @@ namespace Imagin.Core.Models
         #region Properties
 
         [Hidden]
-        public string ErrorCount 
+        public string ErrorCount
             => $"Errors ({Data.Count<LogEntry>(i => i.Result is Error)})";
 
         [Hidden]
-        public string MessageCount 
+        public string MessageCount
             => $"Messages ({Data.Count<LogEntry>(i => i.Result is Message)})";
 
         [Hidden]
-        public string SuccessCount 
+        public string SuccessCount
             => $"Success ({Data.Count<LogEntry>(i => i.Result is Success)})";
 
         [Hidden]
-        public string WarningCount 
+        public string WarningCount
             => $"Warnings ({Data.Count<LogEntry>(i => i.Result is Warning)})";
 
         //...
@@ -274,7 +274,7 @@ namespace Imagin.Core.Models
         void OnLogChanged(object sender, NotifyCollectionChangedEventArgs e) => UpdateText();
 
         //...
-        
+
         string Format(LogEntry i)
         {
             var result = $"{Bullet.ToString(Data.As<IList>().IndexOf(i) + 1)} ";
@@ -429,15 +429,15 @@ namespace Imagin.Core.Models
 
         [field: NonSerialized]
         ICommand openCommand;
-        [Category(Category.Open), DisplayName("Open")]
-        public virtual ICommand OpenCommand => openCommand ??= new RelayCommand(() => Storage.File.Long.Open(Get.Where<Config.BaseApplication>().Log.FilePath));
+        [Below, Category(Category.Open), DisplayName("Open"), Image(Images.Open), Tool]
+        public virtual ICommand OpenCommand => openCommand ??= new RelayCommand(() => Storage.File.Long.Open(Get.Where<Config.BaseApplication>().Log.FilePath).If(i => { if (i is Error e) { Dialog.Show("Open log", $"{e}", DialogImage.Error, Controls.Buttons.Ok); } }));
 
         [Hidden]
         public override ICommand RefreshCommand => base.RefreshCommand;
 
         [field: NonSerialized]
         ICommand saveCommand;
-        [Category(Category.Open), DisplayName("Save")]
+        [Below, Category(Category.Open), DisplayName("Save"), Image(Images.Save), Tool]
         public virtual ICommand SaveCommand => saveCommand ??= new RelayCommand(() => Get.Where<ILog>().Save(), () => Get.Where<ILog>() != null);
 
         ICommand searchCommand;

@@ -285,6 +285,17 @@ public class DockControl : Control
 
     #endregion
 
+    #region AutoSaveDocuments
+
+    public static readonly DependencyProperty AutoSaveDocumentsProperty = DependencyProperty.Register(nameof(AutoSaveDocuments), typeof(bool), typeof(DockControl), new FrameworkPropertyMetadata(true));
+    public bool AutoSaveDocuments
+    {
+        get => (bool)GetValue(AutoSaveDocumentsProperty);
+        set => SetValue(AutoSaveDocumentsProperty, value);
+    }
+
+    #endregion
+
     #region DefaultTemplates
 
     public static readonly DependencyProperty DefaultTemplatesProperty = DependencyProperty.Register(nameof(DefaultTemplates), typeof(KeyTemplateCollection), typeof(DockControl), new FrameworkPropertyMetadata(null));
@@ -741,7 +752,9 @@ public class DockControl : Control
 
     void Add(Document document)
     {
+        document.Unsubscribe(); document.Subscribe();
         Subscribe(document);
+
         if (document.IsMinimized)
         {
             Root.Minimized.Add(document);
@@ -753,10 +766,13 @@ public class DockControl : Control
             control.Source.Add(document);
 
         else DockContent(Root, document.DockPreference, null, document);
+
+        SetCurrentValue(ActiveContentProperty, document);
     }
 
     void Remove(Document document)
     {
+        document.Unsubscribe();
         Unsubscribe(document);
 
         var control = FindControl(document);
@@ -769,15 +785,18 @@ public class DockControl : Control
             Minimized.Remove(document);
         }
 
-        if (ReferenceEquals(ActiveDocument, document))
+        if (ReferenceEquals(ActiveDocument, document) || Documents.Count == 0)
             SetCurrentValue(ActiveDocumentProperty, null);
+
     }
 
     //...
 
     void Add(Models.Panel newPanel)
     {
+        newPanel.Unsubscribe(); newPanel.Subscribe();
         Subscribe(newPanel);
+
         var control = PanelControls.FirstOrDefault<DockPanelControl>();
 
         if (control != null)
@@ -788,6 +807,7 @@ public class DockControl : Control
 
     IDockPanelSource Remove(Models.Panel panel)
     {
+        panel.Unsubscribe();
         Unsubscribe(panel);
 
         if (ReferenceEquals(ActivePanel, panel))
@@ -2095,6 +2115,22 @@ public class DockControl : Control
         {
             switch (e.PropertyName)
             {
+                case nameof(Document.IsModified):
+
+                    if (document.IsModified)
+                    {
+                        if (AutoSaveDocuments)
+                            document.Save();
+                    }
+
+                    if (!document.IsMinimized)
+                        Unminimize(document);
+
+                    else if (document.CanMinimize)
+                        Minimize(document);
+
+                    else document.IsMinimized = false;
+                    break;
                 case nameof(Document.IsMinimized):
 
                     if (!document.IsMinimized)

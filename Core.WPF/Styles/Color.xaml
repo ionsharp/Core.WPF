@@ -8,20 +8,27 @@
     xmlns:Media="clr-namespace:Imagin.Core.Media">
     <DataTemplate x:Key="{x:Static Linq:XColor.ComponentToolTipTemplateKey}">
         <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last" Linq:XPanel.VerticalContentAlignment="Center">
-            <TextBlock FontSize="15" FontWeight="Bold">(<Run Text="{Binding Symbol, Mode=OneWay}"/>) <Run Text="{Binding Name, Mode=OneWay}"/></TextBlock>
+            <local:TitleLabel Step="6">
+                <TextBlock>(<Run Text="{Binding Symbol, Mode=OneWay}"/>) <Run Text="{Binding Name, Mode=OneWay}"/></TextBlock>
+            </local:TitleLabel>
             <TextBlock FontSize="14" Text="{Binding Range}"/>
         </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Linq:XColor.ModelToolTipTemplateKey}">
         <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last" Linq:XPanel.VerticalContentAlignment="Center">
-            <TextBlock FontSize="15" FontWeight="Bold" Text="{Binding Name}"/>
+            <local:TitleLabel Step="6">
+                <TextBlock Text="{Binding Name}"/>
+            </local:TitleLabel>
             <TextBlock FontSize="13" FontStyle="Italic" Opacity="0.5" Text="{Binding Converter={x:Static local:ColorModelLongNameConverter.Default}}"/>
         </StackPanel>
     </DataTemplate>
     
     <DataTemplate x:Key="{x:Static Linq:XColor.ToolTipTemplateKey}">
-        <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*" Linq:XPanel.VerticalContentAlignment="Center">
+        <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
+            <Grid.Resources>
+                <Data:Reference x:Key="Color" Data="{Binding}"/>
+            </Grid.Resources>
             <local:ClipBorder
                 Background="{x:Static Media:CheckerBrush.Default}"
                 BorderBrush="Black"
@@ -29,12 +36,34 @@
                 CornerRadius="999"
                 Height="32"
                 Margin="0,0,10,0"
+                VerticalAlignment="Top"
                 Width="32">
                 <local:FillElement Fill="{Binding Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}"/>
             </local:ClipBorder>
             <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last">
-                <TextBlock FontWeight="Bold"><Run Text="#"/><Run Text="{Binding Converter={x:Static Conversion:ColorToStringConverter.Default}, Mode=OneWay}"/></TextBlock>
-                <TextBlock>(<Run Text="{Binding R, Mode=OneWay}"/>, <Run Text="{Binding G, Mode=OneWay}"/>, <Run Text="{Binding B, Mode=OneWay}"/>)</TextBlock>
+                <TextBlock FontSize="17" Text="{Binding Converter={x:Static Conversion:ColorNameConverter.Default}}" 
+                    FontStyle="Italic" 
+                    Opacity="0.8" 
+                    Visibility="{Data:VisibilityBinding Text, Relative=Self}"/>
+                <TextBlock FontSize="15"><Run FontWeight="Bold" Text="#"/><Run FontWeight="Bold" Text="{Binding Converter={x:Static Conversion:ColorToStringConverter.Default}, Mode=OneWay}"/><Run Text="{Binding Converter={x:Static Conversion:ColorToShortStringConverter.Default}, ConverterParameter=' ({0})', Mode=OneWay}"/></TextBlock>
+                <ItemsControl ItemsSource="{Data:RemoteBinding ColorToolTip, Converter={x:Static Conversion:StringCollectionConverter.Default}, RemoteSource=Options}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,5,0,0">
+                                <local:ShadeLabel Content="{Binding}" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{x:Static Conversion:ColorMultiConverter.Default}" Mode="OneWay">
+                                            <Binding Path="Data" Source="{StaticResource Color}"/>
+                                            <Binding/>
+                                            <Data:RemoteBinding Path="ColorToolTipPrecision" RemoteSource="Options"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
         </Grid>
     </DataTemplate>

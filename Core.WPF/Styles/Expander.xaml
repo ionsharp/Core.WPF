@@ -58,6 +58,8 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
                             IsChecked="{Data:TemplatedParent IsExpanded, Mode=TwoWay}"
                             Padding="{TemplateBinding Padding}"
                             Style="{StaticResource Expander.ToggleButton}"/>

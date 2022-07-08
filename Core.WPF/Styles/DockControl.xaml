@@ -10,7 +10,6 @@
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
     xmlns:Models="clr-namespace:Imagin.Core.Models"
-    xmlns:Numerics="clr-namespace:Imagin.Core.Numerics;assembly=Imagin.Core"
     xmlns:SharedAnalytics="clr-namespace:Imagin.Core.Analytics;assembly=Imagin.Core">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="{local:StyleKey Key=Color}"/>
@@ -77,7 +76,6 @@
                 BorderThickness="0"
                 GroupName="Category"
                 HeaderVisibility="Collapsed"
-                Margin="4"
                 Orientation="Horizontal"
                 Source="{local:SourceBinding Core:ToolAttribute}"/>
         </Border>
@@ -395,35 +393,6 @@
     </Style>
 
     <!-- ... Default panels -->
-
-    <DataTemplate x:Key="{x:Static Models:ColorsPanel.TemplateKey}">
-        <ListBox 
-            BorderThickness="0"
-            ItemsSource="{Binding SelectedGroup}"
-            SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
-            <ListBox.Resources>
-                <Data:Reference x:Key="ColorsPanel" Data="{Binding}"/>
-            </ListBox.Resources>
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type Numerics:ByteVector4}">
-                    <Button
-                        Background="{Binding Converter={x:Static Conversion:ByteVector4ToSolidColorBrushConverter.Default}}"
-                        BorderThickness="0"
-                        Command="{Binding Data.SelectColorCommand, Source={StaticResource ColorsPanel}}"
-                        CommandParameter="{Binding}"
-                        Height="32"
-                        Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
-                        Width="32"
-                        ToolTip="{Binding}"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Models:ExplorePanel.TemplateKey}">
         <local:Explorer 
@@ -933,7 +902,8 @@
             BorderThickness="0"
             GroupName="Category"
             HeaderVisibility="Visible"
-            Source="{Data:Options}"/>
+            Source="{Data:Options}"
+            View="Category"/>
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static Models:PropertiesPanel.TemplateKey}">
@@ -1026,9 +996,6 @@
         <Setter Property="DefaultTemplates">
             <Setter.Value>
                 <local:KeyTemplateCollection>
-                    <local:KeyTemplate DataType="{x:Type Models:ColorsPanel}">
-                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static Models:ColorsPanel.TemplateKey}}"/>
-                    </local:KeyTemplate>
                     <local:KeyTemplate DataType="{x:Type Models:ExplorePanel}">
                         <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static Models:ExplorePanel.TemplateKey}}"/>
                     </local:KeyTemplate>

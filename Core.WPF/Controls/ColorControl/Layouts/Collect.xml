@@ -13,20 +13,17 @@
           <Element xsi:type="DockLayoutDocumentGroup" Height="65*"/>
           <Element xsi:type="DockLayoutPanelGroup" Height="35*">
             <Panels>
-              <DockLayoutPanel IsSelected="true" Name="LogPanel"/>
-              <DockLayoutPanel Name="ColorAnalysisPanel"/>
+              <DockLayoutPanel IsSelected="true" Name="ColorHarmonyPanel"/>
             </Panels>
           </Element>
         </Elements>
       </Element>
       <Element xsi:type="DockLayoutPanelGroup" Width="4*">
         <Panels>
-          <DockLayoutPanel IsSelected="true" Name="ColorPanel"/>
-          <DockLayoutPanel Name="ColorsPanel"/>
-          <DockLayoutPanel Name="ColorProfilesPanel"/>
+          <DockLayoutPanel IsSelected="true" Name="ColorsPanel"/>
           <DockLayoutPanel Name="ColorIlluminantsPanel"/>
-          <DockLayoutPanel Name="ColorHarmonyPanel"/>
-          <DockLayoutPanel Name="ColorChromacityPanel"/>
+          <DockLayoutPanel Name="ColorMatrixPanel"/>
+          <DockLayoutPanel Name="ColorProfilesPanel"/>
         </Panels>
       </Element>
     </Elements>

@@ -149,8 +149,11 @@
     <Compile Include="Controls\ColorControl\Converters\Component4ToDouble.cs" />
     <Compile Include="Controls\ColorControl\Converters\ChromacityToKelvin.cs" />
     <Compile Include="Controls\ColorControl\Converters\KelvinToChromacity.cs" />
-    <Compile Include="Controls\ColorControl\Objects\NamableIlluminant.cs" />
-    <Compile Include="Controls\ColorControl\Objects\NamableProfile.cs" />
+    <Compile Include="Controls\ColorControl\Objects\ChromacityModel.cs" />
+    <Compile Include="Controls\ColorControl\Objects\AdaptationModel.cs" />
+    <Compile Include="Controls\ColorControl\Objects\WorkingProfileModel.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Matrix.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Difference.cs" />
     <Compile Include="Controls\ColorControl\Panels\Color.cs" />
     <Compile Include="Controls\ColorControl\Panels\Analysis.cs" />
     <Compile Include="Controls\ColorControl\Panels\Harmony.cs" />
@@ -162,7 +165,14 @@
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelector3D.cs" />
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelectorEllipse.cs" />
+    <Compile Include="Controls\Control\ViewControl.cs" />
+    <Compile Include="Controls\Control\GroupControl.cs" />
+    <Compile Include="Conversion\Multi\String\Color.cs" />
+    <Compile Include="Effects\AngleGradientEffect.cs" />
     <Compile Include="Media\BlendModes.cs" />
+    <Compile Include="Media\ICC.cs" />
+    <Compile Include="Models\Panels\GroupItem.cs" />
+    <Compile Include="Models\Panels\View.cs" />
     <Compile Include="Storage\StorageWindowModes.cs" />
     <Compile Include="Conversion\Multi\GradientMultiConverter.cs" />
     <Compile Include="Conversion\Single\DoubleMatrix.cs" />
@@ -270,7 +280,6 @@
     <Compile Include="Controls\MemberGrid\MemberValuePresenter.cs" />
     <Compile Include="Controls\MemberGrid\MemberView.cs" />
     <Compile Include="Reflection\MemberModel\List.Item.cs" />
-    <Compile Include="Reflection\MemberModel\List.cs" />
     <Compile Include="Reflection\MemberPathElement.cs" />
     <Compile Include="Reflection\SourceBinding.cs" />
     <Compile Include="Controls\TabControl\CacheTabControl.cs" />
@@ -398,7 +407,6 @@
     <Compile Include="Controls\DockControl\IDockPanelSource.cs" />
     <Compile Include="Controls\DockControl\Control\DockPanelBar.cs" />
     <Compile Include="Controls\DockControl\Layout\DockLayoutRoot.cs" />
-    <Compile Include="Controls\DockControl\Layout\ILayout.cs" />
     <Compile Include="Controls\ColorControl\Options\ColorControlOptions.cs" />
     <Compile Include="Controls\ColorControl\Options\IColorControlOptions.cs" />
     <Compile Include="Config\SingleInstanceException.cs" />
@@ -1330,6 +1338,7 @@
     <Resource Include="Images\Shortcut.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Effects\AngleGradientEffect.fx" />
     <Resource Include="Images\Thermometer.png" />
     <Resource Include="Images\XYZ.png" />
     <Resource Include="Images\LineGraph.png" />
@@ -1537,8 +1546,11 @@
     <Resource Include="Images\DockLeft.png" />
     <Resource Include="Images\DockRight.png" />
     <Resource Include="Images\DockTop.png" />
-    <Resource Include="Controls\ColorControl\Layouts\1.xml" />
-    <Resource Include="Controls\ColorControl\Layouts\2.xml" />
+    <Resource Include="Controls\ColorControl\Layouts\Basic.xml" />
+    <Resource Include="Controls\ColorControl\Layouts\Everything.xml" />
+    <Resource Include="Controls\ColorControl\Layouts\Explore.xml" />
+    <Resource Include="Controls\ColorControl\Layouts\Analyze.xml" />
+    <Resource Include="Controls\ColorControl\Layouts\Collect.xml" />
     <Content Include="Effects\ColorModelEffect.fx" />
     <Resource Include="Images\Hide.png" />
     <Resource Include="Images\Pin.png" />
@@ -1564,6 +1576,7 @@
     <None Include="..\..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <Resource Include="Effects\AngleGradientEffect.ps" />
     <None Include="LICENSE" />
     <Resource Include="Effects\ColorModelEffect.ps" />
     <None Include="packages.config" />

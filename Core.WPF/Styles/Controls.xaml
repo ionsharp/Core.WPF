@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
+    xmlns:Core="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
@@ -513,6 +514,263 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <Style x:Key="{x:Type local:GroupControl}" TargetType="{x:Type local:GroupControl}" BasedOn="{StaticResource {x:Type Control}}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Linq:XElement.Wheel" Value="True"/>
+        <Setter Property="Linq:XElement.WheelIncrement" Value="4"/>
+        <Setter Property="Linq:XElement.WheelMaximum" Value="512"/>
+        <Setter Property="Linq:XElement.WheelMinimum" Value="32"/>
+        <Setter Property="Linq:XElement.WheelValue" Value="{Data:Self ItemSize, Mode=TwoWay}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:GroupControl}">
+                    <Grid>
+                        <Grid.Resources>
+                            <Data:Reference x:Key="Panel" 
+                                Data="{Data:TemplatedParent Panel}"/>
+                            <Data:Reference x:Key="Source" 
+                                Data="{Data:TemplatedParent}"/>
+
+                            <ContextMenu x:Key="ItemContextMenu" DataContext="{Data:Self PlacementTarget.DataContext}">
+                                <MenuItem Header="{l:Loc Edit}"
+                                    FontWeight="Bold"
+                                    Command="{Binding Data.EditCommand, Source={StaticResource Panel}}"
+                                    CommandParameter="{Binding}"/>
+                                <Separator/>
+                                <MenuItem Header="{l:Loc Cut}"
+                                    Command="{Binding Data.CutCommand, Source={StaticResource Panel}}"
+                                    CommandParameter="{Binding}"/>
+                                <MenuItem Header="{l:Loc Copy}"
+                                    Command="{Binding Data.CopyCommand, Source={StaticResource Panel}}"
+                                    CommandParameter="{Binding}"/>
+                                <MenuItem Header="{l:Loc Paste}"
+                                    Command="{Binding Data.PasteCommand, Source={StaticResource Panel}}"
+                                    CommandParameter="{Binding}"/>
+                                <Separator/> 
+                                <MenuItem Header="{l:Loc Clone}"
+                                    Command="{Binding Data.CloneCommand, Source={StaticResource Panel}}"
+                                    CommandParameter="{Binding}"/>
+                                <MenuItem Header="{l:Loc Delete}"
+                                    Command="{Binding Data.DeleteCommand, Source={StaticResource Panel}}"
+                                    CommandParameter="{Binding}"/>
+                                <MenuItem Header="{l:Loc Reset}"
+                                    Command="{Binding Data.ResetCommand, Source={StaticResource Panel}}"
+                                    CommandParameter="{Binding}"/>
+                                <Separator/>
+                                <MenuItem Header="{l:Loc Export, Suffix=...}"
+                                    Command="{Binding Data.Source.ExportCommand, Source={StaticResource Source}}"
+                                    CommandParameter="{Binding}"/>
+                            </ContextMenu>
+                        </Grid.Resources>
+                        <ListBox ItemsSource="{TemplateBinding SelectedGroup}"
+                            BorderThickness="0"
+                            Margin="5"
+                            Padding="0"
+                            ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            SelectedIndex="{Data:TemplatedParent SelectedIndex, Mode=TwoWay}">
+                            <ListBox.Style>
+                                <Style TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Data.View, Source={StaticResource Source}}" Value="Grid">
+                                            <Setter Property="ItemContainerStyle">
+                                                <Setter.Value>
+                                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                                        <Setter Property="ContextMenu" Value="{StaticResource ItemContextMenu}"/>
+                                                        <Setter Property="Height" Value="{Binding Data.ItemSize, Source={StaticResource Source}}"/>
+                                                        <Setter Property="Width" Value="{Binding Data.ItemSize, Source={StaticResource Source}}"/>
+                                                    </Style>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="ItemsPanel">
+                                                <Setter.Value>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel MaxWidth="{Data:Ancestor ActualWidth, ListBox}" Orientation="Horizontal"/>
+                                                    </ItemsPanelTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="ItemTemplate">
+                                                <Setter.Value>
+                                                    <DataTemplate>
+                                                        <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,Auto,Auto">
+                                                            <ContentPresenter Content="{Binding}" 
+                                                                ContentTemplate="{Binding Data.ItemTemplate, Source={StaticResource Source}}"/>
+                                                            <TextBlock
+                                                                FontWeight="Bold"
+                                                                HorizontalAlignment="Center"
+                                                                Margin="0,5,0,0" 
+                                                                Text="{Binding Name}"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                ToolTip="{Data:Self Text}"
+                                                                VerticalAlignment="Center">
+                                                                <TextBlock.Visibility>
+                                                                    <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                        <Data:IsBinding Type="{x:Type Core:IName}"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Visibility>
+                                                            </TextBlock>
+                                                            <TextBlock Text="{Binding Description}"
+                                                                HorizontalAlignment="Center"
+                                                                Margin="0,5,0,0"
+                                                                Opacity="0.5"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                ToolTip="{Data:Self Text}"
+                                                                VerticalAlignment="Center">
+                                                                <TextBlock.Visibility>
+                                                                    <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                        <Data:IsBinding Type="{x:Type Core:IDescription}"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Visibility>
+                                                            </TextBlock>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Data.View, Source={StaticResource Source}}" Value="List">
+                                            <Setter Property="ItemContainerStyle">
+                                                <Setter.Value>
+                                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                                        <Setter Property="ContextMenu" Value="{StaticResource ItemContextMenu}"/>
+                                                        <Setter Property="Height" Value="{Binding Data.ItemSize, Source={StaticResource Source}}"/>
+                                                    </Style>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="ItemsPanel">
+                                                <Setter.Value>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="ItemTemplate">
+                                                <Setter.Value>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition x:Name="Column1" Width="Auto"/>
+                                                                <ColumnDefinition x:Name="Column2" Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <ContentPresenter Grid.Column="0" 
+                                                                Content="{Binding}" 
+                                                                ContentTemplate="{Binding Data.ItemTemplate, Source={StaticResource Source}}"/>
+                                                            <StackPanel Grid.Column="1"
+                                                                HorizontalAlignment="Stretch"
+                                                                Margin="5,0,0,0"
+                                                                VerticalAlignment="Center">
+                                                                <StackPanel.Visibility>
+                                                                    <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                        <Data:IsBinding Type="{x:Type Core:IDescription}"/>
+                                                                        <Data:IsBinding Type="{x:Type Core:IName}"/>
+                                                                    </MultiBinding>
+                                                                </StackPanel.Visibility>
+                                                                <TextBlock
+                                                                    FontWeight="Bold"
+                                                                    HorizontalAlignment="Left" 
+                                                                    Text="{Binding Name}"
+                                                                    TextTrimming="CharacterEllipsis"
+                                                                    ToolTip="{Data:Self Text}">
+                                                                    <TextBlock.Visibility>
+                                                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                            <Data:IsBinding Type="{x:Type Core:IName}"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Visibility>
+                                                                </TextBlock>
+                                                                <TextBlock Text="{Binding Description}"
+                                                                    HorizontalAlignment="Left"
+                                                                    Margin="0,5,0,0"
+                                                                    Opacity="0.5"
+                                                                    TextTrimming="CharacterEllipsis"
+                                                                    ToolTip="{Data:Self Text}">
+                                                                    <TextBlock.Visibility>
+                                                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                            <Data:IsBinding Type="{x:Type Core:IDescription}"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Visibility>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                        <DataTemplate.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Data:IsBinding Type={x:Type Core:IDescription}}" Value="False"/>
+                                                                    <Condition Binding="{Data:IsBinding Type={x:Type Core:IName}}" Value="False"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="Column1" Property="Width" Value="*"/>
+                                                                <Setter TargetName="Column2" Property="Width" Value="Auto"/>
+                                                            </MultiDataTrigger>
+                                                        </DataTemplate.Triggers>
+                                                    </DataTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.Style>
+                        </ListBox>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="View" Value="Single">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type local:GroupControl}">
+                            <Grid>
+                                <Grid.Resources>
+                                    <Data:Reference x:Key="GroupControl" Data="{Data:TemplatedParent}"/>
+                                </Grid.Resources>
+                                <local:CarouselControl
+                                    Columns="1"
+                                    ItemsSource="{TemplateBinding SelectedGroup}"
+                                    Margin="10,5"
+                                    SelectedIndex="{Data:TemplatedParent SelectedIndex, Mode=TwoWay}"
+                                    SortDirection="Ascending"
+                                    SortName="Name">
+                                    <local:CarouselControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,Auto,Auto">
+                                                <ContentPresenter Content="{Binding}" 
+                                                    ContentTemplate="{Binding Data.ItemTemplate, Source={StaticResource GroupControl}}"/>
+                                                <local:TitleLabel Step="6"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="0,5,0,0"
+                                                    VerticalAlignment="Center">
+                                                    <local:TitleLabel.Visibility>
+                                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                            <Data:IsBinding Type="{x:Type Core:IName}"/>
+                                                        </MultiBinding>
+                                                    </local:TitleLabel.Visibility>
+                                                    <TextBlock Text="{Binding Name}"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        ToolTip="{Data:Self Text}"/>
+                                                </local:TitleLabel>
+                                                <TextBlock Text="{Binding Description}"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="0,5,0,0"
+                                                    Opacity="0.5"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    ToolTip="{Data:Self Text}"
+                                                    VerticalAlignment="Center">
+                                                    <TextBlock.Visibility>
+                                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                            <Data:IsBinding Type="{x:Type Core:IDescription}"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Visibility>
+                                                </TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </local:CarouselControl.ItemTemplate>
+                                </local:CarouselControl>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
     <Style x:Key="{x:Type local:MatrixControl}" TargetType="{x:Type local:MatrixControl}" BasedOn="{StaticResource {x:Type Control}}">
         <Setter Property="Background">
@@ -853,6 +1111,165 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Width" Value="{Data:Self Zoom}"/>
+    </Style>
+
+    <Style x:Key="{x:Type local:ViewControl}" TargetType="{x:Type local:ViewControl}" BasedOn="{StaticResource {x:Type Control}}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Linq:XElement.Wheel" Value="True"/>
+        <Setter Property="Linq:XElement.WheelIncrement" Value="4"/>
+        <Setter Property="Linq:XElement.WheelMaximum" Value="512"/>
+        <Setter Property="Linq:XElement.WheelMinimum" Value="32"/>
+        <Setter Property="Linq:XElement.WheelValue" Value="{Data:Self ItemSize, Mode=TwoWay}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:ViewControl}">
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">
+                        <ScrollViewer.Resources>
+                            <Data:Reference x:Key="ViewControl" Data="{Data:TemplatedParent}"/>
+                        </ScrollViewer.Resources>
+                        <ItemsControl ItemsSource="{TemplateBinding Source}" Margin="5">
+                            <ItemsControl.Style>
+                                <Style TargetType="ItemsControl">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Data.View, Source={StaticResource ViewControl}}" Value="Grid">
+                                            <Setter Property="ItemContainerStyle">
+                                                <Setter.Value>
+                                                    <Style TargetType="FrameworkElement">
+                                                        <Setter Property="Height" Value="{Binding Data.ItemSize, Source={StaticResource ViewControl}}"/>
+                                                        <Setter Property="Margin" Value="0,0,2,2"/>
+                                                        <Setter Property="Width" Value="{Binding Data.ItemSize, Source={StaticResource ViewControl}}"/>
+                                                    </Style>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="ItemsPanel">
+                                                <Setter.Value>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel MaxWidth="{Data:Ancestor ActualWidth, ItemsControl}" Orientation="Horizontal"/>
+                                                    </ItemsPanelTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="ItemTemplate">
+                                                <Setter.Value>
+                                                    <DataTemplate>
+                                                        <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="*,Auto,Auto">
+                                                            <ContentPresenter Content="{Binding}" 
+                                                                ContentTemplate="{Binding Data.ItemTemplate, Source={StaticResource ViewControl}}"/>
+                                                            <TextBlock
+                                                                FontWeight="Bold"
+                                                                HorizontalAlignment="Center"
+                                                                Margin="0,5,0,0" 
+                                                                Text="{Binding Name}"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                ToolTip="{Data:Self Text}"
+                                                                VerticalAlignment="Center">
+                                                                <TextBlock.Visibility>
+                                                                    <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                        <Data:IsBinding Type="{x:Type Core:IName}"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Visibility>
+                                                            </TextBlock>
+                                                            <TextBlock Text="{Binding Description}"
+                                                                HorizontalAlignment="Center"
+                                                                Margin="0,5,0,0"
+                                                                Opacity="0.5"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                ToolTip="{Data:Self Text}"
+                                                                VerticalAlignment="Center">
+                                                                <TextBlock.Visibility>
+                                                                    <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                        <Data:IsBinding Type="{x:Type Core:IDescription}"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Visibility>
+                                                            </TextBlock>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Data.View, Source={StaticResource ViewControl}}" Value="List">
+                                            <Setter Property="ItemContainerStyle">
+                                                <Setter.Value>
+                                                    <Style TargetType="FrameworkElement">
+                                                        <Setter Property="Height" Value="{Binding Data.ItemSize, Source={StaticResource ViewControl}}"/>
+                                                        <Setter Property="Margin" Value="0,0,2,2"/>
+                                                    </Style>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="ItemsPanel">
+                                                <Setter.Value>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="ItemTemplate">
+                                                <Setter.Value>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition x:Name="Column1" Width="Auto"/>
+                                                                <ColumnDefinition x:Name="Column2" Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <ContentPresenter Grid.Column="0" Content="{Binding}" 
+                                                                ContentTemplate="{Binding Data.ItemTemplate, Source={StaticResource ViewControl}}"/>
+                                                            <StackPanel Grid.Column="1"
+                                                                HorizontalAlignment="Stretch"
+                                                                Margin="5,0,0,0"
+                                                                VerticalAlignment="Center">
+                                                                <StackPanel.Visibility>
+                                                                    <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                        <Data:IsBinding Type="{x:Type Core:IDescription}"/>
+                                                                        <Data:IsBinding Type="{x:Type Core:IName}"/>
+                                                                    </MultiBinding>
+                                                                </StackPanel.Visibility>
+                                                                <TextBlock
+                                                                    FontWeight="Bold"
+                                                                    HorizontalAlignment="Left" 
+                                                                    Text="{Binding Name}"
+                                                                    TextTrimming="CharacterEllipsis"
+                                                                    ToolTip="{Data:Self Text}">
+                                                                    <TextBlock.Visibility>
+                                                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                            <Data:IsBinding Type="{x:Type Core:IName}"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Visibility>
+                                                                </TextBlock>
+                                                                <TextBlock Text="{Binding Description}"
+                                                                    HorizontalAlignment="Left"
+                                                                    Margin="0,5,0,0"
+                                                                    Opacity="0.5"
+                                                                    TextTrimming="CharacterEllipsis"
+                                                                    ToolTip="{Data:Self Text}">
+                                                                    <TextBlock.Visibility>
+                                                                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}">
+                                                                            <Data:IsBinding Type="{x:Type Core:IDescription}"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Visibility>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                        <DataTemplate.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Data:IsBinding Type={x:Type Core:IDescription}}" Value="False"/>
+                                                                    <Condition Binding="{Data:IsBinding Type={x:Type Core:IName}}" Value="False"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="Column1" Property="Width" Value="*"/>
+                                                                <Setter TargetName="Column2" Property="Width" Value="Auto"/>
+                                                            </MultiDataTrigger>
+                                                        </DataTemplate.Triggers>
+                                                    </DataTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.Style>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ... -->

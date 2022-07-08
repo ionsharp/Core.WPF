@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +30,86 @@ namespace Imagin.Core.Controls;
 
 public partial class MemberGrid : DataGrid
 {
+    #region (class) ListViewModel<T>
+
+    public class ListViewModel<T>
+    {
+        public ObservableCollection<T> Source { get; private set; } = new();
+
+        public ListCollectionView View { get; private set; }
+
+        public ListViewModel() : this(null) { }
+
+        public ListViewModel(IComparer input) : base()
+        {
+            View = new(Source) { CustomSort = input };
+        }
+    }
+
+    #endregion
+
+    #region (class) ListViewModel
+
+    public class ListViewModel : ListViewModel<MemberModel>
+    {
+        public ListViewModel(IComparer input) : base(input) { }
+    }
+
+    #endregion
+
+    #region (class) CategoryViewModel
+
+    public class CategoryViewModel
+    {
+        public ListViewModel<string> Categories { get; private set; } = new();
+
+        public ListViewModel Members { get; private set; }
+
+        public CategoryViewModel(IComparer input) : base() => Members = new(input);
+
+        public void Update(IList<MemberModel> input, int index)
+        {
+            UpdateCategories(input);
+            UpdateMembers(input, index);
+        }
+
+        public void UpdateCategories(IList<MemberModel> input)
+        {
+            Categories.Source.Clear();
+
+            var result = new List<string>();
+            foreach (var i in input)
+            {
+                if (!result.Contains(i.Category))
+                    result.Add(i.Category);
+            }
+            result.Sort();
+
+            result.ForEach(i => Categories.Source.Add(i));
+        }
+
+        public void UpdateMembers(IList<MemberModel> input, int index)
+        {
+            Members.Source.Clear();
+            if (index >= 0 && index < Categories.Source.Count)
+            {
+                foreach (var i in input)
+                {
+                    if (i.Category == Categories.Source[index])
+                        Members.Source.Add(i);
+                }
+            }
+        }
+    }
+
+    #endregion
+
     #region Keys
+
+    public static readonly ResourceKey MemberOptionsTemplate
+        = new();
+
+    //...
 
     public static readonly ResourceKey<Border> HorizontalTemplate
         = new();
@@ -126,8 +206,6 @@ public partial class MemberGrid : DataGrid
 
     //...
 
-    public static readonly ResourceKey ListTemplateKey
-        = new();
 
     public static readonly ResourceKey ListBulletTemplateKey
         = new();
@@ -140,12 +218,17 @@ public partial class MemberGrid : DataGrid
 
     //...
 
+    public static readonly ResourceKey SubObjectTemplate
+        = new();
+
+    //...
+
     public static readonly ResourceKey ObjectButtonTemplateKey
         = new();
 
     public static readonly ResourceKey ObjectTemplateKey
         = new();
-        
+    
     //...
 
     public static readonly ResourceKey RangeTemplateKey
@@ -219,6 +302,7 @@ public partial class MemberGrid : DataGrid
         typeof(FontWeight),
         typeof(Gradient),
         typeof(GradientStepCollection),
+        typeof(GroupItemModel),
         typeof(Unit),
         typeof(Guid),
         typeof(ICommand),
@@ -472,11 +556,11 @@ public partial class MemberGrid : DataGrid
 
     #region (ReadOnly) FeaturedAbove
 
-    static readonly DependencyPropertyKey FeaturedAboveKey = DependencyProperty.RegisterReadOnly(nameof(FeaturedAbove), typeof(ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
+    static readonly DependencyPropertyKey FeaturedAboveKey = DependencyProperty.RegisterReadOnly(nameof(FeaturedAbove), typeof(Imagin.Core.Collections.Generic.ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
     public static readonly DependencyProperty FeaturedAboveProperty = FeaturedAboveKey.DependencyProperty;
-    public ObservableCollection<MemberModel> FeaturedAbove
+    public Imagin.Core.Collections.Generic.ObservableCollection<MemberModel> FeaturedAbove
     {
-        get => (ObservableCollection<MemberModel>)GetValue(FeaturedAboveProperty);
+        get => (Imagin.Core.Collections.Generic.ObservableCollection<MemberModel>)GetValue(FeaturedAboveProperty);
         private set => SetValue(FeaturedAboveKey, value);
     }
 
@@ -484,11 +568,11 @@ public partial class MemberGrid : DataGrid
 
     #region (ReadOnly) FeaturedBelow
 
-    static readonly DependencyPropertyKey FeaturedBelowKey = DependencyProperty.RegisterReadOnly(nameof(FeaturedBelow), typeof(ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
+    static readonly DependencyPropertyKey FeaturedBelowKey = DependencyProperty.RegisterReadOnly(nameof(FeaturedBelow), typeof(Imagin.Core.Collections.Generic.ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
     public static readonly DependencyProperty FeaturedBelowProperty = FeaturedBelowKey.DependencyProperty;
-    public ObservableCollection<MemberModel> FeaturedBelow
+    public Imagin.Core.Collections.Generic.ObservableCollection<MemberModel> FeaturedBelow
     {
-        get => (ObservableCollection<MemberModel>)GetValue(FeaturedBelowProperty);
+        get => (Imagin.Core.Collections.Generic.ObservableCollection<MemberModel>)GetValue(FeaturedBelowProperty);
         private set => SetValue(FeaturedBelowKey, value);
     }
 
@@ -781,6 +865,30 @@ public partial class MemberGrid : DataGrid
 
     #endregion
 
+    #region SelectedCategory
+
+    public static readonly DependencyProperty SelectedCategoryProperty = DependencyProperty.Register(nameof(SelectedCategory), typeof(int), typeof(MemberGrid), new FrameworkPropertyMetadata(-1, OnSelectedCategoryChanged));
+    public int SelectedCategory
+    {
+        get => (int)GetValue(SelectedCategoryProperty);
+        set => SetValue(SelectedCategoryProperty, value);
+    }
+    static void OnSelectedCategoryChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<MemberGrid>().OnSelectedCategoryChanged(e);
+
+    #endregion
+
+    #region SelectedMember
+
+    public static readonly DependencyProperty SelectedMemberProperty = DependencyProperty.Register(nameof(SelectedMember), typeof(MemberModel), typeof(MemberGrid), new FrameworkPropertyMetadata(null, OnSelectedMemberChanged));
+    public MemberModel SelectedMember
+    {
+        get => (MemberModel)GetValue(SelectedMemberProperty);
+        set => SetValue(SelectedMemberProperty, value);
+    }
+    static void OnSelectedMemberChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<MemberGrid>().OnSelectedMemberChanged(new Value<MemberModel>(e));
+
+    #endregion
+
     #region SortDirection
 
     public static readonly DependencyProperty SortDirectionProperty = DependencyProperty.Register(nameof(SortDirection), typeof(ListSortDirection), typeof(MemberGrid), new FrameworkPropertyMetadata(ListSortDirection.Ascending, OnSortDirectionChanged));
@@ -819,11 +927,11 @@ public partial class MemberGrid : DataGrid
 
     #region (ReadOnly) Tools
 
-    static readonly DependencyPropertyKey ToolsKey = DependencyProperty.RegisterReadOnly(nameof(Tools), typeof(ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
+    static readonly DependencyPropertyKey ToolsKey = DependencyProperty.RegisterReadOnly(nameof(Tools), typeof(ListViewModel), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
     public static readonly DependencyProperty ToolsProperty = ToolsKey.DependencyProperty;
-    public ObservableCollection<MemberModel> Tools
+    public ListViewModel Tools
     {
-        get => (ObservableCollection<MemberModel>)GetValue(ToolsProperty);
+        get => (ListViewModel)GetValue(ToolsProperty);
         private set => SetValue(ToolsKey, value);
     }
 
@@ -898,73 +1006,37 @@ public partial class MemberGrid : DataGrid
 
     #region (ReadOnly) ViewAll
 
-    static readonly DependencyPropertyKey ViewAllKey = DependencyProperty.RegisterReadOnly(nameof(ViewAll), typeof(ListCollectionView), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
+    static readonly DependencyPropertyKey ViewAllKey = DependencyProperty.RegisterReadOnly(nameof(ViewAll), typeof(ListViewModel), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
     public static readonly DependencyProperty ViewAllProperty = ViewAllKey.DependencyProperty;
-    public ListCollectionView ViewAll
+    public ListViewModel ViewAll
     {
-        get => (ListCollectionView)GetValue(ViewAllProperty);
+        get => (ListViewModel)GetValue(ViewAllProperty);
         private set => SetValue(ViewAllKey, value);
     }
 
     #endregion
 
-    #region (ReadOnly) ViewAllMembers
+    #region (ReadOnly) ViewCategory
 
-    static readonly DependencyPropertyKey ViewAllMembersKey = DependencyProperty.RegisterReadOnly(nameof(ViewAllMembers), typeof(ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
-    public static readonly DependencyProperty ViewAllMembersProperty = ViewAllMembersKey.DependencyProperty;
-    public ObservableCollection<MemberModel> ViewAllMembers
+    static readonly DependencyPropertyKey ViewCategoryKey = DependencyProperty.RegisterReadOnly(nameof(ViewCategory), typeof(CategoryViewModel), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
+    public static readonly DependencyProperty ViewCategoryProperty = ViewCategoryKey.DependencyProperty;
+    public CategoryViewModel ViewCategory
     {
-        get => (ObservableCollection<MemberModel>)GetValue(ViewAllMembersProperty);
-        private set => SetValue(ViewAllMembersKey, value);
+        get => (CategoryViewModel)GetValue(ViewCategoryProperty);
+        private set => SetValue(ViewCategoryKey, value);
     }
 
     #endregion
 
     #region (ReadOnly) ViewSingle
 
-    static readonly DependencyPropertyKey ViewSingleKey = DependencyProperty.RegisterReadOnly(nameof(ViewSingle), typeof(ListCollectionView), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
+    static readonly DependencyPropertyKey ViewSingleKey = DependencyProperty.RegisterReadOnly(nameof(ViewSingle), typeof(ListViewModel), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
     public static readonly DependencyProperty ViewSingleProperty = ViewSingleKey.DependencyProperty;
-    public ListCollectionView ViewSingle
+    public ListViewModel ViewSingle
     {
-        get => (ListCollectionView)GetValue(ViewSingleProperty);
+        get => (ListViewModel)GetValue(ViewSingleProperty);
         private set => SetValue(ViewSingleKey, value);
     }
-
-    #endregion
-
-    #region (ReadOnly) ViewSingleMember
-
-    static readonly DependencyPropertyKey ViewSingleMemberKey = DependencyProperty.RegisterReadOnly(nameof(ViewSingleMember), typeof(ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
-    public static readonly DependencyProperty ViewSingleMemberProperty = ViewSingleMemberKey.DependencyProperty;
-    public ObservableCollection<MemberModel> ViewSingleMember
-    {
-        get => (ObservableCollection<MemberModel>)GetValue(ViewSingleMemberProperty);
-        private set => SetValue(ViewSingleMemberKey, value);
-    }
-
-    #endregion
-
-    #region (ReadOnly) ViewTools
-
-    static readonly DependencyPropertyKey ViewToolsKey = DependencyProperty.RegisterReadOnly(nameof(ViewTools), typeof(ListCollectionView), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
-    public static readonly DependencyProperty ViewToolsProperty = ViewToolsKey.DependencyProperty;
-    public ListCollectionView ViewTools
-    {
-        get => (ListCollectionView)GetValue(ViewToolsProperty);
-        private set => SetValue(ViewToolsKey, value);
-    }
-
-    #endregion
-
-    #region ViewMember
-
-    public static readonly DependencyProperty ViewMemberProperty = DependencyProperty.Register(nameof(ViewMember), typeof(MemberModel), typeof(MemberGrid), new FrameworkPropertyMetadata(null, OnViewMemberChanged));
-    public MemberModel ViewMember
-    {
-        get => (MemberModel)GetValue(ViewMemberProperty);
-        set => SetValue(ViewMemberProperty, value);
-    }
-    static void OnViewMemberChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<MemberGrid>().OnViewMemberChanged(new Value<MemberModel>(e));
 
     #endregion
 
@@ -989,24 +1061,19 @@ public partial class MemberGrid : DataGrid
         FeaturedBelow
             = new();
 
-        Tools
-            = new();
-
-        ViewAllMembers
-            = new();
-        ViewSingleMember
-            = new();
-
         //...
 
         ViewAll
-            = new (ViewAllMembers) { CustomSort = SortComparer };
+            = new(SortComparer);
+        ViewCategory
+            = new(SortComparer);
         ViewSingle
-            = new(ViewSingleMember) { CustomSort = SortComparer };
-        ViewTools
-            = new(Tools) { CustomSort = SortComparer };
+            = new(SortComparer);
 
-        OnViewChanged(View);
+        Tools
+            = new(SortComparer);
+
+        OnViewChanged(new(View));
 
         //...
 
@@ -1050,20 +1117,13 @@ public partial class MemberGrid : DataGrid
 
     void Clear()
     {
-        FeaturedAbove.Clear();
-        FeaturedBelow.Clear();
-        Tools.Clear();
+        FeaturedAbove.Clear(); FeaturedBelow.Clear();
 
-        ViewAllMembers.Clear();
-        ViewSingleMember.Clear();
-    }
+        ViewAll.Source.Clear();
+        ViewCategory.Categories.Source.Clear(); ViewCategory.Members.Source.Clear();
+        ViewSingle.Source.Clear();
 
-    void Clear(Predicate<MemberModel> input)
-    {
-        ViewAllMembers
-            .RemoveWhere(i => input((MemberModel)i));
-        ViewSingleMember
-            .RemoveWhere(i => input((MemberModel)i));
+        Tools.Source.Clear();
     }
 
     //...
@@ -1098,6 +1158,7 @@ public partial class MemberGrid : DataGrid
                 {
                     Clear();
                     await Members.Load(newSource, sourceFilter, OnMemberAdded);
+                    OnLoaded();
                 }
                 else Members.Refresh(newSource);
             }
@@ -1128,16 +1189,18 @@ public partial class MemberGrid : DataGrid
                     i.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = MemberGroupConverterSelector.Default.Select(GroupName) });
             }
         });
-        group(ViewAll);
-        group(ViewSingle);
-        group(ViewTools);
+        group(ViewAll.View);
+        group(ViewSingle.View);
+        group(Tools.View);
     }
 
     void Sort()
     {
-        ViewAll?.Refresh();
-        ViewSingle?.Refresh();
-        ViewTools?.Refresh();
+        ViewAll?.View.Refresh();
+        ViewCategory?.Categories.View.Refresh(); ViewCategory?.Members.View.Refresh();
+        ViewSingle?.View.Refresh();
+
+        Tools.View?.Refresh();
     }
 
     //...
@@ -1153,19 +1216,14 @@ public partial class MemberGrid : DataGrid
         Route.CollectionChanged += OnRouteChanged;
     }
 
-    void OnMemberAdded(MemberModel i, SourceFilter filter)
+    void OnMemberAdded(MemberModel i)
     {
-        if (filter != null)
-        {
-            //if (!i.Attributes.ContainsKey(filter.Type))
-                //return;
-        }
         if (i.IsFeatured)
         {
-            if (i.Attributes.GetFirst<FeatureAttribute>()?.Where == AboveBelow.Above)
+            if (i.Attributes.GetFirst<FeatureAttribute>()?.Where == AboveBelow.Above || i.Attributes.GetFirst<AboveAttribute>() != null)
                 FeaturedAbove.Add(i);
 
-            if (i.Attributes.GetFirst<FeatureAttribute>()?.Where == AboveBelow.Below)
+            if (i.Attributes.GetFirst<FeatureAttribute>()?.Where == AboveBelow.Below || i.Attributes.GetFirst<BelowAttribute>() != null)
                 FeaturedBelow.Add(i);
 
             if (!FeaturedRepeats)
@@ -1175,12 +1233,12 @@ public partial class MemberGrid : DataGrid
         {
             if (Orientation == Orientation.Vertical)
             {
-                Tools.Add(i);
+                Tools.Source.Add(i);
                 return;
             }
         }
 
-        ViewAllMembers.Add(i);
+        ViewAll.Source.Add(i);
     }
 
     async void OnUnloaded()
@@ -1192,10 +1250,7 @@ public partial class MemberGrid : DataGrid
         Route.CollectionChanged -= OnRouteChanged;
     }
 
-    void OnRouteChanged(object sender, NotifyCollectionChangedEventArgs e)
-    {
-        CanNavigateBack = BackCommand.CanExecute(null);
-    }
+    void OnRouteChanged(object sender, NotifyCollectionChangedEventArgs e) => CanNavigateBack = BackCommand.CanExecute(null);
 
     //...
 
@@ -1254,7 +1309,7 @@ public partial class MemberGrid : DataGrid
     protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
     {
         base.OnItemsSourceChanged(oldValue, newValue);
-        if (newValue != ViewAll && newValue != ViewSingle)
+        if (newValue != ViewAll.View && newValue != ViewCategory.Members.View && newValue != ViewSingle.View)
             throw new ExternalChangeException<MemberGrid>(nameof(ItemsSource));
     }
 
@@ -1295,25 +1350,47 @@ public partial class MemberGrid : DataGrid
         {
             if (input.New == Orientation.Horizontal)
             {
-                foreach (var i in Tools)
-                    ViewAllMembers.Add(i);
+                foreach (var i in Tools.Source)
+                    ViewAll.Source.Add(i);
 
-                Tools.Clear();
+                Tools.Source.Clear();
             }
             else
             {
-                foreach (var i in ViewAllMembers)
+                foreach (var i in ViewAll.Source)
                 {
                     if (i.IsTool)
-                        Tools.Add(i);
+                        Tools.Source.Add(i);
                 }
 
-                for (var i = ViewAllMembers.Count - 1; i >= 0; i--)
+                for (var i = ViewAll.Source.Count - 1; i >= 0; i--)
                 {
-                    if (ViewAllMembers[i].IsTool)
-                        ViewAllMembers.RemoveAt(i);
+                    if (ViewAll.Source[i].IsTool)
+                        ViewAll.Source.RemoveAt(i);
                 }
             }
+        }
+    }
+
+    protected virtual void OnSelectedCategoryChanged(Value<int> input)
+    {
+        switch (View)
+        {
+            case MemberView.Category:
+                ViewCategory.UpdateMembers(ViewAll.Source, input.New);
+                break;
+        }
+    }
+
+    protected virtual void OnSelectedMemberChanged(Value<MemberModel> input)
+    {
+        if (View == MemberView.Single)
+        {
+            if (input.Old != null)
+                ViewSingle.Source.Remove(input.Old);
+
+            if (input.New != null)
+                ViewSingle.Source.Add(input.New);
         }
     }
 
@@ -1323,30 +1400,34 @@ public partial class MemberGrid : DataGrid
 
     protected virtual void OnSourceChanged(Value input) => _ = loadTask.StartAsync(input);
 
-    void OnViewChanged(MemberView input)
+    protected virtual void OnSourceLoaded()
     {
-        SetCurrentValue(ViewMemberProperty, null);
-        switch (input)
+        if (View == MemberView.Category)
         {
-            case MemberView.All:
-                SetCurrentValue(ItemsSourceProperty, ViewAll);
-                break;
-            case MemberView.Single:
-                SetCurrentValue(ItemsSourceProperty, ViewSingle);
-                break;
+            ViewCategory.UpdateCategories(ViewAll.Source);
+            SetCurrentValue(SelectedCategoryProperty, 0);
         }
     }
-    protected virtual void OnViewChanged(Value<MemberView> input) => OnViewChanged(input.New);
 
-    protected virtual void OnViewMemberChanged(Value<MemberModel> input)
+    protected virtual void OnViewChanged(Value<MemberView> input)
     {
-        if (View == MemberView.Single)
+        SetCurrentValue(SelectedMemberProperty, null);
+        switch (input.New)
         {
-            if (input.Old != null)
-                ViewSingleMember.Remove(input.Old);
+            case MemberView.All:
+                SetCurrentValue(ItemsSourceProperty, ViewAll.View);
+                break;
 
-            if (input.New != null)
-                ViewSingleMember.Add(input.New);
+            case MemberView.Category:
+                ViewCategory.UpdateCategories(ViewAll.Source);
+                SetCurrentValue(SelectedCategoryProperty, 0);
+
+                SetCurrentValue(ItemsSourceProperty, ViewCategory.Members.View);
+                break;
+
+            case MemberView.Single:
+                SetCurrentValue(ItemsSourceProperty, ViewSingle.View);
+                break;
         }
     }
 
@@ -1355,6 +1436,8 @@ public partial class MemberGrid : DataGrid
     #region Public
 
     public void Refresh() => Members.Refresh();
+
+    #endregion
 
     #endregion
 
@@ -1371,7 +1454,7 @@ public partial class MemberGrid : DataGrid
                     if (i.Second is Type n)
                         j.Value = n.Create<object>();
 
-                    if (i.Second is object m)
+                    else if (i.Second is object m)
                         j.Value = m;
                 }, 
                 e => Log.Write<MemberGrid>(e));
@@ -1381,12 +1464,12 @@ public partial class MemberGrid : DataGrid
 
     ICommand memberClearCommand;
     public ICommand MemberClearCommand => memberClearCommand
-        ??= new RelayCommand<MemberModel>(i => i.Value = null, i => i is not null && !i.IsReadOnly && (i.Type?.IsValueType == false || i.Type?.IsNullable() == true) && i.Value is not null);
+        ??= new RelayCommand<MemberModel>(i => i.Value = null, i => i is not null && !i.IsReadOnly && (i.Type?.IsValueType == false || i.Type?.IsNullable() == true) && i.Value is not null && i.IsNullable);
 
     ICommand memberDefaultCommand;
     public ICommand MemberDefaultCommand => memberDefaultCommand
     ??= new RelayCommand<MemberModel>
-        (i => Try.Invoke(() => i.Value = i.Type.GetDefaultValue(), e => Log.Write<MemberGrid>(e)), i => i?.Type?.IsAbstract == false && !i.IsReadOnly);
+        (i => Try.Invoke(() => i.Value = i.DefaultValue ?? i.Type.GetDefaultValue(), e => Log.Write<MemberGrid>(e)), i => i?.Type?.IsAbstract == false && !i.IsReadOnly && (i.Type.IsValueType || i.IsNullable || i.DefaultValue != null));
 
     ICommand memberResetCommand;
     public ICommand MemberResetCommand => memberResetCommand
@@ -1398,6 +1481,14 @@ public partial class MemberGrid : DataGrid
             else i.Reset();
         }, 
         i => i is not null && i.Value is IReset);
+
+    //...
+
+    ICommand copyCommand;
+    public ICommand CopyCommand => copyCommand ??= new RelayCommand<MemberModel>(i => XClipboard.Copy(i.Value), i => i?.Value != null);
+
+    ICommand pasteCommand;
+    public ICommand PasteCommand => pasteCommand ??= new RelayCommand<MemberModel>(i => i.Value = XClipboard.Paste(i.Value.GetType()), i => XClipboard.Contains(i?.Value?.GetType()));
 
     //...
 
@@ -1440,8 +1531,6 @@ public partial class MemberGrid : DataGrid
 
     ICommand viewCommand;
     public ICommand ViewCommand => viewCommand ??= new RelayCommand<MemberView>(i => SetCurrentValue(ViewProperty, i));
-
-    #endregion
 
     #endregion
 }

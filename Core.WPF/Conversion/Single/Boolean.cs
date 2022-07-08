@@ -5,6 +5,12 @@ using System;
 using System.Collections;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Imagin.Core.Conversion
 {
@@ -74,8 +80,9 @@ namespace Imagin.Core.Conversion
 
         protected override ConverterValue<bool> ConvertTo(ConverterData<object> input)
         {
-            if (input.ActualParameter is Type i)
-                return input.Value.GetType().IsSubclassOf(i) || input.Value.GetType().Equals(i);
+            var a = input.Value.GetType();
+            if (input.ActualParameter is Type b)
+                return a.IsSubclassOf(b) || a.Equals(b) || (b.GetTypeInfo().IsInterface && a.Implements(b));
 
             return false;
         }

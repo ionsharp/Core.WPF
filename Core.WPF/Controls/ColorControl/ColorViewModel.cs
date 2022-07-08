@@ -461,7 +461,7 @@ public class ColorViewModel : ViewModel
                 {
                     if (ProfileIndex >= 0 && ProfileIndex < selectedProfileGroup.Count)
                     {
-                        if (selectedProfileGroup[ProfileIndex] is NamableProfile selectedProfile)
+                        if (selectedProfileGroup[ProfileIndex] is WorkingProfileModel selectedProfile)
                             Profile = selectedProfile.Value;
                     }
                 }

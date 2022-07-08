@@ -4,7 +4,6 @@ using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -155,7 +154,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     //... (internal)
 
-    internal void LoadSync(SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
+    internal void LoadSync(SourceFilter filter, Action<MemberModel> onAdded)
     {
         var isExplicit
             = Source.Type.GetAttribute<ExplicitAttribute>() != null;
@@ -252,11 +251,11 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
                 : null;
 
             Add(result);
-            Dispatch.Invoke(() => onAdded?.Invoke(result, filter));
+            Dispatch.Invoke(() => onAdded?.Invoke(result));
         }
     }
 
-    internal async Task Load(MemberSource source, SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
+    internal async Task Load(MemberSource source, SourceFilter filter, Action<MemberModel> onAdded)
     {
         Loading = true;
 
@@ -275,7 +274,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
         Loading = false;
     }
 
-    internal async Task Load(SourceFilter filter, Action<MemberModel, SourceFilter> onAdded)
+    internal async Task Load(SourceFilter filter, Action<MemberModel> onAdded)
         => await Load(Source, filter, onAdded);
 
     internal void Load(object input)

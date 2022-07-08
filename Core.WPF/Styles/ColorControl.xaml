@@ -5,10 +5,12 @@
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
+    xmlns:Effects="clr-namespace:Imagin.Core.Effects"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup"
     xmlns:Media="clr-namespace:Imagin.Core.Media"
-    xmlns:Models="clr-namespace:Imagin.Core.Models">
+    xmlns:Models="clr-namespace:Imagin.Core.Models"
+    xmlns:Numerics="clr-namespace:Imagin.Core.Numerics;assembly=Imagin.Core">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="{local:StyleKey Key=ComboBox}"/>
         <ResourceDictionary Source="{local:StyleKey Key=Control}"/>
@@ -133,6 +135,29 @@
                                         </local:TopBorder>
                                     </Grid>
                                 </DataTemplate>
+                                <DataTemplate DataType="{x:Type Models:ColorsPanel}">
+                                    <local:GroupControl Source="{Binding Groups}"
+                                        ItemSize="{Binding ItemSize, Mode=TwoWay}"
+                                        Panel="{Binding}"
+                                        SelectedGroup="{Binding SelectedGroup}" 
+                                        SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                        View="{Binding View}">
+                                        <local:GroupControl.Resources>
+                                            <Data:Reference x:Key="ColorsPanel" Data="{Binding}"/>
+                                        </local:GroupControl.Resources>
+                                        <local:GroupControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type Numerics:ByteVector4}">
+                                                <Button
+                                                    Background="{Binding Converter={x:Static Conversion:ByteVector4ToSolidColorBrushConverter.Default}}"
+                                                    BorderThickness="0"
+                                                    Command="{Binding Data.SelectColorCommand, Source={StaticResource ColorsPanel}}"
+                                                    CommandParameter="{Binding}"
+                                                    Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
+                                                    ToolTip="{Binding Converter={x:Static Conversion:ByteVector4ToColorConverter.Default}}"/>
+                                            </DataTemplate>
+                                        </local:GroupControl.ItemTemplate>
+                                    </local:GroupControl>
+                                </DataTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorAnalysisPanel}">
                                     <DataGrid
                                         AutoGenerateColumns="True"
@@ -157,70 +182,103 @@
                                         GroupName="None"
                                         HeaderVisibility="Collapsed"/>
                                 </DataTemplate>
+                                <DataTemplate DataType="{x:Type local:ColorDifferencePanel}">
+                                    <local:MemberGrid Source="{Binding}"
+                                        BorderThickness="0"
+                                        GroupName="Category"
+                                        HeaderVisibility="Collapsed"/>
+                                </DataTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorHarmonyPanel}">
-                                    <ScrollViewer>
-                                        <ItemsControl
-                                            ItemsSource="{Binding Colors}"
-                                            Margin="2">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,2" >
-                                                        <Button Background="{Binding Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}" 
-                                                            BorderBrush="White" BorderThickness="1"
-                                                            Command="{Binding Data.ActiveDocument.PickCommand, Source={StaticResource ColorControl}}"
-                                                            CommandParameter="{Binding}"
-                                                            MinHeight="32"/>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </ScrollViewer>
+                                    <local:ViewControl Source="{Binding Colors}"
+                                        ItemSize="{Binding ItemSize, Mode=TwoWay}"
+                                        Margin="2"
+                                        View="{Binding View}">
+                                        <local:ViewControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="Black" BorderThickness="1">
+                                                    <Button Background="{Binding Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}" 
+                                                        BorderBrush="White" BorderThickness="1"
+                                                        Command="{Binding Data.ActiveDocument.PickCommand, Source={StaticResource ColorControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
+                                                        ToolTip="{Binding}"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </local:ViewControl.ItemTemplate>
+                                    </local:ViewControl>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorIlluminantsPanel}">
-                                    <ListBox 
-                                        BorderThickness="0"
-                                        ItemsSource="{Binding SelectedGroup}"
-                                        SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
-                                        <ListBox.ItemTemplate>
+                                    <local:GroupControl Source="{Binding Groups}"
+                                        ItemSize="{Binding ItemSize, Mode=TwoWay}"
+                                        Panel="{Binding}"
+                                        SelectedGroup="{Binding SelectedGroup}" 
+                                        SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                        View="{Binding View}">
+                                        <local:GroupControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
-                                                    <local:ProgressRing
-                                                        Margin="0,0,10,0" 
-                                                        Maximum="12000" 
-                                                        Minimum="2000" 
-                                                        Radius="36"
-                                                        Value="{Binding Value, Mode=OneWay, Converter={x:Static Conversion:ChromacityToKelvinConverter.Default}}">
-                                                        <Linq:XProgressBar.ContentTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock  Foreground="{local:ThemeKey Key=Text}"><Run Text="{Binding Converter={x:Static Conversion:DoubleToStringConverter.Default}, ConverterParameter=N0, Mode=OneWay}"/> K</TextBlock>
-                                                            </DataTemplate>
-                                                        </Linq:XProgressBar.ContentTemplate>
-                                                    </local:ProgressRing>
-                                                    <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last">
-                                                        <local:TitleLabel Content="{Binding Name}" Step="6"/>
-                                                        <TextBlock
-                                                            Text="{Binding Value, Converter={x:Static Conversion:ToStringConverter.Default}}"
-                                                            TextTrimming="CharacterEllipsis"
-                                                            ToolTip="{Data:Self Text}"/>
-                                                        <TextBlock
-                                                            Text="{Binding Value, Converter={x:Static local:XYAsVector2ToXYZAsVector3Converter.Default}}"
-                                                            TextTrimming="CharacterEllipsis"
-                                                            ToolTip="{Data:Self Text}"/>
-                                                    </StackPanel>
-                                                </Grid>
+                                                <Viewbox>
+                                                    <Grid>
+                                                        <local:ProgressRing 
+                                                            Foreground="Transparent"
+                                                            Maximum="12000" 
+                                                            Minimum="2000" 
+                                                            Radius="36"
+                                                            Value="{Binding Value, Mode=OneWay, Converter={x:Static Conversion:ChromacityToKelvinConverter.Default}}">
+                                                            <Linq:XProgressBar.ContentTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Foreground="{local:ThemeKey Key=Text}"><Run Text="{Binding Converter={x:Static Conversion:DoubleToStringConverter.Default}, ConverterParameter=N0, Mode=OneWay}"/> K</TextBlock>
+                                                                </DataTemplate>
+                                                            </Linq:XProgressBar.ContentTemplate>
+                                                        </local:ProgressRing>
+                                                        <Border Background="White" Height="72" Width="72">
+                                                            <Border.Effect>
+                                                                <Effects:AngleGradientEffect Angle="270" Thickness="0.17" Minimum="2000" Maximum="12000" Value="{Binding Value, Converter={x:Static Conversion:ChromacityToKelvinConverter.Default}}">
+                                                                    <Effects:AngleGradientEffect.Brush>
+                                                                        <LinearGradientBrush>
+                                                                            <GradientStop Color="#ff1c00" Offset="0"/>
+                                                                            <GradientStop Color="#FFF" Offset="0.5"/>
+                                                                            <GradientStop Color="#bbd0ff" Offset="1"/>
+                                                                        </LinearGradientBrush>
+                                                                    </Effects:AngleGradientEffect.Brush>
+                                                                </Effects:AngleGradientEffect>
+                                                            </Border.Effect>
+                                                        </Border>
+                                                    </Grid>
+                                                </Viewbox>
                                             </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
+                                        </local:GroupControl.ItemTemplate>
+                                    </local:GroupControl>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type local:ColorMatrixPanel}">
+                                    <local:GroupControl Source="{Binding Groups}"
+                                        ItemSize="{Binding ItemSize, Mode=TwoWay}"
+                                        Panel="{Binding}"
+                                        SelectedGroup="{Binding SelectedGroup}" 
+                                        SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                        View="{Binding View}">
+                                        <local:GroupControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Viewbox>
+                                                    <local:MatrixControl Matrix="{Binding Value, Converter={x:Static Conversion:MatrixToDoubleMatrixConverter.Default}, Mode=TwoWay}"
+                                                        IsEditable="False"
+                                                        LabelVisibility="Visible"
+                                                        Zoom="256"/>
+                                                </Viewbox>
+                                            </DataTemplate>
+                                        </local:GroupControl.ItemTemplate>
+                                    </local:GroupControl>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorProfilesPanel}">
-                                    <ListBox 
-                                        BorderThickness="0"
-                                        ItemsSource="{Binding SelectedGroup}"
-                                        SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
-                                        <ListBox.ItemTemplate>
+                                    <local:GroupControl Source="{Binding Groups}"
+                                        ItemSize="{Binding ItemSize, Mode=TwoWay}"
+                                        Panel="{Binding}"
+                                        SelectedGroup="{Binding SelectedGroup}" 
+                                        SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                        View="{Binding View}">
+                                        <local:GroupControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
-                                                    <Grid Margin="0,0,10,0" >
+                                                <Viewbox>
+                                                    <Grid>
                                                         <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
                                                             BackgroundStroke="Transparent"
                                                             Foreground="#900"
@@ -231,13 +289,13 @@
                                                             BackgroundStroke="Transparent"
                                                             Foreground="#090"
                                                             Maximum="1" Minimum="0" 
-                                                            Radius="32"
+                                                            Radius="32" StrokeThickness="4"
                                                             Value="{Binding Value.Primary.G.X, Mode=OneWay}"/>
                                                         <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
                                                             BackgroundStroke="Transparent"
                                                             Foreground="#009"
                                                             Maximum="1" Minimum="0" 
-                                                            Radius="36"
+                                                            Radius="36" StrokeThickness="4"
                                                             Value="{Binding Value.Primary.B.X, Mode=OneWay}"/>
 
                                                         <local:ProgressRing Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
@@ -259,21 +317,10 @@
                                                             Radius="36" StrokeThickness="4"
                                                             Value="{Binding Value.Primary.B.Y, Mode=OneWay}"/>
                                                     </Grid>
-                                                    <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last">
-                                                        <local:TitleLabel Content="{Binding Name}" Step="6"/>
-
-                                                        <TextBlock Text="{Binding Value.Primary, Converter={x:Static Conversion:ToStringConverter.Default}}"
-                                                            TextTrimming="CharacterEllipsis"
-                                                            ToolTip="{Data:Self Text}"/>
-                                                        <TextBlock Text="{Binding Value.Compress, Converter={x:Static Conversion:ToStringConverter.Default}}"
-                                                            Opacity="0.5"
-                                                            TextTrimming="CharacterEllipsis"
-                                                            ToolTip="{Data:Self Text}"/>
-                                                    </StackPanel>
-                                                </Grid>
+                                                </Viewbox>
                                             </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
+                                        </local:GroupControl.ItemTemplate>
+                                    </local:GroupControl>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type Models:OptionsPanel}">
                                     <local:MemberGrid Source="{Binding Data.Options, Source={StaticResource ColorControl}}"
@@ -285,6 +332,7 @@
                         <local:DockControl
                             ActiveDocument="{Data:TemplatedParent ActiveDocument, Converter={x:Static Conversion:ColorDocumentConverter.Default}, Mode=TwoWay}"
                             AutoSave="{Data:TemplatedParent Options.AutoSaveLayout}"
+                            AutoSaveDocuments="{Data:TemplatedParent Options.AutoSaveDocuments}"
                             Documents="{TemplateBinding Documents}"
                             DocumentToolTipTemplate="{DynamicResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
                             Layouts="{Data:TemplatedParent Options.Layouts}"
@@ -292,7 +340,7 @@
                             PanelTemplateSelector="{StaticResource {x:Static local:ColorControl.PanelTemplateSelectorKey}}">
                             <local:DockControl.DocumentTemplate>
                                 <DataTemplate DataType="{x:Type local:ColorDocument}">
-                                    <local:ColorSelectorView Document="{Binding}" Visibility="{Data:VisibilityBinding}"/>
+                                    <local:ColorSelectorView Document="{Binding}"/>
                                 </DataTemplate>
                             </local:DockControl.DocumentTemplate>
                             <local:DockControl.DocumentIconTemplate>
