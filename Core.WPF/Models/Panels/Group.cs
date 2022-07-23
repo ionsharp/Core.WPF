@@ -17,7 +17,7 @@ public interface IGroupPanel { object SelectedItem { get; } }
 
 public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
 {
-    enum Category { Add, Clipboard, Edit, Export, Import }
+    enum Category { Add, Clipboard, Edit, Export, Import, View }
 
     #region Properties
 
@@ -40,7 +40,7 @@ public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
     public virtual string ItemName => "item";
 
     double itemSize = 128.0;
-    [Below, Index(0), Label(false), Range(32.0, 512.0, 4.0), Slider, Tool, Visible]
+    [Category(nameof(Category.View)), Option, Range(32.0, 512.0, 4.0), Slider, Visible]
     public virtual double ItemSize
     {
         get => itemSize;
@@ -55,7 +55,7 @@ public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
     public T SelectedItem => SelectedIndex >= 0 && SelectedIndex < SelectedGroup?.Count ? SelectedGroup[SelectedIndex] : default;
 
     int selectedGroupIndex = -1;
-    [Feature, Index(2), Label(false), SelectedIndex, Setter(nameof(MemberModel.ItemPath), nameof(GroupCollection<T>.Name)), Trigger(nameof(MemberModel.ItemSource), nameof(Groups)), Tool, Visible]
+    [Above, Index(2), Label(false), SelectedIndex, Setter(nameof(MemberModel.ItemPath), nameof(GroupCollection<T>.Name)), Trigger(nameof(MemberModel.ItemSource), nameof(Groups)), Tool, Visible]
     public int SelectedGroupIndex
     {
         get => selectedGroupIndex;
@@ -79,7 +79,7 @@ public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
     }
 
     GroupView view = GroupView.Grid;
-    [Below, Index(1), Label(false), Tool, Visible]
+    [Category(nameof(Category.View)), Option, Visible]
     public GroupView View
     {
         get => view;
@@ -120,7 +120,7 @@ public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
     public ICommand AddCommand => addCommand ??= new RelayCommand(() =>
     {
         var oldItem = GetNewItem();
-        var newItem = new GroupItemWithValue(Groups, oldItem, SelectedGroupIndex);
+        var newItem = new GroupValueModel(Groups, oldItem, SelectedGroupIndex);
 
         MemberWindow.ShowDialog($"New {ItemName}", newItem, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; i.NameColumnVisibility = Visibility.Collapsed; }, Buttons.SaveCancel);
         if (result == 0)
@@ -135,7 +135,7 @@ public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
 
     ICommand addGroupCommand;
     [DisplayName("Add group")]
-    [Feature, Index(0)]
+    [Above, Index(0)]
     [Image(Images.FolderAdd), Tool, Visible]
     public ICommand AddGroupCommand => addGroupCommand ??= new RelayCommand(() =>
     {
@@ -177,7 +177,7 @@ public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
 
     ICommand deleteGroupCommand;
     [DisplayName("Delete group")]
-    [Feature, Index(2)]
+    [Above, Index(2)]
     [Image(Images.FolderDelete), Tool, Visible]
     public ICommand DeleteGroupCommand => deleteGroupCommand ??= new RelayCommand(() =>
     {
@@ -190,9 +190,9 @@ public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
     [Category(nameof(Category.Edit)), DisplayName("Edit")]
     [Index(1)]
     [Image(Images.Pencil), Tool, Visible]
-    public ICommand EditCommand => editCommand ??= new RelayCommand(() =>
+    public ICommand EditCommand => editCommand ??= new RelayCommand<object>(i =>
     {
-        var newItem = new GroupItemWithValue(Groups, SelectedGroup[SelectedIndex], SelectedGroupIndex);
+        var newItem = new GroupValueModel(Groups, i ?? SelectedGroup[SelectedIndex], SelectedGroupIndex);
         MemberWindow.ShowDialog($"Edit {ItemName}", newItem, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; i.NameColumnVisibility = Visibility.Collapsed; }, Buttons.Done);
         if (newItem.GroupIndex != SelectedGroupIndex)
         {
@@ -204,11 +204,11 @@ public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
             Groups[SelectedGroupIndex][SelectedIndex] = (T)newItem.Value;
         }
     }, 
-    () => SelectedGroup != null && SelectedIndex >= 0 && SelectedIndex < SelectedGroup.Count);
+    i => i != null || (SelectedGroup != null && SelectedIndex >= 0 && SelectedIndex < SelectedGroup.Count));
 
     ICommand editGroupCommand;
     [DisplayName("Edit group")]
-    [Feature, Index(1)]
+    [Above, Index(1)]
     [Image(Images.FolderEdit), Tool, Visible]
     public ICommand EditGroupCommand => editGroupCommand ??= new RelayCommand(() => MemberWindow.ShowDialog("Edit group", SelectedGroup, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; }, Buttons.Done), () => Groups != null);
 

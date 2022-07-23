@@ -165,9 +165,9 @@
                             <Setter TargetName="Col0" Property="SharedSizeGroup" Value="MenuItemIconColumnGroup" />
                         </Trigger>
                         <!-- ... -->
-                        <Trigger Property="InputGestureText" Value="{x:Null}">
+                        <!--<Trigger Property="InputGestureText" Value="{x:Null}">
                             <Setter TargetName="PART_InputGesture" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
+                        </Trigger>-->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="HorizontalContentAlignment" Value="Stretch"/>

@@ -95,7 +95,7 @@ public abstract class MainViewOptions : BaseSavable, IApplicationReady
     #region Save
 
     bool autoSave = false;
-    [DisplayName("Auto save"), Feature, ToggleButton]
+    [Above, DisplayName("Auto save"), ToggleButton]
     public bool AutoSave
     {
         get => autoSave;
@@ -267,7 +267,7 @@ public abstract class MainViewOptions : BaseSavable, IApplicationReady
     [field: NonSerialized]
     ICommand saveCommand;
     [DisplayName("Save")]
-    [Feature(AboveBelow.Below)]
+    [Below]
     public virtual ICommand SaveCommand => saveCommand ??= new RelayCommand(Save);
         
     [field: NonSerialized]

@@ -161,7 +161,7 @@ namespace Imagin.Core.Models
         string search = string.Empty;
         [Command(nameof(SearchCommand))]
         [Label(false)]
-        [Feature(AboveBelow.Below)]
+        [Below]
         [Image(Images.Search)]
         [Index(int.MaxValue)]
         [Search, Setter(nameof(MemberModel.Placeholder), "Search..."), Tool]

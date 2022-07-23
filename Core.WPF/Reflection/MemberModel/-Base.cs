@@ -1,7 +1,5 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Controls;
-using Imagin.Core.Conversion;
-using Imagin.Core.Data;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Media;
@@ -9,6 +7,7 @@ using Imagin.Core.Numerics;
 using Imagin.Core.Storage;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -22,16 +21,16 @@ namespace Imagin.Core.Reflection;
 
 public abstract partial class MemberModel : BaseNamable, IComparable
 {
+    readonly MemberAttributes Attributes;
+
     readonly Handle Handle = false;
 
     System.Timers.Timer timer;
 
     #region Attributes
 
-    public MemberAttributes Attributes { get; private set; }
-
     /// <summary>[Attribute type] => [Member (i), First attribute (j), All attributes (k)]</summary>
-    readonly MemberAttributeHandler attributes = new()
+    readonly MemberAttributeHandler AttributeHandler = new()
     {
         {
             typeof(AboveAttribute),
@@ -42,12 +41,12 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.Style = j.GetType())
         },
         {
-            typeof(AssignableAttribute),
+            typeof(AssignAttribute),
             new((i, j, k) =>
             {
                 i.Assignable = true;
 
-                var a = j.As<AssignableAttribute>();
+                var a = j.As<AssignAttribute>();
                 if (a.Types is Type[] m && m.Length > 0)
                 {
                     i.AssignableTypes = new(m);
@@ -75,16 +74,16 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.Style = j.GetType())
         },
         {
+            typeof(CaptionAttribute),
+            new((i, j, k) => i.Caption = j.As<CaptionAttribute>().Caption)
+        },
+        {
             typeof(CategoryAttribute),
             new((i, j, k) => i.Category = j.As<CategoryAttribute>().Category)
         },
         {
             typeof(System.ComponentModel.CategoryAttribute),
             new((i, j, k) => i.Category = j.As<System.ComponentModel.CategoryAttribute>().Category)
-        },
-        {
-            typeof(ObjectAttribute),
-            new((i, j, k) => i.Style = j.GetType())
         },
         {
             typeof(CommandAttribute),
@@ -107,6 +106,10 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             })
         },
         {
+            typeof(CopyAttribute),
+            new((i, j, k) => i.Assignable = true)
+        },
+        {
             typeof(DefaultValueAttribute),
             new((i, j, k) => i.DefaultValue = j.As<DefaultValueAttribute>().Value)
         },
@@ -125,10 +128,6 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         {
             typeof(System.ComponentModel.DisplayNameAttribute),
             new((i, j, k) => i.DisplayName = j.As<System.ComponentModel.DisplayNameAttribute>().DisplayName)
-        },
-        {
-            typeof(FeatureAttribute),
-            new((i, j, k) => i.IsFeatured = j.As<FeatureAttribute>().Featured)
         },
         {
             typeof(FilePathAttribute),
@@ -177,8 +176,8 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.Localize = j.As<LocalizeAttribute>().Localize)
         },
         {
-            typeof(LockedAttribute),
-            new((i, j, k) => i.IsLockable = j.As<LockedAttribute>().Locked)
+            typeof(LockAttribute),
+            new((i, j, k) => i.IsLockable = j.As<LockAttribute>().Locked)
         },
         {
             typeof(MultipleAttribute),
@@ -273,10 +272,6 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             new((i, j, k) => i.Style = j.GetType())
         },
         {
-            typeof(ToolAttribute),
-            new((i, j, k) => i.IsTool = j.As<ToolAttribute>() != null)
-        },
-        {
             typeof(TriggerAttribute),
             new((i, j, k) =>
             {
@@ -326,15 +321,13 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
     #region Properties
 
-    public MemberCollection Parent { get; private set; }
-
-    public MemberModel ParentMember { get; private set; }
+    public MemberModel Parent { get; private set; }
 
     public MemberSource Source { get; private set; }
 
     //...
 
-    public abstract bool CanWrite { get; }
+    public abstract bool IsWritable { get; }
 
     //...
 
@@ -357,14 +350,35 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
     //...
 
-    public IList Collection => Value as IList;
+    public virtual IList Collection => Value as IList;
 
     public int CollectionLength
     {
         get => Collection.Count;
         set
         {
-            Resize(value);
+            if (value == Collection?.Count)
+                return;
+
+            Try.Invoke(() =>
+            {
+                if (value == 0)
+                    Collection.Clear();
+
+                else if (value > Collection.Count)
+                {
+                    var j = value - Collection.Count;
+                    for (var i = 0; i < j; i++)
+                        Collection.Add(CreateItem());
+                }
+                else
+                {
+                    var j = Collection.Count - value;
+                    for (var i = Collection.Count - 1; i >= value; i--)
+                        Collection.RemoveAt(i);
+                }
+            },
+            e => Log.Write<MemberModel>(e));
             this.Changed(() => CollectionLength);
         }
     }
@@ -381,148 +395,175 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
     //...
 
-    /// <summary>
-    /// To do: Use <see cref="Imagin.Core.Conversion.NullConverter"/> to prevent changing <see cref="UpDown{T}.Increment"/> if <see langword="null"/>. It does not currently work as intended...
-    /// </summary>
-    object DefaultIncrement
+    MemberInfo member;
+    public virtual MemberInfo Member
     {
-        get
+        get => member;
+        private set
         {
-            if (Type == typeof(byte))
-                return (byte)1;
-
-            if (Type == typeof(decimal))
-                return (decimal)1;
-
-            if (Type == typeof(double))
-                return (double)1;
-
-            if (Type == typeof(short))
-                return (short)1;
-
-            if (Type == typeof(int))
-                return (int)1;
-
-            if (Type == typeof(long))
-                return (long)1;
-
-            if (Type == typeof(float))
-                return (float)1;
-
-            if (Type == typeof(TimeSpan))
-                return 1.Seconds();
-
-            if (Type == typeof(UDouble))
-                return (UDouble)1;
-
-            if (Type == typeof(ushort))
-                return (ushort)1;
-
-            if (Type == typeof(uint))
-                return (uint)1;
-
-            if (Type == typeof(ulong))
-                return (ulong)1;
-
-            return null;
+            this.Change(ref member, value);
+            MemberType = member?.MemberType ?? MemberTypes.Custom;
+            Name = member?.Name;
         }
     }
 
-    /// <summary>
-    /// To do: Use <see cref="Imagin.Core.Conversion.NullConverter"/> to prevent changing <see cref="UpDown{T}.Maximum"/> if <see langword="null"/>. It does not currently work as intended...
-    /// </summary>
-    object DefaultMaximum
+    MemberCollection members = null;
+    public MemberCollection Members
     {
-        get
-        {
-            if (Type == typeof(byte))
-                return byte.MaxValue;
-
-            if (Type == typeof(decimal))
-                return decimal.MaxValue;
-
-            if (Type == typeof(double))
-                return double.MaxValue;
-
-            if (Type == typeof(short))
-                return short.MaxValue;
-
-            if (Type == typeof(int))
-                return int.MaxValue;
-
-            if (Type == typeof(long))
-                return long.MaxValue;
-
-            if (Type == typeof(float))
-                return float.MaxValue;
-
-            if (Type == typeof(TimeSpan))
-                return TimeSpan.MaxValue;
-
-            if (Type == typeof(UDouble))
-                return UDouble.MaxValue;
-
-            if (Type == typeof(ushort))
-                return ushort.MaxValue;
-
-            if (Type == typeof(uint))
-                return uint.MaxValue;
-
-            if (Type == typeof(ulong))
-                return ulong.MaxValue;
-
-            return null;
-        }
+        get => members;
+        set => this.Change(ref members, value);
     }
 
-    /// <summary>
-    /// To do: Use <see cref="Imagin.Core.Conversion.NullConverter"/> to prevent changing <see cref="UpDown{T}.Minimum"/> if <see langword="null"/>. It does not currently work as intended...
-    /// </summary>
-    object DefaultMinimum
+    ListCollectionView sortedMembers = null;
+    public ListCollectionView SortedMembers
     {
-        get
-        {
-            if (Type == typeof(byte))
-                return byte.MinValue;
+        get => sortedMembers;
+        set => this.Change(ref sortedMembers, value);
+    }
 
-            if (Type == typeof(decimal))
-                return decimal.MinValue;
-
-            if (Type == typeof(double))
-                return double.MinValue;
-
-            if (Type == typeof(short))
-                return short.MinValue;
-
-            if (Type == typeof(int))
-                return int.MinValue;
-
-            if (Type == typeof(long))
-                return long.MinValue;
-
-            if (Type == typeof(float))
-                return float.MinValue;
-
-            if (Type == typeof(TimeSpan))
-                return TimeSpan.MinValue;
-
-            if (Type == typeof(UDouble))
-                return UDouble.MinValue;
-
-            if (Type == typeof(ushort))
-                return ushort.MinValue;
-
-            if (Type == typeof(uint))
-                return uint.MinValue;
-
-            if (Type == typeof(ulong))
-                return ulong.MinValue;
-
-            return null;
-        }
+    MemberTypes memberType;
+    public MemberTypes MemberType
+    {
+        get => memberType;
+        private set => this.Change(ref memberType, value);
     }
 
     //...
+
+    object defaultValue = null;
+    public object DefaultValue
+    {
+        get => defaultValue;
+        private set => this.Change(ref defaultValue, value);
+    }
+
+    dynamic value = default;
+    public object Value
+    {
+        get => value;
+        set => OnValueChanging(this.value, value);
+    }
+
+    //...
+
+    #region Height/Width
+
+    double height = double.NaN;
+    public double Height
+    {
+        get => height;
+        private set => this.Change(ref height, value);
+    }
+
+    double width = double.NaN;
+    public double Width
+    {
+        get => width;
+        private set => this.Change(ref width, value);
+    }
+
+    double maximumHeight = double.NaN;
+    public double MaximumHeight
+    {
+        get => maximumHeight;
+        private set => this.Change(ref maximumHeight, value);
+    }
+
+    double maximumWidth = double.NaN;
+    public double MaximumWidth
+    {
+        get => maximumWidth;
+        private set => this.Change(ref maximumWidth, value);
+    }
+
+    double minimumHeight = double.NaN;
+    public double MinimumHeight
+    {
+        get => minimumHeight;
+        private set => this.Change(ref minimumHeight, value);
+    }
+
+    double minimumWidth = double.NaN;
+    public double MinimumWidth
+    {
+        get => minimumWidth;
+        private set => this.Change(ref minimumWidth, value);
+    }
+
+    #endregion
+
+    #region Is
+
+    bool isEnabled = true;
+    public virtual bool IsEnabled
+    {
+        get => isEnabled;
+        private set => this.Change(ref isEnabled, value);
+    }
+
+    bool isFeatured = false;
+    public bool IsFeatured
+    {
+        get => isFeatured;
+        private set => this.Change(ref isFeatured, value);
+    }
+        
+    bool isLockable = false;
+    public bool IsLockable
+    {
+        get => isLockable;
+        private set => this.Change(ref isLockable, value);
+    }
+
+    bool isLocked = false;
+    public bool IsLocked
+    {
+        get => isLocked;
+        internal set => this.Change(ref isLocked, value);
+    }
+
+    bool isNullable = false;
+    public virtual bool IsNullable
+    {
+        get => isNullable;
+        private set => this.Change(ref isNullable, value);
+    }
+
+    bool isReadOnly = false;
+    public virtual bool IsReadOnly
+    {
+        get => isReadOnly;
+        private set => this.Change(ref isReadOnly, value);
+    }
+
+    bool isVisible = true;
+    public bool IsVisible
+    {
+        get => isVisible;
+        set => this.Change(ref isVisible, value);
+    }
+
+    #endregion
+
+    #region Left/RightText
+
+    string leftText = null;
+    public string LeftText
+    {
+        get => leftText;
+        set => this.Change(ref leftText, value);
+    }
+
+    string rightText = null;
+    public string RightText
+    {
+        get => rightText;
+        set => this.Change(ref rightText, value);
+    }
+
+    #endregion
+
+    #region Other
 
     bool assignable = false;
     public bool Assignable
@@ -530,7 +571,7 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         get => assignable;
         private set => this.Change(ref assignable, value);
     }
-    
+
     ObservableCollection<Type> assignableTypes = new();
     public ObservableCollection<Type> AssignableTypes
     {
@@ -594,13 +635,6 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         private set => this.Change(ref converterParameter, value);
     }
 
-    object defaultValue = null;
-    public object DefaultValue
-    {
-        get => defaultValue;
-        private set => this.Change(ref defaultValue, value);
-    }
-
     char delimiter = ';';
     public char Delimiter
     {
@@ -608,11 +642,11 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         set => this.Change(ref delimiter, value);
     }
 
-    int depthIndex = 0;
-    public int DepthIndex
+    int depth = 0;
+    public int Depth
     {
-        get => depthIndex;
-        set => this.Change(ref depthIndex, value);
+        get => depth;
+        set => this.Change(ref depth, value);
     }
 
     string description = null;
@@ -650,13 +684,6 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         set => this.Change(ref gradient, value);
     }
 
-    double height = double.NaN;
-    public double Height
-    {
-        get => height;
-        private set => this.Change(ref height, value);
-    }
-
     string icon = null;
     public string Icon
     {
@@ -671,74 +698,11 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         private set => this.Change(ref iconColor, value);
     }
 
-    dynamic increment = default;
-    public object Increment
-    {
-        get => increment;
-        set => this.Change(ref increment, value);
-    }
-
     int index = 0;
     public int Index
     {
         get => index;
         private set => this.Change(ref index, value);
-    }
-
-    bool isEnabled = true;
-    public virtual bool IsEnabled
-    {
-        get => isEnabled;
-        private set => this.Change(ref isEnabled, value);
-    }
-
-    bool isFeatured = false;
-    public bool IsFeatured
-    {
-        get => isFeatured;
-        private set => this.Change(ref isFeatured, value);
-    }
-        
-    bool isLockable = false;
-    public bool IsLockable
-    {
-        get => isLockable;
-        private set => this.Change(ref isLockable, value);
-    }
-
-    bool isLocked = false;
-    public bool IsLocked
-    {
-        get => isLocked;
-        internal set => this.Change(ref isLocked, value);
-    }
-
-    bool isNullable = false;
-    public virtual bool IsNullable
-    {
-        get => isNullable;
-        private set => this.Change(ref isNullable, value);
-    }
-
-    bool isReadOnly = false;
-    public virtual bool IsReadOnly
-    {
-        get => isReadOnly;
-        private set => this.Change(ref isReadOnly, value);
-    }
-
-    bool isTool = false;
-    public bool IsTool
-    {
-        get => isTool;
-        private set => this.Change(ref isTool, value);
-    }
-
-    bool isVisible = true;
-    public bool IsVisible
-    {
-        get => isVisible;
-        set => this.Change(ref isVisible, value);
     }
 
     string itemPath = ".";
@@ -769,11 +733,11 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         set => this.Change(ref itemType, value);
     }
 
-    ListCollectionView itemTypes = null;
-    public ListCollectionView ItemTypes
+    object itemClones = null;
+    public object ItemClones
     {
-        get => itemTypes;
-        private set => this.Change(ref itemTypes, value);
+        get => itemClones;
+        set => this.Change(ref itemClones, value);
     }
 
     bool label = true;
@@ -783,93 +747,11 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         private set => this.Change(ref label, value);
     }
 
-    string leftText = null;
-    public string LeftText
-    {
-        get => leftText;
-        set => this.Change(ref leftText, value);
-    }
-
     bool localize = true;
     public bool Localize
     {
         get => localize;
         private set => this.Change(ref localize, value);
-    }
-
-    dynamic maximum = default;
-    public object Maximum
-    {
-        get => maximum;
-        set => this.Change(ref maximum, value);
-    }
-
-    double maximumHeight = double.NaN;
-    public double MaximumHeight
-    {
-        get => maximumHeight;
-        private set => this.Change(ref maximumHeight, value);
-    }
-
-    double maximumWidth = double.NaN;
-    public double MaximumWidth
-    {
-        get => maximumWidth;
-        private set => this.Change(ref maximumWidth, value);
-    }
-
-    MemberInfo member;
-    public virtual MemberInfo Member
-    {
-        get => member;
-        private set
-        {
-            this.Change(ref member, value);
-            MemberType = member?.MemberType ?? MemberTypes.Custom;
-            Name = member?.Name;
-        }
-    }
-
-    MemberCollection members = null;
-    public MemberCollection Members
-    {
-        get => members;
-        set => this.Change(ref members, value);
-    }
-
-    ListCollectionView sortedMembers = null;
-    public ListCollectionView SortedMembers
-    {
-        get => sortedMembers;
-        set => this.Change(ref sortedMembers, value);
-    }
-    
-    MemberTypes memberType;
-    public MemberTypes MemberType
-    {
-        get => memberType;
-        private set => this.Change(ref memberType, value);
-    }
-
-    dynamic minimum = default;
-    public object Minimum
-    {
-        get => minimum;
-        set => this.Change(ref minimum, value);
-    }
-
-    double minimumHeight = double.NaN;
-    public double MinimumHeight
-    {
-        get => minimumHeight;
-        private set => this.Change(ref minimumHeight, value);
-    }
-
-    double minimumWidth = double.NaN;
-    public double MinimumWidth
-    {
-        get => minimumWidth;
-        private set => this.Change(ref minimumWidth, value);
     }
 
     System.Windows.Controls.Orientation orientation = System.Windows.Controls.Orientation.Vertical;
@@ -886,11 +768,11 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         private set => this.Change(ref placeholder, value);
     }
 
-    string rightText = null;
-    public string RightText
+    int selectedIndex = -1;
+    public int SelectedIndex
     {
-        get => rightText;
-        set => this.Change(ref rightText, value);
+        get => selectedIndex;
+        set => this.Change(ref selectedIndex, value);
     }
 
     string stringFormat = null;
@@ -935,60 +817,153 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         set => this.Change(ref validateHandler, value);
     }
 
-    dynamic value = default;
-    public object Value
+    #endregion
+
+    #region Range
+
+    static readonly Dictionary<Type, Func<object>> Increments = new()
     {
-        get => value;
-        set => OnValueChanging(this.value, value);
+        { typeof(byte),     () => (byte)1     },
+        { typeof(decimal),  () => (decimal)1  },
+        { typeof(double),   () => (double)1   },
+        { typeof(short),    () => (short)1    },
+        { typeof(int),      () => (int)1      },
+        { typeof(long),     () => (long)1     },
+        { typeof(float),    () => (float)1    },
+        { typeof(TimeSpan), () => 1.Seconds() },
+        { typeof(UDouble),  () => (UDouble)1  },
+        { typeof(ushort),   () => (ushort)1   },
+        { typeof(uint),     () => (uint)1     },
+        { typeof(ulong),    () => (ulong)1    }
+    };
+
+    static readonly Dictionary<Type, Func<object>> Maximums = new()
+    {
+        { typeof(byte),     () => byte.MaxValue       },
+        { typeof(decimal),  () => decimal.MaxValue    },
+        { typeof(double),   () => double.MaxValue     },
+        { typeof(short),    () => short.MaxValue      },
+        { typeof(int),      () => int.MaxValue        },
+        { typeof(long),     () => long.MaxValue       },
+        { typeof(float),    () => float.MaxValue      },
+        { typeof(TimeSpan), () => TimeSpan.MaxValue   },
+        { typeof(UDouble),  () => UDouble.MaxValue    },
+        { typeof(ushort),   () => ushort.MaxValue     },
+        { typeof(uint),     () => uint.MaxValue       },
+        { typeof(ulong),    () => ulong.MaxValue      },
+    };
+
+    static readonly Dictionary<Type, Func<object>> Minimums = new()
+    {
+        { typeof(byte),     () => byte.MinValue       },
+        { typeof(decimal),  () => decimal.MinValue    },
+        { typeof(double),   () => double.MinValue     },
+        { typeof(short),    () => short.MinValue      },
+        { typeof(int),      () => int.MinValue        },
+        { typeof(long),     () => long.MinValue       },
+        { typeof(float),    () => float.MinValue      },
+        { typeof(TimeSpan), () => TimeSpan.MinValue   },
+        { typeof(UDouble),  () => UDouble.MinValue    },
+        { typeof(ushort),   () => ushort.MinValue     },
+        { typeof(uint),     () => uint.MinValue       },
+        { typeof(ulong),    () => ulong.MinValue      },
+    };
+
+    object DefaultIncrement 
+        => Type != null && Increments.ContainsKey(Type) 
+        ? Increments[Type]() : null;
+
+    object DefaultMaximum 
+        => Type != null && Maximums.ContainsKey(Type) 
+        ? Maximums[Type]() : null;
+
+    object DefaultMinimum 
+        => Type != null && Minimums.ContainsKey(Type) 
+        ? Minimums[Type]() : null;
+
+    dynamic increment = default;
+    public object Increment
+    {
+        get => increment;
+        set => this.Change(ref increment, value);
     }
 
-    double width = double.NaN;
-    public double Width
+    dynamic maximum = default;
+    public object Maximum
     {
-        get => width;
-        private set => this.Change(ref width, value);
+        get => maximum;
+        set => this.Change(ref maximum, value);
     }
+
+    dynamic minimum = default;
+    public object Minimum
+    {
+        get => minimum;
+        set => this.Change(ref minimum, value);
+    }
+
+    #endregion
 
     #endregion
 
     #region MemberModel
 
-    internal MemberModel(MemberModel parent, MemberData data, int depthIndex)
+    protected MemberModel(MemberModel parent, MemberSource source, MemberInfo member, MemberAttributes attributes, int depth)
     {
-        ParentMember
-            = parent;
-        Parent
-            = data.Collection; Source = data.Source; Member = data.Member;
+        Parent = parent; Source = source; Member = member; Attributes = attributes; Depth = depth;
 
-        Dispatch.Invoke(() => Category = Parent.Control.DefaultCategoryName);
+        //Try.Invoke(() => Dispatch.Invoke(() => Category = Parent?.Control?.DefaultCategoryName));
 
-        DepthIndex
-            = depthIndex;
-        DisplayName
+        DisplayName 
             = Name;
-
-        Increment = DefaultIncrement; Maximum = DefaultMaximum; Minimum = DefaultMinimum;
-
-        Attributes = data.Attributes;
-        Attributes.Apply(this, attributes);
-
-        IsReadOnly = !CanWrite || IsReadOnly || Parent.Parent?.IsReadOnly == true;
-
-        if (GetValue() is ITypes i)
-            GetItemTypes(i);
-
-        else if (Source.Instance is ITypes j)
-            GetItemTypes(j);
+        Increment 
+            = DefaultIncrement; Maximum = DefaultMaximum; Minimum = DefaultMinimum;
+        Orientation 
+            = DeclaringType.GetAttribute<HorizontalAttribute>() != null ? System.Windows.Controls.Orientation.Horizontal : Orientation;
+        
+        Attributes?.Apply(this, AttributeHandler);
+        IsReadOnly = !IsWritable || IsReadOnly || Parent?.IsReadOnly == true;
 
         UpdateValue();
         RefreshHard();
     }
 
-    public MemberModel(MemberData data, int depthIndex) : this(null, data, depthIndex) { }
-
     #endregion
 
     #region Methods
+
+    #region Get/HasAttribute
+
+    public T GetAttribute<T>() where T : Attribute => Attributes?.GetFirst<T>();
+
+    public IEnumerable<T> GetAttributes<T>() where T : Attribute => Attributes?.GetAll<T>();
+
+    public bool HasAttribute<T>() where T : Attribute => Attributes?.GetFirst<T>() != null;
+ 
+    #endregion
+
+    #region GetValue
+
+    public virtual object GetValue()
+    {
+        object result = null;
+        Try.Invoke(() => result = GetValue(Source.Instance)); //Dispatch.Invoke(() => );
+        return result;
+    }
+
+    protected abstract object GetValue(object input);
+
+    #endregion
+
+    #region SetValue
+
+    protected void SetValue(object value) => Handle.Invoke(() => SetValue(Source.Instance, value));
+
+    protected abstract void SetValue(object source, object value);
+
+    #endregion
+
+    #region Other
 
     int IComparable.CompareTo(object a)
     {
@@ -998,59 +973,47 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         return 0;
     }
 
+    //...
+
+    object CreateItem(Type type = null)
+    {
+        type ??= ItemType;
+        return type == typeof(string) ? "" : type.Create<object>();
+    }
+
     void EachParent(MemberModel input, Action<MemberModel> action)
     {
-        MemberModel parent = input;
-        while (parent != null)
+        MemberModel result = input;
+        while (result != null)
         {
-            parent = parent.Parent.Parent;
-            parent.If(i => action(i));
+            result = result.Parent;
+            result.If(action);
         }
     }
 
-    void GetItemTypes(ITypes input)
-    {
-        ItemTypes = new(new ObservableCollection<Type>(input.GetTypes()));
-        ItemTypes.CustomSort = TypeComparer.Default;
-        ItemTypes.GroupDescriptions.Add(new PropertyGroupDescription() { Converter = CategoryConverter.Default });
-    }
+    object GetSelectedItem()
+        => Collection is IList i && i.Count > SelectedIndex && SelectedIndex >= 0 ? i[SelectedIndex] : null;
+
+    //...
+
+    void InsertAbove(int index, Type type)
+        => Try.Invoke(() => CreateItem(type).If(i => Collection.Insert(index == -1 ? 0 : index, i)), e => Log.Write<MemberModel>(e));
+
+    void InsertBelow(int index, Type type)
+        => Try.Invoke(() => CreateItem(type).If(i =>
+        {
+            var newIndex = index + 1;
+            if (index != -1 && newIndex < Collection.Count)
+                Collection.Insert(newIndex, i);
+
+            else Collection.Add(i);
+        }), e => Log.Write<MemberModel>(e));
+
+    //...
 
     void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         this.Changed(() => CollectionLength);
-    }
-
-    void OnValueChanging(object oldValue, object newValue)
-    {
-        if (Type == typeof(ByteVector4))
-            Log.Write<MemberModel>($"Old value = {oldValue}, new value = {newValue}");
-
-        if (!isReadOnly)
-        {
-            var oldType = oldValue?.GetType();
-            var newType = newValue?.GetType();
-
-            Unsubscribe();
-            SetValue(newValue);
-
-            UpdateValue(newValue);
-            switch (Source.DataType)
-            {
-                case Types.Value:
-                    Parent.Parent.If(i => i.SetValue(i.Source.Instance, Source.Instance));
-                    break;
-            }
-
-            OnValueChanged(newValue);
-
-            if (oldType != newType)
-                RefreshHard();
-
-            else if (oldType == newType)
-                RefreshSoft();
-
-            Subscribe();
-        }
     }
 
     void OnTrigger(object sender, PropertyChangedEventArgs e)
@@ -1062,9 +1025,10 @@ public abstract partial class MemberModel : BaseNamable, IComparable
             {
                 if (e.PropertyName == i.SourceName)
                 {
+                    object result = null;
                     Try.Invoke(() =>
                     {
-                        var result = sender.GetPropertyValue(e.PropertyName);
+                        result = sender.GetPropertyValue(e.PropertyName);
                         this.SetPropertyValue(i.TargetName, result);
                     },
                     e => Log.Write<MemberModel>(e));
@@ -1077,9 +1041,28 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
     //...
 
-    protected virtual void OnValueChanged(object input) { }
+    void OnValueChanging(object oldValue, object newValue)
+    {
+        if (isReadOnly) return;
 
-    protected T Info<T>() where T : MemberInfo => (T)Member;
+        Unsubscribe();
+        SetValue(newValue);
+
+        UpdateValue(newValue);
+        switch (Source.DataType)
+        {
+            case Types.Value:
+                Parent.If(i => i.SetValue(i.Source.Instance, Source.Instance));
+                break;
+        }
+
+        OnValueChanged(newValue);
+
+        Refresh(oldValue, newValue);
+        Subscribe();
+    }
+
+    protected virtual void OnValueChanged(object input) { }
 
     //...
 
@@ -1136,40 +1119,39 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         return typeof(object); //input.IsClass || input.IsValueType
     }
 
-    #region GetValue
-
-    public object GetValue()
-    {
-        object result = null;
-        Dispatch.Invoke(() => Try.Invoke(() => result = GetValue(Source.Instance)));
-        return result;
-    }
-
-    protected abstract object GetValue(object input);
-
-    #endregion
-
-    #region SetValue
-
-    protected void SetValue(object value) => Handle.Invoke(() => SetValue(Source.Instance, value));
-
-    protected abstract void SetValue(object source, object value);
-
     #endregion
 
     #region Refresh
 
+    internal void Refresh(object oldValue, object newValue)
+    {
+        var oldType = oldValue?.GetType();
+        var newType = newValue?.GetType();
+
+        if (oldType != newType)
+            RefreshHard();
+
+        else if (oldType == newType)
+            RefreshSoft();
+    }
+
+    internal void RefreshSafe() => Handle.SafeInvoke(() => Refresh(Value, GetValue()));
+
+    //...
+
     internal void RefreshHard()
     {
-        var currentValue = Value;
-        if (currentValue != null && IsReferenceType)
+        UpdateValue();
+
+        var newValue = Value;
+        if (newValue != null && IsReferenceType)
         {
-            Members ??= new(Parent.Control, this, DepthIndex + 1);
-            Members.Load(currentValue);
+            Members ??= new(this, Depth + 1);
+            Members.Load(newValue);
 
             if (SortedMembers == null)
             {
-                var categorize = Attributes.GetFirst<CategorizeAttribute>()?.Categorize == true;
+                var categorize = GetAttribute<CategorizeAttribute>()?.Categorize == true;
 
                 SortedMembers = new(Members);
 
@@ -1190,19 +1172,15 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         }
     }
 
+    //...
+
     internal void RefreshSoft()
     {
         UpdateValue();
-        if (Members != null)
-        {
-            var newValue = GetValue();
-            foreach (var i in Members)
-            {
-                i.UpdateSource(new(new MemberPathSource(newValue)));
-                i.RefreshSoft();
-            }
-        }
+        Members?.Refresh(GetValue());
     }
+
+    internal void RefreshSoftSafe() => Handle.SafeInvoke(RefreshSoft);
 
     #endregion
 
@@ -1212,17 +1190,18 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     {
         if (Source.Instance is INotifyPropertyChanged notify)
         {
-            var triggers = Attributes.GetAll<TriggerAttribute>();
+            var triggers = GetAttributes<TriggerAttribute>();
             if (triggers?.Count() > 0)
             {
                 foreach (var trigger in triggers)
                     OnTrigger(notify, new(trigger.SourceName));
             }
 
+            notify.PropertyChanged -= OnTrigger;
             notify.PropertyChanged += OnTrigger;
         }
 
-        if (Attributes.GetFirst<UpdateAttribute>() is UpdateAttribute update)
+        if (GetAttribute<UpdateAttribute>() is UpdateAttribute update)
         {
             timer = new() { Interval = update.Seconds * 1000 };
             timer.Elapsed += OnUpdate;
@@ -1238,12 +1217,8 @@ public abstract partial class MemberModel : BaseNamable, IComparable
 
     public virtual void Unsubscribe()
     {
-        if (Source.Instance is INotifyPropertyChanged j)
-        {
-            var triggers = Attributes.GetAll<TriggerAttribute>();
-            if (triggers?.Count() > 0)
-                j.PropertyChanged -= OnTrigger;
-        }
+        if (Source.Instance is INotifyPropertyChanged notify)
+            notify.PropertyChanged -= OnTrigger;
 
         if (timer != null)
         {
@@ -1276,79 +1251,23 @@ public abstract partial class MemberModel : BaseNamable, IComparable
     internal void UpdateValue() => UpdateValue(GetValue());
 
     internal void UpdateValue(object input) => this.Change(ref value, input, () => Value);
-    
-    internal void UpdateValueSafe() => Handle.SafeInvoke(RefreshSoft);
 
     #endregion
 
     #endregion
 
-    int selectedIndex = -1;
-    public int SelectedIndex
-    {
-        get => selectedIndex;
-        set => this.Change(ref selectedIndex, value);
-    }
-
-    //...
-
-    object CreateItem(Type type)
-    {
-        type ??= ItemType;
-        return type == typeof(string) ? "" : type.Create<object>();
-    }
-
-    object GetSelectedItem()
-        => Collection is IList i && i.Count > SelectedIndex && SelectedIndex >= 0 ? i[SelectedIndex] : null;
-
-    //...
-
-    protected virtual void InsertAbove(int index, Type type)
-        => Try.Invoke(() => CreateItem(type).If(i => Collection.Insert(index == -1 ? 0 : index, i)), e => Log.Write<MemberModel>(e));
-
-    protected virtual void InsertBelow(int index, Type type)
-        => Try.Invoke(() => CreateItem(type).If(i =>
-        {
-            var newIndex = index + 1;
-            if (index != -1 && newIndex < Collection.Count)
-                Collection.Insert(newIndex, i);
-
-            else Collection.Add(i);
-        }), e => Log.Write<MemberModel>(e));
-
-    void Resize(int length)
-    {
-        if (length == Collection?.Count)
-            return;
-
-        Try.Invoke(() =>
-        {
-            if (length == 0)
-                Collection.Clear();
-
-            else if (length > Collection.Count)
-            {
-                var j = length - Collection.Count;
-                for (var i = 0; i < j; i++)
-                    Collection.Add(CreateItem(null));
-            }
-            else
-            {
-                var j = Collection.Count - length;
-                for (var i = Collection.Count - 1; i >= length; i--)
-                    Collection.RemoveAt(i);
-            }
-        },
-        e => Log.Write<MemberModel>(e));
-    }
-
-    //...
+    #region Commands
 
     ICommand insertAboveCommand;
-    public ICommand InsertAboveCommand
-        => insertAboveCommand
-        ??= new RelayCommand<Type>(i => InsertAbove(SelectedIndex, i),
-            i => Collection != null);
+    public ICommand InsertAboveCommand => insertAboveCommand ??= new RelayCommand<object>(i =>
+    {
+        if (i is Type j)
+            InsertAbove(SelectedIndex, j);
+
+        else if (i is ICloneable k)
+            Collection.Add(k.Clone());
+    },
+    i => Collection != null && (i is Type || i is ICloneable));
 
     ICommand insertBelowCommand;
     public ICommand InsertBelowCommand
@@ -1379,4 +1298,13 @@ public abstract partial class MemberModel : BaseNamable, IComparable
         => resetCommand
         ??= new RelayCommand(() => Try.Invoke(() => GetSelectedItem().If<IReset>(i => i.Reset())),
             () => GetSelectedItem() is IReset);
+
+    #endregion
+}
+
+public abstract class MemberModel<T> : MemberModel where T : MemberInfo
+{
+    new public T Member => (T)base.Member;
+
+    protected MemberModel(MemberModel parent, MemberSource source, MemberInfo member, MemberAttributes attributes, int depthIndex) : base(parent, source, member, attributes, depthIndex) { }
 }

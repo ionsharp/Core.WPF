@@ -11,14 +11,7 @@ public class MemberSource
 
     public readonly Type Type;
 
-    //...
-
-    public MemberSource(MemberPathElement input)
-    {
-        Instance = input.Value; Type = Instance.GetType();
-    }
-
-    //...
+    public MemberSource(object input) { Instance = input; Type = Instance.GetType(); }
 
     Type GetSharedType(IEnumerable<Type> types)
     {

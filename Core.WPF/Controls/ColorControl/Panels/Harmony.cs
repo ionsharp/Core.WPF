@@ -21,11 +21,7 @@ public class ColorHarmonyPanel : ViewPanel
 
     public enum Steps
     {
-        Darkness,
-        Lightness,
-        Saturation,
-        Desaturation,
-        Random
+        Darkness, Lightness, Saturation, Desaturation, Random
     }
 
     public override Uri Icon => Resources.InternalImage(Images.ColorWheel);
@@ -44,7 +40,7 @@ public class ColorHarmonyPanel : ViewPanel
         set => this.Change(ref colors, value);
     }
 
-    int count = 4;
+    int count = 16;
     [Range(2, 256, 1), Setter(nameof(MemberModel.RightText), "colors"), SliderUpDown, Tool, Visible]
     public int Count
     {
@@ -53,7 +49,7 @@ public class ColorHarmonyPanel : ViewPanel
     }
 
     Harmony harmony = Harmony.Monochromatic;
-    [Feature, Label(false), Localize(false), Tool, Visible]
+    [Above, Label(false), Localize(false), Tool, Visible]
     public Harmony Harmony
     {
         get => harmony;
@@ -141,7 +137,7 @@ public class ColorHarmonyPanel : ViewPanel
         if (ActiveDocument == null)
             return;
 
-        var color = ActiveDocument.Color.ActualColor;
+        var color = ActiveDocument.NewColor;
         double h = color.GetHue(), saturation = color.GetSaturation(), lightness = color.GetBrightness();
 
         var range = Range / 100.0;
@@ -258,6 +254,6 @@ public class ColorHarmonyPanel : ViewPanel
     }
 
     ICommand saveCommand;
-    [DisplayName("Save"), Feature(AboveBelow.Below), Image(Images.Save), Tool, Visible]
+    [DisplayName("Save"), Below, Image(Images.Save), Tool, Visible]
     public ICommand SaveCommand => saveCommand ??= new RelayCommand(() => Saved?.Invoke(this, new(colors.ToArray<Color>())), () => colors.Count > 0);
 }

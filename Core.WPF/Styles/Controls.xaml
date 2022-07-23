@@ -517,6 +517,15 @@
     
     <Style x:Key="{x:Type local:GroupControl}" TargetType="{x:Type local:GroupControl}" BasedOn="{StaticResource {x:Type Control}}">
         <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu DataContext="{Data:Self PlacementTarget}">
+                    <local:EnumMenuItem Header="View"
+                        Type="{x:Type local:GroupView}"
+                        Value="{Binding View, Mode=TwoWay}"/>
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Linq:XElement.Wheel" Value="True"/>
         <Setter Property="Linq:XElement.WheelIncrement" Value="4"/>
         <Setter Property="Linq:XElement.WheelMaximum" Value="512"/>
@@ -536,31 +545,39 @@
                                 <MenuItem Header="{l:Loc Edit}"
                                     FontWeight="Bold"
                                     Command="{Binding Data.EditCommand, Source={StaticResource Panel}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Icon="{Markup:InternalImage Image=Pencil}"/>
                                 <Separator/>
                                 <MenuItem Header="{l:Loc Cut}"
                                     Command="{Binding Data.CutCommand, Source={StaticResource Panel}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Icon="{Markup:InternalImage Image=Cut}"/>
                                 <MenuItem Header="{l:Loc Copy}"
                                     Command="{Binding Data.CopyCommand, Source={StaticResource Panel}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Icon="{Markup:InternalImage Image=Copy}"/>
                                 <MenuItem Header="{l:Loc Paste}"
                                     Command="{Binding Data.PasteCommand, Source={StaticResource Panel}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Icon="{Markup:InternalImage Image=Paste}"/>
                                 <Separator/> 
                                 <MenuItem Header="{l:Loc Clone}"
                                     Command="{Binding Data.CloneCommand, Source={StaticResource Panel}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Icon="{Markup:InternalImage Image=Clone}"/>
                                 <MenuItem Header="{l:Loc Delete}"
                                     Command="{Binding Data.DeleteCommand, Source={StaticResource Panel}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Icon="{Markup:InternalImage Image=Trash}"/>
                                 <MenuItem Header="{l:Loc Reset}"
                                     Command="{Binding Data.ResetCommand, Source={StaticResource Panel}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Icon="{Markup:InternalImage Image=XRound}"/>
                                 <Separator/>
                                 <MenuItem Header="{l:Loc Export, Suffix=...}"
                                     Command="{Binding Data.Source.ExportCommand, Source={StaticResource Source}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Icon="{Markup:InternalImage Image=Export}"/>
                             </ContextMenu>
                         </Grid.Resources>
                         <ListBox ItemsSource="{TemplateBinding SelectedGroup}"

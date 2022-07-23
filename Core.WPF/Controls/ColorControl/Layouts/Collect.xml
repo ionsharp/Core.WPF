@@ -22,7 +22,7 @@
         <Panels>
           <DockLayoutPanel IsSelected="true" Name="ColorsPanel"/>
           <DockLayoutPanel Name="ColorIlluminantsPanel"/>
-          <DockLayoutPanel Name="ColorMatrixPanel"/>
+          <DockLayoutPanel Name="ColorMatricesPanel"/>
           <DockLayoutPanel Name="ColorProfilesPanel"/>
         </Panels>
       </Element>

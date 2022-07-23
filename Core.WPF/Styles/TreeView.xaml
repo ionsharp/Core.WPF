@@ -33,6 +33,7 @@
                             <local:ImageElement
                                 Margin="{TemplateBinding Padding}"
                                 Source="{Markup:InternalImage 32-ArrowDown.png}"
+                                SourceSize="12,12"
                                 Foreground="{TemplateBinding Foreground}"/>
                         </local:RotateElement>
                     </Grid>

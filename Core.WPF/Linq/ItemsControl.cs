@@ -694,7 +694,7 @@ namespace Imagin.Core.Linq
                     if (GetSortName(control) != null)
                         a.SortDescriptions.Add(new SortDescription(groupName, GetGroupDirection(control)));
 
-                    if (GetGroupStyle(control) is GroupStyle style)
+                    if (!GetGroupsItself(control) && GetGroupStyle(control) is GroupStyle style)
                     {
                         styles.Clear();
                         styles.Add(style);

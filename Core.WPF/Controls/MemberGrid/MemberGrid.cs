@@ -106,11 +106,14 @@ public partial class MemberGrid : DataGrid
 
     #region Keys
 
-    public static readonly ResourceKey MemberOptionsTemplate
-        = new();
+    public static readonly ResourceKey MemberOptionsTemplate = new();
 
     //...
 
+    public static readonly ResourceKey CaptionTemplate = new();
+
+    //...
+    
     public static readonly ResourceKey<Border> HorizontalTemplate
         = new();
 
@@ -205,7 +208,7 @@ public partial class MemberGrid : DataGrid
         = new();
 
     //...
-
+    
 
     public static readonly ResourceKey ListBulletTemplateKey
         = new();
@@ -218,16 +221,15 @@ public partial class MemberGrid : DataGrid
 
     //...
 
-    public static readonly ResourceKey SubObjectTemplate
-        = new();
+    public static readonly ResourceKey CollectionTemplate = new();
 
     //...
 
-    public static readonly ResourceKey ObjectButtonTemplateKey
-        = new();
+    public static readonly ResourceKey ChildObjectTemplate = new();
 
-    public static readonly ResourceKey ObjectTemplateKey
-        = new();
+    public static readonly ResourceKey ObjectButtonTemplate = new();
+
+    public static readonly ResourceKey ObjectTemplate = new();
     
     //...
 
@@ -241,9 +243,10 @@ public partial class MemberGrid : DataGrid
         = new();
 
     //...
+    
+    public static readonly ResourceKey CrumbToolTip = new();
 
-    public static readonly ResourceKey ToolTipKey
-        = new();
+    public static readonly ResourceKey ToolTipKey = new();
 
     //...
 
@@ -521,59 +524,24 @@ public partial class MemberGrid : DataGrid
 
     #endregion
 
-    #region FeaturedRepeats
+    #region FeatureTemplate
 
-    public static readonly DependencyProperty FeaturedRepeatsProperty = DependencyProperty.Register(nameof(FeaturedRepeats), typeof(bool), typeof(MemberGrid), new FrameworkPropertyMetadata(false));
-    public bool FeaturedRepeats
+    public static readonly DependencyProperty FeatureTemplateProperty = DependencyProperty.Register(nameof(FeatureTemplate), typeof(DataTemplate), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
+    public DataTemplate FeatureTemplate
     {
-        get => (bool)GetValue(FeaturedRepeatsProperty);
-        set => SetValue(FeaturedRepeatsProperty, value);
+        get => (DataTemplate)GetValue(FeatureTemplateProperty);
+        set => SetValue(FeatureTemplateProperty, value);
     }
 
     #endregion
 
-    #region FeaturedTemplate
+    #region FeatureVisibility
 
-    public static readonly DependencyProperty FeaturedTemplateProperty = DependencyProperty.Register(nameof(FeaturedTemplate), typeof(DataTemplate), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
-    public DataTemplate FeaturedTemplate
+    public static readonly DependencyProperty FeatureVisibilityProperty = DependencyProperty.Register(nameof(FeatureVisibility), typeof(Visibility), typeof(MemberGrid), new FrameworkPropertyMetadata(Visibility.Visible));
+    public Visibility FeatureVisibility
     {
-        get => (DataTemplate)GetValue(FeaturedTemplateProperty);
-        set => SetValue(FeaturedTemplateProperty, value);
-    }
-
-    #endregion
-
-    #region FeaturedVisibility
-
-    public static readonly DependencyProperty FeaturedVisibilityProperty = DependencyProperty.Register(nameof(FeaturedVisibility), typeof(Visibility), typeof(MemberGrid), new FrameworkPropertyMetadata(Visibility.Visible));
-    public Visibility FeaturedVisibility
-    {
-        get => (Visibility)GetValue(FeaturedVisibilityProperty);
-        set => SetValue(FeaturedVisibilityProperty, value);
-    }
-
-    #endregion
-
-    #region (ReadOnly) FeaturedAbove
-
-    static readonly DependencyPropertyKey FeaturedAboveKey = DependencyProperty.RegisterReadOnly(nameof(FeaturedAbove), typeof(Imagin.Core.Collections.Generic.ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
-    public static readonly DependencyProperty FeaturedAboveProperty = FeaturedAboveKey.DependencyProperty;
-    public Imagin.Core.Collections.Generic.ObservableCollection<MemberModel> FeaturedAbove
-    {
-        get => (Imagin.Core.Collections.Generic.ObservableCollection<MemberModel>)GetValue(FeaturedAboveProperty);
-        private set => SetValue(FeaturedAboveKey, value);
-    }
-
-    #endregion
-
-    #region (ReadOnly) FeaturedBelow
-
-    static readonly DependencyPropertyKey FeaturedBelowKey = DependencyProperty.RegisterReadOnly(nameof(FeaturedBelow), typeof(Imagin.Core.Collections.Generic.ObservableCollection<MemberModel>), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
-    public static readonly DependencyProperty FeaturedBelowProperty = FeaturedBelowKey.DependencyProperty;
-    public Imagin.Core.Collections.Generic.ObservableCollection<MemberModel> FeaturedBelow
-    {
-        get => (Imagin.Core.Collections.Generic.ObservableCollection<MemberModel>)GetValue(FeaturedBelowProperty);
-        private set => SetValue(FeaturedBelowKey, value);
+        get => (Visibility)GetValue(FeatureVisibilityProperty);
+        set => SetValue(FeatureVisibilityProperty, value);
     }
 
     #endregion
@@ -624,14 +592,14 @@ public partial class MemberGrid : DataGrid
 
     #endregion
 
-    #region (ReadOnly) Loading
+    #region (ReadOnly) IsLoading
 
-    static readonly DependencyPropertyKey LoadingKey = DependencyProperty.RegisterReadOnly(nameof(Loading), typeof(bool), typeof(MemberGrid), new FrameworkPropertyMetadata(false));
-    public static readonly DependencyProperty LoadingProperty = LoadingKey.DependencyProperty;
-    public bool Loading
+    static readonly DependencyPropertyKey IsLoadingKey = DependencyProperty.RegisterReadOnly(nameof(IsLoading), typeof(bool), typeof(MemberGrid), new FrameworkPropertyMetadata(false));
+    public static readonly DependencyProperty IsLoadingProperty = IsLoadingKey.DependencyProperty;
+    public bool IsLoading
     {
-        get => (bool)GetValue(LoadingProperty);
-        internal set => SetValue(LoadingKey, value);
+        get => (bool)GetValue(IsLoadingProperty);
+        internal set => SetValue(IsLoadingKey, value);
     }
 
     #endregion
@@ -752,13 +720,12 @@ public partial class MemberGrid : DataGrid
 
     #region Orientation
 
-    public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(MemberGrid), new FrameworkPropertyMetadata(Orientation.Vertical, OnOrientationChanged));
+    public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(MemberGrid), new FrameworkPropertyMetadata(Orientation.Vertical));
     public Orientation Orientation
     {
         get => (Orientation)GetValue(OrientationProperty);
         set => SetValue(OrientationProperty, value);
     }
-    static void OnOrientationChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<MemberGrid>().OnOrientationChanged(e);
 
     #endregion
 
@@ -925,29 +892,6 @@ public partial class MemberGrid : DataGrid
 
     #endregion
 
-    #region (ReadOnly) Tools
-
-    static readonly DependencyPropertyKey ToolsKey = DependencyProperty.RegisterReadOnly(nameof(Tools), typeof(ListViewModel), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
-    public static readonly DependencyProperty ToolsProperty = ToolsKey.DependencyProperty;
-    public ListViewModel Tools
-    {
-        get => (ListViewModel)GetValue(ToolsProperty);
-        private set => SetValue(ToolsKey, value);
-    }
-
-    #endregion
-
-    #region ToolVisibility
-
-    public static readonly DependencyProperty ToolVisibilityProperty = DependencyProperty.Register(nameof(ToolVisibility), typeof(Visibility), typeof(MemberGrid), new FrameworkPropertyMetadata(Visibility.Visible));
-    public Visibility ToolVisibility
-    {
-        get => (Visibility)GetValue(ToolVisibilityProperty);
-        set => SetValue(ToolVisibilityProperty, value);
-    }
-
-    #endregion
-
     #region ValueColumnHeader
 
     public static readonly DependencyProperty ValueColumnHeaderProperty = DependencyProperty.Register(nameof(ValueColumnHeader), typeof(object), typeof(MemberGrid), new FrameworkPropertyMetadata(null));
@@ -1051,15 +995,7 @@ public partial class MemberGrid : DataGrid
 
         //...
 
-        Members =
-            new MemberCollection(this);
-
-        //...
-
-        FeaturedAbove
-            = new();
-        FeaturedBelow
-            = new();
+        Members = new MemberCollection();
 
         //...
 
@@ -1068,9 +1004,6 @@ public partial class MemberGrid : DataGrid
         ViewCategory
             = new(SortComparer);
         ViewSingle
-            = new(SortComparer);
-
-        Tools
             = new(SortComparer);
 
         OnViewChanged(new(View));
@@ -1117,13 +1050,9 @@ public partial class MemberGrid : DataGrid
 
     void Clear()
     {
-        FeaturedAbove.Clear(); FeaturedBelow.Clear();
-
         ViewAll.Source.Clear();
         ViewCategory.Categories.Source.Clear(); ViewCategory.Members.Source.Clear();
         ViewSingle.Source.Clear();
-
-        Tools.Source.Clear();
     }
 
     //...
@@ -1147,17 +1076,21 @@ public partial class MemberGrid : DataGrid
                 var oldSource
                     = Members.Source;
                 var newSource
-                    = new MemberSource(j);
+                    = j.Value;
 
                 ActualSource
                     = j.Value;
 
                 Route.Append(j);
 
-                if (oldSource?.Type != newSource.Type)
+                if (oldSource?.Type != newSource.GetType())
                 {
                     Clear();
+
+                    IsLoading = true;
                     await Members.Load(newSource, sourceFilter, OnMemberAdded);
+                    IsLoading = false;
+
                     OnLoaded();
                 }
                 else Members.Refresh(newSource);
@@ -1191,7 +1124,6 @@ public partial class MemberGrid : DataGrid
         });
         group(ViewAll.View);
         group(ViewSingle.View);
-        group(Tools.View);
     }
 
     void Sort()
@@ -1199,8 +1131,6 @@ public partial class MemberGrid : DataGrid
         ViewAll?.View.Refresh();
         ViewCategory?.Categories.View.Refresh(); ViewCategory?.Members.View.Refresh();
         ViewSingle?.View.Refresh();
-
-        Tools.View?.Refresh();
     }
 
     //...
@@ -1218,27 +1148,8 @@ public partial class MemberGrid : DataGrid
 
     void OnMemberAdded(MemberModel i)
     {
-        if (i.IsFeatured)
-        {
-            if (i.Attributes.GetFirst<FeatureAttribute>()?.Where == AboveBelow.Above || i.Attributes.GetFirst<AboveAttribute>() != null)
-                FeaturedAbove.Add(i);
-
-            if (i.Attributes.GetFirst<FeatureAttribute>()?.Where == AboveBelow.Below || i.Attributes.GetFirst<BelowAttribute>() != null)
-                FeaturedBelow.Add(i);
-
-            if (!FeaturedRepeats)
-                return;
-        }
-        else if (i.IsTool)
-        {
-            if (Orientation == Orientation.Vertical)
-            {
-                Tools.Source.Add(i);
-                return;
-            }
-        }
-
-        ViewAll.Source.Add(i);
+        if (!i.IsFeatured)
+            ViewAll.Source.Add(i);
     }
 
     async void OnUnloaded()
@@ -1341,34 +1252,6 @@ public partial class MemberGrid : DataGrid
             case Visibility.Visible:
                 ShowName();
                 break;
-        }
-    }
-
-    protected virtual void OnOrientationChanged(Value<Orientation> input)
-    {
-        if (!loadTask.Started)
-        {
-            if (input.New == Orientation.Horizontal)
-            {
-                foreach (var i in Tools.Source)
-                    ViewAll.Source.Add(i);
-
-                Tools.Source.Clear();
-            }
-            else
-            {
-                foreach (var i in ViewAll.Source)
-                {
-                    if (i.IsTool)
-                        Tools.Source.Add(i);
-                }
-
-                for (var i = ViewAll.Source.Count - 1; i >= 0; i--)
-                {
-                    if (ViewAll.Source[i].IsTool)
-                        ViewAll.Source.RemoveAt(i);
-                }
-            }
         }
     }
 
@@ -1487,6 +1370,13 @@ public partial class MemberGrid : DataGrid
     ICommand copyCommand;
     public ICommand CopyCommand => copyCommand ??= new RelayCommand<MemberModel>(i => XClipboard.Copy(i.Value), i => i?.Value != null);
 
+    ICommand copyTextCommand;
+    public ICommand CopyTextCommand => copyTextCommand ??= new RelayCommand<MemberModel>(i =>
+    {
+
+    }, 
+    i => i?.Value != null);
+    
     ICommand pasteCommand;
     public ICommand PasteCommand => pasteCommand ??= new RelayCommand<MemberModel>(i => i.Value = XClipboard.Paste(i.Value.GetType()), i => XClipboard.Contains(i?.Value?.GetType()));
 

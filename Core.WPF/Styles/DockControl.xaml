@@ -66,8 +66,7 @@
             BorderThickness="0"
             GroupName="Category"
             HeaderVisibility="Visible"
-            Source="{local:SourceBinding Core:OptionAttribute}"
-            ToolVisibility="Collapsed"/>
+            Source="{local:SourceBinding Core:OptionAttribute}"/>
     </DataTemplate>
 
     <DataTemplate x:Key="{x:Static local:DockControl.PanelToolsTemplateKey}">
@@ -98,39 +97,15 @@
                 ContentTemplateSelector="{Data:Ancestor DockControl.DocumentTemplateSelector, local:DockRootControl}"/>
             <ContentPresenter Content="{Binding}"
                 ContentTemplate="{StaticResource {x:Static local:DockControl.FindTemplateKey}}"/>
-            <Border x:Name="Border" Grid.Row="1" Background="#11000000" Height="32">
-                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*"
-                    DataContext="{Data:Ancestor DockControl, local:DockRootControl}"
-                    Linq:XPanel.VerticalContentAlignment="Center">
-                    <ContentPresenter Content="{Binding ActiveDocument}"
-                        Visibility="{Data:VisibilityBinding}">
-                        <ContentPresenter.ContentTemplate>
-                            <DataTemplate>
-                                <local:ProgressCircle
-                                    Height="16" Width="16"
-                                    Margin="0,0,5,0"
-                                    Visibility="{Data:VisibilityBinding IsBusy}"/>
-                            </DataTemplate>
-                        </ContentPresenter.ContentTemplate>
-                    </ContentPresenter>
-                    <local:MemberGrid
-                        BorderThickness="0"
-                        GroupName="Category"
-                        HeaderVisibility="Collapsed"
-                        Margin="10,2"
-                        Orientation="Horizontal"
-                        Source="{local:SourceBinding ActiveDocument.Status, Core:StatusAttribute}"/>
-                </Grid>
-            </Border>
+            <local:TopBorder Grid.Row="1" Visibility="{Data:HasAttributeVisibilityBinding {x:Type Core:StatusAttribute}}">
+                <local:MemberGrid
+                    BorderThickness="0"
+                    GroupName="Category"
+                    HeaderVisibility="Collapsed"
+                    Orientation="Horizontal"
+                    Source="{local:SourceBinding Core:StatusAttribute}"/>
+            </local:TopBorder>
         </Grid>
-        <DataTemplate.Triggers>
-            <DataTrigger Binding="{Data:Ancestor DockControl.ActiveDocument.Status, local:DockRootControl}" Value="{x:Null}">
-                <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Data:Ancestor DockControl.ActiveDocument.Status, local:DockRootControl, Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:StatusAttribute}}" Value="False">
-                <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
-            </DataTrigger>
-        </DataTemplate.Triggers>
     </DataTemplate>
 
     <!-- ... Panel stuff -->
@@ -252,7 +227,7 @@
                 IsChecked="{Data:TwoWay IsOptionsVisible}"
                 Padding="5,2"
                 Source="{Markup:InternalImage Options.png}"
-                Visibility="{Binding Converter={x:Static local:AnyMemberHasAttributeVisibilityConverter.Default}, ConverterParameter={x:Type Core:OptionAttribute}}"/>
+                Visibility="{Data:HasAttributeVisibilityBinding {x:Type Core:OptionAttribute}}"/>
             <local:ImageToggleButton Grid.Column="5"
                 Menu="{StaticResource {x:Static local:DockControl.PanelMenuKey}}"
                 Padding="5,2"
@@ -298,7 +273,7 @@
                 Visibility="{Data:VisibilityBinding IsOptionsVisible}"/>
         </Grid>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:ToolAttribute}}" Value="True">
+            <DataTrigger Binding="{Data:HasAttributeBinding {x:Type Core:ToolAttribute}}" Value="True">
                 <Setter TargetName="HeaderedContentControl" Property="Header" Value="{Binding}"/>
                 <Setter TargetName="HeaderedContentControl" Property="HeaderTemplate" Value="{StaticResource {x:Static local:DockControl.PanelToolsTemplateKey}}"/>
                 <Setter TargetName="HeaderedContentControl" Property="Linq:XHeaderedContentControl.HeaderVisibility" Value="Visible"/>

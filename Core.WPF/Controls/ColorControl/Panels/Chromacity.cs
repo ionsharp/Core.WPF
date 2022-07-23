@@ -17,7 +17,7 @@ public class ColorChromacityPanel : Panel
     readonly Handle handle = false;
 
     Vector2 chromacity = WorkingProfile.DefaultWhite;
-    [Assignable(nameof(DefaultChromacity)), Horizontal, Index(0), Visible]
+    [Assign(nameof(DefaultChromacity)), Horizontal, Index(0), Visible]
     public Vector2 Chromacity
     {
         get => chromacity;
@@ -43,7 +43,7 @@ public class ColorChromacityPanel : Panel
     public override Uri Icon => Resources.InternalImage(Images.Thermometer);
 
     double illuminant = CCT.GetTemperature((xy)WorkingProfile.Default.Chromacity);
-    [Feature, Gradient("ff1c00", "FFF", "bbd0ff"), Range(2000.0, 12000.0, 100.0), StringFormat("N0"), Visible]
+    [Above, Gradient("ff1c00", "FFF", "bbd0ff"), Range(2000.0, 12000.0, 100.0), StringFormat("N0"), Visible]
     [Setter(nameof(MemberModel.RightText), "K"), SliderUpDown]
     public double Illuminant
     {

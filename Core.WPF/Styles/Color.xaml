@@ -21,6 +21,7 @@
                 <TextBlock Text="{Binding Name}"/>
             </local:TitleLabel>
             <TextBlock FontSize="13" FontStyle="Italic" Opacity="0.5" Text="{Binding Converter={x:Static local:ColorModelLongNameConverter.Default}}"/>
+            <TextBlock FontSize="14" Text="{Data:DescriptionBinding}" TextWrapping="Wrap"/>
         </StackPanel>
     </DataTemplate>
     
@@ -56,8 +57,9 @@
                                         <MultiBinding Converter="{x:Static Conversion:ColorMultiConverter.Default}" Mode="OneWay">
                                             <Binding Path="Data" Source="{StaticResource Color}"/>
                                             <Binding/>
+                                            <Data:RemoteBinding Path="ColorToolTipNormalize" RemoteSource="Options"/>
                                             <Data:RemoteBinding Path="ColorToolTipPrecision" RemoteSource="Options"/>
-                                        </MultiBinding>
+                                        </MultiBinding> 
                                     </TextBlock.Text>
                                 </TextBlock>
                             </StackPanel>

@@ -13,7 +13,7 @@ public class WorkingProfileModel : Namable<WorkingProfile>, IDescription
         set => this.Change(ref description, value);
     }
 
-    [DisplayName("Profile")]
+    [Copy, DisplayName("Profile")]
     public override WorkingProfile Value
     {
         get => base.Value;

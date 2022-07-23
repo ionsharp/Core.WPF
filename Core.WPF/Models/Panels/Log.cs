@@ -126,7 +126,7 @@ namespace Imagin.Core.Models
         }
 
         bool filterError = true;
-        [Button, Feature]
+        [Above, Button]
         [Label(false)]
         [Image(Images.XRound, ThemeKeys.ResultError)]
         [Index(-5)]
@@ -139,7 +139,7 @@ namespace Imagin.Core.Models
         }
 
         bool filterMessage = true;
-        [Button, Feature]
+        [Above, Button]
         [Label(false)]
         [Image(Images.Info, ThemeKeys.ResultMessage)]
         [Index(-4)]
@@ -152,7 +152,7 @@ namespace Imagin.Core.Models
         }
 
         bool filterSuccess = true;
-        [Button, Feature]
+        [Above, Button]
         [Label(false)]
         [Image(Images.CheckmarkRound, ThemeKeys.ResultSuccess)]
         [Index(-3)]
@@ -165,7 +165,7 @@ namespace Imagin.Core.Models
         }
 
         bool filterWarning = true;
-        [Button, Feature]
+        [Above, Button]
         [Label(false)]
         [Image(Images.Warning, ThemeKeys.ResultWarning)]
         [Index(-2)]
@@ -195,7 +195,7 @@ namespace Imagin.Core.Models
         string search = string.Empty;
         [Command(nameof(SearchCommand))]
         [Label(false)]
-        [Feature(AboveBelow.Below)]
+        [Below]
         [Hidden, Image(Images.Search)]
         [Index(int.MaxValue)]
         [Search, Setter(nameof(MemberModel.Placeholder), "Search...")]

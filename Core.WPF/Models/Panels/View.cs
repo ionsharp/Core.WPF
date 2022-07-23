@@ -4,16 +4,18 @@ namespace Imagin.Core.Models;
 
 public abstract class ViewPanel : Panel
 {
-    double itemSize = 128.0;
-    [Below, Index(0), Label(false), Range(32.0, 512.0, 4.0), Slider, Tool, Visible]
+    enum Category { View }
+
+    double itemSize = 32.0;
+    [Category(Category.View), Option, Range(16.0, 512.0, 4.0), Slider, Visible]
     public double ItemSize
     {
         get => itemSize;
         set => this.Change(ref itemSize, value);
     }
 
-    ViewControl.Views view = ViewControl.Views.List;
-    [Below, Index(1), Label(false), Tool, Visible]
+    ViewControl.Views view = ViewControl.Views.Grid;
+    [Category(Category.View), Option, Visible]
     public ViewControl.Views View
     {
         get => view;

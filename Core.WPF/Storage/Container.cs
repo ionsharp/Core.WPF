@@ -17,7 +17,7 @@ namespace Imagin.Core.Storage
         }
 
         [DisplayName("Path")]
-        [Feature]
+        [Above]
         [FolderPath]
         [ReadOnly]
         public override string Path

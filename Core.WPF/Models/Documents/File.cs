@@ -125,7 +125,7 @@ namespace Imagin.Core.Models
             private set => this.Change(ref modified, value);
         }
 
-        [Feature]
+        [Above]
         [UpdateSourceTrigger(UpdateSourceTrigger.LostFocus)]
         [XmlIgnore]
         public string Name

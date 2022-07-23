@@ -19,8 +19,8 @@ public class MainViewModel : DockViewModel<MainWindow, Document>
 {
     #region Properties
 
-    ColorViewModel color;
-    public ColorViewModel Color
+    ColorDocument color;
+    public ColorDocument Color
     {
         get => color;
         set => this.Change(ref color, value);
@@ -95,7 +95,7 @@ public class MainViewModel : DockViewModel<MainWindow, Document>
 
     public MainViewModel() : base()
     {
-        Color = new(Colors.White, new ColorControlOptions());
+        Color = new(Colors.White, null);
 
         if (Get.Current<App>().Notifications.Count == 0)
         {

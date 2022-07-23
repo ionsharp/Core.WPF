@@ -34,7 +34,6 @@ public class MatrixControl : Control
         public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             base.OnPropertyChanged(propertyName);
-            Log.Write<MatrixControl>($"ValueModel.OnPropertyChanged: ({value})");
             Control.UpdateSource();
         }
     }

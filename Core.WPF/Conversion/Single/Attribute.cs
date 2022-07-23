@@ -26,7 +26,7 @@ namespace Imagin.Core.Conversion
                 return GetResult(GetAttribute(b)) ?? GetFallback(b);
 
             if (input.Value is object c)
-                return GetResult(GetAttribute(c.GetType())) ?? GetFallback(c.GetType());
+                return GetResult(GetAttribute(c.GetType())) ?? c.ToString() ?? GetFallback(c.GetType());
 
             return Nothing.Do;
         }

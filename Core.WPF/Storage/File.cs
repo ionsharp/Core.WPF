@@ -16,7 +16,7 @@ namespace Imagin.Core.Storage
     public class File : Item
     {
         [DisplayName("Path")]
-        [Feature]
+        [Above]
         [FilePath]
         [ReadOnly]
         public override string Path

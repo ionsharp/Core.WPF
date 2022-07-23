@@ -165,7 +165,7 @@ public class ColorAnalysisPanel : Panel
         
     int depth = 10;
     [DisplayName("# of colors"), SliderUpDown, Setter(nameof(MemberModel.RightText), "^3"), Range(1, 255, 1)]
-    [Locked, Tool, Visible]
+    [Lock, Tool, Visible]
     public int Depth
     {
         get => depth;
@@ -180,7 +180,7 @@ public class ColorAnalysisPanel : Panel
     }
 
     GroupItemModel profile = null;
-    [Index(-1), Locked, Tool, Visible]
+    [Index(-1), Lock, Tool, Visible]
     public GroupItemModel Profile
     {
         get => profile;
@@ -198,7 +198,7 @@ public class ColorAnalysisPanel : Panel
 
     int precision = 3;
     [SliderUpDown, Range(1, 8, 1)]
-    [Locked, Tool, Visible]
+    [Lock, Tool, Visible]
     public int Precision
     {
         get => precision;
@@ -206,7 +206,7 @@ public class ColorAnalysisPanel : Panel
     }
 
     ColorAnalysisType type = ColorAnalysisType.Accuracy;
-    [Feature(AboveBelow.Above), Label(false), Locked, Localize(false), Tool, Visible]
+    [Above, Label(false), Lock, Localize(false), Tool, Visible]
     public ColorAnalysisType Type
     {
         get => type;
@@ -308,7 +308,7 @@ public class ColorAnalysisPanel : Panel
     public ICommand CancelCommand => cancelCommand ??= new RelayCommand(() => refresh.Cancel(), () => refresh.Started);
 
     ICommand copyCommand;
-    [Below, DisplayName("Copy"), Image(Images.Copy), Index(1), Locked, Tool, Visible]
+    [Below, DisplayName("Copy"), Image(Images.Copy), Index(1), Lock, Tool, Visible]
     public ICommand CopyCommand => copyCommand ??= new RelayCommand(() =>
     {
         var result = new StringBuilder();
@@ -318,11 +318,11 @@ public class ColorAnalysisPanel : Panel
     () => Results?.As<IList>().Count > 0);
 
     ICommand clearCommand;
-    [DisplayName("Clear"), Feature(AboveBelow.Below), Image(Images.XRound), Index(0), Locked, Tool, Visible]
+    [DisplayName("Clear"), Below, Image(Images.XRound), Index(0), Lock, Tool, Visible]
     public ICommand ClearCommand => clearCommand ??= new RelayCommand(() => Results?.As<IList>().Clear(), () => Results?.As<IList>().Count > 0);
 
     ICommand refreshCommand;
-    [DisplayName("Refresh"), Feature(AboveBelow.Below), Image(Images.Refresh), Index(2), Locked, Tool, Trigger(nameof(MemberModel.IsVisible), nameof(IsNotBusy)), Visible]
+    [DisplayName("Refresh"), Below, Image(Images.Refresh), Index(2), Lock, Tool, Trigger(nameof(MemberModel.IsVisible), nameof(IsNotBusy)), Visible]
     public ICommand RefreshCommand => refreshCommand ??= new RelayCommand(() => _ = refresh.Start(), () => !refresh.Started);
 }
 

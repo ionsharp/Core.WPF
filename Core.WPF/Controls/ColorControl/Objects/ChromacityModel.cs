@@ -6,7 +6,7 @@ namespace Imagin.Core.Controls;
 [Serializable]
 public class ChromacityModel : Namable<Vector2>, IDescription
 {
-    [DisplayName("Illuminant"), Horizontal]
+    [Copy, DisplayName("Illuminant"), Horizontal]
     public override Vector2 Value
     {
         get => base.Value;

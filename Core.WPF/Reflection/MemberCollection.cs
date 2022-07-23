@@ -1,4 +1,5 @@
 ﻿using Imagin.Core.Collections.Concurrent;
+using Imagin.Core.Collections.Generic;
 using Imagin.Core.Controls;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
@@ -8,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace Imagin.Core.Reflection;
 
@@ -31,101 +33,66 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     #endregion
 
-    #region Fields
-
-    internal readonly MemberGrid Control;
-
-    public MemberModel Parent { get; private set; }
-
-    #endregion
-
     #region Properties
 
-    public MemberSource Source { get; internal set; }
+    public readonly int Depth = 0;
 
     //...
 
-    bool loading = false;
-    public bool Loading
+    bool isLoading = false;
+    public bool IsLoading
     {
-        get => loading;
-        set
-        {
-            this.Change(ref loading, value);
-            Control.Loading = value;
-        }
+        get => isLoading;
+        set => this.Change(ref isLoading, value);
     }
+
+    public MemberModel Parent { get; private set; }
+
+    public MemberSource Source { get; private set; }
+
+    //...
+
+    public ObservableCollection<MemberModel> Above { get; private set; } = new();
+
+    public ObservableCollection<MemberModel> Below { get; private set; } = new();
+
+    public ListCollectionView ViewAbove { get; private set; }
+
+    public ListCollectionView ViewBelow { get; private set; }
 
     #endregion
 
     #region MemberCollection
 
-    public readonly int Depth = 0;
-
-    internal MemberCollection(MemberGrid propertyGrid) : base() => Control = propertyGrid;
-
-    internal MemberCollection(MemberGrid propertyGrid, MemberModel parent, int depth) : this(propertyGrid)
+    public MemberCollection() : base() 
     {
-        Parent 
-            = parent;
-        Depth 
-            = depth;
+        ViewAbove = new(Above); ViewBelow = new(Below);
     }
 
-    internal MemberModel this[string memberName] => this.FirstOrDefault(i => i.Name == memberName);
+    public MemberCollection(MemberModel parent, int depth) : this() { Parent = parent; Depth = depth; }
 
     #endregion
 
     #region Methods
 
-    //... (new)
-
     new internal void Clear()
     {
         Unsubscribe();
-        base.Clear();
 
+        Above.Clear(); Below.Clear(); base.Clear();
         Source = null;
-    }
-
-    //... (private)
-
-    /// <summary>
-    /// If <see cref="FieldInfo"/>, must be public. If <see cref="PropertyInfo"/>, cannot be indexor and must have <see langword="public"/> getter (with <see langword="internal"/>, <see langword="private"/>, <see langword="protected"/>, or <see langword="public"/> setter).
-    /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
-    bool Supported(MemberInfo input)
-    {
-        if (input is FieldInfo a)
-        {
-            if (MemberGrid.ForbiddenTypes.Contains(a.FieldType))
-                return false;
-
-            return a.IsPublic;
-        }
-
-        if (input is PropertyInfo b)
-        {
-            if (MemberGrid.ForbiddenTypes.Contains(b.PropertyType))
-                return false;
-
-            return b.GetIndexParameters()?.Length == 0 && b.GetGetMethod(false) != null;
-        }
-
-        return false;
     }
 
     //...
 
     void OnSourceChanged(object sender, PropertyChangedEventArgs e) 
-        => this.FirstOrDefault(i => i.Name == e.PropertyName)?.UpdateValueSafe();
+        => this.Concat(Above).Concat(Below).FirstOrDefault(i => i.Name == e.PropertyName)?.RefreshSafe();
 
     void OnSourceLocked(object sender, LockedEventArgs e)
     {
         if (e.IsLocked)
         {
-            foreach (var i in this)
+            foreach (var i in this.Concat(Above).Concat(Below))
             {
                 if (i.IsLockable)
                     i.IsLocked = true;
@@ -143,7 +110,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
             }
             if (!result)
             {
-                foreach (var i in this)
+                foreach (var i in this.Concat(Above).Concat(Below))
                 {
                     if (i.IsLockable)
                         i.IsLocked = false;
@@ -152,9 +119,9 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
         }
     }
 
-    //... (internal)
+    //...
 
-    internal void LoadSync(SourceFilter filter, Action<MemberModel> onAdded)
+    void Load(SourceFilter filter, Action<MemberModel> onAdded)
     {
         var isExplicit
             = Source.Type.GetAttribute<ExplicitAttribute>() != null;
@@ -164,7 +131,7 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
             var data = new CacheData();
             foreach (var i in GetMembers(Source.Type))
             {
-                if (!Supported(i))
+                if (!IsValid(i))
                     continue;
 
                 bool isImplicit(MemberInfo j)
@@ -242,71 +209,63 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
                 }
             }
 
-            var data = new MemberData(this, Source, i.Key, i.Value);
             MemberModel result 
                 = i.Key is FieldInfo 
-                ? new FieldModel(data, Depth) 
+                ? new FieldModel(Parent, Source, i.Key, i.Value, Depth) 
                 : i.Key is PropertyInfo 
-                ? new PropertyModel(data, Depth) 
+                ? new PropertyModel(Parent, Source, i.Key, i.Value, Depth) 
                 : null;
 
-            Add(result);
-            Dispatch.Invoke(() => onAdded?.Invoke(result));
+            if (result.IsFeatured)
+            {
+                if (result.HasAttribute<AboveAttribute>())
+                    Above.Add(result);
+
+                if (result.HasAttribute<BelowAttribute>())
+                    Below.Add(result);
+            }
+            else Add(result);
+            onAdded?.Invoke(result); //Dispatch.Invoke(() => );
         }
     }
 
-    internal async Task Load(MemberSource source, SourceFilter filter, Action<MemberModel> onAdded)
+    internal async Task Load(object source, SourceFilter filter = null, Action<MemberModel> onAdded = null)
     {
-        Loading = true;
+        IsLoading = true;
 
         Clear();
-        Source = source;
+        Source = new(source);
 
-        await Task.Run(() =>
-        {
-            lock (cache)
-            {
-                LoadSync(filter, onAdded);
-            }
-        });
+        lock (cache) { Load(filter, onAdded); }
+        await Task.Run(() => { });
 
         Subscribe();
-        Loading = false;
+        IsLoading = false;
     }
 
-    internal async Task Load(SourceFilter filter, Action<MemberModel> onAdded)
-        => await Load(Source, filter, onAdded);
+    //...
 
-    internal void Load(object input)
+    public void Refresh()
     {
-        Clear();
-        Source = new(new MemberPathSource(input));
-
-        LoadSync(null, null);
-        Subscribe();
+        this.Concat(Above).Concat(Below).ForEach(i => i.RefreshSoftSafe());
     }
 
-    //... (public)
-
-    public void Refresh() => this.ForEach(i => i.UpdateValueSafe());
-
-    public void Refresh(MemberSource newSource)
+    public void Refresh(object newSource)
     {
         Unsubscribe();
-        Source = newSource;
+        Source = new(newSource);
 
-        XList.ForEach<MemberModel>(this, i =>
-        {
-            i.UpdateSource(newSource);
-            i.UpdateValueSafe();
-        });
+        this.Concat(Above).Concat(Below)
+            .ForEach(i => { i.UpdateSource(Source); i.RefreshSoftSafe(); });
 
         Subscribe();
     }
+
+    //...
 
     public void Subscribe()
     {
-        this.ForEach(i => { i.Unsubscribe(); i.Subscribe(); });
+        this.Concat(Above).Concat(Below).ForEach(i => { i.Unsubscribe(); i.Subscribe(); });
 
         Source?.Instance.If<ILock>
             (j => { j.Locked -= OnSourceLocked; j.Locked += OnSourceLocked; });
@@ -316,7 +275,8 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
     public void Unsubscribe()
     {
-        this.ForEach(i => i.Unsubscribe());
+        this.Concat(Above).Concat(Below).ForEach(i => i.Unsubscribe());
+
         Source?.Instance.If<ILock>
             (j => { j.Locked -= OnSourceLocked; });
         Source?.Instance.If<INotifyPropertyChanged>
@@ -335,6 +295,29 @@ public class MemberCollection : ConcurrentCollection<MemberModel>, ISubscribe, I
 
         return false;
     });
+
+    /// <summary>If <see cref="FieldInfo"/>, must be public. If <see cref="PropertyInfo"/>, cannot be indexor and must have <see langword="public"/> getter (with <see langword="internal"/>, <see langword="private"/>, <see langword="protected"/>, or <see langword="public"/> setter).</summary>
+    /// <remarks>Only <see cref="FieldInfo"/> and <see cref="PropertyInfo"/> is supported. <see cref="MethodInfo"/> and everything else is not!</remarks>
+    public static bool IsValid(MemberInfo input)
+    {
+        if (input is FieldInfo a)
+        {
+            if (MemberGrid.ForbiddenTypes.Contains(a.FieldType))
+                return false;
+
+            return a.IsPublic;
+        }
+
+        if (input is PropertyInfo b)
+        {
+            if (MemberGrid.ForbiddenTypes.Contains(b.PropertyType))
+                return false;
+
+            return b.GetIndexParameters()?.Length == 0 && b.GetGetMethod(false) != null;
+        }
+
+        return false;
+    }
 
     #endregion
 }

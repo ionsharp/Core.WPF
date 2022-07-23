@@ -26,7 +26,7 @@
                                 Rotate="{TemplateBinding IsChecked}"
                                 Rotation="-90,0"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                                <local:ImageElement Source="{Markup:InternalImage 32-ArrowDown.png}"/>
+                                <local:ImageElement Source="{Markup:InternalImage 32-ArrowDown.png}" SourceSize="12,12"/>
                             </local:RotateElement>
                             <ContentPresenter Grid.Column="1" 
                                 ContentSource="Content" 

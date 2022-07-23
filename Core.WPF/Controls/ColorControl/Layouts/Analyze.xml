@@ -8,7 +8,7 @@
   <Bottom/>
   <Root xsi:type="DockLayoutGroup" Orientation="Horizontal">
     <Elements>
-      <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="6*">
+      <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="5*">
         <Elements>
           <Element xsi:type="DockLayoutDocumentGroup" Height="65*"/>
           <Element xsi:type="DockLayoutPanelGroup" Height="35*">
@@ -19,17 +19,17 @@
           </Element>
         </Elements>
       </Element>
-      <Element xsi:type="DockLayoutGroup" Orientation="Vertical" Width="4*">
+      <Element xsi:type="DockLayoutGroup" Orientation="Horizontal" Width="5*">
         <Elements>
-          <Element xsi:type="DockLayoutPanelGroup" Height="3*">
+          <Element xsi:type="DockLayoutPanelGroup" Width="5*">
+            <Panels>
+              <DockLayoutPanel IsSelected="true" Name="ColorPanel"/>
+            </Panels>
+          </Element>
+          <Element xsi:type="DockLayoutPanelGroup" Width="5*">
             <Panels>
               <DockLayoutPanel IsSelected="true" Name="ColorChromacityPanel"/>
               <DockLayoutPanel Name="ColorDifferencePanel"/>
-            </Panels>
-          </Element>
-          <Element xsi:type="DockLayoutPanelGroup" Height="7*">
-            <Panels>
-              <DockLayoutPanel IsSelected="true" Name="ColorPanel"/>
             </Panels>
           </Element>
         </Elements>

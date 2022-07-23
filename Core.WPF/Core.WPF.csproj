@@ -149,10 +149,11 @@
     <Compile Include="Controls\ColorControl\Converters\Component4ToDouble.cs" />
     <Compile Include="Controls\ColorControl\Converters\ChromacityToKelvin.cs" />
     <Compile Include="Controls\ColorControl\Converters\KelvinToChromacity.cs" />
+    <Compile Include="Controls\ColorControl\NormalColorModel.cs" />
     <Compile Include="Controls\ColorControl\Objects\ChromacityModel.cs" />
-    <Compile Include="Controls\ColorControl\Objects\AdaptationModel.cs" />
+    <Compile Include="Controls\ColorControl\Objects\MatrixModel.cs" />
     <Compile Include="Controls\ColorControl\Objects\WorkingProfileModel.cs" />
-    <Compile Include="Controls\ColorControl\Panels\Matrix.cs" />
+    <Compile Include="Controls\ColorControl\Panels\Matrices.cs" />
     <Compile Include="Controls\ColorControl\Panels\Difference.cs" />
     <Compile Include="Controls\ColorControl\Panels\Color.cs" />
     <Compile Include="Controls\ColorControl\Panels\Analysis.cs" />
@@ -167,28 +168,28 @@
     <Compile Include="Controls\ColorSelector\Selector\ComponentSelectorEllipse.cs" />
     <Compile Include="Controls\Control\ViewControl.cs" />
     <Compile Include="Controls\Control\GroupControl.cs" />
-    <Compile Include="Conversion\Multi\String\Color.cs" />
+    <Compile Include="Controls\MemberGrid\ObjectToItemModelConverter.cs" />
+    <Compile Include="Data\Binding\Local\Convert\HasAttribute.cs" />
     <Compile Include="Effects\AngleGradientEffect.cs" />
     <Compile Include="Media\BlendModes.cs" />
     <Compile Include="Media\ICC.cs" />
-    <Compile Include="Models\Panels\GroupItem.cs" />
+    <Compile Include="Models\GroupIndex.cs" />
+    <Compile Include="Models\GroupItem.cs" />
+    <Compile Include="Models\GroupValue.cs" />
     <Compile Include="Models\Panels\View.cs" />
     <Compile Include="Storage\StorageWindowModes.cs" />
-    <Compile Include="Conversion\Multi\GradientMultiConverter.cs" />
+    <Compile Include="Conversion\Multi\Object.cs" />
     <Compile Include="Conversion\Single\DoubleMatrix.cs" />
     <Compile Include="Media\GradientAttribute.cs" />
     <Compile Include="Linq\WriteableBitmap.cs" />
     <Compile Include="-\ImageAttribute.cs" />
     <Compile Include="-\UpdateSourceTriggerAttribute.cs" />
-    <Compile Include="Conversion\Multi\Visibility\AandBorCMultiConverter.cs" />
+    <Compile Include="Conversion\Multi\Visibility.cs" />
     <Compile Include="Conversion\Single\One.cs" />
     <Compile Include="Data\Binding\Local\Convert\DoubleToOne.cs" />
     <Compile Include="Data\Binding\Local\Convert\OneToDouble.cs" />
     <Compile Include="Linq\ColorMatrix.cs" />
-    <Compile Include="Controls\ColorControl\ColorViewModel.cs" />
     <Compile Include="Controls\ColorSelector\Slider\BaseComponentSlider.cs" />
-    <Compile Include="Reflection\MemberSetter.cs" />
-    <Compile Include="Reflection\MemberTrigger.cs" />
     <Compile Include="Behavior\Binding.cs" />
     <Compile Include="Behavior\DynamicResource.cs" />
     <Compile Include="Behavior\Index.cs" />
@@ -273,13 +274,12 @@
     <Compile Include="Controls\Presenter\SelectionPresenter.cs" />
     <Compile Include="Controls\ProgressBar\ProgressForegroundConverter.cs" />
     <Compile Include="Controls\ProgressBar\ProgressLine.cs" />
-    <Compile Include="Controls\MemberGrid\Converters.cs" />
     <Compile Include="Controls\MemberGrid\MemberNamePresenter.cs" />
     <Compile Include="Controls\MemberGrid\MemberPlaceholder.cs" />
-    <Compile Include="Controls\MemberGrid\Bindings.cs" />
+    <Compile Include="Controls\MemberGrid\MemberAttributeBinding.cs" />
     <Compile Include="Controls\MemberGrid\MemberValuePresenter.cs" />
     <Compile Include="Controls\MemberGrid\MemberView.cs" />
-    <Compile Include="Reflection\MemberModel\List.Item.cs" />
+    <Compile Include="Reflection\MemberModel\-Item.cs" />
     <Compile Include="Reflection\MemberPathElement.cs" />
     <Compile Include="Reflection\SourceBinding.cs" />
     <Compile Include="Controls\TabControl\CacheTabControl.cs" />
@@ -295,9 +295,8 @@
       <DependentUpon>PropertyWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Conversion\ConverterContainer.cs" />
-    <Compile Include="Conversion\Multi\Thickness\Thickness.cs" />
+    <Compile Include="Conversion\Multi\Thickness.cs" />
     <Compile Include="Conversion\Single\Attribute.cs" />
-    <Compile Include="Conversion\Multi\Double\Unit.cs" />
     <Compile Include="Conversion\Single\Item.cs" />
     <Compile Include="Conversion\Single\Orientation.cs" />
     <Compile Include="Conversion\Single\Point.cs" />
@@ -407,8 +406,8 @@
     <Compile Include="Controls\DockControl\IDockPanelSource.cs" />
     <Compile Include="Controls\DockControl\Control\DockPanelBar.cs" />
     <Compile Include="Controls\DockControl\Layout\DockLayoutRoot.cs" />
-    <Compile Include="Controls\ColorControl\Options\ColorControlOptions.cs" />
-    <Compile Include="Controls\ColorControl\Options\IColorControlOptions.cs" />
+    <Compile Include="Controls\ColorControl\ColorControlOptions.cs" />
+    <Compile Include="Controls\ColorControl\IColorControlOptions.cs" />
     <Compile Include="Config\SingleInstanceException.cs" />
     <Compile Include="Controls\TextBlock\BulletElement.xaml.cs">
       <DependentUpon>BulletElement.xaml</DependentUpon>
@@ -430,9 +429,6 @@
       <DependentUpon>SplashWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Conversion\ConverterSelector.cs" />
-    <Compile Include="Conversion\Multi\String\StringReplace.cs" />
-    <Compile Include="Conversion\Multi\String\Substring.cs" />
-    <Compile Include="Conversion\Multi\Visibility\BooleanToVisibility.cs" />
     <Compile Include="Conversion\Single\Enum.cs" />
     <Compile Include="Conversion\Single\Int32.cs" />
     <Compile Include="Conversion\Single\DateTime.cs" />
@@ -524,12 +520,10 @@
     <Compile Include="Controls\-\ControlLengthUnit.cs" />
     <Compile Include="Controls\Browser\BrowserLayout.cs" />
     <Compile Include="Controls\Browser\BrowserView.cs" />
-    <Compile Include="Conversion\Multi\Visibility\ItemVisibility.cs" />
     <Compile Include="Storage\PathChangedEvent.cs" />
     <Compile Include="Storage\IValidate.cs" />
     <Compile Include="Reflection\MemberPath.cs" />
-    <Compile Include="Reflection\MemberData.cs" />
-    <Compile Include="Reflection\MemberModel\-Field.cs" />
+    <Compile Include="Reflection\MemberModel\-Base.Field.cs" />
     <Compile Include="Reflection\MemberModel\-Base.cs" />
     <Compile Include="Reflection\MemberSource.cs" />
     <Compile Include="Controls\Window\AboutWindow.xaml.cs">
@@ -537,8 +531,6 @@
     </Compile>
     <Compile Include="Conversion\Converter.cs" />
     <Compile Include="Conversion\MultiConverter.cs" />
-    <Compile Include="Conversion\Multi\String\StringFormat.cs" />
-    <Compile Include="Conversion\Multi\String\PropertyChanged.cs" />
     <Compile Include="Conversion\Nothing.cs" />
     <Compile Include="Conversion\Single\ColorDocument.cs" />
     <Compile Include="Conversion\Single\GridLength.cs" />
@@ -605,7 +597,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Compile>
     <Compile Include="Controls\MemberGrid\MemberSearchName.cs" />
-    <Compile Include="Conversion\Multi\String\Bullet.cs" />
     <Compile Include="Models\Documents\Base.cs" />
     <Compile Include="Models\Documents\-Collection.cs" />
     <Compile Include="Models\Panels\Base.cs" />
@@ -730,7 +721,7 @@
     <Compile Include="Controls\MemberGrid\MemberTemplateSelector.cs" />
     <Compile Include="Reflection\MemberAttributes.cs" />
     <Compile Include="Reflection\MemberCollection.cs" />
-    <Compile Include="Reflection\MemberModel\-Property.cs" />
+    <Compile Include="Reflection\MemberModel\-Base.Property.cs" />
     <Compile Include="Controls\ComboBox\TimeZoneBox.cs" />
     <Compile Include="Controls\ProgressBar\ProgressRing.cs" />
     <Compile Include="Controls\Control\PatternControl.cs" />
@@ -740,10 +731,7 @@
     </Compile>
     <Compile Include="Controls\Grid\SplitGrid.cs" />
     <Compile Include="Controls\Button\WindowButton.cs" />
-    <Compile Include="Conversion\Multi\String\TimeLeft.cs" />
-    <Compile Include="Conversion\Multi\Visibility\StartsWithToVisibility.cs" />
-    <Compile Include="Conversion\Multi\Double\Zoom.cs" />
-    <Compile Include="Conversion\Multi\String\String.cs" />
+    <Compile Include="Conversion\Multi\String.cs" />
     <Compile Include="Conversion\Single\SortDirection.cs" />
     <Compile Include="Conversion\Type\DoubleSize.cs" />
     <Compile Include="Conversion\Type\GridLengthArray.cs" />
@@ -972,15 +960,11 @@
     <Compile Include="Controls\UpDown\UInt64UpDown.cs" />
     <Compile Include="Controls\UpDown\-UpDown.cs" />
     <Compile Include="Controls\UpDown\-UpDown.Generic.cs" />
-    <Compile Include="Conversion\Multi\Double\CenterToolTip.cs" />
-    <Compile Include="Conversion\Multi\Visibility\EnumFlagsToVisibility.cs" />
-    <Compile Include="Conversion\Multi\String\FileSize.cs" />
-    <Compile Include="Conversion\Multi\String\UnitString.cs" />
     <Compile Include="Conversion\Single\Thickness.cs" />
-    <Compile Include="Conversion\Multi\Double\Math.cs" />
+    <Compile Include="Conversion\Multi\Double.cs" />
     <Compile Include="Conversion\Single\Object.cs" />
     <Compile Include="Conversion\Single\Type.cs" />
-    <Compile Include="Conversion\Multi\Bool\ValueEqualsParameter.cs" />
+    <Compile Include="Conversion\Multi\Boolean.cs" />
     <Compile Include="Data\Reference.cs" />
     <Compile Include="Data\Binding\Local\Convert\Enumerate.cs" />
     <Compile Include="Input\Relay\DelegateCommand.cs" />
@@ -1339,6 +1323,46 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Effects\AngleGradientEffect.fx" />
+    <Resource Include="Images\CopyNumber.png" />
+    <Resource Include="Images\Camera.png" />
+    <Resource Include="Images\CarouselGradient.png" />
+    <Resource Include="Images\ZoomContent.png" />
+    <Resource Include="Images\ZoomFit.png" />
+    <Resource Include="Images\ZoomWidth.png" />
+    <Resource Include="Images\ZoomIn.png" />
+    <Resource Include="Images\ZoomOut.png" />
+    <Resource Include="Images\Wrench.png" />
+    <Resource Include="Images\Visible.png" />
+    <Resource Include="Images\Unlock.png" />
+    <Resource Include="Images\Resize.png" />
+    <Resource Include="Images\Text.png" />
+    <Resource Include="Images\Tack.png" />
+    <Resource Include="Images\Shutdown.png" />
+    <Resource Include="Images\GradientRadialInvert.png" />
+    <Resource Include="Images\Hidden.png" />
+    <Resource Include="Images\Inbox.png" />
+    <Resource Include="Images\Link.png" />
+    <Resource Include="Images\Location.png" />
+    <Resource Include="Images\Microscope.png" />
+    <Resource Include="Images\Monitor.png" />
+    <Resource Include="Images\Move.png" />
+    <Resource Include="Images\Number.png" />
+    <Resource Include="Images\Drive.png" />
+    <Resource Include="Images\Find.png" />
+    <Resource Include="Images\Flag.png" />
+    <Resource Include="Images\CloudDownload.png" />
+    <Resource Include="Images\Compare.png" />
+    <Resource Include="Images\CloudUpload.png" />
+    <Resource Include="Images\Scissors.png" />
+    <Resource Include="Images\Note.png" />
+    <Resource Include="Images\Stairs.png" />
+    <Resource Include="Images\PasteInvert.png" />
+    <Resource Include="Images\ArrowDownDouble.png" />
+    <Resource Include="Images\Adjust.png" />
+    <Resource Include="Images\Matrix.png" />
+    <Resource Include="Images\RefreshRound.png" />
+    <Resource Include="Images\CopyText.png" />
+    <Resource Include="Images\XYZRound.png" />
     <Resource Include="Images\Thermometer.png" />
     <Resource Include="Images\XYZ.png" />
     <Resource Include="Images\LineGraph.png" />
@@ -1546,8 +1570,8 @@
     <Resource Include="Images\DockLeft.png" />
     <Resource Include="Images\DockRight.png" />
     <Resource Include="Images\DockTop.png" />
-    <Resource Include="Controls\ColorControl\Layouts\Basic.xml" />
-    <Resource Include="Controls\ColorControl\Layouts\Everything.xml" />
+    <Resource Include="Controls\ColorControl\Layouts\Select.xml" />
+    <Resource Include="Controls\ColorControl\Layouts\All.xml" />
     <Resource Include="Controls\ColorControl\Layouts\Explore.xml" />
     <Resource Include="Controls\ColorControl\Layouts\Analyze.xml" />
     <Resource Include="Controls\ColorControl\Layouts\Collect.xml" />

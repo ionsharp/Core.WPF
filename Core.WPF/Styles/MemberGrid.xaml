@@ -64,25 +64,29 @@
     <DataTemplate x:Key="{x:Static local:MemberGrid.ToolTipKey}">
         <StackPanel>
             <local:TitleLabel Step="6">
-                <TextBlock x:Name="TextBlock0" TextTrimming="CharacterEllipsis"/>
+                <TextBlock x:Name="TextBlock0" Text="{local:MemberNameBinding}" TextTrimming="CharacterEllipsis"/>
             </local:TitleLabel>
             <Grid Opacity="0.5">
-                <TextBlock x:Name="TextBlock1" TextWrapping="Wrap"
+                <TextBlock x:Name="TextBlock1" Text="{local:MemberDescriptionBinding}" TextWrapping="Wrap"
                     Visibility="{Data:VisibilityBinding Text, Relative=Self}"/>
                 <TextBlock Text="{l:Loc NoDescription}" FontStyle="Italic"
                     Visibility="{Data:VisibilityBinding Text, ConverterParameter=1, ElementName=TextBlock1}"/>
             </Grid>
         </StackPanel>
-        <DataTemplate.Triggers>
-            <DataTrigger Binding="{Data:IsBinding local:MemberCrumb}" Value="True">
-                <Setter TargetName="TextBlock0" Property="Text" Value="{local:ObjectNameBinding Element.Value}"/>
-                <Setter TargetName="TextBlock1" Property="Text" Value="{local:ObjectDescriptionBinding Element.Value}"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Data:IsBinding Reflection:MemberModel}" Value="True">
-                <Setter TargetName="TextBlock0" Property="Text" Value="{local:MemberNameBinding}"/>
-                <Setter TargetName="TextBlock1" Property="Text" Value="{local:MemberDescriptionBinding}"/>
-            </DataTrigger>
-        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="{x:Static local:MemberGrid.CrumbToolTip}">
+        <StackPanel>
+            <local:TitleLabel Step="6">
+                <TextBlock x:Name="TextBlock0" Text="{local:ObjectNameBinding Element.Value}" TextTrimming="CharacterEllipsis"/>
+            </local:TitleLabel>
+            <Grid Opacity="0.5">
+                <TextBlock x:Name="TextBlock1" Text="{local:ObjectDescriptionBinding Element.Value}" TextWrapping="Wrap"
+                    Visibility="{Data:VisibilityBinding Text, Relative=Self}"/>
+                <TextBlock Text="{l:Loc NoDescription}" FontStyle="Italic"
+                    Visibility="{Data:VisibilityBinding Text, ConverterParameter=1, ElementName=TextBlock1}"/>
+            </Grid>
+        </StackPanel>
     </DataTemplate>
 
     <!-- ... -->
@@ -137,7 +141,9 @@
             <Setter.Value>
                 <DataTemplate DataType="{x:Type Reflection:MemberModel}">
                     <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*">
-                        <TextBlock Margin="0,0,0,5" Text="{Binding Caption}" Visibility="{Data:VisibilityBinding Caption}"/>
+                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static local:MemberGrid.CaptionTemplate}}" 
+                            Margin="0,0,0,5"
+                            Visibility="{Data:VisibilityBinding Caption}"/>
                         <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto">
                             <Grid.Resources>
                                 <Data:Reference x:Key="Member" 
@@ -172,7 +178,8 @@
                                     </DataTemplate>
                                 </ContentPresenter.ContentTemplate>
                             </ContentPresenter>
-                            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static local:MemberGrid.MemberOptionsTemplate}}"/>
+                            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static local:MemberGrid.MemberOptionsTemplate}}"
+                                Visibility="{Data:VisibilityBinding Assignable}"/>
                         </Grid>
                     </Grid>
                 </DataTemplate>
@@ -324,14 +331,14 @@
                 Padding="2">
                 <Border.Visibility>
                     <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
-                        <Data:TemplatedParent Path="FeaturedAbove.IsEmpty"
+                        <Data:TemplatedParent Path="Members.Above.IsEmpty"
                             Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
-                        <Data:TemplatedParent Path="FeaturedVisibility"/>
+                        <Data:TemplatedParent Path="FeatureVisibility"/>
                     </MultiBinding>
                 </Border.Visibility>
                 <ContentPresenter
-                    Content="{Data:TemplatedParent FeaturedAbove}"
-                    ContentTemplate="{TemplateBinding FeaturedTemplate}"/>
+                    Content="{Data:TemplatedParent Members.Above}"
+                    ContentTemplate="{TemplateBinding FeatureTemplate}"/>
             </Border>
 
             <!-- ... Loader -->
@@ -339,7 +346,7 @@
                 ContentTemplate="{TemplateBinding LoaderTemplate}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Visibility="{Data:TemplatedParent Loading, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
+                Visibility="{Data:TemplatedParent IsLoading, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
 
             <!-- ... Content -->
             <local:EmptyPresenter Grid.Column="2" Grid.ColumnSpan="3"/>
@@ -387,14 +394,14 @@
 
             <!-- ... Featured (Below) -->
             <ContentPresenter Grid.Column="4"
-                Content="{Data:TemplatedParent FeaturedBelow}"
-                ContentTemplate="{TemplateBinding FeaturedTemplate}"
+                Content="{Data:TemplatedParent Members.Below}"
+                ContentTemplate="{TemplateBinding FeatureTemplate}"
                 Margin="5,0,0,0">
                 <ContentPresenter.Visibility>
                     <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
-                        <Data:TemplatedParent Path="FeaturedBelow.IsEmpty"
+                        <Data:TemplatedParent Path="Members.Below.IsEmpty"
                             Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
-                        <Data:TemplatedParent Path="FeaturedVisibility"/>
+                        <Data:TemplatedParent Path="FeatureVisibility"/>
                     </MultiBinding>
                 </ContentPresenter.Visibility>
             </ContentPresenter>
@@ -419,10 +426,10 @@
                 <!-- ... Loader -->
                 <ContentPresenter
                     ContentTemplate="{TemplateBinding LoaderTemplate}"
-                    Visibility="{Data:TemplatedParent Loading, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
+                    Visibility="{Data:TemplatedParent IsLoading, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}}"/>
 
-                <Grid Linq:XGrid.Rows="Auto,Auto,Auto,Auto,*,Auto"
-                    Visibility="{Data:TemplatedParent Loading, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
+                <Grid Linq:XGrid.Rows="Auto,Auto,Auto,*,Auto"
+                    Visibility="{Data:TemplatedParent IsLoading, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
 
                     <!-- ... Header -->
                     <local:BottomBorder Grid.Row="0">
@@ -640,52 +647,22 @@
                         </Grid>
                     </local:BottomBorder>
 
-                    <!-- ... Tools -->
+                    <!-- ... Featured (Above) -->
                     <local:BottomBorder Grid.Row="1">
                         <local:BottomBorder.Visibility>
                             <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
-                                <Data:VisibilityBinding Path="Tools.Source.Count" Relative="TemplatedParent"/>
-                                <Data:TemplatedParent Path="ToolVisibility"/>
-                            </MultiBinding>
-                        </local:BottomBorder.Visibility>
-                        <ToolBar
-                            BorderThickness="0"
-                            ItemsSource="{Data:TemplatedParent Tools.View}"
-                            ItemTemplate="{StaticResource ToolBarItemTemplate}"
-                            Margin="5">
-                            <ToolBar.GroupStyle>
-                                <GroupStyle ContainerStyle="{StaticResource ToolBarGroupStyle}">
-                                    <GroupStyle.Panel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal"/>
-                                        </ItemsPanelTemplate>
-                                    </GroupStyle.Panel>
-                                </GroupStyle>
-                            </ToolBar.GroupStyle>
-                            <ToolBar.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ToolBar.ItemsPanel>
-                        </ToolBar>
-                    </local:BottomBorder>
-
-                    <!-- ... Featured (Above) -->
-                    <local:BottomBorder Grid.Row="2">
-                        <local:BottomBorder.Visibility>
-                            <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
-                                <Data:TemplatedParent Path="FeaturedAbove.IsEmpty"
+                                <Data:TemplatedParent Path="Members.Above.IsEmpty"
                                     Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
-                                <Data:TemplatedParent Path="FeaturedVisibility"/>
+                                <Data:TemplatedParent Path="FeatureVisibility"/>
                             </MultiBinding>
                         </local:BottomBorder.Visibility>
                         <ContentPresenter
-                            Content="{Data:TemplatedParent FeaturedAbove}"
-                            ContentTemplate="{TemplateBinding FeaturedTemplate}"/>
+                            Content="{Data:TemplatedParent Members.Above}"
+                            ContentTemplate="{TemplateBinding FeatureTemplate}"/>
                     </local:BottomBorder>
 
                     <!-- ... -->
-                    <Grid Grid.Row="3"
+                    <Grid Grid.Row="2"
                         Margin="5">
                         <Grid.Visibility>
                             <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
@@ -758,8 +735,8 @@
                     </Grid>
 
                     <!-- ... Content -->
-                    <local:EmptyPresenter Grid.Row="4"/>
-                    <ScrollViewer Grid.Row="4" Linq:XElement.Name="{x:Static local:MemberGrid.ScrollViewerKey}"
+                    <local:EmptyPresenter Grid.Row="3"/>
+                    <ScrollViewer Grid.Row="3" Linq:XElement.Name="{x:Static local:MemberGrid.ScrollViewerKey}"
                         Focusable="False"
                         Linq:XScrollViewer.Overlap="True">
                         <ItemsPresenter 
@@ -768,7 +745,7 @@
                     </ScrollViewer>
 
                     <!-- ... Description -->
-                    <Grid Grid.Row="4">
+                    <Grid Grid.Row="3">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
@@ -800,17 +777,17 @@
                     </Grid>
 
                     <!-- ... Featured (Below) -->
-                    <local:TopBorder Grid.Row="5">
+                    <local:TopBorder Grid.Row="4">
                         <local:TopBorder.Visibility>
                             <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
-                                <Data:TemplatedParent Path="FeaturedBelow.IsEmpty"
+                                <Data:TemplatedParent Path="Members.Below.IsEmpty"
                                     Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
-                                <Data:TemplatedParent Path="FeaturedVisibility"/>
+                                <Data:TemplatedParent Path="FeatureVisibility"/>
                             </MultiBinding>
                         </local:TopBorder.Visibility>
                         <ContentPresenter
-                            Content="{Data:TemplatedParent FeaturedBelow}"
-                            ContentTemplate="{TemplateBinding FeaturedTemplate}"/>
+                            Content="{Data:TemplatedParent Members.Below}"
+                            ContentTemplate="{TemplateBinding FeatureTemplate}"/>
                     </local:TopBorder>
                 </Grid>
             </Grid>
@@ -871,7 +848,6 @@
         <Setter Property="DescriptionVisibility" Value="Collapsed"/>
         <Setter Property="EnableColumnVirtualization" Value="True"/>
         <Setter Property="EnableRowVirtualization" Value="True"/>
-        <Setter Property="FeaturedRepeats" Value="False"/>
         <Setter Property="Foreground" Value="{local:ThemeKey Key=Text}"/>
         <Setter Property="HeaderVisibility" Value="Visible"/>
         <Setter Property="HeadersVisibility" Value="None"/>
@@ -1048,7 +1024,7 @@
                                     ButtonVisibility="Collapsed"
                                     Command="{Data:Ancestor EditCommand, {x:Type local:MemberGrid}}"
                                     CommandParameter="{Binding}"
-                                    Linq:XElement.ToolTipTemplate="{DynamicResource {x:Static local:MemberGrid.ToolTipKey}}"
+                                    Linq:XElement.ToolTipTemplate="{DynamicResource {x:Static local:MemberGrid.CrumbToolTip}}"
                                     Margin="0,0,2,0"
                                     ToolTip="{Binding}">
                                     <local:ImageButton.Menu>
@@ -1130,7 +1106,7 @@
                         </Style>
                     </Setter.Value>
                 </Setter>
-                <Setter Property="FeaturedTemplate">
+                <Setter Property="FeatureTemplate">
                     <Setter.Value>
                         <DataTemplate>
                             <ItemsControl
@@ -1175,7 +1151,7 @@
                 <Setter Property="Template" Value="{StaticResource {x:Static local:MemberGrid.HorizontalTemplate}}"/>
             </Trigger>
             <Trigger Property="Orientation" Value="Vertical">
-                <Setter Property="FeaturedTemplate">
+                <Setter Property="FeatureTemplate">
                     <Setter.Value>
                         <DataTemplate>
                             <ItemsControl

@@ -14,7 +14,7 @@ public class MemberPath : ObservableCollection<MemberPathElement>
         if (newValue == null || ReferenceEquals(oldValue, newValue))
             return null;
 
-        if (newValue is ListItemModel a)
+        if (newValue is ItemModel a)
             newValue = new MemberPathItem(a);
 
         else if (newValue is MemberModel b)

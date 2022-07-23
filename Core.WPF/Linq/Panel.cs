@@ -104,7 +104,7 @@ namespace Imagin.Core.Linq
 
         #region SpacingExcept
 
-        public static readonly DependencyProperty SpacingExceptProperty = DependencyProperty.RegisterAttached("SpacingExcept", typeof(SpacingExceptions), typeof(XPanel), new FrameworkPropertyMetadata(SpacingExceptions.None, OnSpacingChanged));
+        public static readonly DependencyProperty SpacingExceptProperty = DependencyProperty.RegisterAttached("SpacingExcept", typeof(SpacingExceptions), typeof(XPanel), new FrameworkPropertyMetadata(SpacingExceptions.Last, OnSpacingChanged));
         public static void SetSpacingExcept(Panel i, SpacingExceptions input) => i.SetValue(SpacingExceptProperty, input);
         public static SpacingExceptions GetSpacingExcept(Panel i) => (SpacingExceptions)i.GetValue(SpacingExceptProperty);
 

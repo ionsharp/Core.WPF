@@ -10,10 +10,10 @@ namespace Imagin.Core.Controls;
 [DisplayName("Difference"), Explicit, Serializable]
 public class ColorDifferencePanel : Panel
 {
-    enum Category { Color1, Color2 }
+    enum Category { A, B }
 
     ByteVector4 color1 = ByteVector4.Black;
-    [Category(Category.Color1), DisplayName("Color"), Horizontal, Index(1), Visible]
+    [Category(Category.A), DisplayName("Color"), Horizontal, Index(1), Visible]
     public ByteVector4 Color1
     {
         get => color1;
@@ -21,7 +21,7 @@ public class ColorDifferencePanel : Panel
     }
 
     GroupItemModel profile1 = null;
-    [Category(Category.Color1), DisplayName("Profile"), Index(0), Visible]
+    [Category(Category.A), DisplayName("Profile"), Index(0), Visible]
     public GroupItemModel Profile1
     {
         get => profile1;
@@ -34,7 +34,7 @@ public class ColorDifferencePanel : Panel
     }
     
     ByteVector4 color2 = ByteVector4.White;
-    [Category(Category.Color2), DisplayName("Color"), Horizontal, Index(1), Visible]
+    [Category(Category.B), DisplayName("Color"), Horizontal, Index(1), Visible]
     public ByteVector4 Color2
     {
         get => color2;
@@ -42,7 +42,7 @@ public class ColorDifferencePanel : Panel
     }
 
     GroupItemModel profile2 = null;
-    [Category(Category.Color2), DisplayName("Profile"), Index(0), Visible]
+    [Category(Category.B), DisplayName("Profile"), Index(0), Visible]
     public GroupItemModel Profile2
     {
         get => profile2;
@@ -55,7 +55,7 @@ public class ColorDifferencePanel : Panel
     }
 
     double difference = 0;
-    [Above, ReadOnly, Visible]
+    [Below, ReadOnly, Visible]
     public double Difference
     {
         get => difference;
@@ -67,8 +67,8 @@ public class ColorDifferencePanel : Panel
     public override string Title => "Difference";
 
     IColorDifference type = new EuclideanColorDifference();
-    [Assignable(typeof(CIE76ColorDifference), typeof(CIE94ColorDifference), typeof(CIEDE2000ColorDifference), typeof(CMCColorDifference), typeof(EuclideanColorDifference), typeof(JzCzhzDEzColorDifference))]
-    [Index(-1), Visible]
+    [Assign(typeof(CIE76ColorDifference), typeof(CIE94ColorDifference), typeof(CIEDE2000ColorDifference), typeof(CMCColorDifference), typeof(EuclideanColorDifference), typeof(JzCzhzDEzColorDifference))]
+    [Above, Visible]
     public IColorDifference Type
     {
         get => type;

@@ -427,7 +427,7 @@
                         Source="{local:SourceBinding Core:ToolAttribute}"
                         VerticalAlignment="Center"/>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding Converter={x:Static local:AnyMemberHasAttributeConverter.Default}, ConverterParameter={x:Type Core:ToolAttribute}}" Value="False">
+                        <DataTrigger Binding="{Data:HasAttributeBinding {x:Type Core:ToolAttribute}}" Value="False">
                             <Setter TargetName="MemberGrid" Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                     </DataTemplate.Triggers>

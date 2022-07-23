@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
+    xmlns:Core="clr-namespace:Imagin.Core;assembly=Imagin.Core"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Effects="clr-namespace:Imagin.Core.Effects"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
@@ -41,9 +42,25 @@
                                                         Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
                                                         ToolTip="{Binding OldColor}">
                                                         <Border.ContextMenu>
-                                                            <ContextMenu>
+                                                            <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext.OldColor}">
+                                                                <MenuItem Header="{l:Loc Copy}"
+                                                                    Command="{Binding Data.CopyColorCommand, Source={StaticResource ColorControl}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Icon="{Markup:InternalImage Image=Copy}"/>
+                                                                <MenuItem Header="{l:Loc CopyHexadecimal}"
+                                                                    Command="{Binding Data.CopyHexadecimalCommand, Source={StaticResource ColorControl}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Icon="{Markup:InternalImage Image=CopyNumber}"/>
+                                                                <MenuItem Header="{l:Loc Paste}"
+                                                                    Command="{Binding Data.PasteOldColorCommand, Source={StaticResource ColorControl}}"
+                                                                    Icon="{Markup:InternalImage Image=Paste}"/>
+                                                                <Separator/>
                                                                 <MenuItem Header="{l:Loc Save}"
-                                                                    Command="{Binding Data.SaveOldColorCommand, Source={StaticResource ColorControl}}"/>
+                                                                    Command="{Binding Data.SaveOldColorCommand, Source={StaticResource ColorControl}}"
+                                                                    Icon="{Markup:InternalImage Image=Save}"/>
+                                                                <MenuItem Header="{l:Loc SaveTo, Suffix=...}"
+                                                                    Command="{Binding Data.SaveNewColorToCommand, Source={StaticResource ColorControl}}"
+                                                                    Icon="{Markup:InternalImage Image=SaveAs}"/>
                                                             </ContextMenu>
                                                         </Border.ContextMenu>
                                                         <Grid Background="{Binding OldColor, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}, ConverterParameter=0}"/>
@@ -52,26 +69,42 @@
                                                         Background="{x:Static Media:CheckerBrush.Default}"
                                                         Height="32"
                                                         Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
-                                                        ToolTip="{Binding Color.ActualColor}">
+                                                        ToolTip="{Binding NewColor}">
                                                         <Border.ContextMenu>
-                                                            <ContextMenu>
+                                                            <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext.NewColor}">
+                                                                <MenuItem Header="{l:Loc Copy}"
+                                                                    Command="{Binding Data.CopyColorCommand, Source={StaticResource ColorControl}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Icon="{Markup:InternalImage Image=Copy}"/>
+                                                                <MenuItem Header="{l:Loc CopyHexadecimal}"
+                                                                    Command="{Binding Data.CopyHexadecimalCommand, Source={StaticResource ColorControl}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Icon="{Markup:InternalImage Image=CopyNumber}"/>
+                                                                <MenuItem Header="{l:Loc Paste}"
+                                                                    Command="{Binding Data.PasteNewColorCommand, Source={StaticResource ColorControl}}"
+                                                                    Icon="{Markup:InternalImage Image=Paste}"/>
+                                                                <Separator/>
                                                                 <MenuItem Header="{l:Loc Save}"
-                                                                    Command="{Binding Data.SaveNewColorCommand, Source={StaticResource ColorControl}}"/>
+                                                                    Command="{Binding Data.SaveOldColorCommand, Source={StaticResource ColorControl}}"
+                                                                    Icon="{Markup:InternalImage Image=Save}"/>
+                                                                <MenuItem Header="{l:Loc SaveTo, Suffix=...}"
+                                                                    Command="{Binding Data.SaveOldColorToCommand, Source={StaticResource ColorControl}}"
+                                                                    Icon="{Markup:InternalImage Image=SaveAs}"/>
                                                             </ContextMenu>
                                                         </Border.ContextMenu>
-                                                        <Grid x:Name="Grid" Background="{Binding Data.ActiveDocument.Color.ActualColor, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}, ConverterParameter=1, Source={StaticResource ColorControl}}"/>
+                                                        <Grid x:Name="Grid" Background="{Binding NewColor, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}, ConverterParameter=1}"/>
                                                     </Border>
                                                 </StackPanel>
                                             </Border>
                                         </Border>
                                         <local:BottomBorder Padding="2">
-                                            <Grid DataContext="{Binding Data.ActiveDocument.Color, Source={StaticResource ColorControl}}" Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,Auto" Linq:XPanel.Spacing="0,0,5,0" Linq:XPanel.SpacingExcept="Last">
+                                            <Grid DataContext="{Binding Data.ActiveDocument, Source={StaticResource ColorControl}}" Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,Auto" Linq:XPanel.Spacing="0,0,5,0" Linq:XPanel.SpacingExcept="Last">
                                                 <ComboBox
                                                     Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ModelToolTipTemplateKey}}"
                                                     Linq:XItemsControl.GroupsItself="True"
                                                     ItemsSource="{Binding Models}"
-                                                    SelectedItem="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                    ToolTip="{Binding ModelType}">
+                                                    SelectedItem="{Binding SelectedModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    ToolTip="{Binding Model}">
                                                     <Linq:XItemsControl.GroupStyle>
                                                         <GroupStyle ContainerStyle="{StaticResource {x:Type GroupItem}}">
                                                             <GroupStyle.Panel>
@@ -89,7 +122,7 @@
                                                     </ComboBox.ItemContainerStyle>
                                                     <ComboBox.ItemTemplate>
                                                         <DataTemplate>
-                                                            <TextBlock Text="{Binding Name}"/>
+                                                            <TextBlock Text="{Binding Value.Name}"/>
                                                         </DataTemplate>
                                                     </ComboBox.ItemTemplate>
                                                 </ComboBox>
@@ -116,7 +149,8 @@
                                             BorderThickness="0"
                                             GroupName="None"
                                             HeaderVisibility="Collapsed"
-                                            Source="{Binding Data.ActiveDocument.Color, Source={StaticResource ColorControl}}"/>
+                                            NameColumnVisibility="Collapsed"
+                                            Source="{local:SourceBinding Data.ActiveDocument, {x:Type Core:StatusAttribute}, Ignore=True, Source={StaticResource ColorControl}}"/>
                                         <local:TopBorder Background="#11000000" Padding="2">
                                             <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,*">
                                                 <Button
@@ -195,12 +229,14 @@
                                         View="{Binding View}">
                                         <local:ViewControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border BorderBrush="Black" BorderThickness="1">
+                                                <Border BorderBrush="Black" BorderThickness="1" SnapsToDevicePixels="True">
                                                     <Button Background="{Binding Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}" 
                                                         BorderBrush="White" BorderThickness="1"
                                                         Command="{Binding Data.ActiveDocument.PickCommand, Source={StaticResource ColorControl}}"
                                                         CommandParameter="{Binding}"
                                                         Linq:XElement.ToolTipTemplate="{StaticResource {x:Static Linq:XColor.ToolTipTemplateKey}}"
+                                                        Padding="0"
+                                                        SnapsToDevicePixels="True"
                                                         ToolTip="{Binding}"/>
                                                 </Border>
                                             </DataTemplate>
@@ -249,7 +285,7 @@
                                         </local:GroupControl.ItemTemplate>
                                     </local:GroupControl>
                                 </DataTemplate>
-                                <DataTemplate DataType="{x:Type local:ColorMatrixPanel}">
+                                <DataTemplate DataType="{x:Type local:ColorMatricesPanel}">
                                     <local:GroupControl Source="{Binding Groups}"
                                         ItemSize="{Binding ItemSize, Mode=TwoWay}"
                                         Panel="{Binding}"
@@ -353,7 +389,7 @@
                                         Height="16"
                                         Margin="0,0,5,0"
                                         Width="16">
-                                        <local:FillElement Fill="{Binding Color.ActualColor, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}, ConverterParameter=1, Mode=OneWay}"/>
+                                        <local:FillElement Fill="{Binding NewColor, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}, ConverterParameter=1, Mode=OneWay}"/>
                                     </local:ClipBorder>
                                 </DataTemplate>
                             </local:DockControl.DocumentIconTemplate>
@@ -365,7 +401,7 @@
                                         Orientation="Horizontal">
                                         <TextBlock Text="{Binding Title}"/>
                                         <local:AccentLabel Shade="Light"
-                                            Content="{Binding Color.ModelType.Name}"/>
+                                            Content="{Binding Model.Name}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </local:DockControl.DocumentTitleTemplate>

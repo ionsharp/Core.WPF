@@ -9,115 +9,117 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Xml.Serialization;
 
-namespace Imagin.Core.Models
+namespace Imagin.Core.Models;
+
+[Serializable]
+public abstract class Document : Content, ICloneable
 {
-    [Serializable]
-    public abstract class Document : Content
+    public const SecondaryDocks DefaultDockPreference = SecondaryDocks.Left;
+
+    bool canClose = true;
+    [Hidden]
+    [XmlIgnore]
+    public virtual bool CanClose
     {
-        public const SecondaryDocks DefaultDockPreference = SecondaryDocks.Left;
+        get => canClose;
+        set => this.Change(ref canClose, value);
+    }
 
-        bool canClose = true;
-        [Hidden]
-        [XmlIgnore]
-        public virtual bool CanClose
+    [Hidden]
+    [XmlIgnore]
+    public virtual bool CanMinimize { get; } = true;
+
+    [Hidden]
+    [XmlIgnore]
+    public virtual SecondaryDocks DockPreference { get; } = DefaultDockPreference;
+
+    [Hidden]
+    public virtual object Icon => default;
+
+    bool isMinimized = false;
+    [Hidden]
+    [XmlIgnore]
+    public virtual bool IsMinimized
+    {
+        get => isMinimized;
+        set => this.Change(ref isMinimized, value);
+    }
+
+    [field: NonSerialized]
+    bool isModified = false;
+    [Hidden, XmlIgnore]
+    public virtual bool IsModified
+    {
+        get => isModified;
+        set => this.Change(ref isModified, value);
+    }
+
+    void Check(Type type, List<Type> oldTypes = null)
+    {
+        oldTypes = oldTypes ?? new();
+        if (oldTypes.Contains(type))
+            return;
+
+        try
         {
-            get => canClose;
-            set => this.Change(ref canClose, value);
-        }
-
-        [Hidden]
-        [XmlIgnore]
-        public virtual bool CanMinimize { get; } = true;
-
-        [Hidden]
-        [XmlIgnore]
-        public virtual SecondaryDocks DockPreference { get; } = DefaultDockPreference;
-
-        [Hidden]
-        public virtual object Icon => default;
-
-        bool isMinimized = false;
-        [Hidden]
-        [XmlIgnore]
-        public virtual bool IsMinimized
-        {
-            get => isMinimized;
-            set => this.Change(ref isMinimized, value);
-        }
-
-        [field: NonSerialized]
-        bool isModified = false;
-        [Hidden, XmlIgnore]
-        public virtual bool IsModified
-        {
-            get => isModified;
-            set => this.Change(ref isModified, value);
-        }
-
-        void Check(Type type, List<Type> oldTypes = null)
-        {
-            oldTypes = oldTypes ?? new();
-            if (oldTypes.Contains(type))
+            if (!type.IsClass || type == typeof(string))
                 return;
 
-            try
+            oldTypes.Add(type);
+
+            void f(Type t) => Log.Write<Document>(new Warning($"The class '{t.FullName}' is not marked as serializable."));
+
+            if (!type.HasAttribute<SerializableAttribute>())
             {
-                if (!type.IsClass || type == typeof(string))
-                    return;
+                f(type);
+            }
 
-                oldTypes.Add(type);
-
-                void f(Type t) => Log.Write<Document>(new Warning($"The class '{t.FullName}' is not marked as serializable."));
-
-                if (!type.HasAttribute<SerializableAttribute>())
+            var types = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            if (types?.Length > 0)
+            {
+                foreach (var i in types)
                 {
-                    f(type);
-                }
-
-                var types = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                if (types?.Length > 0)
-                {
-                    foreach (var i in types)
+                    if (type != i.FieldType)
                     {
-                        if (type != i.FieldType)
+                        if (!i.HasAttribute<NonSerializedAttribute>())
                         {
-                            if (!i.HasAttribute<NonSerializedAttribute>())
+                            if (i.FieldType.IsClass)
                             {
-                                if (i.FieldType.IsClass)
+                                if (!i.FieldType.HasAttribute<SerializableAttribute>())
                                 {
-                                    if (!i.FieldType.HasAttribute<SerializableAttribute>())
-                                    {
-                                        f(i.FieldType);
-                                    }
-                                    else Check(i.FieldType, oldTypes);
+                                    f(i.FieldType);
                                 }
+                                else Check(i.FieldType, oldTypes);
                             }
                         }
                     }
                 }
             }
-            catch { }
         }
-
-        public Document() : base() { }
-        
-        public abstract void Save();
-
-        public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            base.OnPropertyChanged(propertyName);
-            switch (propertyName)
-            {
-                case nameof(IsModified):
-                    this.Changed(() => Title);
-                    break;
-            }
-        }
-
-        [field: NonSerialized]
-        ICommand saveCommand;
-        [Hidden]
-        [XmlIgnore]
-        public virtual ICommand SaveCommand => saveCommand ??= new RelayCommand(Save);
+        catch { }
     }
+
+    public Document() : base() { }
+
+    object ICloneable.Clone() => Clone();
+    public abstract Document Clone();
+
+    public abstract void Save();
+
+    public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        base.OnPropertyChanged(propertyName);
+        switch (propertyName)
+        {
+            case nameof(IsModified):
+                this.Changed(() => Title);
+                break;
+        }
+    }
+
+    [field: NonSerialized]
+    ICommand saveCommand;
+    [Hidden]
+    [XmlIgnore]
+    public virtual ICommand SaveCommand => saveCommand ??= new RelayCommand(Save);
 }

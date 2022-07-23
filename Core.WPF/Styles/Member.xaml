@@ -121,10 +121,16 @@
                             </Separator>
                             <MenuItem Tag="0" Header="{l:Loc Copy}"
                                 Command="{Binding Data.CopyCommand, Source={StaticResource MemberGrid}}"
-                                CommandParameter="{Binding}"/>
+                                CommandParameter="{Binding}"
+                                Icon="{Markup:InternalImage Image=Copy}"/>
+                            <MenuItem Tag="0" Header="{l:Loc CopyText}"
+                                Command="{Binding Data.CopyTextCommand, Source={StaticResource MemberGrid}}"
+                                CommandParameter="{Binding}"
+                                Icon="{Markup:InternalImage Image=CopyText}"/>
                             <MenuItem Tag="0" Header="{l:Loc Paste}"
                                 Command="{Binding Data.PasteCommand, Source={StaticResource MemberGrid}}"
-                                CommandParameter="{Binding}"/>
+                                CommandParameter="{Binding}"
+                                Icon="{Markup:InternalImage Image=Paste}"/>
 
                             <Separator Linq:XSeparator.Header="{l:Loc New}" Visibility="{Data:VisibilityBinding AssignableTypes.Count}"/>
                             <CollectionContainer Collection="{Binding Data.AssignableTypes, Source={StaticResource Member}}"/>
@@ -135,10 +141,12 @@
                             <Separator/>
                             <MenuItem Tag="0" Header="{l:Loc Reset}"
                                 Command="{Binding Data.MemberResetCommand, Source={StaticResource MemberGrid}}"
-                                CommandParameter="{Binding}"/>
+                                CommandParameter="{Binding}"
+                                Icon="{Markup:InternalImage Image=XRound}"/>
                             <MenuItem Tag="0" Header="{l:Loc Clear}"
                                 Command="{Binding Data.MemberClearCommand, Source={StaticResource MemberGrid}}"
                                 CommandParameter="{Binding}"
+                                Icon="{Markup:InternalImage Image=XRound}"
                                 Visibility="{Data:VisibilityBinding IsEnabled, Relative=Self}"/>
                         </CompositeCollection>
                     </ContextMenu.ItemsSource>
@@ -172,6 +180,12 @@
                 <Setter TargetName="ImageButton" Property="Visibility" Value="Collapsed"/>
             </MultiDataTrigger>
         </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- ... -->
+
+    <DataTemplate x:Key="{x:Static local:MemberGrid.CaptionTemplate}">
+        <TextBlock FontStyle="Italic" Opacity="0.5" Text="{Binding Caption}" TextTrimming="CharacterEllipsis" ToolTip="{Data:Self Text}"/>
     </DataTemplate>
 
     <!-- ... -->
@@ -623,7 +637,188 @@
 
     <!-- ... -->
 
-    <ControlTemplate x:Key="{x:Static local:MemberGrid.SubObjectTemplate}" TargetType="TreeViewItem">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.CollectionTemplate}">
+        <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*" Margin="0,2">
+            <Grid.Resources>
+                <Data:Reference x:Key="Member" 
+                    Data="{Binding}"/>
+                <Data:Reference x:Key="MemberGrid" 
+                    Data="{Data:Ancestor local:MemberGrid}"/>
+            </Grid.Resources>
+            <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,Auto,Auto,Auto,*"
+                Linq:XPanel.Spacing="0,0,5,0"
+                Linq:XPanel.SpacingExcept="Last"
+                Linq:XPanel.VerticalContentAlignment="Center"
+                Margin="0,0,0,5"
+                VerticalAlignment="Top">
+                <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"
+                    Linq:XElement.OverrideMargin="0,0,1,0"
+                    ToolTip="{l:Loc Add}"
+                    Visibility="{Data:VisibilityBinding IsReadOnly, Invert=True}">
+                    <ContentPresenter.ContentTemplate>
+                        <DataTemplate>
+                            <local:ImageButton ButtonSize="16,16" ButtonSource="{Markup:InternalImage Image=Plus}" ButtonVisibility="Visible">
+                                <local:ImageButton.Menu>
+                                    <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}" 
+                                        ItemsSource="{Binding ItemTypes}"
+                                        Linq:XItemsControl.GroupsItself="True"
+                                        Linq:XItemsControl.GroupStyle="{StaticResource {x:Static Linq:XItemsControl.MenuGroupStyleKey}}">
+                                        <Linq:XItemsControl.GroupContainerStyle>
+                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                <Setter Property="Command" Value="{Binding Data.InsertAboveCommand, Source={StaticResource Member}}"/>
+                                                <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                <Setter Property="Header" Value="{Data:DisplayNameBinding}"/>
+                                            </Style>
+                                        </Linq:XItemsControl.GroupContainerStyle>
+                                    </ContextMenu>
+                                </local:ImageButton.Menu>
+                            </local:ImageButton>
+                        </DataTemplate>
+                    </ContentPresenter.ContentTemplate>
+                </ContentPresenter>
+                <local:ImageButton
+                    Command="{Binding RemoveCommand}"
+                    Source="{Markup:InternalImage Image=MinusRound}"
+                    ToolTip="{l:Loc Remove}"
+                    Visibility="{Data:VisibilityBinding IsReadOnly, Invert=True}"/>
+                <local:ImageButton
+                    Command="{Binding MoveUpCommand}"
+                    Source="{Markup:InternalImage Image=TriangleUpRound}"
+                    ToolTip="{l:Loc MoveUp}"/>
+                <local:ImageButton
+                    Command="{Binding MoveDownCommand}"
+                    Source="{Markup:InternalImage Image=TriangleDownRound}"
+                    ToolTip="{l:Loc MoveDown}"/>
+                <local:Int32UpDown x:Name="Int32UpDown"
+                    CanUpDown="{Data:InvertBinding IsReadOnly}"
+                    IsReadOnly="{Binding IsReadOnly}"
+                    Linq:XTextBoxBase.Placeholder="{l:Loc Length}"
+                    TextAlignment="Center"
+                    Value="{Binding CollectionLength, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                    Visibility="Collapsed"
+                    Width="64"/>
+            </Grid>
+            <ListBox ItemsSource="{Binding Value}"
+                SelectedIndex="{Binding SelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectionMode="Single">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="Padding" Value="2"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Data.IsReadOnly, Source={StaticResource Member}}" Value="False">
+                                <Setter Property="ContextMenu">
+                                    <Setter.Value>
+                                        <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}">
+                                            <MenuItem Header="{l:Loc Remove}"
+                                                Command="{Binding Data.RemoveCommand, Source={StaticResource Member}}"
+                                                CommandParameter="{Binding}"/>
+                                            <Separator Linq:XSeparator.Header="{l:Loc Move}"/>
+                                            <MenuItem Header="{l:Loc Up}"
+                                                Command="{Binding Data.MoveUpCommand, Source={StaticResource Member}}"
+                                                CommandParameter="{Binding}"/>
+                                            <MenuItem Header="{l:Loc Down}"
+                                                Command="{Binding Data.MoveDownCommand, Source={StaticResource Member}}"
+                                                CommandParameter="{Binding}"/>
+                                            <Separator Linq:XSeparator.Header="{l:Loc Insert}"/>
+                                            <MenuItem Header="{l:Loc Above}"
+                                                Command="{Binding Data.InsertAboveCommand, Source={StaticResource Member}}"
+                                                CommandParameter="{Binding}"/>
+                                            <MenuItem Header="{l:Loc Below}"
+                                                Command="{Binding Data.InsertBelowCommand, Source={StaticResource Member}}"
+                                                CommandParameter="{Binding}"/>
+                                            <Separator/>
+                                            <MenuItem Header="{l:Loc Reset}"
+                                                Command="{Binding Data.ResetCommand, Source={StaticResource Member}}"
+                                                CommandParameter="{Binding}"/>
+                                        </ContextMenu>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Width="{Data:Ancestor ActualWidth, ListBox}"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Expander IsExpanded="True">
+                            <Expander.Header>
+                                <TextBlock Text="{local:ObjectNameBinding}"/>
+                            </Expander.Header>
+                            <local:MemberValuePresenter>
+                                <local:MemberValuePresenter.Content>
+                                    <MultiBinding Converter="{x:Static local:ObjectToItemModelConverter.Default}">
+                                        <Binding Path="Data" Source="{StaticResource Member}"/>
+                                        <Binding/>
+                                    </MultiBinding>
+                                </local:MemberValuePresenter.Content>
+                            </local:MemberValuePresenter>
+                        </Expander>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding ItemType}" Value="{x:Null}">
+                <Setter TargetName="Int32UpDown" Property="IsEnabled" Value="False"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Data:IsNullBinding ItemClones}" Value="False">
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:ImageButton ButtonSize="16,16" ButtonSource="{Markup:InternalImage Image=Plus}" ButtonVisibility="Visible">
+                                <local:ImageButton.Menu>
+                                    <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}" 
+                                        ItemsSource="{Binding ItemClones}"
+                                        Linq:XItemsControl.GroupsItself="True"
+                                        Linq:XItemsControl.GroupStyle="{StaticResource {x:Static Linq:XItemsControl.MenuGroupStyleKey}}">
+                                        <Linq:XItemsControl.GroupContainerStyle>
+                                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                <Setter Property="Command" Value="{Data:Ancestor DataContext.InsertAboveCommand, ContextMenu}"/>
+                                                <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                <Setter Property="Header" Value="{Binding Name}"/>
+                                            </Style>
+                                        </Linq:XItemsControl.GroupContainerStyle>
+                                    </ContextMenu>
+                                </local:ImageButton.Menu>
+                            </local:ImageButton>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding ItemClones}" Value="{x:Null}"/>
+                    <Condition Binding="{Binding ItemType}" Value="{x:Null}"/>
+                    <Condition Binding="{Binding ItemTypes}" Value="{x:Null}"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{Markup:EmptyTemplate}"/>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding ItemClones}" Value="{x:Null}"/>
+                    <Condition Binding="{Data:IsNullBinding ItemType}" Value="False"/>
+                    <Condition Binding="{Binding ItemTypes}" Value="{x:Null}"/>
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <local:ImageButton
+                                Command="{Binding InsertAboveCommand}"
+                                Source="{Markup:InternalImage Image=Plus}"/>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </MultiDataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- ... -->
+
+    <ControlTemplate x:Key="{x:Static local:MemberGrid.ChildObjectTemplate}" TargetType="TreeViewItem">
         <Expander x:Name="Expander" Header="{Binding}"
             IsExpanded="True">
             <Expander.HeaderTemplate>
@@ -631,11 +826,17 @@
                     <StackPanel Linq:XPanel.VerticalContentAlignment="Center" Orientation="Horizontal">
                         <TextBlock Text="{Binding DisplayName}"/>
                         <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static local:MemberGrid.MemberOptionsTemplate}}"
-                            Margin="2,0,0,0"/>
+                            Margin="2,0,0,0"
+                            Visibility="{Data:VisibilityBinding Assignable}"/>
                     </StackPanel>
                 </DataTemplate>
             </Expander.HeaderTemplate>
-            <ItemsPresenter x:Name="ItemsPresenter" Margin="22,5,0,5"/>
+            <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*" Margin="22,0,0,0">
+                <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource {x:Static local:MemberGrid.CaptionTemplate}}" 
+                    Margin="0,5"
+                    Visibility="{Data:VisibilityBinding Caption}"/>
+                <ItemsPresenter x:Name="ItemsPresenter"/>
+            </Grid>
         </Expander>
         <ControlTemplate.Triggers>
             <DataTrigger Binding="{Data:Self DataContext.Members}" Value="{x:Null}">
@@ -652,248 +853,150 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <DataTemplate x:Key="{x:Static local:MemberGrid.ObjectTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ObjectTemplate}">
         <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,Auto">
-            <Grid>
-                <TreeView ItemsSource="{Binding SortedMembers}"
-                    Linq:XItemsControl.GroupsItself="True"
-                    Visibility="{Data:VisibilityBinding Members.Count}">
-                    <Linq:XItemsControl.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.ContainerStyle>
-                                <Style TargetType="GroupItem">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                <Expander x:Name="Expander"
-                                                    IsExpanded="True" 
-                                                    HorizontalAlignment="Stretch">
-                                                    <Expander.Header>
-                                                        <Grid Linq:XGrid.Columns="Auto,*">
-                                                            <TextBlock FontSize="13">
-                                                                <Run Text="{Binding Name, Mode=OneWay}" 
-                                                                    Foreground="{local:ThemeKey ActualKey=AccentLight}"/>
-                                                                <Run Text="{Binding ItemCount, Mode=OneWay, StringFormat= ({0})}"
-                                                                     Foreground="{local:ThemeKey ActualKey=Text}"/>
-                                                            </TextBlock>
-                                                            <local:LineElement Grid.Column="1"
-                                                                Margin="5,0,0,0"
-                                                                Orientation="Horizontal"/>
-                                                        </Grid>
-                                                    </Expander.Header>
-                                                    <ItemsPresenter Margin="20,0,0,0"/>
-                                                </Expander>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GroupStyle.ContainerStyle>
-                            <GroupStyle.Panel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel/>
-                                </ItemsPanelTemplate>
-                            </GroupStyle.Panel>
-                        </GroupStyle>
-                    </Linq:XItemsControl.GroupStyle>
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="TreeViewItem">
-                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                            <Setter Property="Template" Value="{StaticResource {x:Static local:MemberGrid.SubObjectTemplate}}"/>
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type Reflection:MemberModel}" ItemsSource="{Binding SortedMembers}">
-                            <ContentPresenter x:Name="ContentPresenter" Content="{Binding}" Margin="0,2,0,0">
-                                <ContentPresenter.ContentTemplate>
-                                    <DataTemplate DataType="{x:Type Reflection:MemberModel}">
-                                        <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
-                                            <local:MemberNamePresenter Content="{Binding}" Margin="0,0,5,0"/>
-                                            <local:MemberValuePresenter Content="{Binding}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ContentPresenter.ContentTemplate>
-                            </ContentPresenter>
-                            <HierarchicalDataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding Parent.Parent.Orientation}" Value="Vertical">
-                                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                                        <Setter.Value>
-                                            <DataTemplate DataType="{x:Type Reflection:MemberModel}">
-                                                <Expander IsExpanded="True">
-                                                    <Expander.Header>
-                                                        <local:MemberNamePresenter Content="{Binding}"/>
-                                                    </Expander.Header>
-                                                    <local:MemberValuePresenter Content="{Binding}" Margin="22,5,0,5"/>
-                                                </Expander>
-                                            </DataTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Data:PreviousData}" Value="{x:Null}">
-                                    <Setter TargetName="ContentPresenter" Property="Margin" Value="0"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Members.IsNotEmpty}" Value="True">
-                                    <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </HierarchicalDataTemplate.Triggers>
-                        </HierarchicalDataTemplate>
-                    </TreeView.Resources>
-                    <TreeView.Style>
-                        <Style TargetType="TreeView">
-                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="TreeView">
-                                        <ItemsPresenter/>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </TreeView.Style>
-                </TreeView>
-                <TextBlock x:Name="TextBlock" Text="{Data:DisplayNameBinding Value}"
-                    FontStyle="Italic"
-                    Visibility="Collapsed"/>
+            <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*,Auto">
+                <local:BottomBorder>
+                    <local:BottomBorder.Visibility>
+                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
+                            <Binding Path="Members.Above.IsEmpty"
+                                Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
+                            <Data:Ancestor Path="FeatureVisibility" Type="{x:Type local:MemberGrid}"/>
+                        </MultiBinding>
+                    </local:BottomBorder.Visibility>
+                    <ContentPresenter Content="{Binding Members.ViewAbove}" ContentTemplate="{Data:Ancestor FeatureTemplate, local:MemberGrid}"/>
+                </local:BottomBorder>
+
+                <Grid>
+                    <TreeView ItemsSource="{Binding SortedMembers}"
+                        Linq:XItemsControl.GroupsItself="True"
+                        Visibility="{Data:VisibilityBinding Members.Count}">
+                        <Linq:XItemsControl.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="GroupItem">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                    <Expander x:Name="Expander"
+                                                        IsExpanded="True" 
+                                                        HorizontalAlignment="Stretch">
+                                                        <Expander.Header>
+                                                            <Grid Linq:XGrid.Columns="Auto,*">
+                                                                <TextBlock FontSize="13">
+                                                                    <Run Text="{Binding Name, Mode=OneWay}" 
+                                                                        Foreground="{local:ThemeKey ActualKey=AccentLight}"/>
+                                                                    <Run Text="{Binding ItemCount, Mode=OneWay, StringFormat= ({0})}"
+                                                                         Foreground="{local:ThemeKey ActualKey=Text}"/>
+                                                                </TextBlock>
+                                                                <local:LineElement Grid.Column="1"
+                                                                    Margin="5,0,0,0"
+                                                                    Orientation="Horizontal"/>
+                                                            </Grid>
+                                                        </Expander.Header>
+                                                        <ItemsPresenter Margin="20,0,0,0"/>
+                                                    </Expander>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
+                                <GroupStyle.Panel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </GroupStyle.Panel>
+                            </GroupStyle>
+                        </Linq:XItemsControl.GroupStyle>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                <Setter Property="Template" Value="{StaticResource {x:Static local:MemberGrid.ChildObjectTemplate}}"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type Reflection:MemberModel}" ItemsSource="{Binding SortedMembers}">
+                                <ContentPresenter x:Name="ContentPresenter" Content="{Binding}" Margin="0,2,0,0">
+                                    <ContentPresenter.ContentTemplate>
+                                        <DataTemplate DataType="{x:Type Reflection:MemberModel}">
+                                            <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="2*,8*" Linq:XPanel.VerticalContentAlignment="Top">
+                                                <local:MemberNamePresenter Content="{Binding}" Margin="0,0,5,0"/>
+                                                <local:MemberValuePresenter Content="{Binding}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ContentPresenter.ContentTemplate>
+                                </ContentPresenter>
+                                <HierarchicalDataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Orientation}" Value="Vertical">
+                                        <Setter TargetName="ContentPresenter" Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate DataType="{x:Type Reflection:MemberModel}">
+                                                    <Expander IsExpanded="True">
+                                                        <Expander.Header>
+                                                            <local:MemberNamePresenter Content="{Binding}"/>
+                                                        </Expander.Header>
+                                                        <local:MemberValuePresenter Content="{Binding}" Margin="22,5,0,5"/>
+                                                    </Expander>
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Data:PreviousData}" Value="{x:Null}">
+                                        <Setter TargetName="ContentPresenter" Property="Margin" Value="0"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Members.IsNotEmpty}" Value="True">
+                                        <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </HierarchicalDataTemplate.Triggers>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                        <TreeView.Style>
+                            <Style TargetType="TreeView">
+                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TreeView">
+                                            <ItemsPresenter/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TreeView.Style>
+                    </TreeView>
+                    <TextBlock x:Name="TextBlock" Text="{Data:DisplayNameBinding Value}"
+                        FontStyle="Italic"
+                        Visibility="Collapsed"/>
+                </Grid>
+
+                <local:TopBorder>
+                    <local:TopBorder.Visibility>
+                        <MultiBinding Converter="{x:Static Conversion:BooleanToVisibilityMultiConverter.Default}" Mode="OneWay">
+                            <Binding Path="Members.Below.IsEmpty"
+                                Converter="{x:Static Conversion:InverseBooleanConverter.Default}"/>
+                            <Data:Ancestor Path="FeatureVisibility" Type="{x:Type local:MemberGrid}"/>
+                        </MultiBinding>
+                    </local:TopBorder.Visibility>
+                    <ContentPresenter Content="{Binding Members.ViewBelow}" ContentTemplate="{Data:Ancestor FeatureTemplate, local:MemberGrid}"/>
+                </local:TopBorder>
             </Grid>
-            <ContentPresenter x:Name="ContentPresenter" Content="{Binding}" ContentTemplate="{Markup:EmptyTemplate}"  Margin="0,5,0,0"/>
+            <ContentPresenter x:Name="ContentPresenter" Content="{Binding}" ContentTemplate="{Markup:EmptyTemplate}" Margin="0,5,0,0" Visibility="Collapsed"/>
         </Grid>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Members}" Value="{x:Null}">
-                <Setter TargetName="TextBlock" Property="Visibility" Value="Collapsed"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Members.Count}" Value="0">
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Members.Count}" Value="0"/>
+                    <Condition Binding="{Binding TemplateType, Converter={x:Static Conversion:ValueEqualsParameterConverter.Default}, ConverterParameter={x:Type MsCollectionsSpecialized:INotifyCollectionChanged}}" Value="False"/>
+                </MultiDataTrigger.Conditions>
                 <Setter TargetName="TextBlock" Property="Visibility" Value="Visible"/>
-            </DataTrigger>
+            </MultiDataTrigger>
             <DataTrigger Binding="{Binding TemplateType}" Value="{x:Type MsCollectionsSpecialized:INotifyCollectionChanged}">
-                <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <Grid Linq:XGrid.AutoRows="True" Linq:XGrid.Rows="Auto,*" Margin="0,2">
-                                <Grid.Resources>
-                                    <Data:Reference x:Key="Member" 
-                                        Data="{Binding}"/>
-                                    <Data:Reference x:Key="MemberGrid" 
-                                        Data="{Data:Ancestor local:MemberGrid}"/>
-                                </Grid.Resources>
-                                <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,Auto,Auto,Auto,*"
-                                    Linq:XPanel.Spacing="0,0,5,0"
-                                    Linq:XPanel.SpacingExcept="Last"
-                                    Linq:XPanel.VerticalContentAlignment="Center"
-                                    Margin="0,0,0,5"
-                                    VerticalAlignment="Top">
-                                    <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"
-                                        Linq:XElement.OverrideMargin="0,0,1,0"
-                                        ToolTip="{l:Loc Add}"
-                                        Visibility="{Data:VisibilityBinding IsReadOnly, Invert=True}">
-                                        <ContentPresenter.ContentTemplate>
-                                            <DataTemplate>
-                                                <local:ImageButton ButtonSize="16,16" ButtonSource="{Markup:InternalImage Image=Plus}" ButtonVisibility="Visible">
-                                                    <local:ImageButton.Menu>
-                                                        <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}" 
-                                                            ItemsSource="{Binding ItemTypes}"
-                                                            Linq:XItemsControl.GroupsItself="True"
-                                                            Linq:XItemsControl.GroupStyle="{StaticResource {x:Static Linq:XItemsControl.MenuGroupStyleKey}}">
-                                                            <Linq:XItemsControl.GroupContainerStyle>
-                                                                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                                                                    <Setter Property="Command" Value="{Binding Data.InsertAboveCommand, Source={StaticResource Member}}"/>
-                                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                                    <Setter Property="Header" Value="{Data:DisplayNameBinding}"/>
-                                                                </Style>
-                                                            </Linq:XItemsControl.GroupContainerStyle>
-                                                        </ContextMenu>
-                                                    </local:ImageButton.Menu>
-                                                </local:ImageButton>
-                                            </DataTemplate>
-                                        </ContentPresenter.ContentTemplate>
-                                    </ContentPresenter>
-                                    <local:ImageButton
-                                        Command="{Binding RemoveCommand}"
-                                        Source="{Markup:InternalImage Image=MinusRound}"
-                                        ToolTip="{l:Loc Remove}"
-                                        Visibility="{Data:VisibilityBinding IsReadOnly, Invert=True}"/>
-                                    <local:ImageButton
-                                        Command="{Binding MoveUpCommand}"
-                                        Source="{Markup:InternalImage Image=TriangleUpRound}"
-                                        ToolTip="{l:Loc MoveUp}"/>
-                                    <local:ImageButton
-                                        Command="{Binding MoveDownCommand}"
-                                        Source="{Markup:InternalImage Image=TriangleDownRound}"
-                                        ToolTip="{l:Loc MoveDown}"/>
-                                    <local:Int32UpDown
-                                        CanUpDown="{Data:InvertBinding IsReadOnly}"
-                                        IsReadOnly="{Binding IsReadOnly}"
-                                        Linq:XTextBoxBase.Placeholder="{l:Loc Length}"
-                                        TextAlignment="Center"
-                                        Value="{Binding Length, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                                        Visibility="Collapsed"
-                                        Width="64"/>
-                                </Grid>
-                                <ListBox ItemsSource="{Binding Value}"
-                                    SelectedIndex="{Binding SelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectionMode="Single">
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                                            <Setter Property="Padding" Value="2"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Data.IsReadOnly, Source={StaticResource Member}}" Value="False">
-                                                    <Setter Property="ContextMenu">
-                                                        <Setter.Value>
-                                                            <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}">
-                                                                <MenuItem Header="{l:Loc Remove}"
-                                                                    Command="{Binding Data.RemoveCommand, Source={StaticResource Member}}"
-                                                                    CommandParameter="{Binding}"/>
-                                                                <Separator Linq:XSeparator.Header="{l:Loc Move}"/>
-                                                                <MenuItem Header="{l:Loc Up}"
-                                                                    Command="{Binding Data.MoveUpCommand, Source={StaticResource Member}}"
-                                                                    CommandParameter="{Binding}"/>
-                                                                <MenuItem Header="{l:Loc Down}"
-                                                                    Command="{Binding Data.MoveDownCommand, Source={StaticResource Member}}"
-                                                                    CommandParameter="{Binding}"/>
-                                                                <Separator Linq:XSeparator.Header="{l:Loc Insert}"/>
-                                                                <MenuItem Header="{l:Loc Above}"
-                                                                    Command="{Binding Data.InsertAboveCommand, Source={StaticResource Member}}"
-                                                                    CommandParameter="{Binding}"/>
-                                                                <MenuItem Header="{l:Loc Below}"
-                                                                    Command="{Binding Data.InsertBelowCommand, Source={StaticResource Member}}"
-                                                                    CommandParameter="{Binding}"/>
-                                                                <Separator/>
-                                                                <MenuItem Header="{l:Loc Reset}"
-                                                                    Command="{Binding Data.ResetCommand, Source={StaticResource Member}}"
-                                                                    CommandParameter="{Binding}"/>
-                                                            </ContextMenu>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type Reflection:ListItemModel}">
-                                            <local:MemberValuePresenter Content="{Binding}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
-                            <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding ItemTypes}" Value="{x:Null}">
-                                    <Setter TargetName="ContentPresenter" Property="ContentTemplate">
-                                        <Setter.Value>
-                                            <DataTemplate>
-                                                <local:ImageButton
-                                                    Command="{Binding InsertAboveCommand}"
-                                                    Source="{Markup:InternalImage Image=Plus}"/>
-                                            </DataTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                            </DataTemplate.Triggers>
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
+                <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{StaticResource {x:Static local:MemberGrid.CollectionTemplate}}"/>
+                <Setter TargetName="ContentPresenter" Property="Visibility" Value="Visible"/>
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate x:Key="{x:Static local:MemberGrid.ObjectButtonTemplateKey}">
+    <DataTemplate x:Key="{x:Static local:MemberGrid.ObjectButtonTemplate}">
         <ContentPresenter x:Name="ContentPresenter" Content="{Binding}">
             <ContentPresenter.ContentTemplate>
                 <DataTemplate>
@@ -1402,7 +1505,7 @@
             <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
                 <ComboBox
                     ItemsSource="{Binding Value.Groups}"
-                    SelectedIndex="{Binding Value.SelectedGroupIndex, Mode=TwoWay}">
+                    SelectedIndex="{Binding Value.SelectedGroupIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}"/>
@@ -1412,7 +1515,7 @@
                 <ComboBox
                     ItemsSource="{Binding Value.SelectedGroup}"
                     Margin="1,0,0,0"
-                    SelectedIndex="{Binding Value.SelectedIndex, Mode=TwoWay}"/>
+                    SelectedIndex="{Binding Value.SelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
         </local:KeyTemplate>
 
@@ -1450,9 +1553,6 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CommasAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ObjectAttribute}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
@@ -1693,13 +1793,13 @@
             <local:KeyTemplate.Triggers>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding DepthIndex}" Value="0"/>
+                        <Condition Binding="{Binding Depth}" Value="0"/>
                         <Condition Binding="{Binding Style}" Value="{x:Null}"/>
                     </MultiDataTrigger.Conditions>
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplate}}"/>
                 </MultiDataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ButtonAttribute}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplate}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
@@ -1902,54 +2002,63 @@
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsCollections:IEnumerable}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
-                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Depth}" Value="0"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Null}"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplate}}"/>
+                </MultiDataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:BulletsAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ButtonAttribute}">
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplate}}"/>
+                </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CommasAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ObjectAttribute}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsCollections:IList}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
-                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Depth}" Value="0"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Null}"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplate}}"/>
+                </MultiDataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:BulletsAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ButtonAttribute}">
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplate}}"/>
+                </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CommasAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ObjectAttribute}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </DataTrigger>
             </local:KeyTemplate.Triggers>
         </local:KeyTemplate>
         <local:KeyTemplate DataType="{x:Type Reflection:MemberModel}" DataKey="{x:Type MsCollectionsSpecialized:INotifyCollectionChanged}">
             <ContentPresenter x:Name="ContentPresenter" Content="{Binding}"/>
             <local:KeyTemplate.Triggers>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Null}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
-                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Depth}" Value="0"/>
+                        <Condition Binding="{Binding Style}" Value="{x:Null}"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplate}}"/>
+                </MultiDataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:BulletsAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListBulletTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ButtonAttribute}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplateKey}}"/>
+                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectButtonTemplate}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:CommasAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListCommaTemplateKey}}"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ObjectAttribute}">
-                    <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ObjectTemplateKey}}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Style}" Value="{x:Type Core:ToggleButtonAttribute}">
                     <Setter TargetName="ContentPresenter" Property="ContentTemplate" Value="{DynamicResource {x:Static local:MemberGrid.ListImageToggleButtonTemplateKey}}"/>

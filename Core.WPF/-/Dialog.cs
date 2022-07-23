@@ -9,8 +9,8 @@ namespace Imagin.Core
 {
     public static class Dialog
     {
-        public static int Show(string title, object message, Uri image, params Button[] buttons)
-            => Show(out DialogWindow _, title, message, image, buttons);
+        public static int Show(string title, object message, Uri image = null, params Button[] buttons)
+            => Show(out DialogWindow _, title, message, image ?? DialogImage.Information, buttons);
 
         public static int Show(out DialogWindow dialog, string title, object message, Uri image, params Button[] buttons)
         {

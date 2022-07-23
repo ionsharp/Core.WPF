@@ -131,6 +131,7 @@
                             Visibility="{Data:Ancestor IsReadOnly, {x:Type ComboBox}, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}">
                             <local:ImageElement 
                                 Source="{Markup:InternalImage 32-ArrowDown.png}"
+                                SourceSize="12,12"
                                 Foreground="{TemplateBinding Foreground}"/>
                         </local:RotateElement>
 
@@ -576,6 +577,7 @@
                                     </local:ImageButton.Style>
                                 </local:ImageButton>
                                 <local:ImageToggleButton Grid.Column="5"
+                                    ButtonSize="12,12"
                                     ButtonSource="{Markup:InternalImage 32-ArrowDown.png}"
                                     ButtonVisibility="Visible"
                                     Focusable="False"

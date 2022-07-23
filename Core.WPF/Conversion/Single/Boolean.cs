@@ -1,16 +1,10 @@
 ﻿using Imagin.Core.Linq;
-using Imagin.Core.Numerics;
 using Imagin.Core.Storage;
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Imagin.Core.Conversion
 {

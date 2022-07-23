@@ -610,9 +610,9 @@ public class ColorModelEffect : BaseEffect
     protected virtual void OnProfileChanged(Value<WorkingProfile> input)
     {
         SetCurrentValue(CompandingProperty,
-            input.New.Compress.GetAttribute<IndexAttribute>().Index.Double());
+            input.New.Compression.GetAttribute<IndexAttribute>().Index.Double());
         SetCurrentValue(GammaProperty, 
-            input.New.Compress is GammaCompression transfer ? transfer.Gamma : 0.0);
+            input.New.Compression is GammaCompression transfer ? transfer.Gamma : 0.0);
 
         SetCurrentValue(WhiteXProperty, input.New.Chromacity.X);
         SetCurrentValue(WhiteYProperty, input.New.Chromacity.Y);
@@ -622,7 +622,7 @@ public class ColorModelEffect : BaseEffect
         var m_RGB_XYZ 
             = XYZ.GetMatrix(input.New.Primary, (XYZ)(xyY)(xy)input.New.Chromacity);
         var m_XYZ_LMS
-            = input.New.Adapt;
+            = input.New.Adaptation;
 
         var m_LMS_XYZ 
             = m_XYZ_LMS.Invert3By3();
