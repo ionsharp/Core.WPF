@@ -12,12 +12,11 @@ namespace Imagin.Core.Conversion;
 [ValueConversion(typeof(object[]), typeof(Visibility))]
 public class AandBorCMultiConverter : MultiConverter<Visibility>
 {
-    public static AandBorCMultiConverter Default { get; private set; } = new();
-    AandBorCMultiConverter() { }
+    public AandBorCMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values?.Length == 3)
+        if (values?.Length >= 3)
         {
             if (values[0] is bool a)
             {
@@ -35,10 +34,33 @@ public class AandBorCMultiConverter : MultiConverter<Visibility>
 }
 
 [ValueConversion(typeof(object[]), typeof(Visibility))]
+public class AorBandCMultiConverter : MultiConverter<Visibility>
+{
+    public AorBandCMultiConverter() : base() { }
+
+    public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (values?.Length >= 3)
+        {
+            if (values[0] is bool a)
+            {
+                if (values[1] is bool b)
+                {
+                    if (values[2] is bool c)
+                    {
+                        return (a || (b && c)).Visibility();
+                    }
+                }
+            }
+        }
+        return Binding.DoNothing;
+    }
+}
+
+[ValueConversion(typeof(object[]), typeof(Visibility))]
 public class BooleanToVisibilityMultiConverter : MultiConverter<Visibility>
 {
-    public static BooleanToVisibilityMultiConverter Default { get; private set; } = new BooleanToVisibilityMultiConverter();
-    BooleanToVisibilityMultiConverter() { }
+    public BooleanToVisibilityMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -64,46 +86,9 @@ public class BooleanToVisibilityMultiConverter : MultiConverter<Visibility>
 }
 
 [ValueConversion(typeof(object[]), typeof(Visibility))]
-public class EnumFlagsToVisibilityMultiConverter : MultiConverter<Visibility>
+public class ItemVisibilityMultiConverter : MultiConverter<Visibility>
 {
-    public static EnumFlagsToVisibilityMultiConverter Default { get; private set; } = new EnumFlagsToVisibilityMultiConverter();
-    EnumFlagsToVisibilityMultiConverter() { }
-
-    public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-    {
-        object a = null, b = null;
-
-        var Result = true;
-
-        var i = 0;
-        foreach (var j in values)
-        {
-            if (Numerics.M.Even(i))
-            {
-                a = j;
-            }
-            else
-            {
-                b = j;
-                if (a != null && b != null)
-                {
-                    Result = Result && a.As<Enum>().HasFlag(b as Enum);
-                    a = null;
-                    b = null;
-                }
-            }
-            i++;
-        }
-
-        return Result.Visibility();
-    }
-}
-
-[ValueConversion(typeof(object[]), typeof(Visibility))]
-public class ItemVisibilityConverter : MultiConverter<Visibility>
-{
-    public static ItemVisibilityConverter Default { get; private set; } = new ItemVisibilityConverter();
-    ItemVisibilityConverter() { }
+    public ItemVisibilityMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -176,35 +161,5 @@ public class ItemVisibilityConverter : MultiConverter<Visibility>
             }
         }
         return Visibility.Collapsed;
-    }
-}
-
-[ValueConversion(typeof(object[]), typeof(Visibility))]
-public class StartsWithToVisibilityMultiConverter : MultiConverter<Visibility>
-{
-    public static StartsWithToVisibilityMultiConverter Default { get; private set; } = new StartsWithToVisibilityMultiConverter();
-    StartsWithToVisibilityMultiConverter() { }
-
-    public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (values != null && values.Length == 2)
-        {
-
-            var input = values[0].ToString();
-            var query = values[1].ToString();
-
-            if (query.NullOrEmpty())
-            {
-                return Visibility.Visible;
-            }
-
-            if (input.StartsWith(query))
-            {
-                return Visibility.Visible;
-            }
-
-            return Visibility.Collapsed;
-        }
-        return null;
     }
 }

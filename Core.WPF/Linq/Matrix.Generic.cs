@@ -1,4 +1,5 @@
 ﻿using Imagin.Core.Numerics;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Imagin.Core.Linq;
@@ -12,7 +13,7 @@ public static class XMatrix
             var result = XBitmap.New(input.Columns.Int32(), input.Rows.Int32());
             input.Each((y, x, i) =>
             {
-                //result.SetPixel(x, y, System.Windows.Media.Color.FromArgb(M.Denormalize(i.W), M.Denormalize(i.X), M.Denormalize(i.Y), M.Denormalize(i.Z)));
+                result.SetPixel(x, y, Color.FromArgb(M.Denormalize(i.W), M.Denormalize(i.X), M.Denormalize(i.Y), M.Denormalize(i.Z)));
                 return i;
             });
             return result;

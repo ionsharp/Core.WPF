@@ -1,19 +1,18 @@
 ﻿using Imagin.Core.Storage;
 using System;
 
-namespace Imagin.Core.Linq
+namespace Imagin.Core.Linq;
+
+public static class XStorageWindowMode
 {
-    public static class XStorageWindowMode
+    public static ItemType Convert(this StorageDialogMode input)
     {
-        public static ItemType Convert(this StorageWindowModes input)
+        return input switch
         {
-            return input switch
-            {
-                StorageWindowModes.Open => ItemType.File | ItemType.Folder,
-                StorageWindowModes.OpenFile or StorageWindowModes.SaveFile => ItemType.File,
-                StorageWindowModes.OpenFolder => ItemType.Folder,
-                _ => throw new InvalidOperationException(),
-            };
-        }
+            StorageDialogMode.Open => ItemType.File | ItemType.Folder,
+            StorageDialogMode.OpenFile or StorageDialogMode.SaveFile => ItemType.File,
+            StorageDialogMode.OpenFolder => ItemType.Folder,
+            _ => throw new InvalidOperationException(),
+        };
     }
 }

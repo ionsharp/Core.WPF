@@ -1,241 +1,400 @@
-﻿using Imagin.Core.Collections.ObjectModel;
-using Imagin.Core.Data;
+﻿using Imagin.Core.Analytics;
+using Imagin.Core.Collections.ObjectModel;
 using Imagin.Core.Collections.Serialization;
 using Imagin.Core.Controls;
+using Imagin.Core.Conversion;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
+using Imagin.Core.Numerics;
 using Imagin.Core.Reflection;
 using System;
-using System.Runtime.CompilerServices;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Imagin.Core.Models;
 
 public interface IGroupPanel { object SelectedItem { get; } }
 
-public abstract class GroupPanel<T> : Panel, IGroupPanel where T : new()
+#region GroupPanel
+
+[Serializable]
+public abstract class GroupPanel : ViewPanel
 {
-    enum Category { Add, Clipboard, Edit, Export, Import, View }
+    enum Category { [Index(-1)]Edit, Grid }
+
+    [Category(Category.Grid), Name("Collapse"), Option, Show]
+    public bool GridCollapsed { get => Get(true); set => Set(value); }
+
+    [Category(Category.Grid), Name("Length (1)"), Option, Range(0.0, double.MaxValue, 0.01), Show]
+    public GridLength GridLength1 { get => Get(new GridLength(6, GridUnitType.Star)); set => Set(value); }
+
+    [Category(Category.Grid), Name("Length (2)"), Option, Range(0.0, double.MaxValue, 0.01), Show]
+    public GridLength GridLength2 { get => Get(new GridLength(4, GridUnitType.Star)); set => Set(value); }
+
+    [Category(Category.Grid), Name("Orientation"), Option, Show]
+    public Orientation GridOrientation { get => Get(Orientation.Vertical); set => Set(value); }
+
+    [Category(Category.Grid), Name("Reverse"), Option, Show]
+    public bool GridReverse { get => Get(false); set => Set(value); }
+
+    [Category(Category.Edit), Header, HideName, Image(SmallImages.Pencil), Name("Edit"), Show, Style(BooleanStyle.Button)]
+    public bool IsEditing { get => Get(false); set => Set(value); }
+}
+
+#endregion
+
+#region GroupPanel<T>
+
+[Serializable]
+public abstract class GroupPanel<T> : GroupPanel, IGroupPanel
+{
+    enum Category { AddRemove, Clipboard, Edit, Export, Import, Move, View }
 
     #region Properties
 
-    string defaultGroupName = "Untitled group";
-    [Option, Visible]
-    public string DefaultGroupName
-    {
-        get => defaultGroupName;
-        set => this.Change(ref defaultGroupName, value);
-    }
+    [Description("The default name of new groups."), Option, Reserve, Show]
+    public string DefaultGroupName { get => Get("Untitled group"); set => Set(value); }
 
-    GroupWriter<T> groups = null;
-    [Hidden]
-    public GroupWriter<T> Groups
-    {
-        get => groups;
-        private set => this.Change(ref groups, value);
-    }
+    [Description("The suffix to append to the name of cloned items."), Option, Reserve, Show]
+    public string DefaultCloneSuffix { get => Get(" (Clone)"); set => Set(value); }
 
-    public virtual string ItemName => "item";
+    [Description("The default name of new items."), Option, Reserve, Show]
+    public string DefaultItemName { get => Get("Untitled"); set => Set(value); }
 
-    double itemSize = 128.0;
-    [Category(nameof(Category.View)), Option, Range(32.0, 512.0, 4.0), Slider, Visible]
-    public virtual double ItemSize
-    {
-        get => itemSize;
-        set => this.Change(ref itemSize, value);
-    }
+    [Hide]
+    public GroupWriter<T> Groups { get => Get<GroupWriter<T>>(); set => Set(value); }
 
-    [Hidden]
+    [Category(nameof(Category.AddRemove)), CollectionStyle(ItemCommand = nameof(AddCommand)), Header, HideName, Image(SmallImages.Plus), Index(0), Name("Add"), Show, VisibilityTrigger(nameof(ItemTypeCount), 1, Operators.Greater)]
+    public ListCollectionView ItemTypes => new(new ObservableCollection<Type>(GetItemTypes()));
+
+    [Hide]
+    public int ItemTypeCount => GetItemTypes().Count();
+
+    [Hide]
     public GroupCollection<T> SelectedGroup => SelectedGroupIndex >= 0 && SelectedGroupIndex < Groups?.Count ? Groups[SelectedGroupIndex] : default;
 
     object IGroupPanel.SelectedItem => SelectedItem;
-    [Hidden]
-    public T SelectedItem => SelectedIndex >= 0 && SelectedIndex < SelectedGroup?.Count ? SelectedGroup[SelectedIndex] : default;
+    [Hide]
+    public T SelectedItem => SelectedIndex >= 0 && SelectedIndex < SelectedGroup?.Count ? SelectedGroup[SelectedIndex].Value : default;
 
-    int selectedGroupIndex = -1;
-    [Above, Index(2), Label(false), SelectedIndex, Setter(nameof(MemberModel.ItemPath), nameof(GroupCollection<T>.Name)), Trigger(nameof(MemberModel.ItemSource), nameof(Groups)), Tool, Visible]
-    public int SelectedGroupIndex
-    {
-        get => selectedGroupIndex;
-        set
-        {
-            this.Change(ref selectedGroupIndex, value);
-            this.Changed(() => SelectedGroup);
-        }
-    }
+    [Hide]
+    public GroupItem<T> SelectedItemContainer => SelectedIndex >= 0 && SelectedIndex < SelectedGroup?.Count ? SelectedGroup[SelectedIndex] : default;
 
-    int selectedIndex = -1;
-    [Hidden]
-    public int SelectedIndex
-    {
-        get => selectedIndex;
-        set
-        {
-            this.Change(ref selectedIndex, value);
-            this.Changed(() => SelectedItem);
-        }
-    }
+    [Description("The selected group.")]
+    [Pin(Pin.AboveOrLeft), Header, HideName, Index(0), Modify, Name("Selected group"), Placeholder("Select a group"), Show]
+    [Int32Style(Int32Style.Index, nameof(Groups), nameof(GroupCollection<T>.Name))]
+    public int SelectedGroupIndex { get => Get(-1); set => Set(value); }
 
-    GroupView view = GroupView.Grid;
-    [Category(nameof(Category.View)), Option, Visible]
-    public GroupView View
-    {
-        get => view;
-        set => this.Change(ref view, value);
-    }
+    [Hide]
+    public override IList SortNames => new Collections.ObjectModel.StringCollection() { nameof(GroupItem<T>.Created), nameof(GroupItem<T>.Name) };
+
+    [Hide]
+    public sealed override string Title => SelectedGroup?.Count > 0 ? TitleKey.Translate() + $" ({SelectedGroup.Count})" : TitleKey.Translate();
+
+    [Hide]
+    public virtual string TitleKey => base.Title;
+
+    [Hide]
+    public sealed override bool TitleLocalized => false;
 
     #endregion
 
     #region GroupPanel
 
-    GroupPanel() : base() { }
+    public GroupPanel() : base() { }
 
-    public GroupPanel(IGroupWriter groups) : this() => Groups = (GroupWriter<T>)groups;
+    public GroupPanel(IGroupWriter groups) : this()
+    {
+        Groups = (GroupWriter<T>)groups;
+    }
 
     #endregion
 
     #region Methods
 
-    protected virtual T GetNewItem() => new T();
-
-    public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    void OnSelectedGroupChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        base.OnPropertyChanged(propertyName);
-        if (propertyName == nameof(Groups))
-            SelectedGroupIndex = SelectedGroupIndex == -1 ? 0 : SelectedGroupIndex;
+        Update(() => Title);
+        OnSelectedGroupChanged(e);
     }
-        
-    public void Update(IGroupWriter input) => Groups = input as GroupWriter<T>;
+
+    ///
+
+    protected abstract IEnumerable<GroupCollection<T>> GetDefaultGroups();
+
+    protected virtual T GetDefaultItem() => default;
+
+    protected virtual IEnumerable<Type> GetItemTypes()
+    {
+        yield return typeof(T);
+    }
+
+    protected virtual Dictionary<Type, Func<T>> ItemHandlers { get; }
+
+    protected virtual void OnSelectedGroupChanged(NotifyCollectionChangedEventArgs e) { }
+
+    ///
+
+    public override void OnModified(ModifiedEventArgs e)
+    {
+        base.OnModified(e);
+        switch (e.PropertyName)
+        {
+            case nameof(SelectedGroupIndex):
+                e.OldValue.If<int>(i => i >= 0 && i < Groups.Count, i => Groups[i].CollectionChanged -= OnSelectedGroupChanged);
+                e.NewValue.If<int>(i => i >= 0 && i < Groups.Count, i => Groups[i].CollectionChanged += OnSelectedGroupChanged);
+                break;
+        }
+    }
+
+    public override void OnPropertyChanged(PropertyEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+        switch (e.PropertyName)
+        {
+            case nameof(Groups):
+                Groups.If(i => i.Count == 0, i => GetDefaultGroups().ForEach(j => i.Add(j)));
+                //SelectedGroupIndex = SelectedGroupIndex == -1 ? 0 : SelectedGroupIndex;
+                break;
+
+            case nameof(SelectedGroup):
+                Update(() => Title);
+                break;
+
+            case nameof(SelectedGroupIndex):
+                Update(() => SelectedGroup);
+                break;
+
+            case nameof(SelectedIndex):
+                Update(() => SelectedItem);
+                Update(() => SelectedItemContainer);
+                break;
+        }
+    }
+
+    public void SetGroups(IGroupWriter input) => Groups = input as GroupWriter<T>;
 
     #endregion
 
     #region Commands
 
+    ///Items
+
+    bool AnySelected => Try.Return(() => SelectedItems?.Length > 0 == true);
+
     ICommand addCommand;
-    [Category(nameof(Category.Add)), DisplayName("Add")]
-    [Image(Images.Plus)]
-    [Index(0), Tool, Visible]
-    public ICommand AddCommand => addCommand ??= new RelayCommand(() =>
+    [Category(nameof(Category.AddRemove)), Image(SmallImages.Plus), Index(0), Header, Name("Add"), Show, VisibilityTrigger(nameof(ItemTypeCount), 1)]
+    public ICommand AddCommand => addCommand ??= new RelayCommand<Type>(i =>
     {
-        var oldItem = GetNewItem();
-        var newItem = new GroupValueModel(Groups, oldItem, SelectedGroupIndex);
+        T value = i is Type type ? (ItemHandlers?.ContainsKey(type) == true ? ItemHandlers[type]() : type.Create<T>()) : GetDefaultItem();
 
-        MemberWindow.ShowDialog($"New {ItemName}", newItem, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; i.NameColumnVisibility = Visibility.Collapsed; }, Buttons.SaveCancel);
-        if (result == 0)
+        var oldItem = new GroupItem<T>(DefaultItemName, value);
+        var newItem = new GroupValueForm<T>(Groups, oldItem, SelectedGroupIndex);
+
+        Dialog.ShowObject($"New {ItemName}", newItem, Resource.GetImageUri(SmallImages.Plus), i =>
         {
-            if (newItem.GroupIndex == -1)
+            if (i == 0)
             {
-
+                newItem.GroupIndex = newItem.GroupIndex == -1 ? SelectedGroupIndex : newItem.GroupIndex;
+                Groups[newItem.GroupIndex].Add((GroupItem<T>)newItem.Value);
             }
-            else Groups[newItem.GroupIndex].Add((T)newItem.Value);
-        }
-    });
+        },
+        Buttons.SaveCancel);
+    },
+    i => SelectedGroup != null);
+
+    ICommand cloneCommand;
+    [Category(nameof(Category.Clipboard)), Image(SmallImages.Clone), Index(2), Header, Name("Clone"), Show]
+    public ICommand CloneCommand => cloneCommand ??= new RelayCommand(() =>
+    {
+        SelectedItems.Select<GroupItem<T>>(i => (GroupItem<T>)i).ForEach(i =>
+        {
+            var j = i.DeepClone(new CloneHandler());
+            j.Name += DefaultCloneSuffix;
+
+            j.If(i => SelectedGroup.Add(j));
+        });
+    },
+    () => SelectedGroup != null && AnySelected && !typeof(T).HasAttribute<NonCloneableAttribute>());
+
+    ICommand copyCommand;
+    [Category(nameof(Category.Clipboard)), Header, Image(SmallImages.Copy), Index(1), Name("Copy"), Show]
+    public ICommand CopyCommand => copyCommand ??= new RelayCommand(() =>
+    {
+        var result = XList.Select(SelectedItems, i => i.As<GroupItem<T>>().DeepClone(new CloneHandler()));
+        Copy.Set(result);
+    },
+    () => SelectedGroup != null && AnySelected && !typeof(T).HasAttribute<NonCloneableAttribute>());
+
+    ICommand cutCommand;
+    [Category(nameof(Category.Clipboard)), Header, Image(SmallImages.Cut), Index(0), Name("Cut"), Show]
+    public ICommand CutCommand => cutCommand ??= new RelayCommand(() =>
+    {
+        var result = XList.Select(SelectedItems, i => i.As<GroupItem<T>>().DeepClone(new CloneHandler()));
+        Copy.Set(result);
+
+        RemoveCommand.Execute();
+    },
+    () => SelectedGroup != null && AnySelected && !typeof(T).HasAttribute<NonCloneableAttribute>());
+
+    ICommand editCommand;
+    [Hide]
+    public ICommand EditCommand => editCommand ??= new RelayCommand<object>(i =>
+    {
+        IsEditing = true;
+        return;
+
+        var newItem = new GroupValueForm<T>(Groups, i ?? SelectedGroup[SelectedIndex], SelectedGroupIndex);
+        Dialog.ShowObject($"Edit {ItemName.ToLower()}", newItem, Resource.GetImageUri(SmallImages.Pencil), i => 
+        {
+            if (newItem.GroupIndex != SelectedGroupIndex)
+            {
+                SelectedGroup.RemoveAt(SelectedIndex);
+                Groups[newItem.GroupIndex].Add((GroupItem<T>)newItem.Value);
+            }
+        },
+        Buttons.Done);
+    },
+    i => i != null || (SelectedGroup != null && SelectedIndex >= 0 && SelectedIndex < SelectedGroup.Count));
+
+    ICommand moveCommand;
+    [Category(nameof(Category.Move)), Header, Image(SmallImages.FolderMove), Name("Move"), Show]
+    public ICommand MoveCommand => moveCommand ??= new RelayCommand(() => 
+    {
+        var result = new GroupIndexForm(Groups, SelectedGroupIndex);
+        Dialog.ShowObject($"Move {ItemName.ToLower()}", result, Resource.GetImageUri(SmallImages.Pencil), i =>
+        {
+            if (result.GroupIndex != SelectedGroupIndex)
+            {
+                for (var j = SelectedGroup.Count - 1; j >= 0; j--)
+                {
+                    var item = SelectedGroup[j];
+                    if (item.IsSelected)
+                    {
+                        SelectedGroup.RemoveAt(j);
+                        Groups[result.GroupIndex].Add(item);
+                    }
+                }
+            }
+        },
+        Buttons.Done);
+    },
+    () => SelectedGroup != null && AnySelected && !typeof(T).HasAttribute<NonCloneableAttribute>());
+
+    ICommand pasteCommand;
+    [Category(nameof(Category.Clipboard)), Header, Index(3), Image(SmallImages.Paste), Name("Paste"), Show]
+    public ICommand PasteCommand => pasteCommand ??= new RelayCommand(() =>
+    {
+        if (Copy.Contains<GroupItem<T>>())
+            SelectedGroup.Add(Copy.Get<GroupItem<T>>().DeepClone(new CloneHandler()));
+
+        else if (Copy.Contains<IEnumerable<GroupItem<T>>>())
+            Copy.Get<IEnumerable<GroupItem<T>>>().ForEach(i => SelectedGroup.Add(i.DeepClone(new CloneHandler())));
+    },
+    () => SelectedGroup != null && (Copy.Contains<GroupItem<T>>() || Copy.Contains<IEnumerable<GroupItem<T>>>()));
+
+    ICommand removeCommand;
+    [Category(nameof(Category.AddRemove)), Header, Image(SmallImages.Minus), Index(1), Name("Remove"), Show]
+    public ICommand RemoveCommand => removeCommand ??= new RelayCommand(() =>
+    {
+        var itemName = Converter.Get<PluralConverter>().ConvertTo(ItemName.ToLower());
+        Dialog.ShowWarning($"Remove {itemName}", new Warning($"Are you sure you want to remove the selected {itemName}?"), i =>
+        {
+            if (i == 0)
+            {
+                for (var j = SelectedGroup.Count - 1; j >= 0; j--)
+                {
+                    if (SelectedGroup[j].IsSelected)
+                        SelectedGroup.RemoveAt(j);
+                }
+            }
+        },
+        Buttons.YesNo);
+    },
+    () => SelectedGroup != null && AnySelected);
+
+    ///Groups
 
     ICommand addGroupCommand;
-    [DisplayName("Add group")]
-    [Above, Index(0)]
-    [Image(Images.FolderAdd), Tool, Visible]
+    [HeaderOption, Image(SmallImages.FolderAdd), Index(2), Name("Add group"), Show]
     public ICommand AddGroupCommand => addGroupCommand ??= new RelayCommand(() =>
     {
-        var group = MemberWindow.ShowDialog("New group", new GroupCollection<T>(DefaultGroupName), out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; }, Buttons.SaveCancel);
-        if (result == 0)
-            Groups.Add(group);
+        var result = new NameForm(DefaultGroupName);
+        Dialog.ShowObject("Add group", result, Resource.GetImageUri(SmallImages.FolderAdd), i => 
+        {
+            if (i == 0)
+                Groups.Add(new GroupCollection<T>(result.Name));
+        }, 
+        Buttons.SaveCancel);
     },
     () => Groups != null);
 
-    ICommand cloneCommand;
-    [Category(nameof(Category.Edit)), DisplayName("Clone")]
-    [Image(Images.Clone)]
-    [Index(2), Tool, Visible]
-    public ICommand CloneCommand => cloneCommand ??= new RelayCommand(() => SelectedGroup.Insert(SelectedGroup.IndexOf(SelectedItem), (T)SelectedItem.As<ICloneable>().Clone()), () => SelectedGroup != null && SelectedItem is ICloneable);
-
-    ICommand copyCommand;
-    [Category(nameof(Category.Clipboard)), DisplayName("Copy"), Index(1), Image(Images.Copy), Tool, Visible]
-    public ICommand CopyCommand => copyCommand ??= new RelayCommand<T>(i => XClipboard.Copy(i.SmartClone<object>()), i => i != null);
-
-    ICommand cutCommand;
-    [Category(nameof(Category.Clipboard)), DisplayName("Cut"), Index(0), Image(Images.Cut), Tool, Visible]
-    public ICommand CutCommand => cutCommand ??= new RelayCommand<T>(i =>
+    ICommand editGroupCommand;
+    [HeaderOption, Image(SmallImages.FolderEdit), Index(1), Name("Edit group"), Show]
+    public ICommand EditGroupCommand => editGroupCommand ??= new RelayCommand(() =>
     {
-        CopyCommand.Execute(i);
-        SelectedGroup.RemoveAt(SelectedIndex);
+        var result = new NameForm(SelectedGroup.Name);
+        Dialog.ShowObject("Edit group", result, Resource.GetImageUri(SmallImages.FolderEdit), i =>
+        {
+            if (i == 0)
+                SelectedGroup.Name = result.Name;
+        },
+        Buttons.Done);
     }, 
-    i => i != null);
+    () => SelectedGroup != null);
 
-    ICommand deleteCommand;
-    [Category(nameof(Category.Edit)), DisplayName("Delete")]
-    [Image(Images.Trash)]
-    [Index(3), Tool, Visible]
-    public ICommand DeleteCommand => deleteCommand ??= new RelayCommand(() =>
+    ICommand removeGroupCommand;
+    [HeaderOption, Image(SmallImages.FolderDelete), Index(3), Name("Delete group"), Show]
+    public ICommand RemoveGroupCommand => removeGroupCommand ??= new RelayCommand(() =>
     {
-        if (Dialog.Show($"Delete {ItemName}", "Are you sure?", DialogImage.Warning, Buttons.YesNo) == 0)
-            SelectedGroup.RemoveAt(SelectedIndex);
-    },
-    () => SelectedGroup != null && SelectedIndex >= 0 && SelectedIndex < SelectedGroup.Count);
-
-    ICommand deleteGroupCommand;
-    [DisplayName("Delete group")]
-    [Above, Index(2)]
-    [Image(Images.FolderDelete), Tool, Visible]
-    public ICommand DeleteGroupCommand => deleteGroupCommand ??= new RelayCommand(() =>
-    {
-        if (Dialog.Show("Delete group", "Are you sure?", DialogImage.Warning, Buttons.YesNo) == 0)
-            Groups.Remove(SelectedGroup);
+        Dialog.ShowWarning("Remove group", new Warning("Are you sure you want to remove the selected group?"), i =>
+        {
+            if (i == 0)
+                Groups.Remove(SelectedGroup);
+        },
+        Buttons.YesNo);
     },
     () => Groups?.Contains(SelectedGroup) == true);
 
-    ICommand editCommand;
-    [Category(nameof(Category.Edit)), DisplayName("Edit")]
-    [Index(1)]
-    [Image(Images.Pencil), Tool, Visible]
-    public ICommand EditCommand => editCommand ??= new RelayCommand<object>(i =>
+    ICommand resetGroupsCommand;
+    [HeaderOption, Image(SmallImages.Reset), Index(4), Name("Reset groups"), Show]
+    public ICommand ResetGroupsCommand => resetGroupsCommand ??= new RelayCommand(() =>
     {
-        var newItem = new GroupValueModel(Groups, i ?? SelectedGroup[SelectedIndex], SelectedGroupIndex);
-        MemberWindow.ShowDialog($"Edit {ItemName}", newItem, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; i.NameColumnVisibility = Visibility.Collapsed; }, Buttons.Done);
-        if (newItem.GroupIndex != SelectedGroupIndex)
+        Dialog.ShowWarning("Reset groups", new Warning("Are you sure you want to reset all groups?"), i => 
         {
-            SelectedGroup.RemoveAt(SelectedIndex);
-            Groups[newItem.GroupIndex].Add((T)newItem.Value);
-        }
-        else
-        {
-            Groups[SelectedGroupIndex][SelectedIndex] = (T)newItem.Value;
-        }
-    }, 
-    i => i != null || (SelectedGroup != null && SelectedIndex >= 0 && SelectedIndex < SelectedGroup.Count));
+            if (i == 0)
+            {
+                Groups.Clear();
+                GetDefaultGroups().ForEach(i => Groups.Add(i));
+            }
+        }, 
+        Buttons.YesNo);
+    });
 
-    ICommand editGroupCommand;
-    [DisplayName("Edit group")]
-    [Above, Index(1)]
-    [Image(Images.FolderEdit), Tool, Visible]
-    public ICommand EditGroupCommand => editGroupCommand ??= new RelayCommand(() => MemberWindow.ShowDialog("Edit group", SelectedGroup, out int result, i => { i.GroupName = MemberGroupName.None; i.HeaderVisibility = Visibility.Collapsed; }, Buttons.Done), () => Groups != null);
+    ///Other
 
     ICommand exportCommand;
-    [Category(nameof(Category.Export))]
-    [DisplayName("Export")]
-    [Image(Images.Export), Tool, Visible]
+    [Category(nameof(Category.Export)), HeaderOption, Image(SmallImages.Export), Name("Export"), Show]
     public ICommand ExportCommand
         => exportCommand ??= new RelayCommand(() => _ = Groups.Export(SelectedGroup), () => SelectedGroup != null);
 
     ICommand exportAllCommand;
-    [Category(nameof(Category.Export))]
-    [DisplayName("ExportAll")]
-    [Image(Images.ExportAll), Tool, Visible]
+    [Category(nameof(Category.Export)), HeaderOption, Image(SmallImages.ExportAll), Name("ExportAll"), Show]
     public ICommand ExportAllCommand
         => exportAllCommand ??= new RelayCommand(() => _ = Groups.Export());
 
     ICommand importCommand;
-    [Category(nameof(Category.Import))]
-    [DisplayName("Import")]
-    [Image(Images.Import), Tool, Visible]
+    [Category(nameof(Category.Import)), HeaderOption, Image(SmallImages.Import), Name("Import"), Show]
     public ICommand ImportCommand
         => importCommand ??= new RelayCommand(() => Groups.Import());
 
-    ICommand pasteCommand;
-    [Category(nameof(Category.Clipboard)), DisplayName("Paste"), Index(2), Image(Images.Paste), Tool, Visible]
-    public ICommand PasteCommand => pasteCommand ??= new RelayCommand<T>(i => SelectedGroup.Add((T)XClipboard.Paste(typeof(T))), i => i != null && SelectedGroup != null && XClipboard.Contains(typeof(T)));
-
     #endregion
 }
+
+#endregion

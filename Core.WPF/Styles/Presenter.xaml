@@ -10,7 +10,7 @@
     </ResourceDictionary.MergedDictionaries>
     <Style x:Key="{x:Type local:Presenter}" TargetType="{x:Type local:Presenter}"/>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:ButtonPresenter}" TargetType="{x:Type local:ButtonPresenter}" BasedOn="{StaticResource {x:Type local:Presenter}}">
         <Setter Property="ContentTemplate">
@@ -38,7 +38,7 @@
                     <local:TransitionControl
                         Content="{Data:Ancestor CurrentDialog, local:DialogPresenter}"
                         ContentTemplate="{Data:Ancestor Window, Path=(Linq:XWindow.DialogTemplate)}"
-                        Transition="LeftReplace"/>
+                        Transition="{Data:Ancestor Window, Path=(Linq:XWindow.DialogTransition)}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -49,7 +49,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Thickness x:Key="{x:Static local:EmptyPresenter.PopupMarginKey}">10</Thickness>
     
@@ -76,7 +76,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:NotificationPresenter}" TargetType="{x:Type local:NotificationPresenter}" BasedOn="{StaticResource {x:Type local:Presenter}}">
         <Setter Property="ContentTemplate">

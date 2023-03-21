@@ -1,46 +1,23 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 
-namespace Imagin.Core.Models
+namespace Imagin.Core.Models;
+
+[Name("Properties"), Image(SmallImages.Properties), Serializable]
+public class PropertiesPanel : Panel
 {
-    [DisplayName("Properties")]
-    public class PropertiesPanel : Panel
-    {
-        public static readonly ResourceKey TemplateKey = new();
+    public static readonly ResourceKey TemplateKey = new();
 
-        [Hidden]
-        public override Uri Icon => Resources.InternalImage(Images.Properties);
+    [Hide]
+    public override Uri Icon => Resource.GetImageUri(SmallImages.Properties);
 
-        int selectedIndex = -1;
-        [Hidden]
-        [Serialize(false)]
-        public virtual int SelectedIndex
-        {
-            get => selectedIndex;
-            set => this.Change(ref selectedIndex, value);
-        }
+    [Hide, NonSerializable]
+    public virtual int SelectedIndex { get => Get(-1, false); set => Set(value, false); }
 
-        object source = null;
-        [Hidden]
-        [Serialize(false)]
-        public virtual object Source
-        {
-            get => source;
-            set => this.Change(ref source, value);
-        }
+    [HeaderItem, HideName, Image(SmallImages.Info), Name("Show description"), Reserve, Show, Style(BooleanStyle.Button)]
+    public bool ShowDescription { get => Get(false); set => Set(value); }
 
-        ObservableCollection<object> sources = new();
-        [Hidden]
-        [Serialize(false)]
-        public virtual ObservableCollection<object> Sources
-        {
-            get => sources;
-            set => this.Change(ref sources, value);
-        }
+    [Hide, NonSerializable]
+    public virtual object Source { get => Get<object>(null, false); set => Set(value, false); }
 
-        [Hidden]
-        public override string Title => "Properties";
-
-        public PropertiesPanel() : base() { }
-    }
+    public PropertiesPanel() : base() { }
 }

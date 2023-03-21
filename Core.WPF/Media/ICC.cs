@@ -190,14 +190,14 @@ public class ICCProfile
     {
         bool success;
 
-        StringBuilder profileName = new StringBuilder(256);
+        StringBuilder profileName = new(256);
         uint size = (uint)profileName.Capacity * 2;
         success = GetStandardColorSpaceProfile(0, LogicalColorSpace.sRGB, profileName, ref size);
 
-        ProfileFilename sRGBFilename = new ProfileFilename(profileName.ToString());
+        ProfileFilename sRGBFilename = new(profileName.ToString());
         IntPtr hSRGBProfile = OpenColorProfile(sRGBFilename, ProfileRead, FileShare.Read, CreateDisposition.OpenExisting);
 
-        ProfileFilename isoCoatedFilename = new ProfileFilename(@"C:\Users\me\Documents\ISOcoated_v2_300_eci.icc");
+        ProfileFilename isoCoatedFilename = new(@"C:\Users\me\Documents\ISOcoated_v2_300_eci.icc");
         IntPtr hIsoCoatedProfile = OpenColorProfile(isoCoatedFilename, ProfileRead, FileShare.Read, CreateDisposition.OpenExisting);
 
         IntPtr[] profiles = new IntPtr[] { hSRGBProfile, hIsoCoatedProfile };

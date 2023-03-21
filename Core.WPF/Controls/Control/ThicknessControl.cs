@@ -11,7 +11,7 @@ namespace Imagin.Core.Controls
     {
         public static readonly ReferenceKey<Grid> GridKey = new();
 
-        public static readonly ResourceKey<DoubleUpDown> DoubleUpDownStyleKey = new();
+        public static readonly ResourceKey DoubleUpDownStyleKey = new();
 
         public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(ThicknessControl), new FrameworkPropertyMetadata(double.MaxValue, OnMaximumChanged));
         public double Maximum
@@ -19,7 +19,7 @@ namespace Imagin.Core.Controls
             get => (double)GetValue(MaximumProperty);
             set => SetValue(MaximumProperty, value);
         }
-        static void OnMaximumChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => (i as ThicknessControl).OnMaximumChanged(new Value<double>(e));
+        static void OnMaximumChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => (i as ThicknessControl).OnMaximumChanged(e.Convert<double>());
 
         public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(ThicknessControl), new FrameworkPropertyMetadata(double.MinValue, OnMinimumChanged));
         public double Minimum
@@ -27,7 +27,7 @@ namespace Imagin.Core.Controls
             get => (double)GetValue(MinimumProperty);
             set => SetValue(MinimumProperty, value);
         }
-        static void OnMinimumChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => (i as ThicknessControl).OnMinimumChanged(new Value<double>(e));
+        static void OnMinimumChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => (i as ThicknessControl).OnMinimumChanged(e.Convert<double>());
 
         public static readonly DependencyProperty SpacingProperty = DependencyProperty.Register(nameof(Spacing), typeof(Thickness), typeof(ThicknessControl), new FrameworkPropertyMetadata(default(Thickness)));
         public Thickness Spacing
@@ -47,7 +47,7 @@ namespace Imagin.Core.Controls
 
         public ThicknessControl() : base() => this.RegisterHandler(OnLoaded, OnUnloaded);
 
-        //...
+        ///
 
         void OnLoaded()
         {
@@ -58,28 +58,28 @@ namespace Imagin.Core.Controls
                 switch (index)
                 {
                     case 0:
-                        converter = new SimpleConverter<Thickness, double>
+                        converter = new ValueConverter<Thickness, double>
                         (
                             j => j.Left,
                             j => new Thickness(j, Thickness.Top, Thickness.Right, Thickness.Bottom)
                         );
                         break;
                     case 1:
-                        converter = new SimpleConverter<Thickness, double>
+                        converter = new ValueConverter<Thickness, double>
                         (
                             j => j.Top,
                             j => new Thickness(Thickness.Left, j, Thickness.Right, Thickness.Bottom)
                         );
                         break;
                     case 2:
-                        converter = new SimpleConverter<Thickness, double>
+                        converter = new ValueConverter<Thickness, double>
                         (
                             j => j.Right,
                             j => new Thickness(Thickness.Left, Thickness.Top, j, Thickness.Bottom)
                         );
                         break;
                     case 3:
-                        converter = new SimpleConverter<Thickness, double>
+                        converter = new ValueConverter<Thickness, double>
                         (
                             j => j.Bottom,
                             j => new Thickness(Thickness.Left, Thickness.Top, Thickness.Right, j)
@@ -106,10 +106,10 @@ namespace Imagin.Core.Controls
                 i.UpdateTarget();
         }
 
-        //...
+        ///
 
-        protected virtual void OnMaximumChanged(Value<double> input) => Update();
+        protected virtual void OnMaximumChanged(ReadOnlyValue<double> input) => Update();
 
-        protected virtual void OnMinimumChanged(Value<double> input) => Update();
+        protected virtual void OnMinimumChanged(ReadOnlyValue<double> input) => Update();
     }
 }

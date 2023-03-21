@@ -1,14 +1,13 @@
-﻿using Imagin.Core.Local.Engine;
-using Imagin.Core.Local.Extensions;
+﻿using WPFLocalizeExtension.Engine;
+using WPFLocalizeExtension.Extensions;
 
-namespace Imagin.Core.Linq
+namespace Imagin.Core.Linq;
+
+public static partial class XString
 {
-    public static partial class XString
+    public static string Translate(this string input, string prefix = "", string suffix = "", string format = null)
     {
-        public static string Translate(this string input, string prefix = "", string suffix = "")
-        {
-            var result = (string)LocExtension.GetLocalizedValue(typeof(string), input, LocalizeDictionary.Instance.SpecificCulture, null);
-            return result.NullOrEmpty() ? LocalizeDictionary.MissingKeyFormat.F(prefix, input, suffix) : $"{prefix}{result}{suffix}";
-        }
+        var result = (string)LocExtension.GetLocalizedValue(typeof(string), input, LocalizeDictionary.Instance.SpecificCulture, null);
+        return result.NullOrEmpty() ? Markup.LocExtension.MissingKeyFormat.F(prefix, format?.F(input) ?? input, suffix) : $"{prefix}{format?.F(result) ?? result}{suffix}";
     }
 }

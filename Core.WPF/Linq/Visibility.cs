@@ -1,11 +1,10 @@
 ﻿using System.Windows;
 
-namespace Imagin.Core.Linq
-{
-    public static class XVisibility
-    {
-        public static Visibility Invert(this Visibility input) => input == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+namespace Imagin.Core.Linq;
 
-        public static bool Boolean(this Visibility input) => input == Visibility.Visible;
-    }
+public static class XVisibility
+{
+    public static Visibility Invert(this Visibility input) => input == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+    public static bool Boolean(this Visibility input) => input == Visibility.Visible;
 }

@@ -1,7 +1,6 @@
-﻿namespace Imagin.Core.Storage
+﻿namespace Imagin.Core.Storage;
+
+public interface IValidate
 {
-    public interface IValidate
-    {
-        bool Validate(ItemType target, string path);
-    }
+    bool Validate(ItemType target, string path);
 }

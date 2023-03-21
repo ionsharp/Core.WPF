@@ -1,34 +1,19 @@
 ﻿using Imagin.Core.Input;
-using Imagin.Core.Linq;
 using System;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+public abstract class PickerBox<T> : PickerBox
 {
-    public abstract class PickerBox<T, Window> : PickerBox where Window : PickerWindow
-    {
-        public event EventHandler<EventArgs<T>> ValueChanged;
+    public event EventHandler<EventArgs<T>> ValueChanged;
 
-        protected abstract T DefaultValue { get; }
+    protected abstract T DefaultValue { get; }
 
-        public PickerBox() : base() { }
+    public PickerBox() : base() { }
 
-        protected virtual void OnValueChanged(Value<T> input) => ValueChanged?.Invoke(this, new EventArgs<T>(input.New));
+    protected virtual void OnValueChanged(ReadOnlyValue<T> input) => ValueChanged?.Invoke(this, new EventArgs<T>(input.New));
 
-        protected abstract T GetValue();
+    protected abstract T GetValue();
 
-        protected abstract void SetValue(T i);
-
-        public override bool? ShowDialog()
-        {
-            var window = typeof(Window).Create<Window>();
-            window.Title = Title;
-            window.Value = GetValue();
-
-            var result = window.ShowDialog();
-            if (XWindow.GetResult(window) == 0)
-                SetValue((T)window.Value);
-
-            return result;
-        }
-    }
+    protected abstract void SetValue(T i);
 }

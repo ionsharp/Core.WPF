@@ -410,10 +410,9 @@ namespace Imagin.Core.Controls
 
         private void MeasureChild(UIElement child, Size childConstraint)
         {
-          Size lastConstraint;
-          if ((child.IsMeasureValid && childToConstraint.TryGetValue(child, out lastConstraint) && lastConstraint.Equals(childConstraint))) return;
+            if ((child.IsMeasureValid && childToConstraint.TryGetValue(child, out Size lastConstraint) && lastConstraint.Equals(childConstraint))) return;
 
-          child.Measure(childConstraint);
+            child.Measure(childConstraint);
           childToConstraint[child] = childConstraint;
         }
 

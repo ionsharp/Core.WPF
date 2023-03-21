@@ -1,10 +1,9 @@
-﻿namespace Imagin.Core.Models
+﻿namespace Imagin.Core.Models;
+
+public enum FindSource
 {
-    public enum FindSource
-    {
-        AllDocuments,
-        CurrentDocument,
-        [Hidden]
-        Selection
-    }
+    AllDocuments,
+    CurrentDocument,
+    [Hide]
+    Selection
 }

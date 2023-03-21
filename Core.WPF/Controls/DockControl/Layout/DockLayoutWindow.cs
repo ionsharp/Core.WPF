@@ -2,32 +2,16 @@
 using System;
 using System.Windows;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+[Serializable]
+public class DockLayoutWindow : DockLayoutRoot
 {
-    [Serializable]
-    public class DockLayoutWindow : DockLayoutRoot
-    {
-        Point2 position;
-        public Point2 Position
-        {
-            get => position;
-            set => this.Change(ref position, value);
-        }
+    public Point2 Position { get => Get<Point2>(); set => Set(value); }
 
-        DoubleSize size;
-        public DoubleSize Size
-        {
-            get => size;
-            set => this.Change(ref size, value);
-        }
+    public DoubleSize Size { get => Get<DoubleSize>(); set => Set(value); }
 
-        string state = $"{WindowState.Normal}";
-        public virtual WindowState State
-        {
-            get => (WindowState)Enum.Parse(typeof(WindowState), state);
-            set => this.Change(ref state, $"{value}");
-        }
+    public virtual WindowState State { get => GetFromString(WindowState.Normal); set => SetFromString(value); }
 
-        public DockLayoutWindow() : base() { }
-    }
+    public DockLayoutWindow() : base() { }
 }

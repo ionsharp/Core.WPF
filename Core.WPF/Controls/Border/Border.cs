@@ -1,14 +1,19 @@
 ﻿using System.Windows.Controls;
 
-namespace Imagin.Core.Controls
-{
-    public class AllBorder : Border { }
+namespace Imagin.Core.Controls;
 
-    public class BottomBorder : Border { }
+public class AllBorder : Border { }
 
-    public class LeftBorder : Border { }
+///
 
-    public class RightBorder : Border { }
+public class BottomBorder : Border { }
 
-    public class TopBorder : Border { }
-}
+public class LeftBorder : Border { }
+
+public class RightBorder : Border { }
+
+public class TopBorder : Border { }
+
+///
+
+public class RoundBorder : Border { }

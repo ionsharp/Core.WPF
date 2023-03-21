@@ -103,7 +103,7 @@ namespace Imagin.Core.Controls
             get => (ContextMenu)GetValue(MenuProperty);
             set => SetValue(MenuProperty, value);
         }
-        static void OnMenuChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<ImageToggleButton>().OnMenuChanged(new Value<ContextMenu>(e));
+        static void OnMenuChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<ImageToggleButton>().OnMenuChanged(e.Convert<ContextMenu>());
 
         public static readonly DependencyProperty MenuAnimationProperty = DependencyProperty.Register(nameof(MenuAnimation), typeof(PopupAnimation), typeof(ImageToggleButton), new FrameworkPropertyMetadata(PopupAnimation.Fade));
         public PopupAnimation MenuAnimation
@@ -134,11 +134,11 @@ namespace Imagin.Core.Controls
             set => SetValue(SourceSizeProperty, value);
         }
 
-        //...
+        ///
 
         public ImageToggleButton() : base() { }
 
-        //...
+        ///
 
         protected override void OnChecked(RoutedEventArgs e)
         {
@@ -161,7 +161,7 @@ namespace Imagin.Core.Controls
             }
         }
 
-        protected virtual void OnMenuChanged(Value<ContextMenu> input)
+        protected virtual void OnMenuChanged(ReadOnlyValue<ContextMenu> input)
         {
             if (input.New != null)
             {

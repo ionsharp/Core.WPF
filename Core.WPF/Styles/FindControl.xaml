@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
+    xmlns:l="http://wpflocalizeextension.codeplex.com"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
@@ -32,39 +32,39 @@
                                         Linq:XPanel.SpacingExcept="Last">
                                         <ComboBox
                                             ItemsSource="{Markup:Enumerate Models:FindSource}"
-                                            SelectedItem="{Data:TwoWay Source, Relative=TemplatedParent}">
+                                            SelectedItem="{Data:TwoWay Source, From=TemplatedParent}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding Converter={x:Static Conversion:CamelCaseConverter.Default}}"/>
+                                                    <TextBlock Text="{Data:Bind Convert={x:Type Conversion:CamelCaseConverter}}"/>
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
                                         <TextBox
                                             Linq:XTextBox.ClearButtonVisibility="Visible"
-                                            Linq:XTextBoxBase.Placeholder="{l:Loc Find, Suffix=...}"
-                                            Text="{Data:TwoWay FindText, Relative=TemplatedParent, Trigger=PropertyChanged}"/>
+                                            Linq:XTextBoxBase.Placeholder="{Markup:Loc Find, Suffix=...}"
+                                            Text="{Data:TwoWay FindText, From=TemplatedParent, Trigger=PropertyChanged}"/>
                                         <TextBox
                                             Linq:XTextBox.ClearButtonVisibility="Visible"
-                                            Linq:XTextBoxBase.Placeholder="{l:Loc Replace, Suffix=...}"
-                                            Text="{Data:TwoWay ReplaceText, Relative=TemplatedParent, Trigger=PropertyChanged}"/>
+                                            Linq:XTextBoxBase.Placeholder="{Markup:Loc Replace, Suffix=...}"
+                                            Text="{Data:TwoWay ReplaceText, From=TemplatedParent, Trigger=PropertyChanged}"/>
                                     </Grid>
                                 </GroupBox>
 
-                                <GroupBox Header="{l:Loc Match}">
+                                <GroupBox Header="{Markup:Loc Match}">
                                     <StackPanel
                                         Linq:XPanel.Spacing="0,0,5,0"
                                         Linq:XPanel.SpacingExcept="Last"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Top">
                                         <CheckBox
-                                            Content="{l:Loc Case}"
-                                            IsChecked="{Data:TwoWay MatchCase, Relative=TemplatedParent}"/>
+                                            Content="{Markup:Loc Case}"
+                                            IsChecked="{Data:TwoWay MatchCase, From=TemplatedParent}"/>
                                         <CheckBox
-                                            Content="{l:Loc Word}"
-                                            IsChecked="{Data:TwoWay MatchWord, Relative=TemplatedParent}"/>
+                                            Content="{Markup:Loc Word}"
+                                            IsChecked="{Data:TwoWay MatchWord, From=TemplatedParent}"/>
                                     </StackPanel>
                                 </GroupBox>
-                                <GroupBox Header="{l:Loc Find}">
+                                <GroupBox Header="{Markup:Loc Find}">
                                     <StackPanel
                                         Grid.Row="4"
                                         Linq:XPanel.Spacing="0,0,0,2"
@@ -72,16 +72,16 @@
                                         VerticalAlignment="Top">
                                         <Button
                                             Command="{Data:TemplatedParent FindNextCommand}"
-                                            Content="{l:Loc Next}"/>
+                                            Content="{Markup:Loc Next}"/>
                                         <Button
                                             Command="{Data:TemplatedParent FindPreviousCommand}"
-                                            Content="{l:Loc Previous}"/>
+                                            Content="{Markup:Loc Previous}"/>
                                         <Button
                                             Command="{Data:TemplatedParent FindAllCommand}"
-                                            Content="{l:Loc All}"/>
+                                            Content="{Markup:Loc All}"/>
                                     </StackPanel>
                                 </GroupBox>
-                                <GroupBox Header="{l:Loc Replace}">
+                                <GroupBox Header="{Markup:Loc Replace}">
                                     <StackPanel
                                         Grid.Row="4"
                                         Linq:XPanel.Spacing="0,0,0,2"
@@ -89,13 +89,13 @@
                                         VerticalAlignment="Top">
                                         <Button
                                             Command="{Data:TemplatedParent ReplaceNextCommand}"
-                                            Content="{l:Loc Next}"/>
+                                            Content="{Markup:Loc Next}"/>
                                         <Button
                                             Command="{Data:TemplatedParent ReplacePreviousCommand}"
-                                            Content="{l:Loc Previous}"/>
+                                            Content="{Markup:Loc Previous}"/>
                                         <Button
                                             Command="{Data:TemplatedParent ReplaceAllCommand}"
-                                            Content="{l:Loc All}"/>
+                                            Content="{Markup:Loc All}"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>
@@ -127,68 +127,68 @@
                                     <ComboBox
                                         ItemsSource="{Markup:Enumerate Models:FindSource}"
                                         Margin="0,0,5,0"
-                                        SelectedItem="{Data:TwoWay Source, Relative=TemplatedParent}"
-                                        ToolTip="{l:Loc Source}">
+                                        SelectedItem="{Data:TwoWay Source, From=TemplatedParent}"
+                                        ToolTip="{Markup:Loc Source}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Converter={x:Static Conversion:CamelCaseConverter.Default}}"/>
+                                                <TextBlock Text="{Data:Bind Convert={x:Type Conversion:CamelCaseConverter}}"/>
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
                                     <local:ImageToggleButton
-                                        IsChecked="{Data:TwoWay MatchCase, Relative=TemplatedParent}"
+                                        IsChecked="{Data:TwoWay MatchCase, From=TemplatedParent}"
                                         Margin="0,0,5,0"
-                                        Source="{Markup:InternalImage MatchCase.png}"
-                                        ToolTip="{l:Loc MatchCase}"/>
+                                        Source="{Markup:SmallImage MatchCase.png}"
+                                        ToolTip="{Markup:Loc MatchCase}"/>
                                     <local:ImageToggleButton
-                                        IsChecked="{Data:TwoWay MatchWord, Relative=TemplatedParent}"
-                                        Source="{Markup:InternalImage MatchWord.png}"
-                                        ToolTip="{l:Loc MatchWord}"/>
+                                        IsChecked="{Data:TwoWay MatchWord, From=TemplatedParent}"
+                                        Source="{Markup:SmallImage MatchWord.png}"
+                                        ToolTip="{Markup:Loc MatchWord}"/>
                                 </Grid>
                                 <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto,Auto"
                                     Margin="0,0,0,5">
                                     <TextBox
-                                        Linq:XTextBoxBase.Placeholder="{l:Loc Find, Suffix=...}"
+                                        Linq:XTextBoxBase.Placeholder="{Markup:Loc Find, Suffix=...}"
                                         Linq:XTextBoxBase.TextTrimming="CharacterEllipsis"
-                                        Text="{Data:TwoWay FindText, Relative=TemplatedParent, Trigger=PropertyChanged}"/>
+                                        Text="{Data:TwoWay FindText, From=TemplatedParent, Trigger=PropertyChanged}"/>
                                     <local:ImageButton DataContext="{Data:TemplatedParent}"
                                         ButtonVisibility="Visible"
                                         Margin="2,0"
-                                        Source="{Markup:InternalImage Image=FindNext}">
+                                        Source="{Markup:SmallImage Image=FindNext}">
                                         <local:ImageButton.Menu>
                                             <ContextMenu DataContext="{Data:Self PlacementTarget.DataContext}">
-                                                <MenuItem Header="{l:Loc FindNext}"
+                                                <MenuItem Header="{Markup:Loc FindNext}"
                                                     Command="{Binding FindNextCommand}"
-                                                    Icon="{Markup:InternalImage Image=FindNext}"/>
-                                                <MenuItem Header="{l:Loc FindPrevious}"
+                                                    Icon="{Markup:SmallImage Image=FindNext}"/>
+                                                <MenuItem Header="{Markup:Loc FindPrevious}"
                                                     Command="{Binding FindPreviousCommand}"
-                                                    Icon="{Markup:InternalImage Image=FindPrevious}"/>
-                                                <MenuItem Header="{l:Loc FindAll}"
+                                                    Icon="{Markup:SmallImage Image=FindPrevious}"/>
+                                                <MenuItem Header="{Markup:Loc FindAll}"
                                                     Command="{Binding FindAllCommand}"
-                                                    Icon="{Markup:InternalImage Image=FindAll}"/>
+                                                    Icon="{Markup:SmallImage Image=FindAll}"/>
                                             </ContextMenu>
                                         </local:ImageButton.Menu>
                                     </local:ImageButton>
                                     <local:ImageButton
                                         Command="{TemplateBinding CloseCommand}"
-                                        Source="{Markup:InternalImage Image=XRound}"
-                                        ToolTip="{l:Loc Close}"/>
+                                        Source="{Markup:SmallImage Image=XRound}"
+                                        ToolTip="{Markup:Loc Close}"/>
                                 </Grid>
                                 <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="*,Auto,Auto">
                                     <TextBox
-                                        Linq:XTextBoxBase.Placeholder="{l:Loc Replace, Suffix=...}"
+                                        Linq:XTextBoxBase.Placeholder="{Markup:Loc Replace, Suffix=...}"
                                         Linq:XTextBoxBase.TextTrimming="CharacterEllipsis"
-                                        Text="{Data:TwoWay ReplaceText, Relative=TemplatedParent, Trigger=PropertyChanged}"/>
+                                        Text="{Data:TwoWay ReplaceText, From=TemplatedParent, Trigger=PropertyChanged}"/>
                                     <local:ImageButton
                                         Command="{Data:TemplatedParent ReplaceNextCommand}"
                                         Margin="5,0,0,0"
-                                        Source="{Markup:InternalImage Image=ReplaceNext}"
-                                        ToolTip="{l:Loc ReplaceNext}"/>
+                                        Source="{Markup:SmallImage Image=ReplaceNext}"
+                                        ToolTip="{Markup:Loc ReplaceNext}"/>
                                     <local:ImageButton
                                         Command="{Data:TemplatedParent ReplaceAllCommand}"
                                         Margin="5,0,0,0"
-                                        Source="{Markup:InternalImage Image=ReplaceAll}"
-                                        ToolTip="{l:Loc ReplaceAll}"/>
+                                        Source="{Markup:SmallImage Image=ReplaceAll}"
+                                        ToolTip="{Markup:Loc ReplaceAll}"/>
                                 </Grid>
                             </Grid>
                         </Border>
@@ -218,7 +218,7 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsKeyboardFocused" Value="True">
-                <Setter Property="BorderBrush" Value="#007acc" />
+                <Setter Property="BorderBrush" Value="#07c" />
             </Trigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Windows;
 
-namespace Imagin.Core.Config
+namespace Imagin.Core.Config;
+
+public interface IApplication
 {
-    public interface IApplication
-    {
-        event EventHandler<EventArgs> Loaded;
+    event EventHandler<EventArgs> Loaded;
 
-        ApplicationProperties Properties { get; }
+    ApplicationLink Link { get; }
 
-        ResourceDictionary Resources { get; }
-    }
+    ResourceDictionary Resources { get; }
 }

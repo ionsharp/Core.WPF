@@ -1,5 +1,6 @@
 ﻿using Imagin.Core.Linq;
 using Imagin.Core.Numerics;
+using Imagin.Core.Reflection;
 using System;
 using System.Windows;
 using System.Windows.Markup;
@@ -7,10 +8,24 @@ using System.Windows.Media;
 
 namespace Imagin.Core.Media;
 
-[ContentProperty(nameof(Steps)), Image(Images.Gradient), Serializable]
+[Description("An array of position-dependent colors.")]
+[Base(typeof(Gradient)), ContentProperty(nameof(Steps)), Categorize(false), Name(nameof(Gradient)), Image(SmallImages.Gradient), Serializable]
 public class Gradient : Base, ICloneable
 {
     public static Gradient Default => new(new GradientStep(0, System.Windows.Media.Colors.White), new GradientStep(1, System.Windows.Media.Colors.Black));
+
+    public static Gradient Rainbow => new
+    (
+        new GradientStep(0.000, Color.FromArgb(255, 255,   0, 0)),
+        new GradientStep(0.166, Color.FromArgb(255, 255, 255, 0)),
+        new GradientStep(0.332, Color.FromArgb(255,   0, 255, 0)),
+        new GradientStep(0.500, Color.FromArgb(255,   0, 255, 255)),
+        new GradientStep(0.666, Color.FromArgb(255,   0,   0, 255)),
+        new GradientStep(0.832, Color.FromArgb(255, 255,   0, 255)),
+        new GradientStep(1.000, Color.FromArgb(255, 255,   0, 0))
+    );
+
+    ///
 
     public static LinearGradientBrush DefaultBrush => new(System.Windows.Media.Colors.White, System.Windows.Media.Colors.Black, Horizontal.X, Horizontal.Y);
 
@@ -18,16 +33,13 @@ public class Gradient : Base, ICloneable
 
     public static Vector2<Point> Vertical => new(new Point(0.5, 0), new Point(0.5, 1));
 
-    //...
+    ///
 
-    GradientStepCollection steps = new();
-    public GradientStepCollection Steps
-    {
-        get => steps;
-        private set => this.Change(ref steps, value);
-    }
+    [CollectionStyle(AddType = typeof(GradientStep))]
+    [HideName, Categorize(false)]
+    public GradientStepCollection Steps { get => Get(new GradientStepCollection()); private set => Set(value); }
 
-    //...
+    ///
 
     public Gradient() : base() { }
 
@@ -38,7 +50,7 @@ public class Gradient : Base, ICloneable
 
     public Gradient(GradientStepCollection input) : this()
     {
-        input?.ForEach(i => steps.Add(new GradientStep(i.Offset, i.Color)));
+        input?.ForEach(i => Steps.Add(new GradientStep(i.Offset, i.Color)));
     }
 
     public Gradient(GradientStopCollection input) : this()
@@ -46,7 +58,7 @@ public class Gradient : Base, ICloneable
         input?.ForEach(i =>
         {
             i.Color.Convert(out ByteVector4 j);
-            steps.Add(new GradientStep(i.Offset, j));
+            Steps.Add(new GradientStep(i.Offset, j));
         });
     }
 
@@ -54,7 +66,7 @@ public class Gradient : Base, ICloneable
 
     public Gradient(RadialGradientBrush input) : this(input.GradientStops) { }
 
-    //...
+    ///
 
     object ICloneable.Clone() => Clone();
     public virtual Gradient Clone()

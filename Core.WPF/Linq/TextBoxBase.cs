@@ -1,4 +1,5 @@
-﻿using Imagin.Core.Collections.ObjectModel;
+﻿using Imagin.Core.Analytics;
+using Imagin.Core.Collections.ObjectModel;
 using Imagin.Core.Controls;
 using Imagin.Core.Conversion;
 using Imagin.Core.Numerics;
@@ -13,7 +14,6 @@ using System.Windows.Input;
 
 namespace Imagin.Core.Linq;
 
-[Extends(typeof(TextBoxBase))]
 public static class XTextBoxBase
 {
     public const string DefaultMouseTarget = "System.Windows.Controls.TextBoxView";
@@ -401,7 +401,7 @@ public static class XTextBoxBase
 
     #endregion
 
-    //...
+    ///
 
     #region DefaultSuggestionCommand
 
@@ -490,7 +490,7 @@ public static class XTextBoxBase
         }
     }
 
-    //...
+    ///
 
     static void UpdateSuggestions(TextBoxBase control)
     {
@@ -519,7 +519,7 @@ public static class XTextBoxBase
         }
     }
 
-    //...
+    ///
 
     static void Suggestions_GotFocus(object sender, RoutedEventArgs e)
     {
@@ -529,7 +529,7 @@ public static class XTextBoxBase
             {
                 case PopupTriggers.All:
                 case PopupTriggers.GotFocus:
-                    UpdateSuggestions(box);
+                    //UpdateSuggestions(box);
                     SetMenuVisibility(box, Visibility.Visible);
                     break;
             }
@@ -544,7 +544,7 @@ public static class XTextBoxBase
             {
                 case PopupTriggers.All:
                 case PopupTriggers.GotKeyboardFocus:
-                    UpdateSuggestions(box);
+                    //UpdateSuggestions(box);
                     SetMenuVisibility(box, Visibility.Visible);
                     break;
             }
@@ -608,7 +608,7 @@ public static class XTextBoxBase
 
     #endregion
 
-    //...
+    ///
 
     #region Tab
 
@@ -744,7 +744,7 @@ public static class XTextBoxBase
             i.InvalidateProperty(IsEmptyProperty);
     }
 
-    //...
+    ///
 
     static void ApplyTab(TextBoxBase box)
     {

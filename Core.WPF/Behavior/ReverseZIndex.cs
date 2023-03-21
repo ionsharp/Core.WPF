@@ -3,30 +3,29 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 
-namespace Imagin.Core.Behavior
+namespace Imagin.Core.Behavior;
+
+public class ReverseZIndex : Behavior<Panel>
 {
-    public class ReverseZIndex : Behavior<Panel>
+    protected override void OnAttached()
     {
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            AssociatedObject.LayoutUpdated += new EventHandler(OnLayoutUpdated);
-        }
+        base.OnAttached();
+        AssociatedObject.LayoutUpdated += new EventHandler(OnLayoutUpdated);
+    }
 
-        protected void OnLayoutUpdated(object sender, EventArgs e)
+    protected void OnLayoutUpdated(object sender, EventArgs e)
+    {
+        int childCount = AssociatedObject.Children.Count;
+        foreach (FrameworkElement element in AssociatedObject.Children)
         {
-            int childCount = AssociatedObject.Children.Count;
-            foreach (FrameworkElement element in AssociatedObject.Children)
-            {
-                element.SetValue(Panel.ZIndexProperty, childCount);
-                childCount--;
-            }
+            element.SetValue(Panel.ZIndexProperty, childCount);
+            childCount--;
         }
+    }
 
-        protected override void OnDetaching()
-        {
-            base.OnDetaching();
-            AssociatedObject.LayoutUpdated -= OnLayoutUpdated;
-        }
+    protected override void OnDetaching()
+    {
+        base.OnDetaching();
+        AssociatedObject.LayoutUpdated -= OnLayoutUpdated;
     }
 }

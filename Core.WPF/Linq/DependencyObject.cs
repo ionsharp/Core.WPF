@@ -12,7 +12,6 @@ using System.Windows.Media;
 
 namespace Imagin.Core.Linq;
 
-[Extends(typeof(DependencyObject))]
 public static class XDependency
 {
     #region IsVisible
@@ -39,7 +38,7 @@ public static class XDependency
     public static void RemoveChanged(this DependencyObject input, DependencyProperty p, EventHandler e)
         => DependencyPropertyDescriptor.FromProperty(p, input.GetType()).RemoveValueChanged(input, e);
 
-    //...
+    ///
 
     public static DependencyProperty GetDependencyProperty(this DependencyObject input, string propertyName)
     {
@@ -54,7 +53,7 @@ public static class XDependency
 
     public static bool HasDependencyProperty(this DependencyObject input, string propertyName) => input.GetDependencyProperty(propertyName) != null;
 
-    //...
+    ///
 
     public static BindingExpressionBase Bind(this DependencyObject source, DependencyProperty property, BindingBase binding) => BindingOperations.SetBinding(source, property, binding);
 
@@ -79,7 +78,7 @@ public static class XDependency
         });
     }
 
-    //...
+    ///
 
     public static BindingExpressionBase MultiBind(this DependencyObject input, DependencyProperty property, IMultiValueConverter converter, object converterParameter, params Binding[] bindings)
     {
@@ -119,11 +118,11 @@ public static class XDependency
         return input.Bind(property, result);
     }
 
-    //...
+    ///
 
     public static void Unbind(this DependencyObject input, DependencyProperty property) => BindingOperations.ClearBinding(input, property);
 
-    //...
+    ///
 
     public static T FindChildOfType<T>(this DependencyObject input) where T : DependencyObject
         => input.FindLogicalChildOfType<T>() ?? input.FindVisualChildOfType<T>();
@@ -131,7 +130,7 @@ public static class XDependency
     public static DependencyObject FindChildOfType(this DependencyObject input, Type type)
         => input.FindLogicalChildOfType(type) ?? input.FindVisualChildOfType(type);
 
-    //...
+    ///
 
     public static T FindLogicalChildOfType<T>(this DependencyObject input) where T : DependencyObject
     {
@@ -193,7 +192,7 @@ public static class XDependency
         return default;
     }
 
-    //...
+    ///
 
     /// <summary>
     /// Attempts to find parent for specified object in following order: 
@@ -267,7 +266,7 @@ public static class XDependency
         return parent;
     }
 
-    //...
+    ///
 
     public static DependencyObject FindLogicalParent(this DependencyObject input) => LogicalTreeHelper.GetParent(input);
 
@@ -284,9 +283,9 @@ public static class XDependency
         return null;
     }
 
-    //...
+    ///
 
-    public static IEnumerable<T> FindLogicalChildren<T>(this DependencyObject input) where T : DependencyObject
+    public static IEnumerable<T> FindLogicalChildren<T>(this DependencyObject input, bool recursive = true) where T : DependencyObject
     {
         if (input == null)
             yield break;
@@ -296,17 +295,22 @@ public static class XDependency
 
         foreach (var i in LogicalTreeHelper.GetChildren(input).OfType<DependencyObject>())
         {
-            foreach (var j in i.FindLogicalChildren<T>())
+            if (recursive)
             {
-                if (j is T)
-                    yield return j;
+                foreach (var j in i.FindLogicalChildren<T>())
+                {
+                    if (j is T)
+                        yield return j;
+                }
             }
+            else if (i is T k)
+                yield return k;
         }
     }
 
-    //...
+    ///
 
-    public static IEnumerable<T> FindVisualChildren<T>(this DependencyObject input) where T : DependencyObject
+    public static IEnumerable<T> FindVisualChildren<T>(this DependencyObject input, bool recursive = true) where T : DependencyObject
     {
         if (input != null)
         {
@@ -316,14 +320,17 @@ public static class XDependency
                 if (j != null && j is T)
                     yield return (T)j;
 
-                foreach (var k in FindVisualChildren<T>(j))
-                    yield return k;
+                if (recursive)
+                {
+                    foreach (var k in FindVisualChildren<T>(j))
+                        yield return k;
+                }
             }
         }
         yield break;
     }
 
-    //...
+    ///
 
     public static DependencyObject FindVisualParent(this DependencyObject input) => VisualTreeHelper.GetParent(input);
 
@@ -347,7 +354,7 @@ public static class XDependency
         return null;
     }
 
-    //...
+    ///
 
     /// <summary>
     /// Returns true if the specified element is a child of parent somewhere in the visual 
@@ -367,15 +374,21 @@ public static class XDependency
         return false;
     }
 
-    //...
+    ///
 
     public static void Select(this DependencyObject input, bool select)
     {
+        //ListBox/DataGrid
         if (input is ListBoxItem || input is DataGridRow)
             Selector.SetIsSelected(input, select);
 
+        //TreeView
         else if (input is TreeViewItem item)
             XTreeViewItem.SetIsSelected(item, select);
+
+        //ItemsControl
+        else if (input is ContentPresenter content && content.DataContext is ISelect iSelect)
+            iSelect.IsSelected = select;
 
         else throw new NotSupportedException();
     }

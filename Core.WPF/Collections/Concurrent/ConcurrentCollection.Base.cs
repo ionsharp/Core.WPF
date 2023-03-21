@@ -84,6 +84,7 @@ namespace Imagin.Core.Collections.Concurrent
         /// <summary>
         /// Gets an immutable snapshot of the collection
         /// </summary>
+        [Hide]
         public BaseImmutableCollection<T> Snapshot
         {
             get

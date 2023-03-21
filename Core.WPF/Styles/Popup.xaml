@@ -4,11 +4,11 @@
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq">
     <DropShadowEffect x:Key="{x:Static Linq:XPopup.DropShadowEffectKey}"
-        BlurRadius="8" Color="{local:ThemeKey ActualKey=PopupDropShadow}" Opacity="0.64" ShadowDepth="1"/>
+        BlurRadius="8" Color="{local:ThemeKey PopupDropShadow}" Opacity="0.64" ShadowDepth="1"/>
 
     <Style x:Key="{x:Type local:PopupBorder}" TargetType="{x:Type local:PopupBorder}">
-        <Setter Property="Background" Value="{local:ThemeKey Key=PopupBackground}"/>
-        <Setter Property="BorderBrush" Value="{local:ThemeKey Key=PopupBorder}"/>
+        <Setter Property="Background" Value="{local:ThemeKey PopupBackground}"/>
+        <Setter Property="BorderBrush" Value="{local:ThemeKey PopupBorder}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Effect" Value="{StaticResource {x:Static Linq:XPopup.DropShadowEffectKey}}"/>
         <Setter Property="Margin" Value="10"/>

@@ -17,18 +17,10 @@ namespace Imagin.Core.Controls
         public sealed class Dot : Base
         {
             bool isConnected;
-            public bool IsConnected
-            {
-                get => isConnected;
-                set => this.Change(ref isConnected, value);
-            }
+            public bool IsConnected { get => Get(false); set => Set(value); }
 
             Point position;
-            public Point Position
-            {
-                get => position;
-                set => this.Change(ref position, value);
-            }
+            public Point Position { get => Get<Point>(); set => Set(value); }
 
             public Dot() : base() { }
 
@@ -38,14 +30,9 @@ namespace Imagin.Core.Controls
             }
         }
 
-        public sealed class Line : NLine<double>
+        public sealed class Line : MLine<double>
         {
-            bool isOpen;
-            public bool IsOpen
-            {
-                get => isOpen;
-                set => this.Change(ref isOpen, value);
-            }
+            public bool IsOpen { get => Get(false); set => Set(value); }
 
             public Line() : base() { }
 
@@ -67,7 +54,7 @@ namespace Imagin.Core.Controls
 
         Line currentLine;
 
-        Int32Pattern currentPattern;
+        Int32LineCollection currentPattern;
 
         bool isDrawing = false;
 
@@ -176,13 +163,13 @@ namespace Imagin.Core.Controls
             private set => SetValue(LinesProperty, value);
         }
 
-        public static readonly DependencyProperty PatternProperty = DependencyProperty.Register(nameof(Pattern), typeof(Int32Pattern), typeof(PatternControl), new FrameworkPropertyMetadata(null, OnPatternChanged));
-        public Int32Pattern Pattern
+        public static readonly DependencyProperty PatternProperty = DependencyProperty.Register(nameof(Pattern), typeof(Int32LineCollection), typeof(PatternControl), new FrameworkPropertyMetadata(null, OnPatternChanged));
+        public Int32LineCollection Pattern
         {
-            get => (Int32Pattern)GetValue(PatternProperty);
+            get => (Int32LineCollection)GetValue(PatternProperty);
             set => SetValue(PatternProperty, value);
         }
-        static void OnPatternChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<PatternControl>().OnPatternChanged((Int32Pattern)e.NewValue);
+        static void OnPatternChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<PatternControl>().OnPatternChanged((Int32LineCollection)e.NewValue);
 
         #endregion
 
@@ -330,7 +317,7 @@ namespace Imagin.Core.Controls
             }
         }
 
-        //...
+        ///
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
@@ -359,7 +346,7 @@ namespace Imagin.Core.Controls
                 OnDrawingEnded();
         }
 
-        //...
+        ///
 
         protected virtual void OnDrawing(Point MousePosition)
         {
@@ -411,7 +398,7 @@ namespace Imagin.Core.Controls
         {
             isDrawing = true;
 
-            currentPattern = new Int32Pattern();
+            currentPattern = new Int32LineCollection();
             Reset();
 
             var point = GetPoint((CanvasLength / 3).Int32(), MousePosition);
@@ -420,14 +407,14 @@ namespace Imagin.Core.Controls
             Lines.Add(currentLine);
         }
 
-        //...
+        ///
 
-        protected virtual void OnPatternChanged(Int32Pattern input)
+        protected virtual void OnPatternChanged(Int32LineCollection input)
         {
             handle.SafeInvoke(() =>
             {
                 Reset();
-                foreach (var i in input ?? Int32Pattern.Empty)
+                foreach (var i in input ?? Int32LineCollection.Empty)
                 {
                     Lines.Add(new Line(false, i));
                     ConnectDot(i);
@@ -435,7 +422,7 @@ namespace Imagin.Core.Controls
             });
         }
 
-        //...
+        ///
 
         public override void OnApplyTemplate()
         {

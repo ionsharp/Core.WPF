@@ -15,13 +15,13 @@ namespace Imagin.Core.Controls
     {
         public static readonly ReferenceKey<StackPanel> StackPanelKey;
 
-        //...
+        ///
 
         IList Items => Source as IList;
 
         StackPanel Panel => this.GetChild(StackPanelKey);
 
-        //...
+        ///
 
         public static readonly DependencyProperty ColumnsOrRowsProperty = DependencyProperty.Register(nameof(ColumnsOrRows), typeof(int), typeof(StackControl), new PropertyMetadata(1, OnColumnsOrRowsChanged));
         public int ColumnsOrRows
@@ -61,16 +61,16 @@ namespace Imagin.Core.Controls
         }
         static void OnSourceChanged(object sender, DependencyPropertyChangedEventArgs e) => sender.As<StackControl>().OnSourceChanged(e);
 
-        //...
+        ///
 
         public StackControl() : base() => this.RegisterHandler(OnLoaded, OnUnloaded);
 
-        //...
+        ///
 
         void OnItemsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
             => Update();
 
-        //...
+        ///
 
         void OnLoaded()
         {
@@ -85,7 +85,7 @@ namespace Imagin.Core.Controls
                 collection.CollectionChanged -= OnItemsChanged;
         }
 
-        //...
+        ///
 
         StackPanel CreateColumnOrRow(IEnumerable<object> children)
         {
@@ -129,15 +129,15 @@ namespace Imagin.Core.Controls
                 panel.Children.Add(CreateColumnOrRow(items));
         }
 
-        //...
+        ///
 
-        protected virtual void OnColumnsOrRowsChanged(Value<int> input)
+        protected virtual void OnColumnsOrRowsChanged(ReadOnlyValue<int> input)
             => Update();
 
-        protected virtual void OnOrientationChanged(Value<Orientation> input)
+        protected virtual void OnOrientationChanged(ReadOnlyValue<Orientation> input)
             => Update();
 
-        protected virtual void OnSourceChanged(Value<object> input)
+        protected virtual void OnSourceChanged(ReadOnlyValue<object> input)
         {
             Update();
             if (IsLoaded)

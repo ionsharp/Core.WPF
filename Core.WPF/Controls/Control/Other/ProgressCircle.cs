@@ -17,7 +17,7 @@ namespace Imagin.Core.Controls
     {
         List<Action> deferred = new();
 
-        //...
+        ///
 
         public static readonly DependencyProperty BindableWidthProperty = DependencyProperty.Register("BindableWidth", typeof(double), typeof(ProgressCircle), new FrameworkPropertyMetadata(default(double), OnBindableWidthChanged));
         public double BindableWidth
@@ -98,7 +98,7 @@ namespace Imagin.Core.Controls
             private set => SetValue(MaxSideLengthProperty, value);
         }
 
-        //...
+        ///
 
         static ProgressCircle()
         {
@@ -130,11 +130,11 @@ namespace Imagin.Core.Controls
             SizeChanged += OnSizeChanged;
         }
 
-        //...
+        ///
 
         void OnSizeChanged(object sender, SizeChangedEventArgs e) => BindableWidth = ActualWidth;
 
-        //...
+        ///
 
         void SetMaxSideLength(double width)
             => SetCurrentValue(MaxSideLengthProperty, width <= 20 ? 20 : width);
@@ -145,7 +145,7 @@ namespace Imagin.Core.Controls
         void SetEllipseOffset(double width)
             => SetCurrentValue(EllipseOffsetProperty, new Thickness(0, width / 2, 0, 0));
 
-        //...
+        ///
 
         void UpdateLargeState()
         {
@@ -178,7 +178,7 @@ namespace Imagin.Core.Controls
                 action();
         }
 
-        //...
+        ///
 
         public override void OnApplyTemplate()
         {

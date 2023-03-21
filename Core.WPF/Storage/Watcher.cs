@@ -3,123 +3,118 @@ using System;
 using System.IO;
 using System.Windows;
 
-namespace Imagin.Core.Storage
+namespace Imagin.Core.Storage;
+
+public class Watcher : Base, ISubscribe, IUnsubscribe
 {
-    public class Watcher : Base, ISubscribe, IUnsubscribe
+    public event FileSystemEventHandler Changed;
+
+    public event FileSystemEventHandler Created;
+
+    public event FileSystemEventHandler Deleted;
+
+    public event RenamedEventHandler Renamed;
+
+    ///
+
+    public event Analytics.ErrorEventHandler Failed;
+
+    ///
+
+    readonly FileSystemWatcher watcher;
+
+    ///
+
+    public NotifyFilters Filter
     {
-        public event FileSystemEventHandler Changed;
+        get => watcher.NotifyFilter;
+        set => watcher.NotifyFilter = value;
+    }
 
-        public event FileSystemEventHandler Created;
+    public bool IncludeChildren
+    {
+        get => watcher.IncludeSubdirectories;
+        set => watcher.IncludeSubdirectories = value;
+    }
 
-        public event FileSystemEventHandler Deleted;
+    public string Path
+    {
+        get => watcher.Path;
+        private set => watcher.Path = value;
+    }
 
-        public event RenamedEventHandler Renamed;
+    ///
 
-        //...
+    public Watcher() : base() => watcher = new FileSystemWatcher();
 
-        public event Analytics.ErrorEventHandler Failed;
+    public Watcher(NotifyFilters input) : this() => Filter = input;
 
-        //...
+    ///
 
-        readonly FileSystemWatcher watcher;
+    protected void Handle(FileSystemEventArgs e, Action handler, Action invoke)
+    {
+        var dispatcher = Application.Current?.Dispatcher;
+        var checkAccess = dispatcher?.CheckAccess();
 
-        //...
-
-        public NotifyFilters Filter
+        if (checkAccess == false && handler is Action)
         {
-            get => watcher.NotifyFilter;
-            set => watcher.NotifyFilter = value;
+            dispatcher?.Invoke(handler);
         }
+        else if (checkAccess == true)
+            invoke?.Invoke(); 
+    }
 
-        public bool IncludeChildren
-        {
-            get => watcher.IncludeSubdirectories;
-            set => watcher.IncludeSubdirectories = value;
-        }
+    ///
 
-        public string Path
-        {
-            get => watcher.Path;
-            private set => watcher.Path = value;
-        }
+    protected virtual void OnChanged(object sender, FileSystemEventArgs e)
+    {
+        Handle(e, () => OnChanged(sender, e), () => Changed?.Invoke(this, e));
+    }
 
-        //...
+    protected virtual void OnCreated(object sender, FileSystemEventArgs e)
+    {
+        Handle(e, () => OnCreated(sender, e), () => Created?.Invoke(this, e));
+    }
 
-        public Watcher() : base() => watcher = new FileSystemWatcher();
+    protected virtual void OnDeleted(object sender, FileSystemEventArgs e)
+    {
+        Handle(e, () => OnDeleted(sender, e), () => Deleted?.Invoke(this, e));
+    }
 
-        public Watcher(NotifyFilters input) : this() => Filter = input;
+    protected virtual void OnRenamed(object sender, RenamedEventArgs e)
+    {
+        Handle(e, () => OnRenamed(sender, e), () => Renamed?.Invoke(this, e));
+    }
 
-        //...
+    ///
 
-        protected void Handle(FileSystemEventArgs e, Action handler, Action invoke)
-        {
-            var dispatcher = Application.Current?.Dispatcher;
-            var checkAccess = dispatcher?.CheckAccess();
+    protected virtual void OnFailed(Error result) => Failed?.Invoke(this, new(result));
 
-            if (checkAccess == false && handler is Action)
-            {
-                dispatcher?.Invoke(handler);
-            }
-            else if (checkAccess == true)
-                invoke?.Invoke(); 
-        }
+    ///
 
-        //...
+    public void Dispose() => watcher.Dispose();
 
-        protected virtual void OnChanged(object sender, FileSystemEventArgs e)
-        {
-            Handle(e, () => OnChanged(sender, e), () => Changed?.Invoke(this, e));
-        }
+    ///
 
-        protected virtual void OnCreated(object sender, FileSystemEventArgs e)
-        {
-            Handle(e, () => OnCreated(sender, e), () => Created?.Invoke(this, e));
-        }
+    public virtual void Disable() => watcher.EnableRaisingEvents = false;
 
-        protected virtual void OnDeleted(object sender, FileSystemEventArgs e)
-        {
-            Handle(e, () => OnDeleted(sender, e), () => Deleted?.Invoke(this, e));
-        }
+    public virtual Result Enable(string path) => Try.Invoke(() => { Path = path; watcher.EnableRaisingEvents = true; }, e => Log.Write<Watcher>(e));
 
-        protected virtual void OnRenamed(object sender, RenamedEventArgs e)
-        {
-            Handle(e, () => OnRenamed(sender, e), () => Renamed?.Invoke(this, e));
-        }
+    ///
 
-        //...
+    public virtual void Subscribe()
+    {
+        watcher.Changed += OnChanged;
+        watcher.Created += OnCreated;
+        watcher.Deleted += OnDeleted;
+        watcher.Renamed += OnRenamed;
+    }
 
-        protected virtual void OnFailed(Error result) => Failed?.Invoke(this, new(result));
-
-        //...
-
-        public void Dispose() => watcher.Dispose();
-
-        //...
-
-        public virtual void Disable() => watcher.EnableRaisingEvents = false;
-
-        public virtual void Enable(string path)
-        {
-            Path = path;
-            Try.Invoke(() => watcher.EnableRaisingEvents = true, e => Log.Write<Watcher>(e));
-        }
-
-        //...
-
-        public virtual void Subscribe()
-        {
-            watcher.Changed += OnChanged;
-            watcher.Created += OnCreated;
-            watcher.Deleted += OnDeleted;
-            watcher.Renamed += OnRenamed;
-        }
-
-        public virtual void Unsubscribe()
-        {
-            watcher.Changed -= OnChanged;
-            watcher.Created -= OnCreated;
-            watcher.Deleted -= OnDeleted;
-            watcher.Renamed -= OnRenamed;
-        }
+    public virtual void Unsubscribe()
+    {
+        watcher.Changed -= OnChanged;
+        watcher.Created -= OnCreated;
+        watcher.Deleted -= OnDeleted;
+        watcher.Renamed -= OnRenamed;
     }
 }

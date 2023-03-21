@@ -4,10 +4,9 @@ using System;
 
 namespace Imagin.Core.Controls;
 
-/// <summary>Filters an object by <see cref="Attribute"/> before <see cref="MemberGrid"/> reads it.</summary>
-public class SourceBinding : LocalBinding
+public class SourceBinding : Bind
 {
-    public Type Filter { get; private set; }
+    public Type Attribute { get; set; }
 
     public bool Ignore { get; set; }
 
@@ -18,17 +17,19 @@ public class SourceBinding : LocalBinding
         set
         {
             view = value;
-            Filter = typeof(ViewAttribute);
+            Attribute = typeof(ViewAttribute);
         }
     }
 
-    public SourceBinding() : this(null) { }
+    public SourceBinding() : this(".") { }
 
-    public SourceBinding(Type type) : this(".", type) { }
+    public SourceBinding(Type attribute) : this(".", attribute) { }
 
-    public SourceBinding(string path, Type type) : base(path)
+    public SourceBinding(string path) : this(path, null) { }
+
+    public SourceBinding(string path, Type attribute) : base(path)
     {
-        Filter = type;
-        Converter = new SimpleConverter<object, SourceFilter>(i => new(i, Filter, Ignore, View));
+        Attribute = attribute;
+        Converter = new ValueConverter<object, MemberSourceFilter>(i => new(i, Attribute, Ignore, View));
     }
 }

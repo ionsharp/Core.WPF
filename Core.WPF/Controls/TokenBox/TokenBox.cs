@@ -21,7 +21,7 @@ namespace Imagin.Core.Controls
 
         readonly Handle handle = false;
 
-        //...
+        ///
 
         BlockCollection Blocks => Document.Blocks;
         
@@ -48,7 +48,7 @@ namespace Imagin.Core.Controls
         /// </summary>
         string CurrentText => CaretPosition?.GetTextInRun(LogicalDirection.Backward);
 
-        //...
+        ///
 
         public static readonly DependencyProperty PlaceholderProperty = DependencyProperty.Register(nameof(Placeholder), typeof(string), typeof(TokenBox), new FrameworkPropertyMetadata(string.Empty));
         public string Placeholder
@@ -63,7 +63,7 @@ namespace Imagin.Core.Controls
             get => (string)GetValue(SourceProperty);
             set => SetValue(SourceProperty, value);
         }
-        static void OnSourceChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<TokenBox>().OnSourceChanged(new Value<string>(e));
+        static void OnSourceChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<TokenBox>().OnSourceChanged(e.Convert<string>());
 
         public static readonly DependencyProperty TokenDelimiterProperty = DependencyProperty.Register(nameof(TokenDelimiter), typeof(char), typeof(TokenBox), new FrameworkPropertyMetadata(';', OnTokenDelimiterChanged));
         /// <summary>
@@ -74,7 +74,7 @@ namespace Imagin.Core.Controls
             get => (char)GetValue(TokenDelimiterProperty);
             set => SetValue(TokenDelimiterProperty, value);
         }
-        static void OnTokenDelimiterChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<TokenBox>().OnTokenDelimiterChanged(new Value<char>(e));
+        static void OnTokenDelimiterChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<TokenBox>().OnTokenDelimiterChanged(e.Convert<char>());
 
         public static readonly DependencyProperty TokenizerProperty = DependencyProperty.Register(nameof(Tokenizer), typeof(ITokenize), typeof(TokenBox), new FrameworkPropertyMetadata(default(ITokenize)));
         /// <summary>
@@ -120,7 +120,7 @@ namespace Imagin.Core.Controls
             get => (Style)GetValue(TokenStyleProperty);
             set => SetValue(TokenStyleProperty, value);
         }
-        static void OnTokenStyleChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<TokenBox>().OnTokenStyleChanged(new Value<Style>(e));
+        static void OnTokenStyleChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<TokenBox>().OnTokenStyleChanged(e.Convert<Style>());
 
         #endregion
 
@@ -193,7 +193,7 @@ namespace Imagin.Core.Controls
             }
         }
 
-        //...
+        ///
 
         /// <summary>
         /// Generates an <see cref="Inline"/> element to host the given token.
@@ -217,7 +217,7 @@ namespace Imagin.Core.Controls
             return new Run(Tokenizer.ToString(token));
         }
 
-        //...
+        ///
 
         string ParseInlines()
         {
@@ -235,7 +235,7 @@ namespace Imagin.Core.Controls
             return result.ToString();
         }
 
-        //...
+        ///
 
         /// <summary>
         /// Converts the given <see cref="TokenButton"/> to a <see cref="Run"/>.
@@ -373,13 +373,13 @@ namespace Imagin.Core.Controls
 
         #region Virtual
 
-        protected virtual void OnTokenDelimiterChanged(Value<char> input) => SetCurrentValue(SourceProperty, Source.Replace(input.Old, input.New));
+        protected virtual void OnTokenDelimiterChanged(ReadOnlyValue<char> input) => SetCurrentValue(SourceProperty, Source.Replace(input.Old, input.New));
 
         protected virtual void OnTokenAdded(object token) => Tokens.Add(token);
 
         protected virtual void OnTokenRemoved(object token) => Tokens.Remove(token);
         
-        protected virtual void OnSourceChanged(Value<string> input)
+        protected virtual void OnSourceChanged(ReadOnlyValue<string> input)
         {
             handle.SafeInvoke(() =>
             {
@@ -403,7 +403,7 @@ namespace Imagin.Core.Controls
             });
         }
 
-        protected virtual void OnTokenStyleChanged(Value<Style> input)
+        protected virtual void OnTokenStyleChanged(ReadOnlyValue<Style> input)
         {
             if (input.Old != null)
                 Resources.Remove(input.Old.TargetType);

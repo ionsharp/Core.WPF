@@ -1,4 +1,5 @@
 ﻿using Imagin.Core;
+using Imagin.Core.Linq;
 using System;
 using System.Reflection;
 using System.Resources;
@@ -30,30 +31,35 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.None)]
 
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Analytics)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Behavior)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Collections)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.CollectionsConcurrent)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.CollectionsObjectModel)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.CollectionsSerialization)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Colors)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Config)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Controls)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Conversion)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Core)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Data)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Effects)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Local)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.LocalEngine)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.LocalExtensions)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.LocalProviders)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Input)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Linq)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Markup)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Models)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Numerics)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Media)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Reflection)]
-[assembly: XmlnsDefinition(AssemblyProperties.Xml, AssemblyProperties.Path.Storage)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Analytics)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Behavior)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Collections)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.CollectionsConcurrent)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.CollectionsObjectModel)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.CollectionsSerialization)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Colors)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Config)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Controls)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Conversion)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Core)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Data)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Effects)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Local)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Input)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Linq)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Markup)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Models)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Numerics)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Media)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Reflection)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Storage)]
+[assembly: XmlnsDefinition(Constants.Xmlns, AssemblyPath.Validation)]
 
-//[assembly: XmlnsPrefix(Xmlns.Root, "i")]
+//[assembly: XmlnsPrefix(Constants.Xmlns.Root, "i")]
+
+namespace Imagin.Core;
+
+public class Constants
+{
+    public const string Xmlns = "http://imagin.tech/imagin/wpf";
+}

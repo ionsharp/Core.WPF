@@ -27,17 +27,17 @@
             Height="1" Width="1">
             <local:FillElement.Effect>
                 <Effects:ColorModelEffect
-                    XComponent="{Binding XComponent, Converter={x:Static Conversion:Component4ToDoubleConverter.Default}}"
-                    YComponent="{Binding YComponent, Converter={x:Static Conversion:Component4ToDoubleConverter.Default}}"
+                    XComponent="{Data:Bind XComponent, Convert={x:Type Conversion:Component4ToDoubleConverter}}"
+                    YComponent="{Data:Bind YComponent, Convert={x:Type Conversion:Component4ToDoubleConverter}}"
                     Depth="{Binding Depth}"
                     Mode="XY"
                     Model="{Binding Model}"
                     Profile="{Binding Profile}"
                     Shape="{Binding Shape}"
-                    X="{Binding X, Converter={x:Static Conversion:OneToDoubleConverter.Default}}"
-                    Y="{Binding Y, Converter={x:Static Conversion:OneToDoubleConverter.Default}}"
-                    Z="{Binding Z, Converter={x:Static Conversion:OneToDoubleConverter.Default}}"
-                    W="{Binding W, Converter={x:Static Conversion:OneToDoubleConverter.Default}}"/>
+                    X="{Data:Bind X, Convert={x:Type Conversion:OneToDoubleConverter}}"
+                    Y="{Data:Bind Y, Convert={x:Type Conversion:OneToDoubleConverter}}"
+                    Z="{Data:Bind Z, Convert={x:Type Conversion:OneToDoubleConverter}}"
+                    W="{Data:Bind W, Convert={x:Type Conversion:OneToDoubleConverter}}"/>
             </local:FillElement.Effect>
         </local:FillElement>
     </DataTemplate>
@@ -119,7 +119,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="1"
-                                        W="1" X="{Data:OneToDoubleBinding X}"
+                                        W="1" X="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=X}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -141,7 +141,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="3"
-                                        X="1" Y="{Data:OneToDoubleBinding Y}"
+                                        X="1" Y="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Y}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -163,7 +163,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="3" YComponent="1"
-                                        X="1" Z="{Data:OneToDoubleBinding Z}"
+                                        X="1" Z="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Z}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -185,7 +185,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="1"
-                                        X="1" W="{Data:OneToDoubleBinding W}"
+                                        X="1" W="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=W}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -232,7 +232,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="1"
-                                        W="0" X="{Data:OneToDoubleBinding X}"
+                                        W="0" X="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=X}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -254,7 +254,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="3"
-                                        X="0" Y="{Data:OneToDoubleBinding Y}"
+                                        X="0" Y="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Y}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -276,7 +276,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="3" YComponent="1"
-                                        X="0" Z="{Data:OneToDoubleBinding Z}"
+                                        X="0" Z="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Z}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -298,7 +298,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="1"
-                                        X="0" W="{Data:OneToDoubleBinding W}"
+                                        X="0" W="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=W}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -345,7 +345,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="3" YComponent="1"
-                                        Z="1" X="{Data:OneToDoubleBinding X}"
+                                        Z="1" X="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=X}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -367,7 +367,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="0" YComponent="3"
-                                        Z="1" Y="{Data:OneToDoubleBinding Y}"
+                                        Z="1" Y="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Y}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -389,7 +389,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="0" YComponent="1"
-                                        W="1" Z="{Data:OneToDoubleBinding Z}"
+                                        W="1" Z="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Z}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -411,7 +411,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="0" YComponent="1"
-                                        Z="1" W="{Data:OneToDoubleBinding W}"
+                                        Z="1" W="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=W}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -458,7 +458,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="3" YComponent="1"
-                                        Z="0" X="{Data:OneToDoubleBinding X}"
+                                        Z="0" X="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=X}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -480,7 +480,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="0" YComponent="3"
-                                        Z="0" Y="{Data:OneToDoubleBinding Y}"
+                                        Z="0" Y="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Y}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -502,7 +502,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="0" YComponent="1"
-                                        W="0" Z="{Data:OneToDoubleBinding Z}"
+                                        W="0" Z="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Z}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -524,7 +524,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="0" YComponent="1"
-                                        Z="0" W="{Data:OneToDoubleBinding W}"
+                                        Z="0" W="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=W}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -571,7 +571,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="3"
-                                        Y="1" X="{Data:OneToDoubleBinding X}"
+                                        Y="1" X="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=X}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -593,7 +593,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="0"
-                                        W="1" Y="{Data:OneToDoubleBinding Y}"
+                                        W="1" Y="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Y}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -615,7 +615,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="3" YComponent="0"
-                                        Y="1" Z="{Data:OneToDoubleBinding Z}"
+                                        Y="1" Z="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Z}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -637,7 +637,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="0"
-                                        Y="1" W="{Data:OneToDoubleBinding W}"
+                                        Y="1" W="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=W}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -684,7 +684,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="3"
-                                        Y="0" X="{Data:OneToDoubleBinding X}"
+                                        Y="0" X="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=X}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -706,7 +706,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="0"
-                                        W="0" Y="{Data:OneToDoubleBinding Y}"
+                                        W="0" Y="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Y}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -728,7 +728,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="3" YComponent="0"
-                                        Y="0" Z="{Data:OneToDoubleBinding Z}"
+                                        Y="0" Z="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Z}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -750,7 +750,7 @@
                                 <local:FillElement.Effect>
                                     <Effects:ColorModelEffect
                                         XComponent="2" YComponent="0"
-                                        Y="0" W="{Data:OneToDoubleBinding W}"
+                                        Y="0" W="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=W}"
                                         Depth="{Binding Depth}" Mode="XY" Model="{Binding Model}" Profile="{Binding Profile}" Shape="{Binding Shape}"/>
                                 </local:FillElement.Effect>
                             </local:FillElement>
@@ -761,7 +761,7 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:ComponentSelector3D}" TargetType="{x:Type local:ComponentSelector3D}" BasedOn="{StaticResource {x:Type local:ColorSelector}}">
         <Setter Property="ClipToBounds" Value="True"/>
@@ -989,16 +989,16 @@
                                     Height="1" Width="1">
                                     <local:FillElement.Effect>
                                         <Effects:ColorModelEffect
-                                            XComponent="{Binding Component, Converter={x:Static Conversion:Component4ToDoubleConverter.Default}}"
+                                            XComponent="{Data:Bind Component, Convert={x:Type Conversion:Component4ToDoubleConverter}}"
                                             Depth="{Binding Depth}"
                                             Mode="Z"
                                             Model="{Binding Model}"
                                             Profile="{Binding Profile}"
                                             Shape="{Binding Shape}"
-                                            X="{Data:OneToDoubleBinding X}"
-                                            Y="{Data:OneToDoubleBinding Y}"
-                                            Z="{Data:OneToDoubleBinding Z}"
-                                            W="{Data:OneToDoubleBinding W}"/>
+                                            X="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=X}"
+                                            Y="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Y}"
+                                            Z="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=Z}"
+                                            W="{Data:Bind Convert=Conversion:OneToDoubleConverter, Path=W}"/>
                                     </local:FillElement.Effect>
                                 </local:FillElement>
                             </Viewbox>
@@ -1053,7 +1053,7 @@
                                 <local:FillElement DataContext="{Data:TemplatedParent}" Height="1" Width="1">
                                     <local:FillElement.Fill>
                                         <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                            <GradientStop Offset="0" Color="{Binding Color, Converter={x:Static Conversion:ColorWithoutAlphaConverter.Default}, Mode=OneWay}"/>
+                                            <GradientStop Offset="0" Color="{Data:Bind Color, Convert={x:Type Conversion:ColorWithoutAlphaConverter}, Mode=OneWay}"/>
                                             <GradientStop Offset="1" Color="Transparent"/>
                                         </LinearGradientBrush>
                                     </local:FillElement.Fill>
@@ -1591,7 +1591,7 @@
                                 Linq:XPanel.SpacingExcept="Last"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed">
-                                <local:ImageElement Source="{Markup:Image Imagin.Core.WPF, Images/256-Error.png}"
+                                <local:ImageElement Source="{Markup:LargeImage Image=Error}"
                                     HorizontalAlignment="Center"
                                     SourceSize="48,48"/>
                                 <TextBlock FontSize="17" Opacity="0.3" Text="{Data:TemplatedParent Document.Model.Name}"
@@ -1600,7 +1600,7 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Data:Self Document.Model, Converter={x:Static Conversion:HiddenConverter.Default}}" Value="True">
+                        <DataTrigger Binding="{Data:Self Document.Model, Convert={x:Type Conversion:HiddenConverter}}" Value="True">
                             <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="StackPanel" Property="Visibility" Value="Visible"/>
                         </DataTrigger>

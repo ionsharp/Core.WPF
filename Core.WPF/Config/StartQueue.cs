@@ -4,57 +4,60 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Imagin.Core.Config
+namespace Imagin.Core.Config;
+
+public class StartQueue : List<StartTask>
 {
-    public class StartQueue : List<StartTask>
+    public event EventHandler<EventArgs> Completed;
+
+    public SplashWindow SplashWindow { get; private set; }
+
+    public void Add(bool dispatch, string message, Action action)
     {
-        public event EventHandler<EventArgs> Completed;
+        Add(new StartTask(dispatch, message, action));
+    }
 
-        public SplashWindow SplashWindow { get; private set; }
-
-        public void Add(bool dispatch, string message, Action action)
+    async Task Alert(string message, double progress)
+    {
+        await Dispatch.BeginInvoke(() =>
         {
-            Add(new StartTask(dispatch, message, action));
-        }
+            SplashWindow.Message = message;
+            SplashWindow.Progress = progress;
+        });
+    }
 
-        async Task Alert(string message, double progress)
+    public async Task Invoke(SplashWindow splashWindow)
+    {
+        SplashWindow = splashWindow;
+
+        var delay = splashWindow.Delay;
+        await Task.Run(async () =>
         {
-            await Dispatch.InvokeAsync(() =>
+            double progress = 0;
+
+            double a = 0;
+            double b = Count;
+
+            foreach (var i in this)
             {
-                SplashWindow.Message = message;
-                SplashWindow.Progress = progress;
-            });
-        }
+                System.Threading.Thread.Sleep(delay);
 
-        public async Task Invoke(SplashWindow splashWindow)
-        {
-            SplashWindow = splashWindow;
-            await Task.Run(async () =>
-            {
-                double progress = 0;
+                a++;
+                progress = a / b;
 
-                double a = 0;
-                double b = Count;
-
-                foreach (var i in this)
+                await Alert(i.Message, progress);
+                Try.Invoke(() =>
                 {
-                    a++;
-                    progress = a / b;
-
-                    await Alert(i.Message, progress);
-                    Try.Invoke(() =>
+                    if (!i.Dispatch)
                     {
-                        if (!i.Dispatch)
-                        {
-                            i.Action();
-                            return;
-                        }
-                        Dispatch.Invoke(i.Action);
-                    },
-                    e => Log.Write<StartQueue>(e));
-                }
-            });
-            Completed?.Invoke(this, EventArgs.Empty);
-        }
+                        i.Action();
+                        return;
+                    }
+                    Dispatch.Invoke(i.Action);
+                },
+                e => Log.Write<StartQueue>(e));
+            }
+        });
+        Completed?.Invoke(this, EventArgs.Empty);
     }
 }

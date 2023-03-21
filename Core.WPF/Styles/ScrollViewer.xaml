@@ -74,7 +74,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Arrow" />
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Foreground" Value="{local:ThemeKey Key=ScrollBar.Background}" />
+        <Setter Property="Foreground" Value="{local:ThemeKey ScrollBarBackground}" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="Template">
@@ -135,10 +135,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PART_Thumb" Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{local:ThemeKey Key=ScrollBar.MouseOver.Background}" TargetName="PART_Thumb"/>
+                            <Setter Property="Background" Value="{local:ThemeKey ScrollBarMouseOverBackground}" TargetName="PART_Thumb"/>
                         </Trigger>
                         <Trigger SourceName="PART_Thumb" Property="IsDragging" Value="True">
-                            <Setter Property="Background" Value="{local:ThemeKey Key=ScrollBar.Dragging.Background}" TargetName="PART_Thumb"/>
+                            <Setter Property="Background" Value="{local:ThemeKey ScrollBarDraggingBackground}" TargetName="PART_Thumb"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="PART_Thumb" Property="Visibility" Value="Collapsed" />

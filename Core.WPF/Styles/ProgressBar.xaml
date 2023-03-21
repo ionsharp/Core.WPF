@@ -6,17 +6,17 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq">
     <Style x:Key="{x:Type ProgressBar}" TargetType="{x:Type ProgressBar}">
-        <Setter Property="Background" Value="{local:ThemeKey Key=ProgressBarBackground}"/>
+        <Setter Property="Background" Value="{local:ThemeKey ProgressBarBackground}"/>
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Foreground" Value="{local:ThemeKey Key=ProgressBarForeground}"/>
+        <Setter Property="Foreground" Value="{local:ThemeKey ProgressBarForeground}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="Linq:XProgressBar.Content" Value="{Data:Self Value}" />
         <Setter Property="Linq:XProgressBar.ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <TextBlock Foreground="{local:ThemeKey ActualKey=Text}" Text="{Binding StringFormat={}{0:p0}}"/>
+                    <TextBlock Foreground="{local:ThemeKey Text}" Text="{Binding StringFormat={}{0:p0}}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -85,7 +85,7 @@
                                     </Rectangle>
                                 </Grid>
                                 <!--
-                                <local:FillElement Fill="{TemplateBinding Foreground, Converter={x:Static local:ProgressForegroundConverter.Default}}">
+                                <local:FillElement Fill="{TemplateBinding Foreground, Converter={x:Static local:ProgressForegroundConverter}}">
                                     <local:FillElement.Triggers>
                                         <EventTrigger RoutedEvent="local:FillElement.Loaded">
                                             <BeginStoryboard>
@@ -108,7 +108,7 @@
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             Margin="{TemplateBinding Padding}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Visibility="{TemplateBinding IsIndeterminate, Converter={x:Static Conversion:BooleanToVisibilityConverter.Default}, ConverterParameter=1}"/>
+                            Visibility="{Data:TemplatedParent IsIndeterminate, Convert={x:Type Conversion:BooleanToVisibilityConverter}, ConverterParameter=1}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -116,20 +116,20 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Horizontal">
-                <Setter Property="MinHeight" Value="8" />
+                <Setter Property="MinHeight" Value="1" />
             </Trigger>
             <Trigger Property="Orientation" Value="Vertical">
-                <Setter Property="MinWidth" Value="8" />
+                <Setter Property="MinWidth" Value="1" />
             </Trigger>
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:ProgressLine}" TargetType="{x:Type local:ProgressLine}">
-        <Setter Property="Background" Value="{local:ThemeKey ActualKey=ProgressBarBackground}" />
+        <Setter Property="Background" Value="{local:ThemeKey ProgressBarBackground}" />
         <Setter Property="EllipseDiameter" Value="7"/>
-        <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=ProgressBarForeground}" />
+        <Setter Property="Foreground" Value="{local:ThemeKey ProgressBarForeground}" />
         <Setter Property="IsIndeterminate" Value="True"/>
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MinHeight" Value="32" />

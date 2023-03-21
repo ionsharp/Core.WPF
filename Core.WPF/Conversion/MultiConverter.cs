@@ -2,46 +2,45 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Imagin.Core.Conversion
+namespace Imagin.Core.Conversion;
+
+public class MultiConverterData
 {
-    public class MultiConverterData
+    public readonly CultureInfo Culture;
+
+    public readonly object[] Values;
+
+    public readonly object Parameter;
+
+    public readonly Type TargetType;
+
+    public MultiConverterData(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        public readonly CultureInfo Culture;
-
-        public readonly object[] Values;
-
-        public readonly object Parameter;
-
-        public readonly Type TargetType;
-
-        public MultiConverterData(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            Values = values;
-            TargetType = targetType;
-            Parameter = parameter;
-            Culture = culture;
-        }
+        Values = values; TargetType = targetType; Parameter = parameter; Culture = culture;
     }
+}
 
-    [ValueConversion(typeof(object[]), typeof(object))]
-    public class MultiConverter<Result> : IMultiValueConverter
-    {
-        readonly Func<MultiConverterData, Result> To;
+public abstract class MultiConverter : IMultiValueConverter
+{
+    public abstract object Convert(object[] values, Type targetType, object parameter, CultureInfo culture);
 
-        public MultiConverter() : base() { }
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotSupportedException();
 
-        public MultiConverter(Func<MultiConverterData, Result> to) => To = to;
+    public static T Get<T>() where T : IMultiValueConverter => (T)Converter.Instances[typeof(T)];
+}
 
-        public virtual object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) => To.Invoke(new MultiConverterData(values, targetType, parameter, culture));
+[ValueConversion(typeof(object[]), typeof(object))]
+public class MultiConverter<Result> : MultiConverter
+{
+    readonly Func<MultiConverterData, Result> To;
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotSupportedException();
-    }
+    public MultiConverter() : base() { }
 
-    public class DefaultMultiConverter : MultiConverter<object[]>
-    {
-        public static DefaultMultiConverter Default { get; private set; } = new();
-        DefaultMultiConverter() { }
+    public MultiConverter(Func<MultiConverterData, Result> to) => To = to;
 
-        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) => values;
-    }
+    public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) => To.Invoke(new MultiConverterData(values, targetType, parameter, culture));
+
+    public Result Convert(object value, object parameter = null) => Convert(new object[] { value }, parameter);
+
+    public Result Convert(object[] values, object parameter = null) => (Result)Convert(values, null, parameter, null);
 }

@@ -33,6 +33,6 @@ namespace Imagin.Core.Controls
             SetCurrentValue(ValueProperty, Denormalize(input.Y.Value));
         }
 
-        protected virtual void OnValueChanged(Value<byte> input) => Mark();
+        protected virtual void OnValueChanged(ReadOnlyValue<byte> input) => Mark();
     }
 }

@@ -11,7 +11,7 @@
         <ResourceDictionary Source="{local:StyleKey Key=ItemsControl}"/>
         <ResourceDictionary Source="{local:StyleKey Key=ToggleButton}"/>
     </ResourceDictionary.MergedDictionaries>
-    <!-- ... -->
+    <!-- /// -->
 
     <ControlTemplate x:Key="{x:Static Linq:XDataGridRow.TemplateKey}" TargetType="{x:Type DataGridRow}">
         <Border
@@ -30,8 +30,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </SelectiveScrollingGrid.RowDefinitions>
-                    <DataGridCellsPresenter 
-                        Grid.Column="1"
+                    <DataGridCellsPresenter Grid.Column="1"
                         ItemsPanel="{TemplateBinding ItemsPanel}"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                     <DataGridDetailsPresenter 
@@ -57,16 +56,17 @@
 
     <ControlTemplate x:Key="{x:Static Linq:XDataGridRow.ValidationErrorTemplateKey}">
         <TextBlock Text="!" 
-            Foreground="{local:ThemeKey ActualKey=Red}"
+            Foreground="{local:ThemeKey Red}"
             Margin="2,0,0,0"
             VerticalAlignment="Center" />
     </ControlTemplate>
 
     <Style x:Key="{ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}" TargetType="Button">
-        <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.Background}" />
+        <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderBackground}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGrid.SelectAll.Foreground}" />
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
+        <Setter Property="Foreground" Value="{local:ThemeKey DataGridSelectAllForeground}" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Padding" Value="0,0,4,4" />
         <Setter Property="Template">
@@ -75,21 +75,21 @@
                     <Border 
                         x:Name="PART_Border"
                         Background="{TemplateBinding Background}" 
-                        BorderBrush="{local:ThemeKey Key=DataGridColumnHeader.Border}" 
+                        BorderBrush="{local:ThemeKey DataGridColumnHeaderBorder}" 
                         BorderThickness="0,0,1,1">
-                        <local:ImageElement
+                        <local:ImageElement x:Name="ImageElement"
                             HorizontalAlignment="Right"
                             Margin="{TemplateBinding Padding}"
-                            Source="{Markup:InternalImage RightTriangle.png}"
+                            Source="{Markup:SmallImage RightTriangle.png}"
                             Foreground="{TemplateBinding Foreground}"
                             VerticalAlignment="Bottom"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{local:ThemeKey Key=DataGridColumnHeader.MouseOver.Border}" />
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{local:ThemeKey DataGridColumnHeaderMouseOverBorder}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{local:ThemeKey Key=DataGridColumnHeader.Pressed.Border}" />
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{local:ThemeKey DataGridColumnHeaderPressedBorder}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -98,21 +98,22 @@
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.MouseOver.Background}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGrid.SelectAll.MouseOver.Foreground}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderMouseOverBackground}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey DataGridSelectAllMouseOverForeground}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.Pressed.Background}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGrid.SelectAll.Pressed.Foreground}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderPressedBackground}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey DataGridSelectAllPressedForeground}" />
             </Trigger>
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type DataGridCell}" TargetType="{x:Type DataGridCell}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Padding" Value="5,2.5"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -137,14 +138,15 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
     </Style>
 
     <Style x:Key="{x:Type DataGridRow}" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource {x:Type FrameworkElement}}">
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=DataGridRowForeground}" />
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
+        <Setter Property="Foreground" Value="{local:ThemeKey DataGridRowForeground}" />
         <Setter Property="Linq:XElement.FadeIn" Value="True" />
-        <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey ActualKey=DataGridRowForeground}" />
+        <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey DataGridRowForeground}" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template" Value="{StaticResource {x:Static Linq:XDataGridRow.TemplateKey}}"/>
@@ -156,28 +158,28 @@
                     <Condition Property="IsMouseOver" Value="True" />
                     <Condition Property="IsSelected" Value="False" />
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=DataGridRowMouseOverBackground}" />
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=DataGridRowMouseOverBorder}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridRowMouseOverBackground}" />
+                <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridRowMouseOverBorder}" />
             </MultiTrigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsSelected" Value="True" />
                     <Condition Property="Selector.IsSelectionActive" Value="False" />
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=DataGridRowSelectedBackground}" />
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=DataGridRowSelectedBorder}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=DataGridRowSelectedForeground}" />
-                <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey ActualKey=DataGridRowSelectedForeground}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridRowSelectedBackground}" />
+                <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridRowSelectedBorder}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey DataGridRowSelectedForeground}" />
+                <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey DataGridRowSelectedForeground}" />
             </MultiTrigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsSelected" Value="True" />
                     <Condition Property="Selector.IsSelectionActive" Value="True" />
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=DataGridRowSelectedActiveBackground}" />
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=DataGridRowSelectedActiveBorder}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=DataGridRowSelectedActiveForeground}" />
-                <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey ActualKey=DataGridRowSelectedActiveForeground}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridRowSelectedActiveBackground}" />
+                <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridRowSelectedActiveBorder}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey DataGridRowSelectedActiveForeground}" />
+                <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey DataGridRowSelectedActiveForeground}" />
             </MultiTrigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
@@ -185,8 +187,8 @@
                     <Condition Property="IsMouseOver" Value="False" />
                     <Condition Property="IsSelected" Value="False" />
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=DataGridRowEvenBackground}"/>
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=DataGridRowEvenBorder}"/>
+                <Setter Property="Background" Value="{local:ThemeKey DataGridRowEvenBackground}"/>
+                <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridRowEvenBorder}"/>
             </MultiTrigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
@@ -194,17 +196,17 @@
                     <Condition Property="IsMouseOver" Value="False" />
                     <Condition Property="IsSelected" Value="False" />
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=DataGridRowOddBackground}"/>
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=DataGridRowOddBorder}"/>
+                <Setter Property="Background" Value="{local:ThemeKey DataGridRowOddBackground}"/>
+                <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridRowOddBorder}"/>
             </MultiTrigger>
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="Style.DataGridColumnHeader.Thumb" TargetType="Thumb">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.Thumb}"/>
+        <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderThumb}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Width" Value="18"/>
         <Setter Property="Template">
@@ -222,10 +224,11 @@
     </Style>
 
     <Style x:Key="Style.DataGridColumnHeader" TargetType="{x:Type DataGridColumnHeader}">
-        <Setter Property="BorderBrush" Value="{local:ThemeKey Key=DataGridColumnHeader.Border}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridColumnHeaderBorder}" />
         <Setter Property="BorderThickness" Value="1,0,1,1" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGridColumnHeader.Foreground}" />
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
+        <Setter Property="Foreground" Value="{local:ThemeKey DataGridColumnHeaderForeground}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="Margin" Value="-1,0,0,0" />
         <Setter Property="MinWidth" Value="0" />
@@ -283,26 +286,27 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="SortDirection" Value="{x:Null}">
-                <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.Background}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderBackground}" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.MouseOver.Background}" />
-                <Setter Property="BorderBrush" Value="{local:ThemeKey Key=DataGridColumnHeader.MouseOver.Border}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGridColumnHeader.MouseOver.Foreground}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderMouseOverBackground}" />
+                <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridColumnHeaderMouseOverBorder}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey DataGridColumnHeaderMouseOverForeground}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.Pressed.Background}" />
-                <Setter Property="BorderBrush" Value="{local:ThemeKey Key=DataGridColumnHeader.Pressed.Border}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGridColumnHeader.Pressed.Foreground}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderPressedBackground}" />
+                <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridColumnHeaderPressedBorder}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey DataGridColumnHeaderPressedForeground}" />
             </Trigger>
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type DataGridRowHeader}" TargetType="{x:Type DataGridRowHeader}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
         <Setter Property="Padding" Value="5,0" />
         <Setter Property="Template">
             <Setter.Value>
@@ -334,8 +338,8 @@
     <Style x:Key="{x:Type DataGrid}" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource {x:Type ItemsControl}}">
         <Setter Property="AlternationCount" Value="2" />
         <Setter Property="AutoGenerateColumns" Value="False" />
-        <Setter Property="Background" Value="{local:ThemeKey Key=DataGrid.Background}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey Key=DataGrid.Border}" />
+        <Setter Property="Background" Value="{local:ThemeKey DataGridBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridBorder}" />
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CanUserAddRows" Value="False"/>
         <Setter Property="CanUserDeleteRows" Value="False"/>
@@ -346,15 +350,15 @@
         <Setter Property="ColumnHeaderStyle" Value="{StaticResource Style.DataGridColumnHeader}"/>
         <Setter Property="EnableColumnVirtualization" Value="True" />
         <Setter Property="EnableRowVirtualization" Value="True" />
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
         <Setter Property="GridLinesVisibility" Value="None"/>
         <Setter Property="HeadersVisibility" Value="All"/>
-        <Setter Property="HorizontalGridLinesBrush" Value="{local:ThemeKey Key=DataGrid.GridLines.Horizontal}"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{local:ThemeKey DataGridGridLinesHorizontal}"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle"/>
         <Setter Property="Linq:XItemsControl.CanDragSelect" Value="False"/>
         <Setter Property="Linq:XItemsControl.EmptyTemplateVisibility" Value="Visible"/>
         <Setter Property="Linq:XItemsControl.EnableColumnMenu" Value="True"/>
-        <Setter Property="Linq:XItemsControl.SelectNoneOnEmptySpaceClick" Value="True"/>
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Padding" Value="5,0,0,0"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
@@ -442,19 +446,22 @@
             </Setter.Value>
         </Setter>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="VerticalGridLinesBrush" Value="{local:ThemeKey Key=DataGrid.GridLines.Vertical}"/>
+        <Setter Property="VerticalGridLinesBrush" Value="{local:ThemeKey DataGridGridLinesVertical}"/>
         <Setter Property="VirtualizingPanel.IsContainerVirtualizable" Value="True"/>
         <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel"/>
         <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Standard" />
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
         <Style.Triggers>
+            <Trigger Property="AutoGenerateColumns" Value="True">
+                <Setter Property="Linq:XDataGrid.ColumnVisibility" Value="True"/>
+            </Trigger>
             <Trigger Property="IsGrouping" Value="True">
                 <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
-            </Trigger>
+            </Trigger> 
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type DataGridCheckBoxColumn}" TargetType="{x:Type DataGridCheckBoxColumn}">
         <Setter Property="ElementStyle" Value="{StaticResource {x:Type CheckBox}}"/>

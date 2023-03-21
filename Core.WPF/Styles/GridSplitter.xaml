@@ -5,7 +5,7 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq">
     <Style x:Key="{x:Type GridSplitter}" TargetType="{x:Type GridSplitter}">
-        <Setter Property="Background" Value="{local:ThemeKey ActualKey=GridSplitterBackground}" />
+        <Setter Property="Background" Value="{local:ThemeKey GridSplitterBackground}" />
         <Setter Property="Height" Value="Auto"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="IsTabStop" Value="True" />

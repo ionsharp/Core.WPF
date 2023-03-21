@@ -7,8 +7,8 @@
     </ResourceDictionary.MergedDictionaries>
     <Style x:Key="Style.DecreaseRepeatButton" TargetType="{x:Type RepeatButton}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{local:ThemeKey Key=Slider.DecreaseButton.Background}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey Key=Slider.DecreaseButton.Border}" />
+        <Setter Property="Background" Value="{local:ThemeKey SliderDecreaseButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey SliderDecreaseButtonBorder}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
@@ -27,8 +27,8 @@
 
     <Style x:Key="Style.IncreaseRepeatButton" TargetType="{x:Type RepeatButton}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{local:ThemeKey Key=Slider.IncreaseButton.Background}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey Key=Slider.IncreaseButton.Border}" />
+        <Setter Property="Background" Value="{local:ThemeKey SliderIncreaseButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey SliderIncreaseButtonBorder}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="IsTabStop" Value="False" />
@@ -49,8 +49,8 @@
 
     <Style x:Key="Style.Slider.Thumb" TargetType="{x:Type Thumb}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{local:ThemeKey Key=Slider.Thumb.Background}"/>
-        <Setter Property="BorderBrush" Value="{local:ThemeKey Key=Slider.Thumb.Border}"/>
+        <Setter Property="Background" Value="{local:ThemeKey SliderThumbBackground}"/>
+        <Setter Property="BorderBrush" Value="{local:ThemeKey SliderThumbBorder}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Height" Value="16"/>

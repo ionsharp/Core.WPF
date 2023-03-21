@@ -7,7 +7,7 @@ namespace Imagin.Core.Media
     {
         public static DrawingBrush Default => Create(DefaultBackground, DefaultForeground, DefaultSize);
 
-        //...
+        ///
 
         public static Brush DefaultBackground => Brushes.White;
 
@@ -15,7 +15,7 @@ namespace Imagin.Core.Media
 
         public static double DefaultSize => 10;
         
-        //...
+        ///
 
         public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register(nameof(Background), typeof(Brush), typeof(CheckerBrush), new FrameworkPropertyMetadata(DefaultBackground, OnPropertyChanged));
         public Brush Background

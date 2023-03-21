@@ -15,12 +15,7 @@ namespace Imagin.Core.Controls
 
         public readonly DockWindow Window;
 
-        IDockControl mouseOver = null;
-        public IDockControl MouseOver
-        {
-            get => mouseOver;
-            internal set => this.Change(ref mouseOver, value);
-        }
+        public IDockControl MouseOver { get => Get<IDockControl>(); internal set => Set(value); }
 
         public Point MousePosition { get; internal set; }
 

@@ -6,7 +6,7 @@
     xmlns:Linq="clr-namespace:Imagin.Core.Linq">
     <Style x:Key="{x:Type Hyperlink}" TargetType="{x:Type Hyperlink}">
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Foreground" Value="{local:ThemeKey Key=Link}"/>
+        <Setter Property="Foreground" Value="{local:ThemeKey Link}"/>
         <Setter Property="Linq:XHyperlink.IsExternal" Value="True"/>
         <Setter Property="ToolTip" Value="{Data:Self NavigateUri}" />
     </Style>

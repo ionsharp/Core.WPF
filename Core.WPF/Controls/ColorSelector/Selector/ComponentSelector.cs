@@ -86,14 +86,14 @@ public abstract class ComponentSelector : ColorSelector
         set => SetValue(ZoomProperty, value);
     }
 
-    //...
+    ///
 
     public ComponentSelector() : base()
     {
         SetCurrentValue(EllipsePositionProperty, new Point2(0, 0));
     }
 
-    //...
+    ///
 
     protected One GetValue(Component4 component)
     {

@@ -5,13 +5,13 @@ namespace Imagin.Core.Media;
 [Serializable]
 public enum GradientType : int
 {
-    [Image(Images.GradientAngle)]
+    [Image(SmallImages.GradientAngle)]
     Angle = 0,
-    [DisplayName("Radial")]
-    [Image(Images.GradientRadial)]
+    [Name("Radial")]
+    [Image(SmallImages.GradientRadial)]
     Circle = 1,
-    [Image(Images.GradientDiamond)]
+    [Image(SmallImages.GradientDiamond)]
     Diamond = 2,
-    [Image(Images.Gradient)]
+    [Image(SmallImages.Gradient)]
     Linear = 3,
 }

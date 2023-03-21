@@ -13,7 +13,7 @@ public class ColorSelector : Control
 {
     Canvas PART_Canvas;
 
-    //...
+    ///
 
     public static readonly DependencyProperty DepthProperty = DependencyProperty.Register(nameof(Depth), typeof(double), typeof(ColorSelector), new FrameworkPropertyMetadata(0.0));
     public double Depth
@@ -36,11 +36,11 @@ public class ColorSelector : Control
         set => SetValue(ProfileProperty, value);
     }
 
-    //...
+    ///
 
     public ColorSelector() : base() { }
 
-    //...
+    ///
 
     Vector2<One> CoerceDepth(Vector2<One> a)
     {
@@ -90,7 +90,7 @@ public class ColorSelector : Control
         Mark();
     }
 
-    //...
+    ///
 
     /// <summary>Gets a <see cref="Point"/> in range [0, 1].</summary>
     protected Vector2<One> Normalize(Point input)
@@ -101,13 +101,13 @@ public class ColorSelector : Control
         return new Vector2<One>(input.X, input.Y);
     }
 
-    //...
+    ///
 
     protected virtual void Mark() { }
 
     protected virtual void OnMouseChanged(Vector2<One> input) { }
 
-    //...
+    ///
 
     public override void OnApplyTemplate()
     {

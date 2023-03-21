@@ -2,28 +2,27 @@
 using System;
 using System.Collections.Generic;
 
-namespace Imagin.Core.Data
+namespace Imagin.Core.Data;
+
+/// <summary>
+/// Tokenizes a <see cref="string"/> into multiple <see cref="string"/>s.
+/// </summary>
+public sealed class StringTokenizer : Tokenizer<string>
 {
-    /// <summary>
-    /// Tokenizes a <see cref="string"/> into multiple <see cref="string"/>s.
-    /// </summary>
-    public sealed class StringTokenizer : Tokenizer<string>
+    public override IEnumerable<string> Tokenize(string input, char delimiter)
     {
-        public override IEnumerable<string> Tokenize(string input, char delimiter)
-        {
-            var result = input.Split(XArray.New<char>(delimiter), StringSplitOptions.RemoveEmptyEntries);
-            foreach (var i in result)
-                yield return i;
-        }
-
-        public override string ToToken(string input)
-        {
-            var result = input.Trim();
-            return !result.Empty() ? result : null;
-        }
-
-        public override string ToString(string input) => input;
-
-        public StringTokenizer() : base(null) { }
+        var result = input.Split(XArray.New<char>(delimiter), StringSplitOptions.RemoveEmptyEntries);
+        foreach (var i in result)
+            yield return i;
     }
+
+    public override string ToToken(string input)
+    {
+        var result = input.Trim();
+        return !result.Empty() ? result : null;
+    }
+
+    public override string ToString(string input) => input;
+
+    public StringTokenizer() : base(null) { }
 }

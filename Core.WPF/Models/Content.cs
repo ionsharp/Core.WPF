@@ -1,44 +1,40 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace Imagin.Core.Models
+namespace Imagin.Core.Models;
+
+[Serializable]
+public abstract class Content : LockableViewModel, ISubscribe, IUnsubscribe
 {
-    [Serializable]
-    public abstract class Content : LockableViewModel, ISubscribe, IUnsubscribe
+    [Hide, XmlIgnore]
+    public virtual bool CanFloat { get => Get(true); set => Set(value); }
+
+    [Hide, XmlIgnore]
+    [NonSerializable]
+    public bool IsBusy
     {
-        bool canFloat = true;
-        [Hidden, XmlIgnore]
-        public virtual bool CanFloat
+        get => Get(false, false);
+        set
         {
-            get => canFloat;
-            set => this.Change(ref canFloat, value);
+            Set(value, false);
+            Update(() => IsNotBusy);
         }
-
-        bool isBusy = false;
-        [Hidden, XmlIgnore]
-        [Serialize(false)]
-        public bool IsBusy
-        {
-            get => isBusy;
-            set
-            {
-                this.Change(ref isBusy, value);
-                this.Changed(() => IsNotBusy);
-            }
-        }
-
-        public bool IsNotBusy => !IsBusy;
-
-        [Hidden, XmlIgnore]
-        public virtual string Title { get; }
-
-        [Hidden, XmlIgnore]
-        public virtual object ToolTip { get; }// = null;
-
-        //...
-
-        public virtual void Subscribe() { }
-
-        public virtual void Unsubscribe() { }
     }
+
+    [Hide]
+    public bool IsNotBusy => !IsBusy;
+
+    [Hide, XmlIgnore]
+    public virtual string Title { get; }
+
+    [Hide, XmlIgnore]
+    public virtual object ToolTip { get; }
+
+    ///
+
+    [Hide]
+    public virtual void Subscribe() { }
+
+    [Hide]
+    public virtual void Unsubscribe() { }
 }

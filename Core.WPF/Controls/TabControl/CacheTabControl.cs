@@ -22,7 +22,7 @@ namespace Imagin.Core.Controls
             ItemContainerGenerator.StatusChanged += OnItemContainerGeneratorStatusChanged;
         }
 
-        //...
+        ///
 
         void OnItemContainerGeneratorStatusChanged(object sender, EventArgs e)
         {
@@ -94,7 +94,7 @@ namespace Imagin.Core.Controls
             return null;
         }
 
-        //...
+        ///
 
         /// <summary>
         /// When the items change we remove any generated panel children and add any new ones as necessary
@@ -152,7 +152,7 @@ namespace Imagin.Core.Controls
             return item;
         }
 
-        //...
+        ///
 
         public override void OnApplyTemplate()
         {

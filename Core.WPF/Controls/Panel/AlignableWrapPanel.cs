@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Imagin.Core.Linq;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,7 +37,7 @@ namespace Imagin.Core.Controls
             get => orientation;
             set => SetValue(OrientationProperty, value);
         }
-        static void OnOrientationChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => ((AlignableWrapPanel)i).orientation = new Value<Orientation>(e).New;
+        static void OnOrientationChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => ((AlignableWrapPanel)i).orientation = e.Convert<Orientation>().New;
 
         public static readonly DependencyProperty HorizontalContentAlignmentProperty = DependencyProperty.Register(nameof(HorizontalContentAlignment), typeof(HorizontalAlignment), typeof(AlignableWrapPanel), new FrameworkPropertyMetadata(HorizontalAlignment.Left, FrameworkPropertyMetadataOptions.AffectsArrange));
         public HorizontalAlignment HorizontalContentAlignment

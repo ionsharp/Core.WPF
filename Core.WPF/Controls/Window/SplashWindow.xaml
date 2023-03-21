@@ -6,29 +6,21 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Markup="clr-namespace:Imagin.Core.Markup">
-    <Grid Linq:XGrid.Rows="*,Auto,Auto,Auto"
-        DataContext="{Data:Ancestor local:SplashWindow}"
-        Height="300"
-        Width="512">
-        <Image 
-            x:Name="PART_Image"
-            Grid.Row="0"
-            Grid.RowSpan="4"
-            RenderOptions.BitmapScalingMode="NearestNeighbor"
-            Source="{Binding Image}"/>
+    <Grid DataContext="{Data:Ancestor local:SplashWindow}" Linq:XGrid.Rows="*,Auto,Auto,Auto">
+        <ContentPresenter Grid.Row="0" Grid.RowSpan="4" Content="{Binding Image}" ContentTemplate="{Data:Ancestor ImageTemplate, local:SplashWindow}"/>
         <local:ProgressLine
             Grid.Row="1"
-            Foreground="{Binding Accent, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}"
+            Foreground="{Data:Bind Accent, Convert={x:Type Conversion:ColorToSolidColorBrushConverter}}"
             HorizontalAlignment="Center"
             Width="360"/>
         <TextBlock 
             Grid.Row="2"
             Margin="10"
             VerticalAlignment="Center">
-            <Run Foreground="White" Text="Loading"/> <Run FontStyle="Italic" Foreground="#AA000000" Text="{Binding Message, Converter={x:Static Conversion:ToLowerConverter.Default}, Mode=OneWay}"/><Run Foreground="White" Text="..."/></TextBlock>
+            <Run Foreground="White" Text="Loading"/> <Run FontStyle="Italic" Foreground="#AA000000" Text="{Data:Bind Message, Convert={x:Type Conversion:ToLowerConverter}, Mode=OneWay}"/><Run Foreground="White" Text="..."/></TextBlock>
         <ProgressBar 
             Grid.Row="3"
-            Foreground="{Binding Accent, Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}"
+            Foreground="{Data:Bind Accent, Convert={x:Type Conversion:ColorToSolidColorBrushConverter}}"
             Height="6"
             Linq:XProgressBar.ContentTemplate="{Markup:EmptyTemplate}"
             Maximum="1"

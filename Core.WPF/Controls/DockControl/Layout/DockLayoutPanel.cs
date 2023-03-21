@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Imagin.Core.Numerics;
+using System;
 using System.Xml.Serialization;
 
 namespace Imagin.Core.Controls
@@ -6,21 +7,11 @@ namespace Imagin.Core.Controls
     [Serializable]
     public class DockLayoutPanel : Base
     {
-        bool isSelected;
         [XmlAttribute]
-        public bool IsSelected
-        {
-            get => isSelected;
-            set => this.Change(ref isSelected, value);
-        }
+        public bool IsSelected { get => Get(false); set => Set(value); }
 
-        string name;
         [XmlAttribute]
-        public string Name
-        {
-            get => name;
-            set => this.Change(ref name, value);
-        }
+        public string Name { get => Get(""); set => Set(value); }
 
         DockLayoutPanel() : base() { }
 

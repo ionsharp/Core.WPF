@@ -2,6 +2,8 @@
 using Imagin.Core.Media;
 using Imagin.Core.Numerics;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Windows.Media;
 using static Imagin.Core.Numerics.M;
 
@@ -12,12 +14,46 @@ public static partial class XColor
     public static readonly ResourceKey ComponentToolTipTemplateKey = new();
 
     public static readonly ResourceKey ModelToolTipTemplateKey = new();
+    
+    public static readonly ResourceKey IconTemplateKey = new();
+
+    public static readonly ResourceKey ToolTipHeaderTemplateKey = new();
 
     public static readonly ResourceKey ToolTipTemplateKey = new();
-
+    
     #region System.Drawing
 
     public static void Convert(this System.Drawing.Color color, out Color result) => result = Color.FromArgb(color.A, color.R, color.G, color.B);
+
+    static readonly IEnumerable<PropertyInfo> ColorProperties
+        = XList.Where<PropertyInfo>(typeof(System.Drawing.Color).GetProperties(BindingFlags.Public | BindingFlags.Static), p => p.PropertyType == typeof(System.Drawing.Color));
+
+    public static string GetApproximateName(this ByteVector4 input)
+    {
+        var color = Convert(input);
+
+        int minDistance = int.MaxValue;
+        string minColor = System.Drawing.Color.Black.Name;
+
+        foreach (var property in ColorProperties)
+        {
+            var value = (System.Drawing.Color)property.GetValue(null, null);
+            if (value.R == color.R && value.G == color.G && value.B == color.B)
+                return value.Name.SplitCamel();
+
+            int distance = Math.Abs(value.R - color.R) + Math.Abs(value.G - color.G) + Math.Abs(value.B - color.B);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                minColor = value.Name;
+            }
+        }
+
+        return $"~ {minColor.SplitCamel()}";
+    }
+
+    public static string GetName(this ByteVector4 input)
+        => Colour.FindName(input) ?? input.GetApproximateName();
 
     #endregion
 
@@ -83,7 +119,7 @@ public static partial class XColor
     static double BlendVividLightf(double a, double b)
         => b < 0.5 ? BlendColorBurnf(a, 2.0 * b) : BlendColorDodgef(a, 2.0 * (b - 0.5));
 
-    //...
+    ///
 
     public static Color Blend(this Color a, Color b, BlendModes blendMode = BlendModes.Normal, double amount = 1)
     {
@@ -351,7 +387,7 @@ public static partial class XColor
     public static void Convert(this Color input, out Vector4 result)
         => result = new(Normalize(input.A), Normalize(input.R), Normalize(input.G), Normalize(input.B));
 
-    //...
+    ///
 
     public static Color Convert(ByteVector4 input) => Color.FromArgb(input.A, input.R, input.G, input.B);
 

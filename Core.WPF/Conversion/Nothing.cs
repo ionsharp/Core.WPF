@@ -1,9 +1,8 @@
-﻿namespace Imagin.Core.Conversion
-{
-    public sealed class Nothing
-    {
-        public static readonly Nothing Do = new();
+﻿namespace Imagin.Core.Conversion;
 
-        Nothing() { }
-    }
+public sealed class Nothing
+{
+    public static readonly Nothing Do = new();
+
+    Nothing() { }
 }

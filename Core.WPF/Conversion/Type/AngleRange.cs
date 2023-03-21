@@ -1,13 +1,12 @@
 ﻿using Imagin.Core.Numerics;
 
-namespace Imagin.Core.Conversion
+namespace Imagin.Core.Conversion;
+
+public class AngleRangeTypeConverter : StringTypeConverter<Angle>
 {
-    public class AngleRangeTypeConverter : StringTypeConverter<Angle>
-    {
-        protected override int? Length => 2;
+    protected override int? Length => 2;
 
-        protected override Angle Convert(string input) => double.Parse(input);
+    protected override Angle Convert(string input) => double.Parse(input);
 
-        protected override object Convert(Angle[] input) => new AngleRange(input[0], input[1]);
-    }
+    protected override object Convert(Angle[] input) => new AngleRange(input[0], input[1]);
 }

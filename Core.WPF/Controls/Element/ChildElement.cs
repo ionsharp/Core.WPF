@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Imagin.Core.Linq;
+using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
 
@@ -34,7 +35,7 @@ namespace Imagin.Core.Controls
                     view.AddVisualChild(newChild);
                     view.AddLogicalChild(newChild);
 
-                    view.OnChildChanged(new(e));
+                    view.OnChildChanged(e.Convert<Visual>());
                 }
             }
         }
@@ -46,17 +47,17 @@ namespace Imagin.Core.Controls
             set => SetValue(ImageForegroundProperty, value);
         }
 
-        //...
+        ///
 
         protected override int VisualChildrenCount => GetValue(ChildProperty) is not null ? 1 : 0;
 
         protected override Visual GetVisualChild(int index) => (UIElement)GetValue(ChildProperty);
 
-        //...
+        ///
 
         public ChildElement() : base() { }
 
-        //...
+        ///
 
         protected override Size ArrangeOverride(Size finalSize)
         {
@@ -76,6 +77,6 @@ namespace Imagin.Core.Controls
             return new Size(0, 0);
         }
 
-        protected virtual void OnChildChanged(Value<Visual> input) { }
+        protected virtual void OnChildChanged(ReadOnlyValue<Visual> input) { }
     }
 }

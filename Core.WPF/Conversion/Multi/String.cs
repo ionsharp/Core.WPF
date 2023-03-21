@@ -14,8 +14,7 @@ namespace Imagin.Core.Conversion;
 [ValueConversion(typeof(object[]), typeof(string))]
 public class BulletMultiConverter : MultiConverter<string>
 {
-    public static BulletMultiConverter Default { get; private set; } = new BulletMultiConverter();
-    BulletMultiConverter() { }
+    public BulletMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -41,8 +40,7 @@ public class BulletMultiConverter : MultiConverter<string>
 [ValueConversion(typeof(object[]), typeof(string))]
 public class ColorMultiConverter : MultiConverter<string>
 {
-    public static ColorMultiConverter Default { get; private set; } = new();
-    public ColorMultiConverter() { }
+    public ColorMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -78,8 +76,7 @@ public class ColorMultiConverter : MultiConverter<string>
 [ValueConversion(typeof(object[]), typeof(string))]
 public class FileSizeMultiConverter : MultiConverter<string>
 {
-    public static FileSizeMultiConverter Default { get; private set; } = new FileSizeMultiConverter();
-    FileSizeMultiConverter() { }
+    public FileSizeMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -99,16 +96,28 @@ public class FileSizeMultiConverter : MultiConverter<string>
 }
 
 [ValueConversion(typeof(object[]), typeof(string))]
-public class PropertyChangedMultiConverter : MultiConverter<string>
+public abstract class StringFormatMultiConverter<T> : MultiConverter<string>
 {
-    public static PropertyChangedMultiConverter Default { get; private set; } = new PropertyChangedMultiConverter();
-    PropertyChangedMultiConverter() { }
+    public StringFormatMultiConverter() : base() { }
 
-    public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    protected abstract string Convert(T a, string b);
+
+    public sealed override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values?.Length > 1)
-            return values[0].ToString();
+        if (values?.Length == 2)
+        {
+            if (values[0] is T a)
+            {
+                if (values[1] is string b)
+                {
+                    var i = b.Between("{", "}");
+                    if (!i.NullOrEmpty())
+                        return b.ReplaceBetween('{', '}', "0").F(Convert(a, i));
 
+                    return Convert(a, b);
+                }
+            }
+        }
         return Binding.DoNothing;
     }
 }
@@ -116,8 +125,7 @@ public class PropertyChangedMultiConverter : MultiConverter<string>
 [ValueConversion(typeof(object[]), typeof(string))]
 public class StringMultiConverter : MultiConverter<string>
 {
-    public static StringMultiConverter Default { get; private set; } = new StringMultiConverter();
-    StringMultiConverter() { }
+    public StringMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -136,8 +144,7 @@ public class StringMultiConverter : MultiConverter<string>
 [ValueConversion(typeof(object[]), typeof(string))]
 public class StringReplaceMultiConverter : MultiConverter<string>
 {
-    public static StringReplaceMultiConverter Default { get; private set; } = new StringReplaceMultiConverter();
-    StringReplaceMultiConverter() { }
+    public StringReplaceMultiConverter() : base() { }
 
     public sealed override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -159,8 +166,7 @@ public class StringReplaceMultiConverter : MultiConverter<string>
 [ValueConversion(typeof(object[]), typeof(string))]
 public class SubstringMultiConverter : MultiConverter<string>
 {
-    public static SubstringMultiConverter Default { get; private set; } = new SubstringMultiConverter();
-    SubstringMultiConverter() { }
+    public SubstringMultiConverter() : base() { }
 
     public sealed override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -194,8 +200,7 @@ public class SubstringMultiConverter : MultiConverter<string>
 [ValueConversion(typeof(object[]), typeof(string))]
 public class TimeLeftMultiConverter : MultiConverter<string>
 {
-    public static TimeLeftMultiConverter Default { get; private set; } = new TimeLeftMultiConverter();
-    TimeLeftMultiConverter() { }
+    public TimeLeftMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -215,10 +220,23 @@ public class TimeLeftMultiConverter : MultiConverter<string>
 }
 
 [ValueConversion(typeof(object[]), typeof(string))]
+public class ToStringMultiConverter : MultiConverter<string>
+{
+    public ToStringMultiConverter() : base() { }
+
+    public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (values?.Length > 1)
+            return values[0].ToString();
+
+        return Binding.DoNothing;
+    }
+}
+
+[ValueConversion(typeof(object[]), typeof(string))]
 public class UnitStringMultiConverter : MultiConverter<string>
 {
-    public static UnitStringMultiConverter Default { get; private set; } = new UnitStringMultiConverter();
-    UnitStringMultiConverter() { }
+    public UnitStringMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -242,117 +260,81 @@ public class UnitStringMultiConverter : MultiConverter<string>
     }
 }
 
-//...
-
-[ValueConversion(typeof(object[]), typeof(string))]
-public abstract class StringFormatMultiConverter<T> : MultiConverter<string>
-{
-    protected abstract string Convert(T a, string b);
-
-    public sealed override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (values?.Length == 2)
-        {
-            if (values[0] is T a)
-            {
-                if (values[1] is string b)
-                {
-                    var i = b.Between("{", "}");
-                    if (!i.NullOrEmpty())
-                        return b.ReplaceBetween('{', '}', "0").F(Convert(a, i));
-
-                    return Convert(a, b);
-                }
-            }
-        }
-        return Binding.DoNothing;
-    }
-}
+///
 
 public class ByteStringFormatMultiConverter : StringFormatMultiConverter<byte>
 {
-    public static ByteStringFormatMultiConverter Default { get; private set; } = new ByteStringFormatMultiConverter();
-    ByteStringFormatMultiConverter() { }
+    public ByteStringFormatMultiConverter() : base() { }
 
     protected override string Convert(byte a, string b) => a.ToString(b);
 }
 
 public class DecimalStringFormatMultiConverter : StringFormatMultiConverter<decimal>
 {
-    public static DecimalStringFormatMultiConverter Default { get; private set; } = new DecimalStringFormatMultiConverter();
-    DecimalStringFormatMultiConverter() { }
+    public DecimalStringFormatMultiConverter() : base() { }
 
     protected override string Convert(decimal a, string b) => a.ToString(b);
 }
 
 public class DoubleStringFormatMultiConverter : StringFormatMultiConverter<double>
 {
-    public static DoubleStringFormatMultiConverter Default { get; private set; } = new DoubleStringFormatMultiConverter();
-    DoubleStringFormatMultiConverter() { }
+    public DoubleStringFormatMultiConverter() : base() { }
 
     protected override string Convert(double a, string b) => a.ToString(b);
 }
 
 public class Int16StringFormatMultiConverter : StringFormatMultiConverter<short>
 {
-    public static Int16StringFormatMultiConverter Default { get; private set; } = new Int16StringFormatMultiConverter();
-    Int16StringFormatMultiConverter() { }
+    public Int16StringFormatMultiConverter() : base() { }
 
     protected override string Convert(short a, string b) => a.ToString(b);
 }
 
 public class Int32StringFormatMultiConverter : StringFormatMultiConverter<int>
 {
-    public static Int32StringFormatMultiConverter Default { get; private set; } = new Int32StringFormatMultiConverter();
-    Int32StringFormatMultiConverter() { }
+    public Int32StringFormatMultiConverter() : base() { }
 
     protected override string Convert(int a, string b) => a.ToString(b);
 }
 
 public class Int64StringFormatMultiConverter : StringFormatMultiConverter<long>
 {
-    public static Int64StringFormatMultiConverter Default { get; private set; } = new Int64StringFormatMultiConverter();
-    Int64StringFormatMultiConverter() { }
+    public Int64StringFormatMultiConverter() : base() { }
 
     protected override string Convert(long a, string b) => a.ToString(b);
 }
 
 public class SingleStringFormatMultiConverter : StringFormatMultiConverter<float>
 {
-    public static SingleStringFormatMultiConverter Default { get; private set; } = new SingleStringFormatMultiConverter();
-    SingleStringFormatMultiConverter() { }
+    public SingleStringFormatMultiConverter() : base() { }
 
     protected override string Convert(float a, string b) => a.ToString(b);
 }
 
 public class UDoubleStringFormatMultiConverter : StringFormatMultiConverter<UDouble>
 {
-    public static UDoubleStringFormatMultiConverter Default { get; private set; } = new UDoubleStringFormatMultiConverter();
-    UDoubleStringFormatMultiConverter() { }
+    public UDoubleStringFormatMultiConverter() : base() { }
 
     protected override string Convert(UDouble a, string b) => a.ToString(b);
 }
 
 public class UInt16StringFormatMultiConverter : StringFormatMultiConverter<ushort>
 {
-    public static UInt16StringFormatMultiConverter Default { get; private set; } = new UInt16StringFormatMultiConverter();
-    UInt16StringFormatMultiConverter() { }
+    public UInt16StringFormatMultiConverter() : base() { }
 
     protected override string Convert(ushort a, string b) => a.ToString(b);
 }
 
 public class UInt32StringFormatMultiConverter : StringFormatMultiConverter<uint>
 {
-    public static UInt32StringFormatMultiConverter Default { get; private set; } = new UInt32StringFormatMultiConverter();
-    UInt32StringFormatMultiConverter() { }
+    public UInt32StringFormatMultiConverter() : base() { }
 
     protected override string Convert(uint a, string b) => a.ToString(b);
 }
 
 public class UInt64StringFormatMultiConverter : StringFormatMultiConverter<ulong>
 {
-    public static UInt64StringFormatMultiConverter Default { get; private set; } = new UInt64StringFormatMultiConverter();
-    UInt64StringFormatMultiConverter() { }
+    public UInt64StringFormatMultiConverter() : base() { }
 
     protected override string Convert(ulong a, string b) => a.ToString(b);
 }

@@ -7,17 +7,17 @@
     </ResourceDictionary.MergedDictionaries>
     <Style x:Key="{x:Type local:Ruler}" TargetType="{x:Type local:Ruler}" BasedOn="{StaticResource {x:Type FrameworkElement}}">
         <Setter Property="AutoSize" Value="True" />
-        <Setter Property="Background" Value="{local:ThemeKey ActualKey=RulerBackground}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=RulerBorder}" />
+        <Setter Property="Background" Value="{local:ThemeKey RulerBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey RulerBorder}" />
         <Setter Property="ChipColor" Value="#22000000" />
-        <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=RulerForeground}" />
+        <Setter Property="Foreground" Value="{local:ThemeKey RulerForeground}" />
         <Setter Property="Height" Value="32" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Resolution" Value="72" />
         <Setter Property="SmallStep" Value="10" />
         <Setter Property="Step" Value="50" />
         <Setter Property="TickPlacement" Value="Top" />
-        <Setter Property="TickStroke" Value="{local:ThemeKey ActualKey=RulerTickStroke}" />
+        <Setter Property="TickStroke" Value="{local:ThemeKey RulerTickStroke}" />
         <Setter Property="Unit" Value="Pixel" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>

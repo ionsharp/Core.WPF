@@ -210,7 +210,7 @@ namespace Imagin.Core.Controls
             base.OnRender(drawingContext);
             if (Points?.Count > 1)
             {
-                var geometry = new Shape(Points).Geometry(Closed);
+                var geometry = new PointShape(Points).GetGeometry(Closed);
                 drawingContext.DrawGeometry(Brushes.Transparent, new Pen(Brushes.Black, StrokeThickness1 / Zoom) { DashStyle = DashStyle1 }, geometry);
                 drawingContext.DrawGeometry(Brushes.Transparent, new Pen(Brushes.White, StrokeThickness2 / Zoom) { DashStyle = DashStyle2 }, geometry);
             }

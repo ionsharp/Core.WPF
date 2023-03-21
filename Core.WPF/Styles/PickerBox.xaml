@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:l="clr-namespace:Imagin.Core.Local.Extensions"
+    xmlns:l="http://wpflocalizeextension.codeplex.com"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
@@ -42,14 +42,14 @@
         <Setter Property="Width" Value="28"/>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:ColorBox}" TargetType="{x:Type local:ColorBox}" BasedOn="{StaticResource {x:Type local:PickerBox}}">
         <Setter Property="Title" Value="Select color..."/>
         <Setter Property="ValueTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <Rectangle Fill="{Binding Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}"/>
+                    <Rectangle Fill="{Data:Bind Convert={x:Type Conversion:ColorToSolidColorBrushConverter}}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>

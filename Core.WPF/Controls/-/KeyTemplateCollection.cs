@@ -1,9 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+public class KeyTemplateCollection : ObservableCollection<KeyTemplate>
 {
-    public class KeyTemplateCollection : ObservableCollection<KeyTemplate>
-    {
-        public KeyTemplateCollection() : base() { }
-    }
+    public KeyTemplateCollection() : base() { }
 }

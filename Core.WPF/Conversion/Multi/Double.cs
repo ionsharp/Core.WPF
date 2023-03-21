@@ -10,28 +10,25 @@ using System.Windows.Data;
 namespace Imagin.Core.Conversion;
 
 [ValueConversion(typeof(object[]), typeof(double))]
-public class CenterToolTipMultiConverter : MultiConverter<double>
+public class HorizontalCenterMultiConverter : MultiConverter<double>
 {
-    public static CenterToolTipMultiConverter Default { get; private set; } = new CenterToolTipMultiConverter();
-    CenterToolTipMultiConverter() { }
+    public HorizontalCenterMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values.FirstOrDefault(v => v == DependencyProperty.UnsetValue) != null)
-        {
+        if (values.FirstOrDefault(i => i == DependencyProperty.UnsetValue) != null)
             return double.NaN;
-        }
-        double placementTargetWidth = (double)values[0];
-        double toolTipWidth = (double)values[1];
-        return (placementTargetWidth / 2.0) - (toolTipWidth / 2.0);
+
+        double aWidth = (double)values[0];
+        double bWidth = (double)values[1];
+        return (aWidth / 2.0) - (bWidth / 2.0);
     }
 }
 
 [ValueConversion(typeof(object[]), typeof(double))]
 public class MathMultiConverter : MultiConverter<double>
 {
-    public static MathMultiConverter Default { get; private set; } = new MathMultiConverter();
-    MathMultiConverter() { }
+    public MathMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
@@ -93,55 +90,28 @@ public class MathMultiConverter : MultiConverter<double>
     }
 }
 
-[ValueConversion(typeof(double), typeof(double))]
-public class UnitMultiConverter : MultiConverter<double>
+[ValueConversion(typeof(object[]), typeof(double))]
+public class OpacityMultiConverter : MultiConverter<double>
 {
-    public static UnitMultiConverter Default { get; private set; } = new();
-    UnitMultiConverter() { }
+    public OpacityMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values?.Length >= 4)
+        var result = 1.0;
+        if (values?.Length > 0)
         {
-            if (values[0] is double value)
+            foreach (var i in values)
             {
-                if (values[1] is float resolution)
-                {
-                    if (values[2] is Unit from)
-                    {
-                        if (values[3] is Unit to)
-                        {
-                            var result = from.Convert(to, value, resolution);
-                            if (values.Length >= 5)
-                            {
-                                if (values[4] is double scale)
-                                    return result * scale;
-                            }
-                            return result;
-                        }
-                    }
-                }
+                if (i is double j)
+                    result *= j;
             }
         }
-        return Binding.DoNothing;
+        return result;
     }
 }
 
 [ValueConversion(typeof(object[]), typeof(double))]
 public class ZoomMultiConverter : MultiConverter<double>
 {
-    public static ZoomMultiConverter Default { get; private set; } = new ZoomMultiConverter();
-    ZoomMultiConverter() { }
-
-    public override object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    {
-        if (values[0] is double)
-        {
-            var value = (double)values[0];
-            var zoom = (double)values[1];
-
-            return value / zoom;
-        }
-        return default(double);
-    }
+    public ZoomMultiConverter() : base(i => i.Values[0] is double value && i.Values[1] is double zoom && zoom != 0 ? value / zoom : default) { }
 }

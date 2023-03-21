@@ -13,13 +13,13 @@ namespace Imagin.Core.Controls
     {
         public static readonly ReferenceKey<Canvas> CanvasKey = new();
 
-        //...
+        ///
 
         const double height = 100;
 
         const double width = 100;
 
-        //...
+        ///
 
         static System.Windows.Threading.DispatcherTimer DefaultTimer => new()
         {
@@ -28,11 +28,11 @@ namespace Imagin.Core.Controls
 
         System.Windows.Threading.DispatcherTimer timer = null;
 
-        //...
+        ///
 
         Canvas Canvas => this.GetChild<Canvas>(CanvasKey);
 
-        //...
+        ///
 
         readonly List<Line> intermediateTicks = new();
 
@@ -40,7 +40,7 @@ namespace Imagin.Core.Controls
 
         readonly List<Ellipse> minorTicks = new();
 
-        //...
+        ///
 
         public static readonly DependencyProperty CenterTemplateProperty = DependencyProperty.Register(nameof(CenterTemplate), typeof(DataTemplate), typeof(Clock), new FrameworkPropertyMetadata(null));
         public DataTemplate CenterTemplate
@@ -65,7 +65,7 @@ namespace Imagin.Core.Controls
         static void OnAChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if (sender is Clock control)
-                control.APosition = control.GetPosition(new Value<DateTime>(e).New);
+                control.APosition = control.GetPosition(e.Convert<DateTime>().New);
         }
 
         static readonly DependencyPropertyKey APositionKey = DependencyProperty.RegisterReadOnly(nameof(APosition), typeof(Point), typeof(Clock), new FrameworkPropertyMetadata(new Point(0, 0)));
@@ -97,7 +97,7 @@ namespace Imagin.Core.Controls
             set => SetValue(AVisibilityProperty, value);
         }
 
-        //...
+        ///
 
         public static readonly DependencyProperty BProperty = DependencyProperty.Register(nameof(B), typeof(DateTime), typeof(Clock), new FrameworkPropertyMetadata(DateTime.Now.Date.AddHours(9), OnBChanged));
         public DateTime B
@@ -108,7 +108,7 @@ namespace Imagin.Core.Controls
         static void OnBChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if (sender is Clock control)
-                control.BPosition = control.GetPosition(new Value<DateTime>(e).New);
+                control.BPosition = control.GetPosition(e.Convert<DateTime>().New);
         }
 
         static readonly DependencyPropertyKey BPositionKey = DependencyProperty.RegisterReadOnly(nameof(BPosition), typeof(Point), typeof(Clock), new FrameworkPropertyMetadata(new Point(0, 0)));
@@ -140,7 +140,7 @@ namespace Imagin.Core.Controls
             set => SetValue(BVisibilityProperty, value);
         }
 
-        //...
+        ///
 
         public static readonly DependencyProperty HourStrokeProperty = DependencyProperty.Register(nameof(HourStroke), typeof(Brush), typeof(Clock), new FrameworkPropertyMetadata(Brushes.Black));
         public Brush HourStroke
@@ -164,7 +164,7 @@ namespace Imagin.Core.Controls
             private set => SetValue(HourTransformKey, value);
         }
 
-        //...
+        ///
 
         public static readonly DependencyProperty MinuteStrokeProperty = DependencyProperty.Register(nameof(MinuteStroke), typeof(Brush), typeof(Clock), new FrameworkPropertyMetadata(Brushes.Black));
         public Brush MinuteStroke
@@ -188,7 +188,7 @@ namespace Imagin.Core.Controls
             private set => SetValue(MinuteTransformKey, value);
         }
 
-        //...
+        ///
 
         public static readonly DependencyProperty SecondStrokeProperty = DependencyProperty.Register(nameof(SecondStroke), typeof(Brush), typeof(Clock), new FrameworkPropertyMetadata(Brushes.Black));
         public Brush SecondStroke
@@ -212,7 +212,7 @@ namespace Imagin.Core.Controls
             private set => SetValue(SecondTransformKey, value);
         }
 
-        //...
+        ///
 
         public static readonly DependencyProperty MajorTickStrokeProperty = DependencyProperty.Register(nameof(MajorTickStroke), typeof(Brush), typeof(Clock), new FrameworkPropertyMetadata(Brushes.Black, OnTicksChanged));
         public Brush MajorTickStroke
@@ -235,7 +235,7 @@ namespace Imagin.Core.Controls
             set => SetValue(MajorTickLengthProperty, value);
         }
 
-        //...
+        ///
 
         public static readonly DependencyProperty MinorTickStrokeProperty = DependencyProperty.Register(nameof(MinorTickStroke), typeof(Brush), typeof(Clock), new FrameworkPropertyMetadata(Brushes.Black, OnTicksChanged));
         public Brush MinorTickStroke
@@ -251,7 +251,7 @@ namespace Imagin.Core.Controls
             set => SetValue(MinorTickStrokeThicknessProperty, value);
         }
 
-        //...
+        ///
 
         public static readonly DependencyProperty IntermediateTickStrokeProperty = DependencyProperty.Register(nameof(IntermediateTickStroke), typeof(Brush), typeof(Clock), new FrameworkPropertyMetadata(Brushes.Black, OnTicksChanged));
         public Brush IntermediateTickStroke
@@ -274,7 +274,7 @@ namespace Imagin.Core.Controls
             set => SetValue(IntermediateTickLengthProperty, value);
         }
 
-        //...
+        ///
 
         public static readonly DependencyProperty TimeZoneProperty = DependencyProperty.Register(nameof(TimeZone), typeof(Time.TimeZone), typeof(Clock), new FrameworkPropertyMetadata(Time.TimeZone.EasternStandardTime));
         public Time.TimeZone TimeZone
@@ -283,11 +283,11 @@ namespace Imagin.Core.Controls
             set => SetValue(TimeZoneProperty, value);
         }
 
-        //...
+        ///
 
         static void OnTicksChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => (i as Clock).DrawTicks();
 
-        //...
+        ///
 
         public Clock() : base()
         {
@@ -313,11 +313,11 @@ namespace Imagin.Core.Controls
             InitializeComponent();
         }
 
-        //...
+        ///
 
         double AngleFrom(DateTime input) => ((input.Hour > 11 ? input.Hour - 12 : input.Hour) * 30.0) + (input.Minute * 0.5) - 90;
 
-        //...
+        ///
 
         void OnTick(object sender, EventArgs e)
         {
@@ -347,7 +347,7 @@ namespace Imagin.Core.Controls
             SetCurrentValue(DateTimeProperty, now);
         }
 
-        //...
+        ///
 
         void ClearTicks()
         {
@@ -485,13 +485,13 @@ namespace Imagin.Core.Controls
             }
         }
 
-        //...
+        ///
 
         double X(double i) => (Math.Cos(Angle.GetRadian(i)) * 50.0) + (width / 2.0);
 
         double Y(double i) => (Math.Sin(Angle.GetRadian(i)) * 50.0) + (height / 2.0);
 
-        //...
+        ///
 
         Point GetPosition(DateTime input)
         {
@@ -500,7 +500,7 @@ namespace Imagin.Core.Controls
             return new Point(x + (width / 2.0) - 3, y + (height / 2.0) - 3);
         }
 
-        //...
+        ///
 
         public override void OnApplyTemplate()
         {

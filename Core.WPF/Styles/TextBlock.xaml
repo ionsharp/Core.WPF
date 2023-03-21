@@ -4,9 +4,13 @@
     xmlns:local="clr-namespace:Imagin.Core.Controls"
     xmlns:Conversion="clr-namespace:Imagin.Core.Conversion"
     xmlns:Data="clr-namespace:Imagin.Core.Data"
+    xmlns:Linq="clr-namespace:Imagin.Core.Linq"
     xmlns:Text="clr-namespace:Imagin.Core.Text;assembly=Imagin.Core">
     <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}">
-        <!--<Setter Property="FontFamily" Value="{Markup:DefaultFont Lucida.ttf#Lucida Grande}"/>-->
+        <!--<Setter Property="FontFamily" Value="{Markup:Font Lucida.ttf#Lucida Grande, Core}"/>-->
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
+        <Setter Property="Linq:XTextBlock.FontScale" Value="{Data:Options FontScale}"/>
+        <Setter Property="Linq:XTextBlock.FontScaleOrigin" Value="{Data:Self FontSize}"/>
         <Setter Property="UseLayoutRounding" Value="False" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
@@ -14,10 +18,10 @@
     <Style x:Key="{x:Type local:BulletElement}" TargetType="{x:Type local:BulletElement}" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="Text">
             <Setter.Value>
-                <MultiBinding Converter="{x:Static Conversion:BulletMultiConverter.Default}">
+                <Data:MultiBind Convert="{x:Type Conversion:BulletMultiConverter}">
                     <Data:Self Path="Bullet"/>
                     <Data:Self Path="Value"/>
-                </MultiBinding>
+                </Data:MultiBind>
             </Setter.Value>
         </Setter>
         <Style.Triggers>

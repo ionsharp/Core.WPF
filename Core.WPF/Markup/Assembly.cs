@@ -1,94 +1,110 @@
 ﻿using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using System;
 using System.Windows.Markup;
 
-namespace Imagin.Core.Markup
+namespace Imagin.Core.Markup;
+
+public abstract class AssemblyExtension : MarkupExtension
 {
-    public sealed class AssemblyCopyright : MarkupExtension
+    public string AssemblyName { get; set; }
+
+    AssemblyType assembly = AssemblyType.Unspecified;
+    public AssemblyType Assembly
     {
-        public AssemblyCopyright() : base() { }
-
-        public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.Copyright();
-    }
-
-    public sealed class AssemblyDescription : MarkupExtension
-    {
-        public AssemblyDescription() : base() { }
-
-        public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.Description();
-    }
-
-    public sealed class AssemblyFileVersion : AssemblyVersion
-    {
-        public AssemblyFileVersion() : base() { }
-
-        public AssemblyFileVersion(string assembly) : base(assembly) { }
-
-        public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.FileVersion(Assembly);
-    }
-
-    public class AssemblyName : MarkupExtension
-    {
-        public string Assembly { get; set; } = null;
-
-        public AssemblyName() : base() { }
-
-        public AssemblyName(string assembly) : base()
+        get => assembly;
+        set
         {
-            Assembly = assembly;
-        }
-
-        public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.ShortName(Assembly);
-    }
-
-    public sealed class AssemblyIcon : Image
-    {
-        public AssemblyIcon(string relativePath) : base(relativePath) { }
-
-        public AssemblyIcon(string assembly, string relativePath) : base(assembly, relativePath) { }
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            if (Assembly == null)
-                Assembly = XAssembly.ShortName();
-
-            return base.ProvideValue(serviceProvider);
+            assembly = value;
+            AssemblyName = XAssembly.GetAssemblyName(value);
         }
     }
 
-    public sealed class AssemblyProduct : MarkupExtension
-    {
-        public AssemblyProduct() : base() { }
+    public AssemblyExtension() : this(AssemblyType.Current) { }
 
-        public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.Product();
-    }
+    public AssemblyExtension(AssemblyType assembly) : base() => Assembly = assembly;
+}
 
-    public sealed class AssemblyTitle : MarkupExtension
-    {
-        public AssemblyTitle() : base() { }
+///
 
-        public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.Title();
-    }
+public sealed class AssemblyCopyright : AssemblyExtension
+{
+    public AssemblyCopyright() : base() { }
 
-    /// <summary>
-    /// This attribute is not discoverable for some reason. Use <see cref="AssemblyFileVersion"/> instead.
-    /// </summary>
-    public class AssemblyVersion : MarkupExtension
-    {
-        public string Assembly { get; set; } = null;
+    public AssemblyCopyright(AssemblyType assembly) : base(assembly) { }
 
-        public AssemblyVersion() : base() { }
+    public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.GetProperties(AssemblyName).Copyright;
+}
 
-        public AssemblyVersion(string assembly) : base()
-        {
-            Assembly = assembly;
-        }
+public sealed class AssemblyDescription : AssemblyExtension
+{
+    public AssemblyDescription() : base() { }
 
-        public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.Version(Assembly);
-    }
+    public AssemblyDescription(AssemblyType assembly) : base(assembly) { }
 
-    public sealed class DefaultAssemblyName : AssemblyName
-    {
-        public DefaultAssemblyName() : base(AssemblyProperties.Name) { }
-    }
+    public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.GetProperties(AssemblyName).Description;
+}
+
+public sealed class AssemblyFileVersion : AssemblyExtension
+{
+    public AssemblyFileVersion() : base() { }
+
+    public AssemblyFileVersion(AssemblyType assembly) : base(assembly) { }
+
+    public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.GetProperties(AssemblyName).FileVersion.ShortVersion();
+}
+
+///
+
+public class AssemblyName : AssemblyExtension
+{
+    public AssemblyName() : base() { }
+
+    public AssemblyName(AssemblyType assembly) : base(assembly) { }
+
+    public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.GetProperties(AssemblyName).Name;
+}
+
+public sealed class DefaultAssemblyName : AssemblyName
+{
+    public DefaultAssemblyName() : base(AssemblyType.Core) { }
+}
+
+///
+
+public sealed class AssemblyProduct : AssemblyExtension
+{
+    public AssemblyProduct() : base() { }
+
+    public AssemblyProduct(AssemblyType assembly) : base(assembly) { }
+
+    public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.GetProperties(AssemblyName).Product;
+}
+
+public sealed class AssemblyTitle : AssemblyExtension
+{
+    public AssemblyTitle() : base() { }
+
+    public AssemblyTitle(AssemblyType assembly) : base(assembly) { }
+
+    public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.GetProperties(AssemblyName).Title;
+}
+
+[Obsolete("Not discoverable. Use 'AssemblyFileVersion' instead.")]
+public class AssemblyVersion : AssemblyExtension
+{
+    public AssemblyVersion() : base() { }
+
+    public AssemblyVersion(AssemblyType assembly) : base(assembly) { }
+
+    public override object ProvideValue(IServiceProvider serviceProvider) => XAssembly.GetProperties(AssemblyName).Version.ShortVersion();
+}
+
+///
+
+public sealed class AssemblyIcon : Image
+{
+    public AssemblyIcon() : base("Logo.ico", AssemblyType.Current) { }
+
+    public AssemblyIcon(AssemblyType assembly) : base("Logo.ico", assembly) { }
 }

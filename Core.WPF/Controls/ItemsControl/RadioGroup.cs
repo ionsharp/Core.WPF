@@ -7,6 +7,8 @@ namespace Imagin.Core.Controls
 {
     public class RadioGroup : ItemsControl
     {
+        public static readonly ResourceKey ItemContainerStyleKey = new();
+
         readonly Handle handle = false;
 
         public static readonly DependencyProperty GroupNameProperty = DependencyProperty.Register(nameof(GroupName), typeof(string), typeof(RadioGroup), new FrameworkPropertyMetadata(string.Empty));
@@ -79,12 +81,12 @@ namespace Imagin.Core.Controls
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
+                    break;
                     foreach (var m in e.OldItems)
                     {
                         if (this.GetContainer(m) is RadioButton n)
                             n.Checked -= OnChecked;
                     }
-                    break;
             }
         }
 

@@ -4,22 +4,16 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Imagin.Core.Controls;
 
-public class ResizeAdorner : Adorner, ISubscribe, IUnsubscribe
+/// <inheritdoc/>
+public class ResizeAdorner : TransformAdorner
 {
     #region Properties
-
+    
     readonly Thumb top, bottom, left, right, topLeft, topRight, bottomLeft, bottomRight;
-
-    readonly VisualCollection Children;
-
-    protected override int VisualChildrenCount 
-        => Children.Count;
 
     public Axis2D? CoerceAxis 
         => XElement.GetResizeCoerceAxis(AdornedElement as FrameworkElement);
@@ -27,11 +21,7 @@ public class ResizeAdorner : Adorner, ISubscribe, IUnsubscribe
     public CardinalDirection? CoerceDirection 
         => XElement.GetResizeCoerceDirection(AdornedElement as FrameworkElement);
 
-    public double Snap 
-        => XElement.GetResizeSnap(AdornedElement as FrameworkElement);
-
-    public Style ThumbStyle 
-        => XElement.GetResizeThumbStyle(AdornedElement as FrameworkElement);
+    public double Snap => XElement.GetResizeSnap(AdornedElement as FrameworkElement);
 
     #endregion
 
@@ -39,9 +29,6 @@ public class ResizeAdorner : Adorner, ISubscribe, IUnsubscribe
 
     public ResizeAdorner(FrameworkElement element) : base(element)
     {
-        Children
-            = new VisualCollection(this);
-
         BuildThumb(ref top,
             Cursors.SizeNS);
         BuildThumb(ref left,
@@ -64,21 +51,6 @@ public class ResizeAdorner : Adorner, ISubscribe, IUnsubscribe
 
     #region Methods
 
-    bool CanHandle(Thumb Thumb)
-    {
-        var result = true;
-
-        if (AdornedElement == null || Thumb == null)
-            result = false;
-
-        if (result)
-            EnforceSize(AdornedElement as FrameworkElement);
-
-        return result;
-    }
-
-    //...
-        
     /// <summary>
     /// Handler for resizing from the bottom-right.
     /// </summary>
@@ -253,136 +225,91 @@ public class ResizeAdorner : Adorner, ISubscribe, IUnsubscribe
         }
     }
 
-    //...
+    ///
 
-    /// <summary>
-    /// Helper method to instantiate the corner Thumbs, 
-    /// set the Cursor property, set some appearance properties, 
-    /// and add the elements to the visual tree.
-    /// </summary>
-    void BuildThumb(ref Thumb thumb, Cursor cursor)
-    {
-        if (thumb == null)
-        {
-            thumb = new Thumb()
-            {
-                Background = Brushes.Black,
-                BorderThickness = new Thickness(0),
-                Cursor = cursor,
-                Height = 10,
-                Style = ThumbStyle,
-                Width = 10,
-            };
-            Children.Add(thumb);
-        }
-    }
-
-    /// <summary>
-    /// This method ensures that the Widths and Heights 
-    /// are initialized.  Sizing to content produces Width 
-    /// and Height values of Double.NaN.  Because this Adorner 
-    /// explicitly resizes, the Width and Height need to be 
-    /// set first.  It also sets the maximum size of the 
-    /// adorned element.
-    /// </summary>
-    void EnforceSize(FrameworkElement input)
-    {
-        if (input.Width.Equals(double.NaN))
-            input.Width = input.DesiredSize.Width;
-
-        if (input.Height.Equals(double.NaN))
-            input.Height = input.DesiredSize.Height;
-
-        if (input.Parent is FrameworkElement parent)
-        {
-            input.MaxHeight 
-                = parent.ActualHeight;
-            input.MaxWidth 
-                = parent.ActualWidth;
-        }
-    }
-
-    //...
-
+    /// <inheritdoc/>
     protected override Size ArrangeOverride(Size finalSize)
     {
-        //desiredWidth and desiredHeight are the width and height of the element that’s being adorned; these will be used to place the TransformAdorner at the corners of the adorned element.  
-        var desiredWidth 
+        //Desired width/height
+        var dW 
             = AdornedElement.DesiredSize.Width;
-        var desiredHeight 
+        var dH 
             = AdornedElement.DesiredSize.Height;
 
-        //adornerWidth & adornerHeight are used for placement as well.
-        var adornerWidth 
+        //Adorner width/height
+        var aW 
             = DesiredSize.Width;
-        var adornerHeight 
+        var aH 
             = DesiredSize.Height;
 
-        //rotateLine.Arrange(new Rect((desiredWidth / 2) - (adornerWidth / 2), (-adornerHeight / 2) - 10, adornerWidth, adornerHeight));
-        //rotateSphere.Arrange(new Rect((desiredWidth / 2) - (adornerWidth / 2), (-adornerHeight / 2) - 20, adornerWidth, adornerHeight));
-
         top
-            .Arrange(new Rect((desiredWidth / 2) - (adornerWidth / 2), -adornerHeight / 2, adornerWidth, adornerHeight));
+            .Arrange(new Rect((dW / 2) - (aW / 2), -aH / 2, aW, aH));
         left
-            .Arrange(new Rect(-adornerWidth / 2, (desiredHeight / 2) - (adornerHeight / 2), adornerWidth, adornerHeight));
+            .Arrange(new Rect(-aW / 2, (dH / 2) - (aH / 2), aW, aH));
         right
-            .Arrange(new Rect(desiredWidth - adornerWidth / 2, (desiredHeight / 2) - (adornerHeight / 2), adornerWidth, adornerHeight));
+            .Arrange(new Rect(dW - aW / 2, (dH / 2) - (aH / 2), aW, aH));
         bottom
-            .Arrange(new Rect((desiredWidth / 2) - (adornerWidth / 2), desiredHeight - adornerHeight / 2, adornerWidth, adornerHeight));
+            .Arrange(new Rect((dW / 2) - (aW / 2), dH - aH / 2, aW, aH));
         topLeft
-            .Arrange(new Rect(-adornerWidth / 2, -adornerHeight / 2, adornerWidth, adornerHeight));
+            .Arrange(new Rect(-aW / 2, -aH / 2, aW, aH));
         topRight
-            .Arrange(new Rect(desiredWidth - adornerWidth / 2, -adornerHeight / 2, adornerWidth, adornerHeight));
+            .Arrange(new Rect(dW - aW / 2, -aH / 2, aW, aH));
         bottomLeft
-            .Arrange(new Rect(-adornerWidth / 2, desiredHeight - adornerHeight / 2, adornerWidth, adornerHeight));
+            .Arrange(new Rect(-aW / 2, dH - aH / 2, aW, aH));
         bottomRight
-            .Arrange(new Rect(desiredWidth - adornerWidth / 2, desiredHeight - adornerHeight / 2, adornerWidth, adornerHeight));
+            .Arrange(new Rect(dW - aW / 2, dH - aH / 2, aW, aH));
             
         return finalSize;
     }
 
-    protected override Visual GetVisualChild(int index) => Children[index];
+    /// <inheritdoc/>
+    protected override void BuildThumb(ref Thumb thumb, Cursor cursor, double height = DefaultThumbHeight, double width = DefaultThumbWidth, DependencyProperty property = null)
+        => base.BuildThumb(ref thumb, cursor, height, width, XElement.ResizeThumbStyleProperty);
 
-    //...
+    ///
 
-    public void Subscribe()
+    /// <inheritdoc/>
+    public override void Subscribe()
     {
+        base.Subscribe();
         top.DragDelta
-            += new DragDeltaEventHandler(HandleTop);
+            += HandleTop;
         left.DragDelta
-            += new DragDeltaEventHandler(HandleLeft);
+            += HandleLeft;
         right.DragDelta
-            += new DragDeltaEventHandler(HandleRight);
+            += HandleRight;
         bottom.DragDelta
-            += new DragDeltaEventHandler(HandleBottom);
+            += HandleBottom;
         topLeft.DragDelta
-            += new DragDeltaEventHandler(HandleTopLeft);
+            += HandleTopLeft;
         topRight.DragDelta
-            += new DragDeltaEventHandler(HandleTopRight);
+            += HandleTopRight;
         bottomLeft.DragDelta
-            += new DragDeltaEventHandler(HandleBottomLeft);
+            += HandleBottomLeft;
         bottomRight.DragDelta
-            += new DragDeltaEventHandler(HandleBottomRight);
+            += HandleBottomRight;
     }
 
-    public void Unsubscribe()
+    /// <inheritdoc/>
+    public override void Unsubscribe()
     {
+        base.Unsubscribe();
         top.DragDelta
-            -= new DragDeltaEventHandler(HandleTop);
+            -= HandleTop;
         left.DragDelta
-            -= new DragDeltaEventHandler(HandleLeft);
+            -= HandleLeft;
         right.DragDelta
-            -= new DragDeltaEventHandler(HandleRight);
+            -= HandleRight;
         bottom.DragDelta
-            -= new DragDeltaEventHandler(HandleBottom);
+            -= HandleBottom;
         topLeft.DragDelta
-            -= new DragDeltaEventHandler(HandleTopLeft);
+            -= HandleTopLeft;
         topRight.DragDelta
-            -= new DragDeltaEventHandler(HandleTopRight);
+            -= HandleTopRight;
         bottomLeft.DragDelta
-            -= new DragDeltaEventHandler(HandleBottomLeft);
+            -= HandleBottomLeft;
         bottomRight.DragDelta
-            -= new DragDeltaEventHandler(HandleBottomRight);
+            -= HandleBottomRight;
     }
 
     #endregion

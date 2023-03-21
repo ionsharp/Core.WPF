@@ -1119,4 +1119,76 @@
   <data name="Profiles" xml:space="preserve">
     <value>Profils</value>
   </data>
+  <data name="Tiles" xml:space="preserve">
+    <value>Carrelage</value>
+  </data>
+  <data name="Closing" xml:space="preserve">
+    <value>Fermeture</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Économie</value>
+  </data>
+  <data name="Draw" xml:space="preserve">
+    <value>Dessiner</value>
+  </data>
+  <data name="ReportABug" xml:space="preserve">
+    <value>Signaler un bug</value>
+  </data>
+  <data name="Animation" xml:space="preserve">
+    <value>Animation</value>
+  </data>
+  <data name="Selected" xml:space="preserve">
+    <value>Choisi</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>Pas de description</value>
+  </data>
+  <data name="This" xml:space="preserve">
+    <value>Ce</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Rapport</value>
+  </data>
+  <data name="Blend" xml:space="preserve">
+    <value>Mélange</value>
+  </data>
+  <data name="Effect" xml:space="preserve">
+    <value>Effet</value>
+  </data>
+  <data name="Shape" xml:space="preserve">
+    <value>Forme</value>
+  </data>
+  <data name="Tile" xml:space="preserve">
+    <value>Tuile</value>
+  </data>
+  <data name="Dock" xml:space="preserve">
+    <value>Dock</value>
+  </data>
+  <data name="DockAll" xml:space="preserve">
+    <value>Ancrer tout</value>
+  </data>
+  <data name="GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="Manage" xml:space="preserve">
+    <value>Gérer</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Afficher tout</value>
+  </data>
+  <data name="UnpinAll" xml:space="preserve">
+    <value>Tout désépingler</value>
+  </data>
+  <data name="Explore" xml:space="preserve">
+    <value>Explorer</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Maison</value>
+  </data>
+  <data name="Issues" xml:space="preserve">
+    <value>Questions</value>
+  </data>
+  <data name="Wiki" xml:space="preserve">
+    <value>Wiki</value>
+  </data>
 </root>

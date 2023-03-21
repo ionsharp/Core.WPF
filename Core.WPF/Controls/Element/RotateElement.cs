@@ -36,19 +36,19 @@ namespace Imagin.Core.Controls
             set => SetValue(RotationScaleProperty, value);
         }
 
-        //...
+        ///
 
         protected override int VisualChildrenCount => GetValue(ChildProperty) is not null ? 1 : 0;
 
         protected override Visual GetVisualChild(int index) => (UIElement)GetValue(ChildProperty);
 
-        //...
+        ///
 
         public RotateElement() : base() { }
 
-        //...
+        ///
 
-        protected override void OnChildChanged(Value<Visual> input)
+        protected override void OnChildChanged(ReadOnlyValue<Visual> input)
         {
             base.OnChildChanged(input);
             input.New.SetCurrentValue(RenderTransformProperty,

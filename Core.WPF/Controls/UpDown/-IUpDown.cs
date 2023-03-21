@@ -1,11 +1,10 @@
-﻿namespace Imagin.Core.Controls
+﻿namespace Imagin.Core.Controls;
+
+public interface IUpDown<T>
 {
-    public interface IUpDown<T>
-    {
-        T Maximum { get; set; }
+    T Maximum { get; set; }
 
-        T Minimum { get; set; }
+    T Minimum { get; set; }
 
-        T Value { get; set; }
-    }
+    T Value { get; set; }
 }

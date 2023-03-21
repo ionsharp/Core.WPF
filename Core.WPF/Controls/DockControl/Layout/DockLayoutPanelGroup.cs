@@ -1,4 +1,5 @@
-﻿using Imagin.Core.Linq;
+﻿using Imagin.Core.Collections.ObjectModel;
+using Imagin.Core.Linq;
 using Imagin.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -10,25 +11,15 @@ namespace Imagin.Core.Controls
     [Serializable]
     public class DockLayoutPanelGroup : DockLayoutElement
     {
-        bool collapse = false;
         [XmlAttribute]
-        public bool Collapse
-        {
-            get => collapse;
-            set => this.Change(ref collapse, value);
-        }
+        public bool Collapse { get => Get(false); set => Set(value); }
 
-        List<DockLayoutPanel> panels = new();
         [XmlArray]
-        public List<DockLayoutPanel> Panels
-        {
-            get => panels;
-            set => this.Change(ref panels, value);
-        }
+        public List<DockLayoutPanel> Panels { get => Get(new List<DockLayoutPanel>()); set => Set(value); }
 
         public DockLayoutPanelGroup() : base() { }
 
-        public DockLayoutPanelGroup(IEnumerable<DockLayoutPanel> input) : base() => input?.ForEach(i => panels.Add(i));
+        public DockLayoutPanelGroup(IEnumerable<DockLayoutPanel> input) : base() => input?.ForEach(Panels.Add);
 
         public DockLayoutPanelGroup(params DockLayoutPanel[] input) : this(input as IEnumerable<DockLayoutPanel>) { }
 

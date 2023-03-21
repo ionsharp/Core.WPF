@@ -3,58 +3,57 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+public abstract class NumericUpDown<T> : UpDown<T>
 {
-    public abstract class NumericUpDown<T> : UpDown<T>
+    protected const string Comma = ",";
+
+    protected const string Dash = "-";
+
+    protected const string Period = ".";
+
+    public abstract T DefaultIncrement { get; }
+
+    public virtual Regex Expression => new("^[0-9]?$");
+
+    public abstract bool IsRational { get; }
+
+    public abstract bool IsSigned { get; }
+
+    public static readonly DependencyProperty<T, NumericUpDown<T>> IncrementProperty = new(nameof(Increment), new FrameworkPropertyMetadata(default(T), OnIncrementChanged));
+    public T Increment
     {
-        protected const string Comma = ",";
+        get => IncrementProperty.Get(this);
+        set => IncrementProperty.Set(this, value);
+    }
+    static void OnIncrementChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<NumericUpDown<T>>().OnIncrementChanged(e.Convert<T>());
 
-        protected const string Dash = "-";
+    public static readonly DependencyProperty<string, NumericUpDown<T>> StringFormatProperty = new(nameof(StringFormat), new FrameworkPropertyMetadata(string.Empty, OnStringFormatChanged));
+    public string StringFormat
+    {
+        get => StringFormatProperty.Get(this);
+        set => StringFormatProperty.Set(this, value);
+    }
+    static void OnStringFormatChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<NumericUpDown<T>>().OnStringFormatChanged(e.Convert<string>());
 
-        protected const string Period = ".";
+    public NumericUpDown() : base() => SetCurrentValue(IncrementProperty.Property, DefaultIncrement);
 
-        public abstract T DefaultIncrement { get; }
-
-        public virtual Regex Expression => new("^[0-9]?$");
-
-        public abstract bool IsRational { get; }
-
-        public abstract bool IsSigned { get; }
-
-        public static readonly DependencyProperty<T, NumericUpDown<T>> IncrementProperty = new(nameof(Increment), new FrameworkPropertyMetadata(default(T), OnIncrementChanged));
-        public T Increment
+    protected override void OnPreviewTextInput(TextCompositionEventArgs e)
+    {
+        base.OnPreviewTextInput(e);
+        e.Handled = e.Text switch
         {
-            get => IncrementProperty.Get(this);
-            set => IncrementProperty.Set(this, value);
-        }
-        static void OnIncrementChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<NumericUpDown<T>>().OnIncrementChanged(new Value<T>(e));
+            Dash => !(IsSigned && CaretIndex == 0 && !Text.Contains(Dash)),
+            Period => !(!IsRational && !Text.Contains(Period)),
+            _ => !Expression.IsMatch(e.Text),
+        };
+    }
 
-        public static readonly DependencyProperty<string, NumericUpDown<T>> StringFormatProperty = new(nameof(StringFormat), new FrameworkPropertyMetadata(string.Empty, OnStringFormatChanged));
-        public string StringFormat
-        {
-            get => StringFormatProperty.Get(this);
-            set => StringFormatProperty.Set(this, value);
-        }
-        static void OnStringFormatChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<NumericUpDown<T>>().OnStringFormatChanged(new Value<string>(e));
+    protected virtual void OnIncrementChanged(ReadOnlyValue<T> input) { }
 
-        public NumericUpDown() : base() => SetCurrentValue(IncrementProperty.Property, DefaultIncrement);
-
-        protected override void OnPreviewTextInput(TextCompositionEventArgs e)
-        {
-            base.OnPreviewTextInput(e);
-            e.Handled = e.Text switch
-            {
-                Dash => !(IsSigned && CaretIndex == 0 && !Text.Contains(Dash)),
-                Period => !(!IsRational && !Text.Contains(Period)),
-                _ => !Expression.IsMatch(e.Text),
-            };
-        }
-
-        protected virtual void OnIncrementChanged(Value<T> input) { }
-
-        protected virtual void OnStringFormatChanged(Value<string> input)
-        {
-            OnValueChanged(new Value<T>(default, Value));
-        }
+    protected virtual void OnStringFormatChanged(ReadOnlyValue<string> input)
+    {
+        OnValueChanged(new ReadOnlyValue<T>(default, Value));
     }
 }

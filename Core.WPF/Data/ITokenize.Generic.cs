@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace Imagin.Core.Data
+namespace Imagin.Core.Data;
+
+public interface ITokenize<Token>
 {
-    public interface ITokenize<Token>
-    {
-        object Source { get; }
+    object Source { get; }
 
-        IEnumerable<Token> Tokenize(string input, char delimiter);
+    IEnumerable<Token> Tokenize(string input, char delimiter);
 
-        Token ToToken(string input);
+    Token ToToken(string input);
 
-        string ToString(Token input);
-    }
+    string ToString(Token input);
 }

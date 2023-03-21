@@ -2,22 +2,15 @@
 using System;
 using System.Windows.Markup;
 
-namespace Imagin.Core.Markup
+namespace Imagin.Core.Markup;
+
+public class SpecialFolder : MarkupExtension
 {
-    public class SpecialFolder : MarkupExtension
-    {
-        public Environment.SpecialFolder Folder
-        {
-            get; set;
-        }
+    public Environment.SpecialFolder Folder { get; set; }
 
-        public SpecialFolder() : base() { }
+    public SpecialFolder() : base() { }
 
-        public SpecialFolder(Environment.SpecialFolder folder) : this()
-        {
-            Folder = folder;
-        }
+    public SpecialFolder(Environment.SpecialFolder folder) : this() => Folder = folder;
 
-        public override object ProvideValue(IServiceProvider serviceProvider) => Folder.Path();
-    }
+    public override object ProvideValue(IServiceProvider serviceProvider) => Folder.GetPath();
 }

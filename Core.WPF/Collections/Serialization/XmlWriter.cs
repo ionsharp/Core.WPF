@@ -14,7 +14,7 @@ namespace Imagin.Core.Collections.Serialization
     {
         readonly string Root;
 
-        //...
+        ///
 
         XmlCallbackSerializer serializer = null;
         XmlCallbackSerializer Serializer => serializer ?? (serializer = new XmlCallbackSerializer(typeof(List<T>), new XmlAttributeOverrides(), AllTypes, new XmlRootAttribute(Root), string.Empty));
@@ -24,16 +24,11 @@ namespace Imagin.Core.Collections.Serialization
 
         readonly Type[] Types;
 
-        //...
+        ///
 
-        Encoding encoding = Encoding.ASCII;
-        public Encoding Encoding
-        {
-            get => encoding;
-            set => this.Change(ref encoding, value);
-        }
+        public Encoding Encoding { get => this.Get(Encoding.ASCII); set => this.Set(value); }
 
-        //...
+        ///
 
         public XmlWriter(string root, string folderPath, string fileName, string fileExtension, string singleFileExtension, Limit limit = default, params Type[] types) : base(folderPath, fileName, fileExtension, singleFileExtension, limit)
         {
@@ -41,7 +36,7 @@ namespace Imagin.Core.Collections.Serialization
             Types = types;
         }
 
-        //...
+        ///
 
         IEnumerable<Type> GetTypes()
         {
@@ -49,7 +44,7 @@ namespace Imagin.Core.Collections.Serialization
                 yield return i;
         }
 
-        //...
+        ///
 
         public override Result Deserialize(string filePath, out object result)
         {
@@ -57,7 +52,7 @@ namespace Imagin.Core.Collections.Serialization
             try
             {
                 //1. Get an XML string from the file
-                string text = Storage.File.Long.ReadAllText(filePath, encoding.Convert());
+                string text = Storage.File.Long.ReadAllText(filePath, Encoding.Convert());
                 reader = new StringReader(text);
 
                 //2b. Deserialize the XML string
@@ -93,7 +88,7 @@ namespace Imagin.Core.Collections.Serialization
                 string text = writer.ToString();
 
                 //2b. Write the XML string to the file
-                Storage.File.Long.WriteAllText(filePath, text, encoding.Convert());
+                Storage.File.Long.WriteAllText(filePath, text, Encoding.Convert());
                 result = new Success();
             }
             catch (Exception e)

@@ -1,6 +1,7 @@
 ﻿using Imagin.Core.Conversion;
 using Imagin.Core.Linq;
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,34 +10,56 @@ using System.Windows.Media.Animation;
 
 namespace Imagin.Core.Controls
 {
-    public class ProgressRing : ProgressBar
+    public class ProgressRingAngleToPointConverter : MultiConverter<Point>
     {
-        #region Converters
+        public ProgressRingAngleToPointConverter() : base() { }
 
-        public static readonly IMultiValueConverter AngleToPointConverter = new MultiConverter<Point>(i =>
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (i.Values[0] is double angle)
+            if (values?.Length == 3)
             {
-                if (i.Values[1] is double radius)
+                if (values[0] is double angle)
                 {
-                    if (i.Values[2] is double stroke)
+                    if (values[1] is double radius)
                     {
-                        double piang = angle * Math.PI / 180;
+                        if (values[2] is double stroke)
+                        {
+                            double piang = angle * Math.PI / 180;
 
-                        double px = Math.Sin(piang) * (radius - stroke / 2) + radius;
-                        double py = -Math.Cos(piang) * (radius - stroke / 2) + radius;
-                        return new Point(px, py);
+                            double px = Math.Sin(piang) * (radius - stroke / 2) + radius;
+                            double py = -Math.Cos(piang) * (radius - stroke / 2) + radius;
+                            return new Point(px, py);
+                        }
                     }
                 }
             }
             return default;
-        });
+        }
+    }
 
-        public static readonly IMultiValueConverter RadiusToSizeConverter 
-            = new MultiConverter<Size>(i => i.Values[0] is double radius && i.Values[1] is double stroke ? new Size(radius - stroke / 2, radius - stroke / 2) : default);
+    public class ProgressRingRadiusToSizeConverter : MultiConverter<Size>
+    {
+        public ProgressRingRadiusToSizeConverter() : base() { }
 
-        public static readonly IMultiValueConverter StrokeToStartPointConverter 
-            = new MultiConverter<Point>(i => i.Values[0] is double radius && i.Values[1] is double stroke ? new Point(radius, stroke / 2) : default);
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return values?.Length == 2 && values[0] is double radius && values[1] is double stroke ? new Size(radius - stroke / 2, radius - stroke / 2) : default;
+        }
+    }
+
+    public class ProgressRingStrokeToStartPointConverter : MultiConverter<Point>
+    {
+        public ProgressRingStrokeToStartPointConverter() : base() { }
+
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return values?.Length == 2 && values[0] is double radius && values[1] is double stroke ? new Point(radius, stroke / 2) : default;
+        }
+    }
+
+    public class ProgressRing : ProgressBar
+    {
+        #region Converters
 
         #endregion
 

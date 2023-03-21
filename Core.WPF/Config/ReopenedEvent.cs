@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Imagin.Core.Config
+namespace Imagin.Core.Config;
+
+public delegate void ReopenedEventHandler(SingleApplication sender, ReopenedEventArgs e);
+
+public class ReopenedEventArgs : EventArgs
 {
-    public delegate void ReopenedEventHandler(SingleApplication sender, ReopenedEventArgs e);
+    public readonly IEnumerable<string> Arguments;
 
-    public class ReopenedEventArgs : EventArgs
+    public ReopenedEventArgs(IEnumerable<string> arguments) : base()
     {
-        public readonly IEnumerable<string> Arguments;
-
-        public ReopenedEventArgs(IEnumerable<string> arguments) : base()
-        {
-            Arguments = arguments;
-        }
+        Arguments = arguments;
     }
 }

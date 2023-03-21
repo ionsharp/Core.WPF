@@ -4,17 +4,30 @@
     <SolidColorBrush x:Key="Accent" Color="#AC7500"/>
     <SolidColorBrush x:Key="AccentLight" Color="#F9CF25"/>
     <SolidColorBrush x:Key="AccentDark" Color="#D4AA00"/>
-    <!-- ... -->
+    <!-- /// -->
     <SolidColorBrush x:Key="AccentForeground" Color="#FFF"/>
-    <!-- ... -->
-    <SolidColorBrush x:Key="Green" Color="#74AA68"/>
-    <SolidColorBrush x:Key="Red" Color="#CB3C3C"/>
-    <!-- ... -->
-    <SolidColorBrush x:Key="ResultError" Color="#C00"/>
-    <SolidColorBrush x:Key="ResultMessage" Color="#007acc"/>
-    <SolidColorBrush x:Key="ResultSuccess" Color="Green"/>
-    <SolidColorBrush x:Key="ResultWarning" Color="Orange"/>
-    <!-- ... -->
+    <!-- /// -->
+    <SolidColorBrush x:Key="Green" Color="#3A3"/>
+    <SolidColorBrush x:Key="BrightGreen" Color="#3C3"/>
+
+    <SolidColorBrush x:Key="Red" Color="#C30"/>
+    <SolidColorBrush x:Key="BrightRed" Color="#F30"/>
+
+    <SolidColorBrush x:Key="Blue" Color="#07c"/>
+    <SolidColorBrush x:Key="BrightBlue" Color="#07F"/>
+
+    <SolidColorBrush x:Key="Orange" Color="Orange"/>
+    <SolidColorBrush x:Key="BrightOrange" Color="#FC0"/>
+    <!-- /// -->
+    <LinearGradientBrush x:Key="PolygonBackground" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#11000000"/>
+        <GradientStop Offset="1" Color="#22000000"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="PolygonForeground" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#F9CF25"/>
+        <GradientStop Offset="1" Color="#D4AA00"/>
+    </LinearGradientBrush>
+    <!-- /// -->
     <SolidColorBrush x:Key="AngleControlBackground" Color="#11000000"/>
     <SolidColorBrush x:Key="AngleControlNeedleStroke" Color="#CCA300"/>
     <SolidColorBrush x:Key="AngleControlOriginFill" Color="#CCA300"/>
@@ -38,18 +51,18 @@
     <SolidColorBrush x:Key="ButtonCancelPressedForeground" Color="#FFF"/>
 
     <LinearGradientBrush x:Key="ButtonDefaultBackground" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#64ac4f"/>
-        <GradientStop Offset="1" Color="#568b40"/>
+        <GradientStop Offset="0" Color="#AC7500"/>
+        <GradientStop Offset="1" Color="#8C5500"/>
     </LinearGradientBrush>
-    <SolidColorBrush x:Key="ButtonDefaultBorder" Color="#396f1c"/>
+    <SolidColorBrush x:Key="ButtonDefaultBorder" Color="#8C5500"/>
     <SolidColorBrush x:Key="ButtonDefaultForeground" Color="#FFF"/>
 
-    <SolidColorBrush x:Key="ButtonDefaultMouseOverBackground" Color="#2a8c0b"/>
-    <SolidColorBrush x:Key="ButtonDefaultMouseOverBorder" Color="#396f1c"/>
+    <SolidColorBrush x:Key="ButtonDefaultMouseOverBackground" Color="#AC7500"/>
+    <SolidColorBrush x:Key="ButtonDefaultMouseOverBorder" Color="#8C5500"/>
     <SolidColorBrush x:Key="ButtonDefaultMouseOverForeground" Color="#FFF"/>
 
-    <SolidColorBrush x:Key="ButtonDefaultPressedBackground" Color="#1b6e01"/>
-    <SolidColorBrush x:Key="ButtonDefaultPressedBorder" Color="#396f1c"/>
+    <SolidColorBrush x:Key="ButtonDefaultPressedBackground" Color="#8C5500"/>
+    <SolidColorBrush x:Key="ButtonDefaultPressedBorder" Color="#AC7500"/>
     <SolidColorBrush x:Key="ButtonDefaultPressedForeground" Color="#FFF"/>
 
     <SolidColorBrush x:Key="ButtonBackground" Color="#796A2E"/>
@@ -84,10 +97,10 @@
     <SolidColorBrush x:Key="ClockMinorTickStroke" Color="#33000000"/>
 
     <SolidColorBrush x:Key="ComboBoxBackground" Color="Transparent"/>
-    <SolidColorBrush x:Key="ComboBoxBorder" Color="#25000000"/>
+    <SolidColorBrush x:Key="ComboBoxBorder" Color="Transparent"/>
     <SolidColorBrush x:Key="ComboBoxForeground" Color="#FFF"/>
 
-    <SolidColorBrush x:Key="ComboBoxFocusBorder" Color="#007acc"/>
+    <SolidColorBrush x:Key="ComboBoxFocusBorder" Color="#07c"/>
 
     <SolidColorBrush x:Key="ComboBoxMouseOverBackground" Color="#25000000"/>
     <SolidColorBrush x:Key="ComboBoxMouseOverBorder" Color="#44000000"/>
@@ -138,13 +151,16 @@
     <SolidColorBrush x:Key="DataGridRowMouseOverBackground" Color="#FFB9AE83"/>
     <SolidColorBrush x:Key="DataGridRowMouseOverBorder" Color="#FFB9AE83"/>
 
-    <SolidColorBrush x:Key="DialogBackground" Color="#AA000000"/>
-    <LinearGradientBrush x:Key="DialogBodyBackground" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#FCFCFC"/>
-        <GradientStop Offset="1" Color="#F5F5F5"/>
+    <SolidColorBrush x:Key="DialogBackground" Color="#AA40360D"/>
+    <LinearGradientBrush x:Key="DialogBackgroundSecondary" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#A38C31"/>
+        <GradientStop Offset="1" Color="#736321"/>
     </LinearGradientBrush>
+    <SolidColorBrush x:Key="DialogBodyBackground" Color="Transparent"/>
     <SolidColorBrush x:Key="DialogFooterBackground" Color="#11000000"/>
-    <SolidColorBrush x:Key="DialogTitleBackground" Color="#007acc"/>
+    <SolidColorBrush x:Key="DialogFooterBorder" Color="#736321"/>
+    <SolidColorBrush x:Key="DialogTitleBackground" Color="Transparent"/>
+    <SolidColorBrush x:Key="DialogTitleBorder" Color="#736321"/>
     <SolidColorBrush x:Key="DialogTitleForeground" Color="#FFF"/>
 
     <SolidColorBrush x:Key="DockControlEmptyMarkerSourceColor" Color="#AC7500"/>
@@ -161,8 +177,8 @@
     <SolidColorBrush x:Key="DockPanelButtonBackground" Color="#11000000"/>
     <SolidColorBrush x:Key="DockPanelButtonBorder" Color="#33000000"/>
     <SolidColorBrush x:Key="DockPanelButtonForeground" Color="#333"/>
-    <SolidColorBrush x:Key="DockPanelButtonCheckedBackground" Color="#007acc"/>
-    <SolidColorBrush x:Key="DockPanelButtonCheckedBorder" Color="#007acc"/>
+    <SolidColorBrush x:Key="DockPanelButtonCheckedBackground" Color="#07c"/>
+    <SolidColorBrush x:Key="DockPanelButtonCheckedBorder" Color="#07c"/>
     <SolidColorBrush x:Key="DockPanelButtonCheckedForeground" Color="#FFF"/>
     <SolidColorBrush x:Key="DockPanelButtonMouseOverBackground" Color="#33000000"/>
     <SolidColorBrush x:Key="DockPanelButtonMouseOverBorder" Color="#33000000"/>
@@ -210,8 +226,8 @@
     <SolidColorBrush x:Key="ImageButtonPressedForeground" Color="#FFF"/>
 
     <LinearGradientBrush x:Key="ImageToggleButtonCheckedBackground" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#AAAC7500"/>
-        <GradientStop Offset="1" Color="#FFAC7500"/>
+        <GradientStop Offset="0" Color="Transparent"/>
+        <GradientStop Offset="1" Color="Transparent"/>
     </LinearGradientBrush>
     <SolidColorBrush x:Key="ImageToggleButtonCheckedBorder" Color="#AC7500"/>
     <SolidColorBrush x:Key="ImageToggleButtonCheckedForeground" Color="#FFF"/>
@@ -319,8 +335,12 @@
     <SolidColorBrush x:Key="RadioButtonForeground" Color="#FFF"/>
     <SolidColorBrush x:Key="RadioButtonTickStroke" Color="#BA9A1C"/>
 
-    <SolidColorBrush x:Key="RadioGroupMouseOverBackground" Color="#22000000"/>
+    <LinearGradientBrush x:Key="RadioGroupMouseOverBackground" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#05000000"/>
+        <GradientStop Offset="1" Color="#11000000"/>
+    </LinearGradientBrush>
     <SolidColorBrush x:Key="RadioGroupMouseOverForeground" Color="#FFF"/>
+    <SolidColorBrush x:Key="RadioGroupCheckedBackground" Color="#AC7500"/>
     <SolidColorBrush x:Key="RadioGroupCheckedForeground" Color="#FFF"/>
 
     <SolidColorBrush x:Key="RichTextBoxBackground" Color="Transparent"/>
@@ -459,7 +479,7 @@
         <GradientStop Offset="1" Color="#736321"/>
     </LinearGradientBrush>
     <SolidColorBrush x:Key="WindowBorder" Color="#4A3F15"/>
-    <SolidColorBrush x:Key="WindowActiveBorder" Color="#DBBD46"/>
+    <SolidColorBrush x:Key="WindowActiveBorder" Color="#675406"/>
     <SolidColorBrush x:Key="WindowOverlayBackground" Color="#66000000"/>
     <SolidColorBrush x:Key="WindowContentBorder" Color="#10000000"/>
 

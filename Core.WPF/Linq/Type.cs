@@ -2,41 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
+using System.Runtime.CompilerServices;
+using Imagin.Core.Reflection;
 
-namespace Imagin.Core.Linq
+namespace Imagin.Core.Linq;
+
+public static partial class XType
 {
-    public static partial class XType
+    /// <summary>https://stackoverflow.com/questions/299515/reflection-to-identify-extension-methods</summary>
+    public static IEnumerable<MethodInfo> GetExtensionMethods(this Type input, AssemblyType assemblyType = AssemblyType.Core)
     {
-        public static List<FieldInfo> GetAttachedProperties(this Type input)
-        {
-            List<FieldInfo> result = new();
-            if (input?.Inherits<DependencyObject>(true) == true)
-            {
-                var types = XAssembly.GetAssembly(AssemblyProperties.Name).GetTypes(AssemblyProperties.Path.Linq, i => i.GetAttribute<ExtendsAttribute>()?.Type != null);
-                foreach (var i in types)
-                {
-                    var extends = i.GetAttribute<ExtendsAttribute>().Type;
-                    if (input.GetType().Inherits(extends, true) || (extends.IsInterface && input.GetType().Implements(extends)))
-                    {
-                        var fields = i.GetFields(BindingFlags.Public | BindingFlags.Static).Where(j => j.FieldType == typeof(DependencyProperty));
-                        foreach (var j in fields)
-                            result.Add(j);
-                    }
-                }
-            }
-            return result;
-        }
-
-        public static List<FieldInfo> GetDependencyProperties(this Type input)
-        {
-            List<FieldInfo> result = new();
-            if (input?.Inherits<DependencyObject>(true) == true)
-            {
-                var fields = input.GetFields(BindingFlags.Public | BindingFlags.Static).Where(i => i.FieldType == typeof(DependencyProperty));
-                fields.ForEach(i => result.Add(i));
-            }
-            return result;
-        }
+        var assembly = XAssembly.GetAssembly(assemblyType);
+        var query = from type in assembly.GetTypes()
+            where type.IsSealed && !type.IsGenericType && !type.IsNested
+            from method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+            where method.IsDefined(typeof(ExtensionAttribute), false)
+            where method.GetParameters()[0].ParameterType == input
+            select method;
+        return query;
     }
 }

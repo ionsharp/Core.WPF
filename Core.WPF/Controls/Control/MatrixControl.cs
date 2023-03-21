@@ -19,21 +19,16 @@ public class MatrixControl : Control
     {
         public readonly MatrixControl Control;
 
-        double value = 0;
-        public double Value
-        {
-            get => value;
-            set => this.Change(ref this.value, value);
-        }
+        public double Value { get => Get(.0); set => Set(value); }
 
         public ValueModel(MatrixControl control, double value) : base()
         {
-            Control = control; this.value = value;
+            Control = control; Value = value;
         }
 
-        public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        public override void OnPropertyChanged(PropertyEventArgs e)
         {
-            base.OnPropertyChanged(propertyName);
+            base.OnPropertyChanged(e);
             Control.UpdateSource();
         }
     }
@@ -145,23 +140,78 @@ public class MatrixControl : Control
         SetCurrentValue(MatrixProperty, result);
     });
 
-    protected virtual void OnMatrixChanged(Value<DoubleMatrix> input)
+    protected virtual void OnMatrixChanged(ReadOnlyValue<DoubleMatrix> input)
     {
         Handle.SafeInvoke(() =>
         {
-            Columns
-                = (int)input.New.Columns;
-            Rows
-                = (int)input.New.Rows;
-
             EditableMatrix.Clear();
-            input.New.Each(i =>
-            {
-                EditableMatrix.Add(new(this, i));
-                return i;
-            });
+            if (input.New != null)
+            {            
+                Columns
+                    = (int)input.New.Columns;
+                Rows
+                    = (int)input.New.Rows;
+
+                input.New.Each(i =>
+                {
+                    EditableMatrix.Add(new(this, i));
+                    return i;
+                });
+            }
         });
     }
+
+    ///
+
+    ICommand addColumnCommand;
+    public ICommand AddColumnCommand
+        => addColumnCommand ??= new RelayCommand(() => 
+        {
+            var result = new DoubleMatrix(Matrix.Rows, Matrix.Columns + 1);
+            Matrix.Each((y, x, i) =>
+            {
+                result[y, x] = i;
+                return i;
+            });
+            SetCurrentValue(MatrixProperty, result);
+        }, 
+        () => Matrix != null);
+
+    ICommand addRowCommand;
+    public ICommand AddRowCommand
+        => addRowCommand ??= new RelayCommand(() => 
+        {
+            var result = new DoubleMatrix(Matrix.Rows + 1, Matrix.Columns);
+            Matrix.Each((y, x, i) =>
+            {
+                result[y, x] = i;
+                return i;
+            });
+            SetCurrentValue(MatrixProperty, result);
+        }, 
+        () => Matrix != null);
+
+    ICommand removeColumnCommand;
+    public ICommand RemoveColumnCommand
+        => removeColumnCommand ??= new RelayCommand(() => 
+        {
+            var result = new DoubleMatrix(Matrix.Rows, Matrix.Columns - 1);
+            result.Each((y, x, i) => Matrix[y, x]);
+            SetCurrentValue(MatrixProperty, result);
+        }, 
+        () => Matrix?.Columns > 1);
+
+    ICommand removeRowCommand;
+    public ICommand RemoveRowCommand
+        => removeRowCommand ??= new RelayCommand(() => 
+        {
+            var result = new DoubleMatrix(Matrix.Rows - 1, Matrix.Columns);
+            result.Each((y, x, i) => Matrix[y, x]);
+            SetCurrentValue(MatrixProperty, result);
+        }, 
+        () => Matrix?.Rows > 1);
+
+    ///
 
     ICommand invertCommand;
     public ICommand InvertCommand

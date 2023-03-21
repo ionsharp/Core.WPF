@@ -1,6 +1,7 @@
 ﻿using Imagin.Core.Linq;
 using Imagin.Core.Numerics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
@@ -11,7 +12,6 @@ namespace Imagin.Core.Conversion;
 [ValueConversion(typeof(object[]), typeof(object))]
 public class GradientMultiConverter : MultiConverter<object>
 {
-    public static GradientMultiConverter Default { get; private set; } = new();
     public GradientMultiConverter() : base() { }
 
     public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
@@ -66,6 +66,25 @@ public class GradientMultiConverter : MultiConverter<object>
                         }
                     }
                 }
+            }
+        }
+        return Binding.DoNothing;
+    }
+}
+
+[ValueConversion(typeof(object[]), typeof(object))]
+public class PropertyValueMultiConverter : MultiConverter<object>
+{
+    public PropertyValueMultiConverter() : base() { }
+
+    public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (values?.Length == 2)
+        {
+            if (values[0] is object source)
+            {
+                if (values[1] is string propertyName)
+                    return Try.Return(() => source.GetPropertyValue(propertyName));
             }
         }
         return Binding.DoNothing;

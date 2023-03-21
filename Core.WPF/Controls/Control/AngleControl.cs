@@ -26,7 +26,7 @@ namespace Imagin.Core.Controls
             get => (double)GetValue(DegreesProperty);
             set => SetValue(DegreesProperty, value);
         }
-        static void OnDegreesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => d.As<AngleControl>().OnDegreesChanged(new Value<double>(e));
+        static void OnDegreesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => d.As<AngleControl>().OnDegreesChanged(e.Convert<double>());
 
         public static readonly DependencyProperty OriginFillProperty = DependencyProperty.Register(nameof(OriginFill), typeof(Brush), typeof(AngleControl), new FrameworkPropertyMetadata(Brushes.Black));
         public Brush OriginFill
@@ -76,7 +76,7 @@ namespace Imagin.Core.Controls
             get => (double)GetValue(RadiansProperty);
             set => SetValue(RadiansProperty, value);
         }
-        static void OnRadiansChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => d.As<AngleControl>().OnRadiansChanged(new Value<double>(e));
+        static void OnRadiansChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => d.As<AngleControl>().OnRadiansChanged(e.Convert<double>());
 
         #endregion
 
@@ -87,7 +87,7 @@ namespace Imagin.Core.Controls
         public AngleControl() : base()
         {
             this.Bind(HeightProperty, nameof(Width), this, BindingMode.TwoWay);
-            j = this.Bind(RadiansProperty, nameof(Degrees), this, BindingMode.TwoWay, new SimpleConverter<double, double>
+            j = this.Bind(RadiansProperty, nameof(Degrees), this, BindingMode.TwoWay, new ValueConverter<double, double>
             (
                 i => Angle.GetRadian(i),
                 i => Angle.GetDegree(i)
@@ -131,7 +131,7 @@ namespace Imagin.Core.Controls
 
         void UpdateLine() => this.GetChild(LineKey).If(i => i.RenderTransform = new RotateTransform(Degrees + 90d));
 
-        //...
+        ///
 
         double RadiansFromPoint(Point point)
         {
@@ -141,7 +141,7 @@ namespace Imagin.Core.Controls
             return Math.Atan2(point.Y - center.Y, point.X - center.X);
         }
 
-        //...
+        ///
 
         void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -176,7 +176,7 @@ namespace Imagin.Core.Controls
             }
         }
 
-        //...
+        ///
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
@@ -185,11 +185,11 @@ namespace Imagin.Core.Controls
             j?.UpdateTarget();
         }
 
-        //...
+        ///
 
-        protected virtual void OnDegreesChanged(Value<double> input) => UpdateLine();
+        protected virtual void OnDegreesChanged(ReadOnlyValue<double> input) => UpdateLine();
 
-        protected virtual void OnRadiansChanged(Value<double> input) => UpdateLine();
+        protected virtual void OnRadiansChanged(ReadOnlyValue<double> input) => UpdateLine();
 
         #endregion
     }

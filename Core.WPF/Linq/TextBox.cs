@@ -6,7 +6,6 @@ using System.Windows.Media;
 
 namespace Imagin.Core.Linq;
 
-[Extends(typeof(TextBox))]
 public static class XTextBox
 {
     #region Properties
@@ -295,7 +294,7 @@ public static class XTextBox
             new MouseButtonEventHandler(OnMouseUp), true);
     }
 
-    //...
+    ///
 
     static void OnEdited(TextBox box)
     {

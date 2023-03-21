@@ -34,10 +34,10 @@ namespace Imagin.Core.Controls
 
         public ContentControl() : base() { }
 
-        protected virtual void OnContentChanged(Value<T> input) { }
+        protected virtual void OnContentChanged(ReadOnlyValue<T> input) { }
 
-        protected virtual void OnContentTemplateChanged(Value<DataTemplate> input) { }
+        protected virtual void OnContentTemplateChanged(ReadOnlyValue<DataTemplate> input) { }
 
-        protected virtual void OnContentTemplateSelectorChanged(Value<DataTemplateSelector> input) { }
+        protected virtual void OnContentTemplateSelectorChanged(ReadOnlyValue<DataTemplateSelector> input) { }
     }
 }

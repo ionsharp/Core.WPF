@@ -11,7 +11,7 @@
         <ResourceDictionary Source="{local:StyleKey Key=TextBox}"/>
         <ResourceDictionary Source="{local:StyleKey Key=ToggleButton}"/>
     </ResourceDictionary.MergedDictionaries>
-    <!-- ... -->
+    <!-- /// -->
     
     <Style x:Key="{x:Static ToolBar.CheckBoxStyleKey}"
         TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}"/>
@@ -31,11 +31,11 @@
     <Style x:Key="{x:Static ToolBar.ToggleButtonStyleKey}" 
         TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}"/>
 
-    <!-- ... -->
+    <!-- /// -->
     
     <Style x:Key="{x:Type ToolBar}" TargetType="{x:Type ToolBar}">
-        <Setter Property="Background" Value="{local:ThemeKey ActualKey=ToolBarBackground}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=ToolBarBorder}" />
+        <Setter Property="Background" Value="{local:ThemeKey ToolBarBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey ToolBarBorder}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Padding" Value="0" />
@@ -49,11 +49,12 @@
 						Padding="{TemplateBinding Padding}">
                         <DockPanel>
                             <local:ImageButton DockPanel.Dock="Right"
-                                ButtonSource="{Markup:InternalImage TriangleDown.png}"
+                                ButtonSource="{Markup:SmallImage TriangleDown.png}"
                                 ButtonVisibility="Visible"
                                 ClickMode="Press"
                                 IsChecked="{Data:TemplatedParent IsOverflowOpen, Mode=TwoWay}"
-                                IsEnabled="{TemplateBinding HasOverflowItems}">
+                                IsEnabled="{TemplateBinding HasOverflowItems}"
+                                Visibility="{Data:VisibilityBinding IsEnabled, From=Self}">
                                 <Popup x:Name="OverflowPopup"
                                     AllowsTransparency="True"
                                     Focusable="False"
@@ -87,6 +88,6 @@
     </Style>
 
     <Style x:Key="{x:Type ToolBarTray}" TargetType="{x:Type ToolBarTray}">
-        <Setter Property="Background" Value="{local:ThemeKey Key=ToolBarTray.Background}" />
+        <Setter Property="Background" Value="{local:ThemeKey ToolBarTrayBackground}" />
     </Style>
 </ResourceDictionary>

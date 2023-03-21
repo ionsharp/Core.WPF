@@ -79,10 +79,9 @@ namespace Imagin.Core.Input
             bool isKeyDown = !wasKeyDown && !isKeyReleased;
             bool isKeyUp = wasKeyDown && isKeyReleased;
 
-            char ch;
 
             //translated based on the active application's keyboard layout.
-            KeyboardNativeMethods.TryGetCharFromKeyboardState( wParam, ( int )flags, out ch );
+            KeyboardNativeMethods.TryGetCharFromKeyboardState(wParam, (int)flags, out char ch);
             return new KeyEventArgsExt( keyData, timestamp, isKeyDown, isKeyUp, ch );
 
         }
@@ -108,8 +107,7 @@ namespace Imagin.Core.Input
                 return new KeyEventArgsExt( keyData, keyboardHookStruct.Time, isKeyDown, isKeyUp, ( char )AppendModifierStates( ( Keys )keyboardHookStruct.ScanCode ) );
 
             //Translate based on the application's keyboard layout
-            char ch;
-            KeyboardNativeMethods.TryGetCharFromKeyboardState( keyboardHookStruct.VirtualKeyCode, keyboardHookStruct.ScanCode, keyboardHookStruct.Flags, out ch );
+            KeyboardNativeMethods.TryGetCharFromKeyboardState(keyboardHookStruct.VirtualKeyCode, keyboardHookStruct.ScanCode, keyboardHookStruct.Flags, out char ch);
             return new KeyEventArgsExt( keyData, keyboardHookStruct.Time, isKeyDown, isKeyUp, ch );
 
         }

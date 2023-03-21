@@ -1,11 +1,10 @@
-﻿namespace Imagin.Core.Conversion
+﻿namespace Imagin.Core.Conversion;
+
+public class CharArrayTypeConverter : StringTypeConverter<char>
 {
-    public class CharArrayTypeConverter : StringTypeConverter<char>
-    {
-        protected override int? Length => null;
+    protected override int? Length => null;
 
-        protected override char Convert(string input) => char.Parse(input);
+    protected override char Convert(string input) => char.Parse(input);
 
-        protected override object Convert(char[] input) => input;
-    }
+    protected override object Convert(char[] input) => input;
 }

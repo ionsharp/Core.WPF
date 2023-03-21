@@ -28,7 +28,7 @@ public struct ImageFormat
             formats = formats ?? XArray.New
             (
                 new ImageFormat("image", true, true),
-                //...
+                ///
                 new ImageFormat("aai", true, true),
                 new ImageFormat("art", true, true),
                 new ImageFormat("arw", true, false),

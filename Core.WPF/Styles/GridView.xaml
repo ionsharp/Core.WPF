@@ -5,7 +5,7 @@
     xmlns:Linq="clr-namespace:Imagin.Core.Linq">
     <Style x:Key="GridViewColumnHeader.Thumb" TargetType="Thumb">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeaderThumb}"/>
+        <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderThumb}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Width" Value="18"/>
         <Setter Property="Template">
@@ -24,11 +24,11 @@
     
     <Style x:Key="{x:Type GridViewColumnHeader}" TargetType="GridViewColumnHeader">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.Background}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey Key=DataGridColumnHeader.Border}" />
+        <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey DataGridColumnHeaderBorder}" />
         <Setter Property="BorderThickness" Value="0,0,1,0" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGridColumnHeader.Foreground}" />
+        <Setter Property="Foreground" Value="{local:ThemeKey DataGridColumnHeaderForeground}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="MinHeight" Value="28" />
@@ -117,12 +117,12 @@
                 </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.MouseOver.Background}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGridColumnHeader.MouseOver.Foreground}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderMouseOverBackground}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey DataGridColumnHeaderMouseOverForeground}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{local:ThemeKey Key=DataGridColumnHeader.Pressed.Background}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey Key=DataGridColumnHeader.Pressed.Foreground}" />
+                <Setter Property="Background" Value="{local:ThemeKey DataGridColumnHeaderPressedBackground}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey DataGridColumnHeaderPressedForeground}" />
             </Trigger>
         </Style.Triggers>
     </Style>

@@ -78,7 +78,7 @@ namespace Imagin.Core.Controls
             SetCurrentValue(MenuProperty, DefaultMenu);
         }
 
-        protected override void OnMenuChanged(Value<ContextMenu> input)
+        protected override void OnMenuChanged(ReadOnlyValue<ContextMenu> input)
         {
             base.OnMenuChanged(input);
             if (input.Old is not null)

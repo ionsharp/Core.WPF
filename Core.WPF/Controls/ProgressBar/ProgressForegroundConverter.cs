@@ -6,7 +6,7 @@ using System.Windows.Media;
 namespace Imagin.Core.Controls
 {
     [ValueConversion(typeof(SolidColorBrush), typeof(LinearGradientBrush))]
-    public class ProgressForegroundConverter : Converter<SolidColorBrush, LinearGradientBrush>
+    public class ProgressForegroundConverter : ValueConverter<SolidColorBrush, LinearGradientBrush>
     {
         public static ProgressForegroundConverter Default { get; private set; } = new ProgressForegroundConverter();
         ProgressForegroundConverter() { }

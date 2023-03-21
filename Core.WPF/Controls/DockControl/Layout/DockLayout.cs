@@ -8,14 +8,9 @@ namespace Imagin.Core.Controls
     [XmlRoot("Layout")]
     public class DockLayout : DockLayoutRoot
     {
-        List<DockLayoutWindow> floating = new();
         [XmlArray]
         [XmlArrayItem(ElementName = "Window")]
-        public List<DockLayoutWindow> Floating
-        {
-            get => floating;
-            set => this.Change(ref floating, value);
-        }
+        public List<DockLayoutWindow> Floating { get => Get(new List<DockLayoutWindow>()); set => Set(value); }
 
         public DockLayout() : base() { }
 

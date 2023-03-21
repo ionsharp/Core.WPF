@@ -1,10 +1,14 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Collections;
-using Imagin.Core.Collections.Generic;
+using Imagin.Core.Collections.ObjectModel;
 using Imagin.Core.Controls;
+using Imagin.Core.Conversion;
 using Imagin.Core.Imports;
+using Imagin.Core.Numerics;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +18,6 @@ using System.Windows.Media;
 
 namespace Imagin.Core.Linq;
 
-[Extends(typeof(Window))]
 public static class XWindow
 {
     public static readonly ReferenceKey<Border> BorderKey = new();
@@ -27,7 +30,7 @@ public static class XWindow
 
     const int SC_MOVE = 0xF010;
 
-    //...
+    ///
 
     const uint SWP_NOSIZE = 0x0001;
 
@@ -37,7 +40,7 @@ public static class XWindow
 
     const uint SWP_NOZORDER = 0x0004;
 
-    //...
+    ///
 
     const int WM_ACTIVATEAPP = 0x001C;
 
@@ -75,6 +78,14 @@ public static class XWindow
                 i.Left += (e.PreviousSize.Width - e.NewSize.Width) / 2;
         }
     }
+
+    #endregion
+
+    #region ButtonStyle
+
+    public static readonly DependencyProperty ButtonStyleProperty = DependencyProperty.RegisterAttached("ButtonStyle", typeof(Controls.ButtonStyle), typeof(XWindow), new FrameworkPropertyMetadata(Controls.ButtonStyle.Classic));
+    public static Controls.ButtonStyle GetButtonStyle(Window i) => (Controls.ButtonStyle)i.GetValue(ButtonStyleProperty);
+    public static void SetButtonStyle(Window i, Controls.ButtonStyle input) => i.SetValue(ButtonStyleProperty, input);
 
     #endregion
 
@@ -187,11 +198,35 @@ public static class XWindow
 
     #endregion
 
+    #region DialogBlur
+
+    public static readonly DependencyProperty DialogBlurProperty = DependencyProperty.RegisterAttached("DialogBlur", typeof(double), typeof(XWindow), new FrameworkPropertyMetadata(1000.0));
+    public static double GetDialogBlur(Window i) => (double)i.GetValue(DialogBlurProperty);
+    public static void SetDialogBlur(Window i, double input) => i.SetValue(DialogBlurProperty, input);
+
+    #endregion
+
     #region DialogTemplate
 
     public static readonly DependencyProperty DialogTemplateProperty = DependencyProperty.RegisterAttached("DialogTemplate", typeof(DataTemplate), typeof(XWindow), new FrameworkPropertyMetadata(null));
     public static DataTemplate GetDialogTemplate(Window i) => (DataTemplate)i.GetValue(DialogTemplateProperty);
     public static void SetDialogTemplate(Window i, DataTemplate input) => i.SetValue(DialogTemplateProperty, input);
+
+    #endregion
+
+    #region DialogTransition
+
+    public static readonly DependencyProperty DialogTransitionProperty = DependencyProperty.RegisterAttached("DialogTransition", typeof(Transitions), typeof(XWindow), new FrameworkPropertyMetadata(Transitions.Default));
+    public static Transitions GetDialogTransition(Window i) => (Transitions)i.GetValue(DialogTransitionProperty);
+    public static void SetDialogTransition(Window i, Transitions input) => i.SetValue(DialogTransitionProperty, input);
+
+    #endregion
+
+    #region DisableCancel
+
+    public static readonly DependencyProperty DisableCancelProperty = DependencyProperty.RegisterAttached("DisableCancel", typeof(bool), typeof(XWindow), new FrameworkPropertyMetadata(false));
+    public static bool GetDisableCancel(Window i) => (bool)i.GetValue(DisableCancelProperty);
+    public static void SetDisableCancel(Window i, bool input) => i.SetValue(DisableCancelProperty, input);
 
     #endregion
 
@@ -252,11 +287,11 @@ public static class XWindow
 
     #endregion
 
-    #region Header
+    #region HeaderBackground
 
-    public static readonly DependencyProperty HeaderProperty = DependencyProperty.RegisterAttached("Header", typeof(object), typeof(XWindow), new FrameworkPropertyMetadata(null));
-    public static object GetHeader(Window i) => (object)i.GetValue(HeaderProperty);
-    public static void SetHeader(Window i, object input) => i.SetValue(HeaderProperty, input);
+    public static readonly DependencyProperty HeaderBackgroundProperty = DependencyProperty.RegisterAttached("HeaderBackground", typeof(Brush), typeof(XWindow), new FrameworkPropertyMetadata(Brushes.Transparent));
+    public static Brush GetHeaderBackground(Window i) => (Brush)i.GetValue(HeaderBackgroundProperty);
+    public static void SetHeaderBackground(Window i, Brush input) => i.SetValue(HeaderBackgroundProperty, input);
 
     #endregion
 
@@ -268,19 +303,52 @@ public static class XWindow
 
     #endregion
 
-    #region HeaderTemplate
+    #region HeaderButtonTemplate
 
-    public static readonly DependencyProperty HeaderTemplateProperty = DependencyProperty.RegisterAttached("HeaderTemplate", typeof(DataTemplate), typeof(XWindow), new FrameworkPropertyMetadata(null));
-    public static DataTemplate GetHeaderTemplate(Window i) => (DataTemplate)i.GetValue(HeaderTemplateProperty);
-    public static void SetHeaderTemplate(Window i, DataTemplate input) => i.SetValue(HeaderTemplateProperty, input);
+    public static readonly DependencyProperty HeaderButtonTemplateProperty = DependencyProperty.RegisterAttached("HeaderButtonTemplate", typeof(DataTemplate), typeof(XWindow), new FrameworkPropertyMetadata(null));
+    public static DataTemplate GetHeaderButtonTemplate(Window i) => (DataTemplate)i.GetValue(HeaderButtonTemplateProperty);
+    public static void SetHeaderButtonTemplate(Window i, DataTemplate input) => i.SetValue(HeaderButtonTemplateProperty, input);
 
     #endregion
 
-    #region HeaderTemplateSelector
+    #region Icon
 
-    public static readonly DependencyProperty HeaderTemplateSelectorProperty = DependencyProperty.RegisterAttached("HeaderTemplateSelector", typeof(DataTemplateSelector), typeof(XWindow), new FrameworkPropertyMetadata(null));
-    public static DataTemplateSelector GetHeaderTemplateSelector(Window i) => (DataTemplateSelector)i.GetValue(HeaderTemplateSelectorProperty);
-    public static void SetHeaderTemplateSelector(Window i, DataTemplateSelector input) => i.SetValue(HeaderTemplateSelectorProperty, input);
+    public static readonly DependencyProperty IconProperty = DependencyProperty.RegisterAttached("Icon", typeof(ImageSource), typeof(XWindow), new FrameworkPropertyMetadata(null));
+    public static ImageSource GetIcon(Window i) => (ImageSource)i.GetValue(IconProperty);
+    public static void SetIcon(Window i, ImageSource input) => i.SetValue(IconProperty, input);
+
+    #endregion
+
+    #region IconMenu
+
+    public static readonly DependencyProperty IconMenuProperty = DependencyProperty.RegisterAttached("IconMenu", typeof(object), typeof(XWindow), new FrameworkPropertyMetadata(null));
+    public static object GetIconMenu(Window i) => (object)i.GetValue(IconMenuProperty);
+    public static void SetIconMenu(Window i, object input) => i.SetValue(IconMenuProperty, input);
+
+    #endregion
+    
+    #region IconSize
+
+    public static readonly DependencyProperty IconSizeProperty = DependencyProperty.RegisterAttached("IconSize", typeof(DoubleSize), typeof(XWindow), new FrameworkPropertyMetadata(null));
+    [TypeConverter(typeof(DoubleSizeTypeConverter))]
+    public static DoubleSize GetIconSize(Window i) => (DoubleSize)i.GetValue(IconSizeProperty);
+    public static void SetIconSize(Window i, DoubleSize input) => i.SetValue(IconSizeProperty, input);
+
+    #endregion
+
+    #region IconVisibility
+
+    public static readonly DependencyProperty IconVisibilityProperty = DependencyProperty.RegisterAttached("IconVisibility", typeof(Visibility), typeof(XWindow), new FrameworkPropertyMetadata(Visibility.Visible));
+    public static Visibility GetIconVisibility(Window i) => (Visibility)i.GetValue(IconVisibilityProperty);
+    public static void SetIconVisibility(Window i, Visibility input) => i.SetValue(IconVisibilityProperty, input);
+
+    #endregion
+
+    #region HeaderPlacement
+
+    public static readonly DependencyProperty HeaderPlacementProperty = DependencyProperty.RegisterAttached("HeaderPlacement", typeof(TopBottom), typeof(XWindow), new FrameworkPropertyMetadata(TopBottom.Top));
+    public static TopBottom GetHeaderPlacement(Window i) => (TopBottom)i.GetValue(HeaderPlacementProperty);
+    public static void SetHeaderPlacement(Window i, TopBottom input) => i.SetValue(HeaderPlacementProperty, input);
 
     #endregion
 
@@ -289,6 +357,28 @@ public static class XWindow
     public static readonly DependencyProperty HeaderVisibilityProperty = DependencyProperty.RegisterAttached("HeaderVisibility", typeof(Visibility), typeof(XWindow), new FrameworkPropertyMetadata(Visibility.Visible));
     public static Visibility GetHeaderVisibility(Window i) => (Visibility)i.GetValue(HeaderVisibilityProperty);
     public static void SetHeaderVisibility(Window i, Visibility input) => i.SetValue(HeaderVisibilityProperty, input);
+
+    #endregion
+
+    #region IsAlwaysMaximized
+
+    public static readonly DependencyProperty IsAlwaysMaximizedProperty = DependencyProperty.RegisterAttached("IsAlwaysMaximized", typeof(bool), typeof(XWindow), new FrameworkPropertyMetadata(false, OnIsAlwaysMaximizedChanged));
+    public static bool GetIsAlwaysMaximized(Window i) => (bool)i.GetValue(IsAlwaysMaximizedProperty);
+    public static void SetIsAlwaysMaximized(Window i, bool input) => i.SetValue(IsAlwaysMaximizedProperty, input);
+    static void OnIsAlwaysMaximizedChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (sender is Window window)
+            window.RegisterHandlerAttached((bool)e.NewValue, IsAlwaysMaximizedProperty, i => i.StateChanged += IsAlwaysMaximized_StateChanged, i => i.StateChanged -= IsAlwaysMaximized_StateChanged);
+    }
+
+    static void IsAlwaysMaximized_StateChanged(object sender, EventArgs e)
+    {
+        if (sender is Window window)
+        {
+            if (window.WindowState != WindowState.Maximized)
+                window.WindowState = WindowState.Maximized;
+        }
+    }
 
     #endregion
 
@@ -309,6 +399,14 @@ public static class XWindow
 
     #endregion
 
+    #region IsDialogShowing
+
+    public static readonly DependencyProperty IsDialogShowingProperty = DependencyProperty.RegisterAttached("IsDialogShowing", typeof(bool), typeof(XWindow), new FrameworkPropertyMetadata(false));
+    public static bool GetIsDialogShowing(Window i) => (bool)i.GetValue(IsDialogShowingProperty);
+    public static void SetIsDialogShowing(Window i, bool input) => i.SetValue(IsDialogShowingProperty, input);
+
+    #endregion
+    
     #region MaximizeCommand
 
     public static readonly RoutedUICommand MaximizeCommand = new(nameof(MaximizeCommand), nameof(MaximizeCommand), typeof(XWindow));
@@ -319,9 +417,25 @@ public static class XWindow
 
     #region Menu
 
-    public static readonly DependencyProperty MenuProperty = DependencyProperty.RegisterAttached("Menu", typeof(Menu), typeof(XWindow), new FrameworkPropertyMetadata(null));
-    public static Menu GetMenu(Window i) => (Menu)i.GetValue(MenuProperty);
-    public static void SetMenu(Window i, Menu input) => i.SetValue(MenuProperty, input);
+    public static readonly DependencyProperty MenuProperty = DependencyProperty.RegisterAttached("Menu", typeof(object), typeof(XWindow), new FrameworkPropertyMetadata(null));
+    public static object GetMenu(Window i) => (object)i.GetValue(MenuProperty);
+    public static void SetMenu(Window i, object input) => i.SetValue(MenuProperty, input);
+
+    #endregion
+
+    #region MenuOrientation
+
+    public static readonly DependencyProperty MenuOrientationProperty = DependencyProperty.RegisterAttached("MenuOrientation", typeof(Orientation), typeof(XWindow), new FrameworkPropertyMetadata(Orientation.Horizontal));
+    public static Orientation GetMenuOrientation(Window i) => (Orientation)i.GetValue(MenuOrientationProperty);
+    public static void SetMenuOrientation(Window i, Orientation input) => i.SetValue(MenuOrientationProperty, input);
+
+    #endregion
+
+    #region MenuTemplate
+
+    public static readonly DependencyProperty MenuTemplateProperty = DependencyProperty.RegisterAttached("MenuTemplate", typeof(DataTemplate), typeof(XWindow), new FrameworkPropertyMetadata(null));
+    public static DataTemplate GetMenuTemplate(Window i) => (DataTemplate)i.GetValue(MenuTemplateProperty);
+    public static void SetMenuTemplate(Window i, DataTemplate input) => i.SetValue(MenuTemplateProperty, input);
 
     #endregion
 
@@ -332,7 +446,7 @@ public static class XWindow
     static void OnCanMinimize(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
 
     #endregion
-
+    
     #region Notifications
 
     static readonly DependencyPropertyKey NotificationsKey = DependencyProperty.RegisterAttachedReadOnly("Notifications", typeof(ICollectionChanged), typeof(XWindow), new FrameworkPropertyMetadata(null));
@@ -381,7 +495,7 @@ public static class XWindow
         }
     }
 
-    //...
+    ///
 
     static void Bottom_Subscribe(Window window)
     {
@@ -407,7 +521,7 @@ public static class XWindow
         }
     }
 
-    //...
+    ///
 
     static void Bottom_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
@@ -491,27 +605,71 @@ public static class XWindow
 
     #endregion
 
-    #region TitleIcon
+    #region SystemMenuItems
 
-    public static readonly DependencyProperty TitleIconProperty = DependencyProperty.RegisterAttached("TitleIcon", typeof(ImageSource), typeof(XWindow), new FrameworkPropertyMetadata(null));
-    public static ImageSource GetTitleIcon(Window i) => (ImageSource)i.GetValue(TitleIconProperty);
-    public static void SetTitleIcon(Window i, ImageSource input) => i.SetValue(TitleIconProperty, input);
+    const uint MF_SEPARATOR = 0x800;
 
-    #endregion
+    const uint MF_BYCOMMAND = 0x0;
 
-    #region TitleIconVisibility
+    const uint MF_BYPOSITION = 0x400;
 
-    public static readonly DependencyProperty TitleIconVisibilityProperty = DependencyProperty.RegisterAttached("TitleIconVisibility", typeof(Visibility), typeof(XWindow), new FrameworkPropertyMetadata(Visibility.Visible));
-    public static Visibility GetTitleIconVisibility(Window i) => (Visibility)i.GetValue(TitleIconVisibilityProperty);
-    public static void SetTitleIconVisibility(Window i, Visibility input) => i.SetValue(TitleIconVisibilityProperty, input);
+    const uint MF_STRING = 0x0;
 
-    #endregion
+    const uint MF_ENABLED = 0x0;
+
+    const uint MF_DISABLED = 0x2;
     
+    ///
+
+    [DllImport("user32.dll")]
+    static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+    [DllImport("user32", SetLastError = true, CharSet = CharSet.Auto)]
+    static extern bool InsertMenu(IntPtr hmenu, int position, uint flags, uint item_id, [MarshalAs(UnmanagedType.LPTStr)]string item_text);
+
+    [DllImport("user32.dll")]
+    static extern bool EnableMenuItem(IntPtr hMenu, uint uIDEnableItem, uint uEnable);
+
+    static Dictionary<Window, IntPtr> systemMenus;
+
+    ///
+
+    ///<summary>https://www.codeproject.com/Articles/70568/An-MVVM-friendly-approach-to-adding-system-menu-en</summary>
+    public static readonly DependencyProperty MenuItemsProperty = DependencyProperty.RegisterAttached("MenuItems", typeof(FreezableCollection<SystemMenuItem>), typeof(XWindow), new PropertyMetadata(OnMenuItemsChanged));
+    public static FreezableCollection<SystemMenuItem> GetMenuItems(Window i) => i.GetValueOrSetDefault(MenuItemsProperty, () => new FreezableCollection<SystemMenuItem>());
+    public static void SetMenuItems(Window i, FreezableCollection<SystemMenuItem> input) => i.SetValue(MenuItemsProperty, input);
+    static void OnMenuItemsChanged(DependencyObject i, DependencyPropertyChangedEventArgs e)
+    {
+        if (i is Window window)
+        {
+            if (e.NewValue is FreezableCollection<SystemMenuItem> items)
+                SetMenuItems(window, items);
+        }
+    }
+
+    #endregion
+
+    #region TaskbarIconTemplate
+
+    public static readonly DependencyProperty TaskbarIconTemplateProperty = DependencyProperty.RegisterAttached("TaskbarIconTemplate", typeof(DataTemplate), typeof(XWindow), new FrameworkPropertyMetadata(null));
+    public static DataTemplate GetTaskbarIconTemplate(Window i) => (DataTemplate)i.GetValue(TaskbarIconTemplateProperty);
+    public static void SetTaskbarIconTemplate(Window i, DataTemplate input) => i.SetValue(TaskbarIconTemplateProperty, input);
+
+    #endregion
+
     #region TitleTemplate
 
     public static readonly DependencyProperty TitleTemplateProperty = DependencyProperty.RegisterAttached("TitleTemplate", typeof(DataTemplate), typeof(XWindow), new FrameworkPropertyMetadata(null));
     public static DataTemplate GetTitleTemplate(Window i) => (DataTemplate)i.GetValue(TitleTemplateProperty);
     public static void SetTitleTemplate(Window i, DataTemplate input) => i.SetValue(TitleTemplateProperty, input);
+
+    #endregion
+
+    #region Type
+
+    public static readonly DependencyProperty TypeProperty = DependencyProperty.RegisterAttached("Type", typeof(WindowTypes), typeof(XWindow), new FrameworkPropertyMetadata(WindowTypes.Default));
+    public static WindowTypes GetType(Window i) => (WindowTypes)i.GetValue(TypeProperty);
+    public static void SetType(Window i, WindowTypes input) => i.SetValue(TypeProperty, input);
 
     #endregion
 
@@ -523,9 +681,26 @@ public static class XWindow
     {
         if (sender is Window window)
         {
+            /*
+            var helper = new WindowInteropHelper(window);
+
+            var menu = GetSystemMenu(helper.Handle, false);
+            systemMenus.Add(window, menu);
+
+            if (GetMenuItems(window).Count > 0)
+                InsertMenu(menu, -1, MF_BYPOSITION | MF_SEPARATOR, 0, String.Empty);
+
+            foreach (SystemMenuItem item in GetMenuItems(window))
+                InsertMenu(systemMenus[window], (int)item.Id, MF_BYCOMMAND | MF_STRING, (uint)item.Id, item.Header);
+
+            var source = HwndSource.FromHwnd(helper.Handle);
+            source.AddHook(WndProc);
+            */
+
+            ///
+
             window.SourceInitialized -= OnSourceInitialized;
-            HwndSource.FromHwnd(new WindowInteropHelper(window).Handle)
-                .AddHook(new HwndSourceHook(WndProc));
+            HwndSource.FromHwnd(new WindowInteropHelper(window).Handle).AddHook(new HwndSourceHook(WndProc));
 
             window.AddOnce
                 (new CommandBinding(CloseCommand,
@@ -545,12 +720,32 @@ public static class XWindow
         }
     }
 
-    //...
+    ///
 
     static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        Window window = null;
         switch (msg)
         {
+            case (int)WindowMessages.WM_SYSCOMMAND:
+                break;
+                var item = GetMenuItems(window).Where(i => i.Id == wParam.ToInt32()).FirstOrDefault();
+                if (item != null)
+                {
+                    item.Command.Execute(item.CommandParameter);
+                    handled = true;
+                }
+
+            case (int)WindowMessages.WM_INITMENUPOPUP:
+                break;
+                if (systemMenus[window] == wParam)
+                {
+                    foreach (var i in GetMenuItems(window))
+                        EnableMenuItem(systemMenus[window], (uint)i.Id, i.Command.CanExecute(i.CommandParameter) ? MF_ENABLED : MF_DISABLED);
+
+                    handled = true;
+                }
+
             case (int)WindowMessages.WM_GETMINMAXINFO:
                 GetMinMaxInfo(hwnd, lParam);
                 handled = true;
@@ -581,7 +776,7 @@ public static class XWindow
     [DllImport("user32.dll")]
     static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
-    //...
+    ///
 
     static void GetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
     {
@@ -613,7 +808,7 @@ public static class XWindow
         Marshal.StructureToPtr(mmi, lParam, true);
     }
 
-    //...
+    ///
 
     public static double ActualLeft(this Window input)
     {
@@ -635,7 +830,7 @@ public static class XWindow
         else return input.Top;
     }
 
-    //...
+    ///
 
     public static bool CanMaximize(this Window window) => window != null && window.WindowStyle != WindowStyle.ToolWindow && window.WindowState != WindowState.Maximized && window.ResizeMode != ResizeMode.NoResize;
 

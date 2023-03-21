@@ -1,4 +1,5 @@
-﻿using Imagin.Core.Collections;
+﻿using Imagin.Core.Analytics;
+using Imagin.Core.Collections;
 using Imagin.Core.Conversion;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
@@ -17,12 +18,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Imagin.Core.Controls;
 
-#region DockControl
+#region WindowsServices
 
 /*
 protected override void OnSourceInitialized(EventArgs e)
@@ -51,43 +51,50 @@ public static class WindowsServices
     }
 }
 
+#endregion
+
+#region DockControl
+
 public class DockControl : Control
 {
     #region Keys
 
     public static readonly ReferenceKey<Border> BorderKey = new();
 
-    //...
+    ///
 
     public static readonly ResourceKey FindTemplateKey = new();
 
-    //...
+    ///
         
-    public static readonly ResourceKey<ImageElement> EmptyMarkerStyleKey = new();
+    public static readonly ResourceKey EmptyMarkerStyleKey = new();
 
-    public static readonly ResourceKey<ImageElement> PrimaryMarkerStyleKey = new();
+    public static readonly ResourceKey PrimaryMarkerStyleKey = new();
 
-    public static readonly ResourceKey<ImageElement> SecondaryMarkerStyleKey = new();
+    public static readonly ResourceKey SecondaryMarkerStyleKey = new();
 
-    public static readonly ResourceKey<Polygon> SelectionStyleKey = new();
+    public static readonly ResourceKey SelectionStyleKey = new();
 
-    //...
+    ///
 
     public static readonly ResourceKey DocumentTemplateKey = new();
 
-    //...
+    ///
 
-    public static readonly ResourceKey<TabItem> DocumentStyle = new();
+    
+    public static readonly ResourceKey DocumentMenuKey = new();
 
-    public static readonly ResourceKey<TabItem> PanelStyle = new();
+    public static readonly ResourceKey DocumentStyle = new();
 
-    //...
+    public static readonly ResourceKey PanelStyle = new();
 
-    public static readonly ResourceKey<GridSplitter> GridSplitterStyleKey = new();
+    ///
 
-    //...
+    public static readonly ResourceKey GridSplitterStyleKey = new();
 
-    public static readonly ResourceKey<ContextMenu> PanelMenuKey = new();
+    ///
+
+    public static readonly ResourceKey PanelMenuKey = new();
 
     public static readonly ResourceKey PanelHeaderPatternKey = new();
 
@@ -100,12 +107,16 @@ public class DockControl : Control
     public static readonly ResourceKey PanelTitleHeaderTemplateKey = new();
 
     public static readonly ResourceKey CollapsedPanelTitleHeaderTemplateKey = new();
-        
-    //...
 
+    ///
+    
     public static readonly ResourceKey PanelOptionsTemplateKey = new();
 
-    public static readonly ResourceKey PanelToolsTemplateKey = new();
+    ///
+
+    public static readonly ResourceKey ContentFooterTemplateKey = new();
+
+    public static readonly ResourceKey ContentHeaderTemplateKey = new();
 
     #endregion
 
@@ -139,11 +150,11 @@ public class DockControl : Control
 
     readonly MouseHookListener mouseListener = new(new Input.WinApi.GlobalHooker());
 
-    //...
+    ///
 
     readonly DockRootControl Root;
 
-    //...
+    ///
 
     readonly Handle handleActive 
         = false;
@@ -154,12 +165,12 @@ public class DockControl : Control
     readonly Handle handleClosing 
         = false;
 
-    //...
+    ///
 
     readonly List<DockWindow> Floating 
         = new();
 
-    //...
+    ///
 
     readonly Dictionary<Models.Panel, IDockPanelSource> Hidden
         = new();
@@ -167,12 +178,12 @@ public class DockControl : Control
     readonly Dictionary<Models.Panel, IDockPanelSource> Pins
         = new();
 
-    //...
+    ///
 
     readonly Dictionary<Document, DockDocumentControl> Minimized
         = new();
 
-    //...
+    ///
 
     internal List<DockDocumentControl> DocumentControls 
         = new();
@@ -180,9 +191,9 @@ public class DockControl : Control
     internal List<DockPanelControl> PanelControls 
         = new();
 
-    //...
+    ///
 
-    readonly CancelTask refreshTask;
+    readonly Method refreshTask;
 
 
     internal DockDragEvent LastDrag = null;
@@ -285,24 +296,13 @@ public class DockControl : Control
 
     #endregion
 
-    #region AutoSaveDocuments
+    #region DefaultPanelTemplate
 
-    public static readonly DependencyProperty AutoSaveDocumentsProperty = DependencyProperty.Register(nameof(AutoSaveDocuments), typeof(bool), typeof(DockControl), new FrameworkPropertyMetadata(true));
-    public bool AutoSaveDocuments
+    public static readonly DependencyProperty DefaultPanelTemplateProperty = DependencyProperty.Register(nameof(DefaultPanelTemplate), typeof(DataTemplate), typeof(DockControl), new FrameworkPropertyMetadata(null));
+    public DataTemplate DefaultPanelTemplate
     {
-        get => (bool)GetValue(AutoSaveDocumentsProperty);
-        set => SetValue(AutoSaveDocumentsProperty, value);
-    }
-
-    #endregion
-
-    #region DefaultTemplates
-
-    public static readonly DependencyProperty DefaultTemplatesProperty = DependencyProperty.Register(nameof(DefaultTemplates), typeof(KeyTemplateCollection), typeof(DockControl), new FrameworkPropertyMetadata(null));
-    public KeyTemplateCollection DefaultTemplates
-    {
-        get => (KeyTemplateCollection)GetValue(DefaultTemplatesProperty);
-        set => SetValue(DefaultTemplatesProperty, value);
+        get => (DataTemplate)GetValue(DefaultPanelTemplateProperty);
+        set => SetValue(DefaultPanelTemplateProperty, value);
     }
 
     #endregion
@@ -337,7 +337,7 @@ public class DockControl : Control
         get => (DocumentCollection)GetValue(DocumentsProperty);
         set => SetValue(DocumentsProperty, value);
     }
-    static void OnDocumentsChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DockControl>().OnDocumentsChanged(new Value<DocumentCollection>(e));
+    static void OnDocumentsChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DockControl>().OnDocumentsChanged(e.Convert<DocumentCollection>());
 
     #endregion
 
@@ -392,6 +392,28 @@ public class DockControl : Control
     {
         get => (DataTemplateSelector)GetValue(DocumentTitleTemplateSelectorProperty);
         set => SetValue(DocumentTitleTemplateSelectorProperty, value);
+    }
+
+    #endregion
+
+    #region DocumentToolTipHeaderTemplate
+
+    public static readonly DependencyProperty DocumentToolTipHeaderTemplateProperty = DependencyProperty.Register(nameof(DocumentToolTipHeaderTemplate), typeof(DataTemplate), typeof(DockControl), new FrameworkPropertyMetadata(null));
+    public DataTemplate DocumentToolTipHeaderTemplate
+    {
+        get => (DataTemplate)GetValue(DocumentToolTipHeaderTemplateProperty);
+        set => SetValue(DocumentToolTipHeaderTemplateProperty, value);
+    }
+
+    #endregion
+
+    #region DocumentToolTipHeaderTemplateSelector
+
+    public static readonly DependencyProperty DocumentToolTipHeaderTemplateSelectorProperty = DependencyProperty.Register(nameof(DocumentToolTipHeaderTemplateSelector), typeof(DataTemplateSelector), typeof(DockControl), new FrameworkPropertyMetadata(null));
+    public DataTemplateSelector DocumentToolTipHeaderTemplateSelector
+    {
+        get => (DataTemplateSelector)GetValue(DocumentToolTipHeaderTemplateSelectorProperty);
+        set => SetValue(DocumentToolTipHeaderTemplateSelectorProperty, value);
     }
 
     #endregion
@@ -496,7 +518,7 @@ public class DockControl : Control
         get => (Layouts)GetValue(LayoutsProperty);
         set => SetValue(LayoutsProperty, value);
     }
-    static void OnLayoutsChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DockControl>().OnLayoutsChanged(new Value<Layouts>(e));
+    static void OnLayoutsChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DockControl>().OnLayoutsChanged(e.Convert<Layouts>());
 
     #endregion
 
@@ -574,7 +596,7 @@ public class DockControl : Control
         get => (PanelCollection)GetValue(PanelsProperty);
         set => SetValue(PanelsProperty, value);
     }
-    static void OnPanelsChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DockControl>().OnPanelsChanged(new Value<PanelCollection>(e));
+    static void OnPanelsChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DockControl>().OnPanelsChanged(e.Convert<PanelCollection>());
 
     #endregion
 
@@ -655,6 +677,17 @@ public class DockControl : Control
 
     #endregion
 
+    #region PanelToolTipHeaderTemplate
+
+    public static readonly DependencyProperty PanelToolTipHeaderTemplateProperty = DependencyProperty.Register(nameof(PanelToolTipHeaderTemplate), typeof(DataTemplate), typeof(DockControl), new FrameworkPropertyMetadata(null));
+    public DataTemplate PanelToolTipHeaderTemplate
+    {
+        get => (DataTemplate)GetValue(PanelToolTipHeaderTemplateProperty);
+        set => SetValue(PanelToolTipHeaderTemplateProperty, value);
+    }
+
+    #endregion
+
     #region ParentWindow
 
     Window parentWindow = null;
@@ -691,17 +724,11 @@ public class DockControl : Control
 
     public DockControl() : base()
     {
-        Root 
-            = new DockRootControl(this, null);
-        ActiveRoot
-            = Root;
+        Root = new DockRootControl(this, null);
+        ActiveRoot = Root;
 
         this.RegisterHandler(OnLoaded, OnUnloaded);
-        SetCurrentValue(DefaultTemplatesProperty,
-            new KeyTemplateCollection());
-
-        refreshTask
-            = new CancelTask(Refresh, false);
+        refreshTask = new Method(Refresh, false);
     }
 
     #endregion
@@ -752,7 +779,6 @@ public class DockControl : Control
 
     void Add(Document document)
     {
-        document.Unsubscribe(); document.Subscribe();
         Subscribe(document);
 
         if (document.IsMinimized)
@@ -772,7 +798,6 @@ public class DockControl : Control
 
     void Remove(Document document)
     {
-        document.Unsubscribe();
         Unsubscribe(document);
 
         var control = FindControl(document);
@@ -790,15 +815,13 @@ public class DockControl : Control
 
     }
 
-    //...
+    ///
 
     void Add(Models.Panel newPanel)
     {
-        newPanel.Unsubscribe(); newPanel.Subscribe();
         Subscribe(newPanel);
 
-        var control = PanelControls.FirstOrDefault<DockPanelControl>();
-
+        var control = ActivePanel != null && PanelControls.FirstOrDefault(i => i.Source.Contains(ActivePanel)) is DockPanelControl result ? result : PanelControls.FirstOrDefault<DockPanelControl>();
         if (control != null)
             control.Source.Add(newPanel);
 
@@ -807,7 +830,6 @@ public class DockControl : Control
 
     IDockPanelSource Remove(Models.Panel panel)
     {
-        panel.Unsubscribe();
         Unsubscribe(panel);
 
         if (ReferenceEquals(ActivePanel, panel))
@@ -858,7 +880,7 @@ public class DockControl : Control
 
     #endregion
 
-    //...
+    ///
 
     #region Convert (IDockControl)
 
@@ -997,7 +1019,7 @@ public class DockControl : Control
 
     #endregion
 
-    //...
+    ///
 
     #region Convert (DockLayoutElement)
 
@@ -1464,7 +1486,7 @@ public class DockControl : Control
                 PanelControls[i].Delete();
         }
 
-        //...
+        ///
 
         //Isolate panels that aren't allowed to share; isolated panels require a dedicated control
         var isolated = new List<Models.Panel>();
@@ -1491,12 +1513,12 @@ public class DockControl : Control
         foreach (var i in isolated)
             Show(i);
 
-        //...
+        ///
 
         //Make sure panels that are actually visible are marked as such
         Panels.ForEach(i => { Unsubscribe(i); i.IsVisible = FindPanel(i); Subscribe(i); });
 
-        //...
+        ///
 
         //Make sure at least one DockDocumentControl in the main root persists
         if (!DocumentControls.Contains(i => i.Persist && ReferenceEquals(i.Root, Root)))
@@ -1641,7 +1663,7 @@ public class DockControl : Control
         }
     }
 
-    //...
+    ///
 
     internal void DockCenter(DockDragEvent e, int index = -1)
     {
@@ -1693,7 +1715,7 @@ public class DockControl : Control
         }
     }
 
-    //...
+    ///
 
     internal void DockPrimary(SecondaryDocks docks)
     {
@@ -1891,7 +1913,7 @@ public class DockControl : Control
         return result;
     }
 
-    //...
+    ///
 
     bool IsCompatible(DockContentControl input)
         => !input.Source.Contains<Models.Panel>(i => !i.CanShare);
@@ -1906,7 +1928,7 @@ public class DockControl : Control
         return null;
     }
 
-    //...
+    ///
 
     DockContentControl FindControl(Content input)
         => (DockContentControl)FindControl(input as Document) 
@@ -1946,7 +1968,7 @@ public class DockControl : Control
         return null;
     }
 
-    //...
+    ///
 
     bool FindPanel(Models.Panel input)
         => FindAnchor(input) != null || FindControl(input) != null;
@@ -1961,7 +1983,7 @@ public class DockControl : Control
         yield break;
     }
 
-    //...
+    ///
 
     DockRootControl FindRoot(Document input)
         => FindAnchor(input)?.Root ?? FindControl(input)?.Root;
@@ -1977,7 +1999,10 @@ public class DockControl : Control
     {
         if (content?.Length > 0)
         {
-            var result = new DockLayoutWindow { Position = new(position.Value.X, position.Value.Y) };
+            var result = new DockLayoutWindow();
+            if (position != null)
+                result.Position = new(position.Value.X, position.Value.Y);
+
             result.Root = content.Contains<Document>()
                 ? new DockLayoutDocumentGroup(content)
                 : new DockLayoutPanelGroup(content.Cast<Models.Panel>());
@@ -1995,7 +2020,7 @@ public class DockControl : Control
                 if (a != null)
                     a.Source.Remove(i);
 
-                else if (i is Models.Panel j && FindAnchor(j) is PanelCollection b)
+                else if (i is Models.Panel j && FindAnchor(j) is DockAnchorPanelCollection b)
                 {
                     b.Remove(j);
                     Pins.Remove(j);
@@ -2090,7 +2115,7 @@ public class DockControl : Control
 
     void OnContentMouseLeave(object sender, MouseEventArgs e) { }
 
-    //...
+    ///
 
     void OnDocumentsChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
@@ -2117,12 +2142,6 @@ public class DockControl : Control
             {
                 case nameof(Document.IsModified):
 
-                    if (document.IsModified)
-                    {
-                        if (AutoSaveDocuments)
-                            document.Save();
-                    }
-
                     if (!document.IsMinimized)
                         Unminimize(document);
 
@@ -2145,7 +2164,7 @@ public class DockControl : Control
         }
     }
 
-    //...
+    ///
 
     void OnFloatingAnchorChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
@@ -2170,7 +2189,7 @@ public class DockControl : Control
             handleClosing.SafeInvoke(() => e.Cancel = !Deset(window.Root, false, false), () => Deset(window.Root, true, false));
     }
 
-    //...
+    ///
 
     void OnGlobalMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
     {
@@ -2193,7 +2212,7 @@ public class DockControl : Control
         Drag = null;
     }
 
-    //...
+    ///
 
     void OnLayoutApplied(Layouts sender, LayoutEventArgs e) 
         => _ = refreshTask.Start();
@@ -2201,7 +2220,7 @@ public class DockControl : Control
     void OnLayoutSaved(Layouts sender, LayoutSavedEventArgs e) 
         => Layouts?.Save(e.Value, Convert());
 
-    //...
+    ///
 
     void OnLoaded()
     {
@@ -2231,7 +2250,7 @@ public class DockControl : Control
         //Deset(); This needs tested!
     }
 
-    //...
+    ///
 
     void OnPanelHeightRequested(Models.Panel sender, double length)
     {
@@ -2283,7 +2302,7 @@ public class DockControl : Control
             columnDefinition.Width = new GridLength(length, GridUnitType.Pixel);
     }
 
-    //...
+    ///
 
     void OnParentOrFloatingWindowActivated(object sender, EventArgs e)
     {
@@ -2292,17 +2311,26 @@ public class DockControl : Control
 
     void OnParentWindowClosing(object sender, CancelEventArgs e)
     {
+        if (sender is Window window)
+        {
+            if (XWindow.GetDisableCancel(window))
+                return;
+        }
+
         if (Documents.Contains(i => i.IsModified))
         {
-            var result = Dialog.Show("Close", "One or more documents have unsaved changes. Close anyway?", DialogImage.Warning, Buttons.YesNo);
-            e.Cancel = result == 1;
+            Dialog.ShowWarning("Close", new Warning("One or more documents have unsaved changes. Close anyway?"), i =>
+            {
+                e.Cancel = i == 1;
+            },
+            Buttons.YesNo);
         }
 
         if (!e.Cancel)
         {
             if (AutoSave)
             {
-                /* Something causes infinite layouts to save (1 saves each time app opens). Disable feature for now...
+                /* Something causes infinite layouts to save (1 save each time app opens). Disable feature for now...
                 if (Layouts != null)
                 {
                     if (Layouts.Layout.NullOrEmpty())
@@ -2368,6 +2396,8 @@ public class DockControl : Control
 
             Hidden.Remove(panel);
         }
+        else if (panel.DockPreference == SecondaryDocks.Center)
+            source = FindCompatible(Root, panel);
 
         if (source != null)
             source.Source.Add(panel);
@@ -2507,7 +2537,7 @@ public class DockControl : Control
         }
     }
 
-    //...
+    ///
 
     void MovePanelToPreviousGroup(Models.Panel i)
     {
@@ -2662,7 +2692,9 @@ public class DockControl : Control
         var result = await Layouts.Apply();
         if (result != null)
         {
-            await Dispatch.InvokeAsync(() => Convert(result));
+            await Task.Run(() => { }/*Thread.Sleep(1500)*/);
+
+            Convert(result);
             LayoutChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -2684,7 +2716,7 @@ public class DockControl : Control
         i.PropertyChanged -= OnDocumentPropertyChanged;
     }
 
-    //...
+    ///
 
     void Subscribe(DocumentCollection input)
     {
@@ -2701,7 +2733,7 @@ public class DockControl : Control
             Unsubscribe(i);
     }
 
-    //...
+    ///
 
     void Subscribe(Layouts i)
     {
@@ -2720,7 +2752,7 @@ public class DockControl : Control
             -= OnLayoutSaved;
     }
 
-    //...
+    ///
 
     void Subscribe(Models.Panel i)
     {
@@ -2744,7 +2776,7 @@ public class DockControl : Control
     }
         
 
-    //...
+    ///
 
     void Subscribe(PanelCollection input)
     {
@@ -2761,7 +2793,7 @@ public class DockControl : Control
             Unsubscribe(i);
     }
 
-    //...
+    ///
 
     internal void Subscribe(DockContentControl input)
     {
@@ -2784,7 +2816,7 @@ public class DockControl : Control
             -= OnContentItemsChanged;
     }
 
-    //...
+    ///
 
     void Subscribe(DockWindow input)
     {
@@ -2846,7 +2878,7 @@ public class DockControl : Control
         }
     });
 
-    protected virtual void OnActiveDocumentChanged(Value<Document> input) => handleActive.SafeInvoke(() =>
+    protected virtual void OnActiveDocumentChanged(ReadOnlyValue<Document> input) => handleActive.SafeInvoke(() =>
     {
         if (input.New != null)
         {
@@ -2857,7 +2889,7 @@ public class DockControl : Control
             SetCurrentValue(ActiveContentProperty, null);
     });
 
-    protected virtual void OnActivePanelChanged(Value<Models.Panel> input) => handleActive.SafeInvoke(() =>
+    protected virtual void OnActivePanelChanged(ReadOnlyValue<Models.Panel> input) => handleActive.SafeInvoke(() =>
     {
         if (input.New != null)
         {
@@ -2868,12 +2900,12 @@ public class DockControl : Control
             SetCurrentValue(ActiveContentProperty, null);
     });
 
-    protected virtual void OnActiveRootChanged(Value<DockRootControl> input)
+    protected virtual void OnActiveRootChanged(ReadOnlyValue<DockRootControl> input)
     {
         Activate(input.New);
     }
 
-    protected virtual void OnDocumentsChanged(Value<DocumentCollection> input)
+    protected virtual void OnDocumentsChanged(ReadOnlyValue<DocumentCollection> input)
     {
         if (input.Old != null)
             Unsubscribe(input.Old);
@@ -2884,7 +2916,7 @@ public class DockControl : Control
         _ = refreshTask.Start();
     }
 
-    protected virtual void OnDragChanged(Value<DockDragEvent> input)
+    protected virtual void OnDragChanged(ReadOnlyValue<DockDragEvent> input)
     {
         Dragging = input.New != null;
         var e = input.New;
@@ -2892,12 +2924,12 @@ public class DockControl : Control
             Mark(e.Source);
     }
 
-    protected virtual void OnDraggingChanged(Value<bool> input)
+    protected virtual void OnDraggingChanged(ReadOnlyValue<bool> input)
     {
         mouseListener.Enabled = input.New;
     }
 
-    protected virtual void OnLayoutsChanged(Value<Layouts> input)
+    protected virtual void OnLayoutsChanged(ReadOnlyValue<Layouts> input)
     {
         if (input.Old != null)
             Unsubscribe(input.Old);
@@ -2908,7 +2940,7 @@ public class DockControl : Control
         _ = refreshTask.Start();
     }
 
-    protected virtual void OnPanelsChanged(Value<PanelCollection> input)
+    protected virtual void OnPanelsChanged(ReadOnlyValue<PanelCollection> input)
     {
         if (input.Old != null)
             Unsubscribe(input.Old);
@@ -2940,7 +2972,7 @@ public class DockControl : Control
         if (document != null)
         {
             ActiveFind = document;
-            Models.Panel.Find<FindPanel>().If(j => j.FindText = Clipboard.GetText());
+            Panels.FirstOrDefault<FindPanel>().If(j => j.FindText = Clipboard.GetText());
         }
     }
 
@@ -2952,7 +2984,7 @@ public class DockControl : Control
     public ICommand CloseDocumentCommand => closeDocumentCommand ??= new RelayCommand<Document>(i => Documents.Remove(i), i => i?.CanClose == true);
 
     ICommand closeAllDocumentsCommand;
-    public ICommand CloseAllDocumentsCommand => closeAllDocumentsCommand ??= new RelayCommand(() => Documents.Clear(), () => Documents.Any<Document>());
+    public ICommand CloseAllDocumentsCommand => closeAllDocumentsCommand ??= new RelayCommand(() => Documents.Clear(), () => Documents?.Any<Document>() == true);
 
     ICommand closeAllDocumentsButThisCommand;
     public ICommand CloseAllDocumentsButThisCommand => closeAllDocumentsButThisCommand ??= new RelayCommand<Document>(i =>
@@ -2968,7 +3000,7 @@ public class DockControl : Control
     ICommand closeFindCommand;
     public ICommand CloseFindCommand => closeFindCommand ??= new RelayCommand(() => ActiveFind = null, () => ActiveFind != null);
 
-    //...
+    ///
 
     ICommand collapsePanelsCommand;
     public ICommand CollapsePanelsCommand 
@@ -3019,7 +3051,7 @@ public class DockControl : Control
         },
         i => FindControl(i) is DockPanelControl j && j.Collapse);
 
-    //...
+    ///
 
     ICommand dockCommand;
     public ICommand DockCommand => dockCommand ??= new RelayCommand<DockWindow>(i =>
@@ -3028,6 +3060,22 @@ public class DockControl : Control
         handleClosing.Invoke(() => i.Close());
     }, 
     i => i != null);
+    
+    ICommand dockDocumentCommand;
+    public ICommand DockDocumentCommand
+        => dockDocumentCommand ??= new RelayCommand<Document>(i => { }, i => true);
+
+    ICommand dockAllDocumentsCommand;
+    public ICommand DockAllDocumentsCommand
+        => dockAllDocumentsCommand ??= new RelayCommand(() => { }, () => true);
+
+    ICommand dockPanelCommand;
+    public ICommand DockPanelCommand
+        => dockPanelCommand ??= new RelayCommand<Models.Panel>(i => { }, i => true);
+
+    ICommand dockAllPanelsCommand;
+    public ICommand DockAllPanelsCommand
+        => dockAllPanelsCommand ??= new RelayCommand(() => { }, () => true);
 
     ICommand dockPinCommand;
     public ICommand DockPinCommand => dockPinCommand ??= new RelayCommand<DockPanelButton>(i =>
@@ -3069,7 +3117,7 @@ public class DockControl : Control
     },
     i => i != null);
 
-    //...
+    ///
 
     ICommand floatCommand;
     public ICommand FloatCommand 
@@ -3083,17 +3131,17 @@ public class DockControl : Control
     public ICommand FloatAllPanelsCommand 
         => floatAllPanelsCommand ??= new RelayCommand<Models.Panel>(i => FloatAll(i), i => FindControl(i)?.Source.Count > 1);
 
-    //...
+    ///
 
     ICommand hideCommand;
     public ICommand HideCommand 
         => hideCommand ??= new RelayCommand<Models.Panel>(i => i.IsVisible = false, i => i?.CanHide == true && i.IsVisible);
 
     ICommand hideAllCommand;
-    public ICommand HideAllCommand 
+    public ICommand HideAllCommand
         => hideAllCommand ??= new RelayCommand(() => Panels.ForEach(i => i.IsVisible = false), () => Panels?.Contains(j => j?.CanHide == true && j.IsVisible) == true);
-
-    //...
+    
+    ///
 
     ICommand moveDocumentToPreviousGroupCommand;
     public ICommand MoveDocumentToPreviousGroupCommand => moveDocumentToPreviousGroupCommand ??= new RelayCommand<Document>(i => MoveDocumentToPreviousGroup(i), i =>
@@ -3165,7 +3213,7 @@ public class DockControl : Control
         return false;
     });
 
-    //...
+    ///
 
     ICommand movePanelToPreviousGroupCommand;
     public ICommand MovePanelToPreviousGroupCommand => movePanelToPreviousGroupCommand ??= new RelayCommand<Models.Panel>(i => MovePanelToPreviousGroup(i), i =>
@@ -3249,7 +3297,7 @@ public class DockControl : Control
         return false;
     });
 
-    //...
+    ///
 
     ICommand newDocumentHorizontalGroupCommand;
     public ICommand NewDocumentHorizontalGroupCommand
@@ -3259,7 +3307,7 @@ public class DockControl : Control
     public ICommand NewDocumentVerticalGroupCommand
         => newDocumentVerticalGroupCommand ??= new RelayCommand<Document>(i => NewVerticalGroup(i), i => FindControl(i)?.Source.Count > 1);
 
-    //...
+    ///
 
     ICommand newPanelHorizontalGroupCommand;
     public ICommand NewPanelHorizontalGroupCommand
@@ -3269,7 +3317,7 @@ public class DockControl : Control
     public ICommand NewPanelVerticalGroupCommand
         => newPanelVerticalGroupCommand ??= new RelayCommand<Models.Panel>(i => NewVerticalGroup(i), i => FindControl(i)?.Source.Count > 1);
 
-    //...
+    ///
 
     ICommand minimizeCommand;
     public ICommand MinimizeCommand 
@@ -3278,14 +3326,6 @@ public class DockControl : Control
     ICommand minimizeAllCommand;
     public ICommand MinimizeAllCommand
         => minimizeAllCommand ??= new RelayCommand(() => Documents.ForEach(i => i.IsMinimized = true), () => true);
-
-    ICommand restoreCommand;
-    public ICommand RestoreCommand 
-        => restoreCommand ??= new RelayCommand<Document>(i => i.IsMinimized = false, i => i?.CanMinimize == true && i.IsMinimized);
-
-    ICommand restoreAllCommand;
-    public ICommand RestoreAllCommand
-        => restoreAllCommand ??= new RelayCommand(() => Documents.ForEach(i => i.IsMinimized = false), () => true);
 
     ICommand pinCommand;
     public ICommand PinCommand 
@@ -3298,6 +3338,14 @@ public class DockControl : Control
             PinCommand.Execute(i);
     });
 
+    ICommand restoreCommand;
+    public ICommand RestoreCommand
+        => restoreCommand ??= new RelayCommand<Document>(i => i.IsMinimized = false, i => i?.CanMinimize == true && i.IsMinimized);
+
+    ICommand restoreAllCommand;
+    public ICommand RestoreAllCommand
+        => restoreAllCommand ??= new RelayCommand(() => Documents.ForEach(i => i.IsMinimized = false), () => true);
+
     ICommand selectCommand;
     public ICommand SelectCommand => selectCommand ??= new RelayCommand<Content>(i =>
     {
@@ -3306,9 +3354,17 @@ public class DockControl : Control
     },
     i => i is Content);
 
+    ICommand showAllCommand;
+    public ICommand ShowAllCommand
+        => showAllCommand ??= new RelayCommand(() => Panels.ForEach(i => i.IsVisible = true), () => Panels?.Contains(j => j?.CanHide == true && !j.IsVisible) == true);
+
     ICommand unpinCommand;
     public ICommand UnpinCommand
         => unpinCommand ??= new RelayCommand<Models.Panel>(i => Unpin(i), i => i?.IsVisible == true && Pins.ContainsKey(i));
+
+    ICommand unpinAllCommand;
+    public ICommand UnpinAllCommand
+        => unpinAllCommand ??= new RelayCommand(() => Panels.Where(i => Pins.ContainsKey(i)).ForEach(i => UnpinCommand.Execute(i)), () => Panels?.Contains(i => Pins.ContainsKey(i)) == true);
 
     #endregion
 
@@ -3332,7 +3388,7 @@ public static class XDockControl
             element.RegisterHandlerAttached((bool)e.NewValue, DragProperty, Drag_Loaded, Drag_Unloaded);
     }
 
-    //...
+    ///
 
     static void Drag_Loaded(FrameworkElement input)
     {
@@ -3391,7 +3447,7 @@ public static class XDockControl
             element.RegisterHandlerAttached((bool)e.NewValue, PreviewDragProperty, PreviewDrag_Loaded, PreviewDrag_Unloaded);
     }
 
-    //...
+    ///
 
     static void PreviewDrag_Loaded(FrameworkElement input)
     {
@@ -3495,7 +3551,7 @@ public static class XDockControl
         }
     }
 
-    //...
+    ///
 
     static List<T> GetAll<T>(IDockControl i) where T : Content
     {
@@ -3548,7 +3604,7 @@ public static class XDockControl
         return result;
     }
 
-    //...
+    ///
 
     static DockGroupControl GetParent(this IDockControl input, DockGroupControl parent = null)
     {
@@ -3578,7 +3634,7 @@ public static class XDockControl
 
     public static DockGroupControl GetParent(this IDockControl input) => input.GetParent(null);
 
-    //...
+    ///
 
     public static Point GetPosition(this IDockControl input)
     {
@@ -3586,11 +3642,11 @@ public static class XDockControl
         return new Point(result.X + (input.ActualWidth / 2), result.Y + (input.ActualHeight / 2));
     }
 
-    //...
+    ///
 
     public static int GetIndex(this IDockControl input) => input.GetParent()?.Children.IndexOf(input as UIElement) ?? -1;
 
-    //...
+    ///
 
     static void Unsubscribe(IDockControl i)
     {
@@ -3606,7 +3662,7 @@ public static class XDockControl
         }
     }
 
-    //...
+    ///
 
     public static void Delete(this IDockControl input)
     {

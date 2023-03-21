@@ -10,7 +10,7 @@ namespace Imagin.Core.Controls
     [ContentProperty(nameof(Templates))]
     public class KeyTemplateSelector : DataTemplateSelector
     {
-        public KeyTemplate Default { get; set; } = new();
+        public DataTemplate Default { get; set; } = new();
 
         public List<KeyTemplate> Templates { get; set; } = new();
 

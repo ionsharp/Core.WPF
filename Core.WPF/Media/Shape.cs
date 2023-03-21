@@ -1,18 +1,39 @@
 ﻿using Imagin.Core.Linq;
 using Imagin.Core.Numerics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Media;
+using System.Xml.Serialization;
 using static Imagin.Core.Numerics.M;
 
 namespace Imagin.Core.Media;
 
-[Image(Images.Shape)]
-[Serializable]
-public class Shape : BaseNamable
+[Description("An array of points used to represent complex shapes.")]
+[Base(typeof(Shape)), Categorize(false), Image(SmallImages.Shape), Serializable]
+public abstract class Shape : Base
 {
+    public static Dictionary<uint, string> PolygonNames = new()
+    {
+        {  3, "Triangle"    },
+        {  4, "Diamond"     },
+        {  5, "Pentagon"    },
+        {  6, "Hexagon"     },
+        {  7, "Heptagon"    },
+        {  8, "Octagon"     },
+        {  9, "Nonagon"     },
+        { 10, "Decagon"     },
+        { 11, "Hendecagon"  },
+        { 12, "Dodecagon"   },
+        { 13, "Tridecagon"  },
+        { 14, "Tetradecagon"},
+        { 15, "Pentadecagon"},
+        { 16, "Hexadecagon" },
+    };
+
     #region (enum) CombineMode
 
     public enum CombineMode
@@ -29,123 +50,41 @@ public class Shape : BaseNamable
 
     #region Properties
 
-    public int Count => Points?.Count ?? 0;
-
-    readonly List<Point> preservedPoints = new();
-
-    [NonSerialized]
-    PointCollection points = new();
-    public PointCollection Points
-    {
-        get => points;
-        set => this.Change(ref points, value);
-    }
-
     #endregion
 
     #region Shape
 
-    public Shape() : base()
-    {
-        Points = new PointCollection();
-    }
+    public Shape() : base() { }
 
-    public Shape(IEnumerable<Point> input) : this()
-        => input?.ForEach(i => Points.Add(i));
-
-    public Shape(IList<System.Drawing.Point> input) : this()
-        => input?.ForEach(i => Points.Add(new(i.X, i.Y)));
-
-    public Shape(params Point[] input) : this()
-        => input?.ForEach(i => Points.Add(i));
-
-    public Shape(params Vector2<int>[] input) : this()
-        => input?.ForEach(i => Points.Add(new(i.X, i.Y)));
-
-    public Shape(PointCollection input) : this()
-        => input?.ForEach(i => Points.Add(i));
-
-    public Shape(Shape input) : this() 
-        => Points = new(input.Points);
-
-    public Shape(string name) : this() 
-        => Name = name;
-
-    public Shape(string name, IEnumerable<Point> input) : this(input)
-        => Name = name;
-
-    public Shape(string name, IList<System.Drawing.Point> input) : this(input)
-        => Name = name;
-
-    public Shape(string name, PointCollection input) : this(input)
-        => Name = name;
-
-    public Shape(string name, Shape input) : this(input)
-        => Name = name;
 
     #endregion
 
     #region Methods
 
     #region Public
+    
+    public virtual System.Windows.Media.Geometry GetNormalGeometry() => GetGeometry(1, 1);
 
-    public PathGeometry Geometry(bool closed = false)
-    {
-        var pathFigures = new List<PathFigure>();
-        var pathSegments = new List<PathSegment>();
+    public virtual System.Windows.Media.Geometry GetGeometry(double height, double width) => throw new NotImplementedException();
 
-        for (var i = 0; i < points.Count; i++)
-        {
-            if (i == points.Count - 1)
-                break;
+    ///
 
-            var a = points[i];
-            var b = points[i + 1];
+    [OnSerializing]
+    public void OnSerializing(StreamingContext context) { }
 
-            pathSegments.Add(new LineSegment(b, true));
-            pathFigures.Add(new PathFigure(a, pathSegments, false));
-            pathSegments.Clear();
-        }
+    [OnDeserialized]
+    public void OnDeserialized(StreamingContext context) { }
 
-        return new PathGeometry(pathFigures);
-    }
+    ///
 
-    /// <summary>
-    /// Converts points of existing range to points of range [0, 1].
-    /// </summary>
-    public void Normalize()
-    {
-        Normalize(points);
-        this.Changed(() => Points);
-    }
+    /// <summary>Converts points of existing range to points of range [0, 1].</summary>
+    public abstract void Normalize();
 
-    public void Preserve()
-    {
-        preservedPoints.Clear();
-        points.ForEach(i => preservedPoints.Add(i));
-    }
+    public abstract void Scale(System.Drawing.Point scale);
 
-    public void Restore()
-    {
-        points = new PointCollection();
-        preservedPoints.ForEach(i => points.Add(i));
-    }
+    public abstract void Scale(System.Windows.Point scale);
 
-    public void Scale(System.Drawing.Point scale)
-    {
-        Scale(points, scale);
-        this.Changed(() => Points);
-    }
-
-    public void Translate(Quadrants quadrant = Quadrants.I)
-    {
-        var bounds = GetBounds(points);
-
-        var x = bounds.Width / 2;
-        var y = bounds.Height / 2;
-
-        Points = Translate(points, x, y);
-    }
+    public abstract void Translate(Quadrants quadrant = Quadrants.I);
 
     #endregion
 
@@ -184,7 +123,7 @@ public class Shape : BaseNamable
         return new DoubleRegion(minX, minY, maxX - minX, maxY - minY);
     }
 
-    //...
+    ///
 
     static double GetConcaveRadius(uint num_points, int skip)
     {
@@ -277,7 +216,7 @@ public class Shape : BaseNamable
         close_p2 = new Point(p3.X + dx34 * t2, p3.Y + dy34 * t2);
     }
 
-    //...
+    ///
 
     public static IEnumerable<Point> Close(IEnumerable<Point> input)
     {
@@ -493,7 +432,13 @@ public class Shape : BaseNamable
             input[i] = new Point(input[i].X * scale.X, input[i].Y * scale.Y);
     }
 
-    //...
+    public static void Scale(IList<Point> input, System.Windows.Point scale)
+    {
+        for (var i = 0; i < input.Count; i++)
+            input[i] = new Point(input[i].X * scale.X, input[i].Y * scale.Y);
+    }
+
+    ///
 
     /// <summary>
     /// Moves all points in the direction of the origin until each lives in quadrant I.
@@ -519,9 +464,9 @@ public class Shape : BaseNamable
         Each(input, point => new System.Drawing.Point(point.X + x, point.Y + y));
     }
 
-    public static PointCollection Translate(IList<Point> input, double xCenter, double yCenter)
+    public static List<Point> Translate(IList<Point> input, double xCenter, double yCenter)
     {
-        var result = new PointCollection();
+        var result = new List<Point>();
 
         var bounds = GetBounds(input);
         var oldCenter = bounds.Center;
@@ -535,7 +480,7 @@ public class Shape : BaseNamable
         return result;
     }
 
-    //...
+    ///
 
     public static IEnumerable<Point> GetEllipse(Int32Region region, bool close = false)
     {
@@ -568,7 +513,7 @@ public class Shape : BaseNamable
             yield return first.Value;
     }
 
-    //...
+    ///
 
     public static IEnumerable<Point> GetPolygon(Int32Region region, double angle, uint sides, int quadrant)
     {
@@ -585,7 +530,7 @@ public class Shape : BaseNamable
             yield return new Point(oldPoints[i].X, oldPoints[i].Y);
     }
 
-    public static System.Drawing.Point[] GetPolygon(double startAngle, Point center, Size size, uint sides, int quadrant)
+    public static Point[] GetPolygon(double startAngle, Point center, Size size, uint sides, int quadrant)
     {
         Clamp(sides, 32, 3);
 
@@ -593,7 +538,7 @@ public class Shape : BaseNamable
         var b = startAngle;
         double x = 0, y = 0;
 
-        var points = new System.Drawing.Point[sides + 1];
+        var points = new Point[sides + 1];
         for (int i = 0; i < sides; i++)
         {
             x = size.Width * System.Math.Cos(b);
@@ -604,7 +549,7 @@ public class Shape : BaseNamable
             x += center.X;
             y += center.Y;
 
-            points[i] = new System.Drawing.Point(x.Round().Int32(), y.Round().Int32());
+            points[i] = new Point(x, y);
             b += a;
         }
 
@@ -612,7 +557,44 @@ public class Shape : BaseNamable
         return points;
     }
 
-    //...
+    public static IEnumerable<PointShape> GetPolygons(uint sidesMinimum = 3, uint sidesMaximum = 16, double angle = 180, double height = 1, double width = 1)
+    {
+        var center = new Point(width, height);
+        for (uint i = sidesMinimum; i <= sidesMaximum; i++)
+        {
+            var shape = new PointShape(GetPolygon(Angle.GetRadian(angle), center, new Size(width, height), i, 0));
+            shape.Translate(); shape.Normalize();
+            yield return shape;
+        }
+    }
+
+    ///
+
+    public static PathGeometry GetPolygonGeometry(uint sides, double angle, double height, double width)
+    {
+        var shape = new PointShape(GetPolygon(Angle.GetRadian(angle), new Point(0, 0), new Size(width, height), sides, 0));
+        shape.Translate();
+        shape.Normalize();
+        shape.Scale(new Point(width, height));
+
+        var myPathFigure = new PathFigure();
+
+        myPathFigure.StartPoint = shape.Points[0];
+        var myLineSegment = new PolyLineSegment();
+
+        for (var i = 0; i < shape.Points.Count; i++)
+            myLineSegment.Points.Add(shape.Points[i]);
+
+        myLineSegment.Points.Add(shape.Points[0]);
+
+        var myPathSegmentCollection = new PathSegmentCollection() { myLineSegment };
+        myPathFigure.Segments = myPathSegmentCollection;
+
+        return new PathGeometry() { Figures = new PathFigureCollection() { myPathFigure } };
+
+    }
+
+    ///
 
     public static IEnumerable<Point> GetStar(Int32Region region, double angle, uint sides, int indent, int quadrant)
     {
@@ -684,7 +666,19 @@ public class Shape : BaseNamable
         return result;
     }
 
-    //...
+    public static IEnumerable<PointShape> GetStars(uint sidesMinimum = 3, uint sidesMaximum = 16, double height = 20, double width = 20)
+    {
+        var origin = new Point(width, height);
+        for (uint i = sidesMinimum; i <= sidesMaximum; i++)
+        {
+            var shape = new PointShape(Shape.GetStar(Angle.GetRadian(270), i, 2, new Rect(origin, new Size(width, height)), 0));
+            shape.Translate();
+            shape.Normalize();
+            yield return shape;
+        }
+    }
+
+    ///
 
     public static IEnumerable<Point> GetRectangle(Int32Region region, bool close = false)
     {
@@ -817,4 +811,179 @@ public class Shape : BaseNamable
     #endregion
 
     #endregion
+}
+
+///
+
+[Serializable]
+public class PointShape : Shape, IEnumerable<Point>
+{
+    [Hide]
+    public int Count => Points?.Count ?? 0;
+
+    public List<Point> Points { get => Get(new List<Point>()); set => Set(value); }
+
+    ///
+
+    public PointShape() : base() => Points = new List<Point>();
+
+    public PointShape(IEnumerable<Point> input) : this()
+        => input?.ForEach(Points.Add);
+
+    public PointShape(IList<System.Drawing.Point> input) : this()
+        => input?.ForEach(i => Points.Add(new(i.X, i.Y)));
+
+    public PointShape(params Point[] input) : this()
+        => input?.ForEach(Points.Add);
+
+    public PointShape(params Vector2<int>[] input) : this()
+        => input?.ForEach(i => Points.Add(new(i.X, i.Y)));
+
+    public PointShape(PointCollection input) : this()
+        => input?.ForEach(Points.Add);
+
+    ///
+
+    public System.Windows.Media.Geometry GetGeometry(bool closed)
+    {
+        var shape = this;
+
+        var myPathFigure = new PathFigure();
+        if (shape.Points?.Count > 0)
+        {
+            myPathFigure.StartPoint = shape.Points[0];
+            var myLineSegment = new PolyLineSegment();
+
+            for (var i = 0; i < shape.Points.Count; i++)
+                myLineSegment.Points.Add(shape.Points[i]);
+
+            myLineSegment.Points.Add(shape.Points[0]);
+
+            var myPathSegmentCollection = new PathSegmentCollection() { myLineSegment };
+            myPathFigure.Segments = myPathSegmentCollection;
+        }
+
+        return new PathGeometry() { Figures = new PathFigureCollection() { myPathFigure } };
+    }
+
+    public override System.Windows.Media.Geometry GetGeometry(double height, double width)
+    {
+        var result = new PointShape(Points);
+        result.Scale(new Point(width, height));
+        return result.GetGeometry(true);
+    }
+
+    ///
+
+    ///<inheritdoc/>
+    public override void Normalize()
+    {
+        Normalize(Points);
+        Update(() => Points);
+    }
+
+    public void Rotate(double degree, Point center = default)
+    {
+        for (var i = 0; i < Points.Count; i++)
+        {
+            var x = ((Points[i].X - center.X) * CosDeg(degree) - (Points[i].Y - center.Y) * SinDeg(degree)) + center.X;
+            var y = ((Points[i].X - center.X) * SinDeg(degree) - (Points[i].Y - center.Y) * CosDeg(degree)) + center.Y;
+            Points[i] = new(x, y);
+        }
+
+        Update(() => Points);
+    }
+
+    public override void Scale(System.Drawing.Point scale)
+    {
+        Scale(Points, scale);
+        Update(() => Points);
+    }
+
+    public override void Scale(System.Windows.Point scale)
+    {
+        Scale(Points, scale);
+        Update(() => Points);
+    }
+
+    public override void Translate(Quadrants quadrant = Quadrants.I)
+    {
+        var bounds = GetBounds(Points);
+
+        var x = bounds.Width / 2;
+        var y = bounds.Height / 2;
+
+        Points = Translate(Points, x, y);
+    }
+
+    ///
+
+    IEnumerator IEnumerable.GetEnumerator() => Points.GetEnumerator();
+
+    IEnumerator<Point> IEnumerable<Point>.GetEnumerator() => Points.GetEnumerator();
+}
+
+[Serializable]
+public abstract class VectorShape : Shape
+{
+    public override void Normalize()
+    {
+        //What do we do?
+    }
+
+    public override void Scale(System.Drawing.Point scale)
+    {
+        //What do we do?
+    }
+
+    public override void Scale(System.Windows.Point scale)
+    {
+        //What do we do?
+    }
+
+    public override void Translate(Quadrants quadrant = Quadrants.I)
+    {
+        //What do we do?
+    }
+}
+
+///
+
+[Image(SmallImages.Ellipse), Serializable]
+public class Circle : VectorShape
+{
+    public Circle() : base() { }
+
+    public override System.Windows.Media.Geometry GetGeometry(double height, double width)
+        => new EllipseGeometry(new Rect(0, 0, width, height));
+}
+
+[Image(SmallImages.Heart), Serializable]
+public class Heart : VectorShape
+{
+    public Heart() : base() { }
+
+    public override System.Windows.Media.Geometry GetGeometry(double height, double width)
+    {
+        if (width > 40)
+        {
+
+        }
+        else return null;
+
+        var x = new DoubleRange(0, 90);
+        var y = new DoubleRange(0, 80);
+
+        var h = new DoubleRange(0, height);
+        var w = new DoubleRange(0, width - 40);
+
+        var data =
+            $"M {x.Convert(w, 51)},{y.Convert(h, 10)}" +
+            $"A {x.Convert(w, 20)},{y.Convert(h, 20)} 0 0 0 {x.Convert(w, 10)},{y.Convert(h, 50)}" +
+            $"C {x.Convert(w, 20)},{y.Convert(h, 60)} {x.Convert(w, 50)},{y.Convert(h, 80)} {x.Convert(w, 50)},{y.Convert(h, 80)}" +
+            $"C {x.Convert(w, 50)},{y.Convert(h, 80)} {x.Convert(w, 70)},{y.Convert(h, 70)} {x.Convert(w, 90)},{y.Convert(h, 50)}" +
+            $"A {x.Convert(w, 20)},{y.Convert(h, 20)} 0 0 0 {x.Convert(w, 49)},{y.Convert(h, 10)}";
+
+        return System.Windows.Media.Geometry.Parse(data);
+    }
 }

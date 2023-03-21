@@ -1,25 +1,23 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace Imagin.Core.Linq
+namespace Imagin.Core.Linq;
+
+public static class XGridSplitter
 {
-    [Extends(typeof(GridSplitter))]
-    public static class XGridSplitter
-    {
-        #region Content
+    #region Content
 
-        public static readonly DependencyProperty ContentProperty = DependencyProperty.RegisterAttached("Content", typeof(object), typeof(XGridSplitter), new FrameworkPropertyMetadata(null));
-        public static object GetContent(GridSplitter i) => (object)i.GetValue(ContentProperty);
-        public static void SetContent(GridSplitter i, object input) => i.SetValue(ContentProperty, input);
+    public static readonly DependencyProperty ContentProperty = DependencyProperty.RegisterAttached("Content", typeof(object), typeof(XGridSplitter), new FrameworkPropertyMetadata(null));
+    public static object GetContent(GridSplitter i) => (object)i.GetValue(ContentProperty);
+    public static void SetContent(GridSplitter i, object input) => i.SetValue(ContentProperty, input);
 
-        #endregion
+    #endregion
 
-        #region ContentTemplate
+    #region ContentTemplate
 
-        public static readonly DependencyProperty ContentTemplateProperty = DependencyProperty.RegisterAttached("ContentTemplate", typeof(DataTemplate), typeof(XGridSplitter), new FrameworkPropertyMetadata(null));
-        public static DataTemplate GetContentTemplate(GridSplitter i) => (DataTemplate)i.GetValue(ContentTemplateProperty);
-        public static void SetContentTemplate(GridSplitter i, DataTemplate input) => i.SetValue(ContentTemplateProperty, input);
+    public static readonly DependencyProperty ContentTemplateProperty = DependencyProperty.RegisterAttached("ContentTemplate", typeof(DataTemplate), typeof(XGridSplitter), new FrameworkPropertyMetadata(null));
+    public static DataTemplate GetContentTemplate(GridSplitter i) => (DataTemplate)i.GetValue(ContentTemplateProperty);
+    public static void SetContentTemplate(GridSplitter i, DataTemplate input) => i.SetValue(ContentTemplateProperty, input);
 
-        #endregion
-    }
+    #endregion
 }

@@ -1113,4 +1113,76 @@
   <data name="Profiles" xml:space="preserve">
     <value>Profiles</value>
   </data>
+  <data name="Tiles" xml:space="preserve">
+    <value>Tiles</value>
+  </data>
+  <data name="Closing" xml:space="preserve">
+    <value>Closing</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Saving</value>
+  </data>
+  <data name="Draw" xml:space="preserve">
+    <value>Draw</value>
+  </data>
+  <data name="ReportABug" xml:space="preserve">
+    <value>Report a bug</value>
+  </data>
+  <data name="Animation" xml:space="preserve">
+    <value>Animation</value>
+  </data>
+  <data name="Selected" xml:space="preserve">
+    <value>Selected</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>No description</value>
+  </data>
+  <data name="This" xml:space="preserve">
+    <value>This</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="Blend" xml:space="preserve">
+    <value>Blend</value>
+  </data>
+  <data name="Effect" xml:space="preserve">
+    <value>Effect</value>
+  </data>
+  <data name="Shape" xml:space="preserve">
+    <value>Shape</value>
+  </data>
+  <data name="Tile" xml:space="preserve">
+    <value>Tile</value>
+  </data>
+  <data name="Dock" xml:space="preserve">
+    <value>Dock</value>
+  </data>
+  <data name="DockAll" xml:space="preserve">
+    <value>Dock all</value>
+  </data>
+  <data name="GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="Manage" xml:space="preserve">
+    <value>Manage</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Show all</value>
+  </data>
+  <data name="UnpinAll" xml:space="preserve">
+    <value>Unpin all</value>
+  </data>
+  <data name="Explore" xml:space="preserve">
+    <value>Explore</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Issues" xml:space="preserve">
+    <value>Issues</value>
+  </data>
+  <data name="Wiki" xml:space="preserve">
+    <value>Wiki</value>
+  </data>
 </root>

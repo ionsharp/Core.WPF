@@ -2,38 +2,37 @@
 using System;
 using System.Windows;
 
-namespace Imagin.Core.Conversion
+namespace Imagin.Core.Conversion;
+
+public class GridLengthArrayTypeConverter : StringTypeConverter<GridLength>
 {
-    public class GridLengthArrayTypeConverter : StringTypeConverter<GridLength>
+    protected override int? Length => null;
+
+    protected override GridLength Convert(string input)
     {
-        protected override int? Length => null;
-
-        protected override GridLength Convert(string input)
+        switch (input.ToLower())
         {
-            switch (input.ToLower())
-            {
-                case "auto":
-                    return new GridLength(1, GridUnitType.Auto);
+            case "auto":
+                return new GridLength(1, GridUnitType.Auto);
 
-                case "*":
-                    return new GridLength(1, GridUnitType.Star);
+            case "*":
+                return new GridLength(1, GridUnitType.Star);
 
-                default:
+            default:
 
-                    if (input.EndsWith("*"))
-                    {
-                        var i = input.Replace("*", string.Empty);
-                        if (i.PositiveNumber())
-                            return new GridLength(double.Parse(i), GridUnitType.Star);
-                    }
+                if (input.EndsWith("*"))
+                {
+                    var i = input.Replace("*", string.Empty);
+                    if (i.PositiveNumber())
+                        return new GridLength(double.Parse(i), GridUnitType.Star);
+                }
 
-                    if (input.PositiveNumber())
-                        return new GridLength(double.Parse(input), GridUnitType.Pixel);
+                if (input.PositiveNumber())
+                    return new GridLength(double.Parse(input), GridUnitType.Pixel);
 
-                    throw new NotSupportedException();
-            }
+                throw new NotSupportedException();
         }
-
-        protected override object Convert(GridLength[] input) => input;
     }
+
+    protected override object Convert(GridLength[] input) => input;
 }

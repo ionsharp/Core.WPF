@@ -16,9 +16,9 @@ namespace Imagin.Core.Controls
 
     public class DownloadControl : Control
     {
-        public static readonly ResourceKey<ProgressBar> ProgressBarStyleKey = new();
+        public static readonly ResourceKey ProgressBarStyleKey = new();
 
-        public static readonly ResourceKey<TextBlock> TextBlockStyleKey = new();
+        public static readonly ResourceKey TextBlockStyleKey = new();
 
         class Data
         {
@@ -35,15 +35,15 @@ namespace Imagin.Core.Controls
             }
         }
 
-        readonly CancelTask<Data> downloadTask;
+        readonly Method<Data> downloadTask;
 
         readonly Stopwatch stopwatch = new();
 
-        //...
+        ///
 
         public event DownloadEventHandler Downloaded;
 
-        //...
+        ///
 
         public static readonly DependencyProperty AutoStartProperty = DependencyProperty.Register(nameof(AutoStart), typeof(bool), typeof(DownloadControl), new FrameworkPropertyMetadata(false, OnAutoStartChanged));
         public bool AutoStart
@@ -51,7 +51,7 @@ namespace Imagin.Core.Controls
             get => (bool)GetValue(AutoStartProperty);
             set => SetValue(AutoStartProperty, value);
         }
-        static void OnAutoStartChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => sender.As<DownloadControl>().OnAutoStartChanged(new(e));
+        static void OnAutoStartChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => sender.As<DownloadControl>().OnAutoStartChanged(e.Convert<bool>());
 
         public static readonly DependencyProperty DestinationProperty = DependencyProperty.Register(nameof(Destination), typeof(string), typeof(DownloadControl), new FrameworkPropertyMetadata(string.Empty, OnDestinationChanged));
         public string Destination
@@ -59,7 +59,7 @@ namespace Imagin.Core.Controls
             get => (string)GetValue(DestinationProperty);
             set => SetValue(DestinationProperty, value);
         }
-        static void OnDestinationChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => sender.As<DownloadControl>().OnDestinationChanged(new(e));
+        static void OnDestinationChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => sender.As<DownloadControl>().OnDestinationChanged(e.Convert<string>());
 
         static readonly DependencyPropertyKey MessageKey = DependencyProperty.RegisterReadOnly(nameof(Message), typeof(object), typeof(DownloadControl), new FrameworkPropertyMetadata(null));
         public static readonly DependencyProperty MessageProperty = MessageKey.DependencyProperty;
@@ -89,7 +89,7 @@ namespace Imagin.Core.Controls
             get => (string)GetValue(SourceProperty);
             set => SetValue(SourceProperty, value);
         }
-        static void OnSourceChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => sender.As<DownloadControl>().OnSourceChanged(new(e));
+        static void OnSourceChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => sender.As<DownloadControl>().OnSourceChanged(e.Convert<string>());
 
         static readonly DependencyPropertyKey ProgressKey = DependencyProperty.RegisterReadOnly(nameof(Progress), typeof(double), typeof(DownloadControl), new FrameworkPropertyMetadata(0.0));
         public static readonly DependencyProperty ProgressProperty = ProgressKey.DependencyProperty;
@@ -123,14 +123,14 @@ namespace Imagin.Core.Controls
             private set => SetValue(RemainingKey, value);
         }
 
-        //...
+        ///
 
         public DownloadControl() : base()
         {
             downloadTask = new(null, DownloadAsync, true);
         }
 
-        //...
+        ///
 
         async Task DownloadAsync(Data data, CancellationToken token)
         {
@@ -162,7 +162,7 @@ namespace Imagin.Core.Controls
             OnDownloaded(result);
         }
 
-        //...
+        ///
 
         void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
@@ -176,9 +176,9 @@ namespace Imagin.Core.Controls
                 = stopwatch.Elapsed.Left(e.TotalBytesToReceive, e.BytesReceived).TotalSeconds.Int64();
         }
 
-        //...
+        ///
 
-        protected virtual void OnAutoStartChanged(Value<bool> input)
+        protected virtual void OnAutoStartChanged(ReadOnlyValue<bool> input)
         {
             if (input.New)
             {
@@ -187,20 +187,20 @@ namespace Imagin.Core.Controls
             }
         }
 
-        protected virtual void OnDestinationChanged(Value<string> input)
+        protected virtual void OnDestinationChanged(ReadOnlyValue<string> input)
         {
             if (AutoStart) Start();
         }
 
         protected virtual void OnDownloaded(Result input) => Downloaded?.Invoke(this, new(input));
 
-        protected virtual void OnSourceChanged(Value<string> input)
+        protected virtual void OnSourceChanged(ReadOnlyValue<string> input)
         {
             if (AutoStart) Start();
         }
 
-        //...
+        ///
 
-        public void Start() => _ = downloadTask.StartAsync(new(Source, Destination));
+        public void Start() => _ = downloadTask.Start(new(Source, Destination));
     }
 }

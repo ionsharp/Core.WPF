@@ -7,48 +7,23 @@ namespace Imagin.Core.Controls
     [Serializable]
     public abstract class DockLayoutRoot : Base
     {
-        List<DockLayoutPanel> top = new();
         [XmlArray]
         [XmlArrayItem(ElementName = "Panel")]
-        public List<DockLayoutPanel> Top
-        {
-            get => top;
-            set => this.Change(ref top, value);
-        }
+        public List<DockLayoutPanel> Top { get => Get(new List<DockLayoutPanel>()); set => Set(value); }
 
-        List<DockLayoutPanel> left = new();
         [XmlArray]
         [XmlArrayItem(ElementName = "Panel")]
-        public List<DockLayoutPanel> Left
-        {
-            get => left;
-            set => this.Change(ref left, value);
-        }
+        public List<DockLayoutPanel> Left { get => Get(new List<DockLayoutPanel>()); set => Set(value); }
 
-        List<DockLayoutPanel> right = new();
         [XmlArray]
         [XmlArrayItem(ElementName = "Panel")]
-        public List<DockLayoutPanel> Right
-        {
-            get => right;
-            set => this.Change(ref right, value);
-        }
+        public List<DockLayoutPanel> Right { get => Get(new List<DockLayoutPanel>()); set => Set(value); }
 
-        List<DockLayoutPanel> bottom = new();
         [XmlArray]
         [XmlArrayItem(ElementName = "Panel")]
-        public List<DockLayoutPanel> Bottom
-        {
-            get => bottom;
-            set => this.Change(ref bottom, value);
-        }
+        public List<DockLayoutPanel> Bottom { get => Get(new List<DockLayoutPanel>()); set => Set(value); }
 
-        DockLayoutElement root;
-        public DockLayoutElement Root
-        {
-            get => root;
-            set => this.Change(ref root, value);
-        }
+        public DockLayoutElement Root { get => Get<DockLayoutElement>(); set => Set(value); }
 
         public DockLayoutRoot() : base() { }
     }

@@ -11,7 +11,7 @@ namespace Imagin.Core.Controls
     {
         #region Properties
 
-        readonly object lockme = new object();
+        readonly object lockme = new();
 
         Storyboard indeterminateStoryboard;
 

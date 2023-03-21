@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Imagin.Core.Storage
+namespace Imagin.Core.Storage;
+
+[Serializable]
+public enum OverwriteCondition
 {
-    [Serializable]
-    public enum OverwriteCondition
-    {
-        IfNewer,
-        IfSizeDifferent,
-        IfNewerOrSizeDifferent,
-        Always
-    }
+    IfNewer,
+    IfSizeDifferent,
+    IfNewerOrSizeDifferent,
+    Always
 }

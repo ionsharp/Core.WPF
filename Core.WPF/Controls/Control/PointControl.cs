@@ -19,19 +19,9 @@ namespace Imagin.Core.Controls
         {
             public readonly PointControl Source;
 
-            double x = 0;
-            public double X
-            {
-                get => x;
-                set => this.Change(ref x, value);
-            }
+            public double X { get => Get(.0); set => Set(value); }
 
-            double y = 0;
-            public double Y
-            {
-                get => y;
-                set => this.Change(ref y, value);
-            }
+            public double Y { get => Get(.0); set => Set(value); }
 
             public PointModel(PointControl source, double x, double y) : base()
             {
@@ -39,13 +29,13 @@ namespace Imagin.Core.Controls
                 X = x; Y = y;
             }
 
-            public override void OnPropertyChanged([CallerMemberName] string propertyName = "")
+            public override void OnPropertyChanged(PropertyEventArgs e)
             {
-                base.OnPropertyChanged(propertyName);
+                base.OnPropertyChanged(e);
                 Source.UpdateSource();
             }
 
-            public override string ToString() => $"({x}, {y})";
+            public override string ToString() => $"({X}, {Y})";
         }
 
         #endregion
@@ -94,9 +84,18 @@ namespace Imagin.Core.Controls
 
         #region Methods
 
+        Point? addPoint = null;
+
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                var point = e.GetPosition(this);
+                addPoint = new(Clamp(point.X / Zoom, 1), Clamp(point.Y / Zoom, 1));
+                return;
+            }
+
             if (e.OriginalSource is System.Windows.Shapes.Ellipse ellipse)
             {
                 target 
@@ -125,7 +124,7 @@ namespace Imagin.Core.Controls
             target = null; targetPoint = null;
         }
 
-        protected virtual void OnPointsChanged(Value<PointCollection> input)
+        protected virtual void OnPointsChanged(ReadOnlyValue<PointCollection> input)
         {
             Handle.SafeInvoke(() =>
             {
@@ -140,6 +139,17 @@ namespace Imagin.Core.Controls
         #endregion
 
         #region Commands
+        
+        ICommand addCommand;
+        public ICommand AddCommand => addCommand ??= new RelayCommand(() =>
+        {
+            var result = new PointModel(this, addPoint.Value.X, addPoint.Value.Y);
+            MovablePoints.Add(result);
+
+            UpdateSource();
+            addPoint = null;
+        },
+        () => addPoint != null);
 
         ICommand insertAfterCommand;
         public ICommand InsertAfterCommand => insertAfterCommand ??= new RelayCommand<PointModel>(i =>

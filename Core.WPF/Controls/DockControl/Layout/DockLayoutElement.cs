@@ -1,59 +1,28 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+[Serializable]
+public abstract class DockLayoutElement : Base
 {
-    [Serializable]
-    public abstract class DockLayoutElement : Base
-    {
-        double minHeight = double.NaN;
-        [XmlAttribute]
-        public double MinHeight
-        {
-            get => minHeight;
-            set => this.Change(ref minHeight, value);
-        }
+    [XmlAttribute]
+    public double MinHeight { get => Get(double.NaN); set => Set(value); }
 
-        ControlLength height = ControlLength.Star;
-        [XmlAttribute]
-        public string Height
-        {
-            get => height;
-            set => this.Change(ref height, value);
-        }
+    [XmlAttribute]
+    public string Height { get => Get("1*"); set => Set(value); }
 
-        double maxHeight = double.NaN;
-        [XmlAttribute]
-        public double MaxHeight
-        {
-            get => maxHeight;
-            set => this.Change(ref maxHeight, value);
-        }
+    [XmlAttribute]
+    public double MaxHeight { get => Get(double.NaN); set => Set(value); }
 
-        double minWidth = double.NaN;
-        [XmlAttribute]
-        public double MinWidth
-        {
-            get => minWidth;
-            set => this.Change(ref minWidth, value);
-        }
+    [XmlAttribute]
+    public double MinWidth { get => Get(double.NaN); set => Set(value); }
 
-        ControlLength width = ControlLength.Star;
-        [XmlAttribute]
-        public string Width
-        {
-            get => width;
-            set => this.Change(ref width, value);
-        }
+    [XmlAttribute]
+    public string Width { get => Get("1*"); set => Set(value); }
 
-        double maxWidth = double.NaN;
-        [XmlAttribute]
-        public double MaxWidth
-        {
-            get => maxWidth;
-            set => this.Change(ref maxWidth, value);
-        }
+    [XmlAttribute]
+    public double MaxWidth { get => Get(double.NaN); set => Set(value); }
 
-        public DockLayoutElement() : base() { }
-    }
+    public DockLayoutElement() : base() { }
 }

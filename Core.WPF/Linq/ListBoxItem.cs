@@ -1,29 +1,28 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace Imagin.Core.Linq
+namespace Imagin.Core.Linq;
+
+public static class XListBoxItem
 {
-    [Extends(typeof(ListBoxItem))]
-    public static class XListBoxItem
-    {
-        #region LastSelected
+    public static readonly ResourceKey TemplateKey = new();
 
-        public static readonly DependencyProperty LastSelectedProperty = DependencyProperty.RegisterAttached("LastSelected", typeof(bool), typeof(XListBoxItem), new FrameworkPropertyMetadata(false));
-        public static bool GetLastSelected(ListBoxItem i) => (bool)i.GetValue(LastSelectedProperty);
-        public static void SetLastSelected(ListBoxItem i, bool value) => i.SetValue(LastSelectedProperty, value);
+    #region LastSelected
 
-        #endregion
-    }
+    public static readonly DependencyProperty LastSelectedProperty = DependencyProperty.RegisterAttached("LastSelected", typeof(bool), typeof(XListBoxItem), new FrameworkPropertyMetadata(false));
+    public static bool GetLastSelected(ListBoxItem i) => (bool)i.GetValue(LastSelectedProperty);
+    public static void SetLastSelected(ListBoxItem i, bool value) => i.SetValue(LastSelectedProperty, value);
 
-    [Extends(typeof(ListViewItem))]
-    public static class XListViewItem
-    {
-        #region ParentHasColumns
+    #endregion
+}
 
-        public static readonly DependencyProperty ParentHasColumnsProperty = DependencyProperty.RegisterAttached("ParentHasColumns", typeof(bool), typeof(XListViewItem), new FrameworkPropertyMetadata(false));
-        public static bool GetParentHasColumns(ListViewItem i) => (bool)i.GetValue(ParentHasColumnsProperty);
-        public static void SetParentHasColumns(ListViewItem i, bool value) => i.SetValue(ParentHasColumnsProperty, value);
+public static class XListViewItem
+{
+    #region ParentHasColumns
 
-        #endregion
-    }
+    public static readonly DependencyProperty ParentHasColumnsProperty = DependencyProperty.RegisterAttached("ParentHasColumns", typeof(bool), typeof(XListViewItem), new FrameworkPropertyMetadata(false));
+    public static bool GetParentHasColumns(ListViewItem i) => (bool)i.GetValue(ParentHasColumnsProperty);
+    public static void SetParentHasColumns(ListViewItem i, bool value) => i.SetValue(ParentHasColumnsProperty, value);
+
+    #endregion
 }

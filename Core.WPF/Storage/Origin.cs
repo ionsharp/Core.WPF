@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Imagin.Core.Storage
+namespace Imagin.Core.Storage;
+
+[Serializable]
+public enum Origin
 {
-    [Serializable]
-    public enum Origin
-    {
-        Local,
-        Remote
-    }
+    Local,
+    Remote
 }

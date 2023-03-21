@@ -6,12 +6,12 @@ namespace Imagin.Core.Controls
     [Serializable]
     public enum PopupTriggers
     {
-        [Hidden]
+        [Hide]
         None = 0,
         GotFocus = 1,
         GotKeyboardFocus = 2,
         TextChanged = 4,
-        [Hidden]
+        [Hide]
         All = GotFocus | GotKeyboardFocus | TextChanged
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 
-namespace Imagin.Core.Collections.ObjectModel
+namespace Imagin.Core.Collections.ObjectModel;
+
+[Serializable]
+public class ObjectCollection : ObservableCollection<object>
 {
-    [Serializable]
-    public class ObjectCollection : ObservableCollection<object>
-    {
-        public ObjectCollection() : base() { }
-    }
+    public ObjectCollection() : base() { }
 }

@@ -2,38 +2,34 @@
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Imagin.Core.Conversion
+namespace Imagin.Core.Conversion;
+
+[ValueConversion(typeof(Gradient), typeof(LinearGradientBrush))]
+public class GradientConverter : ValueConverter<Gradient, LinearGradientBrush>
 {
-    [ValueConversion(typeof(Gradient), typeof(LinearGradientBrush))]
-    public class GradientConverter : Converter<Gradient, LinearGradientBrush>
-    {
-        public static GradientConverter Default { get; private set; } = new GradientConverter();
-        GradientConverter() { }
+    public GradientConverter() : base() { }
 
-        protected override ConverterValue<LinearGradientBrush> ConvertTo(ConverterData<Gradient> input) => input.Value.LinearBrush();
+    protected override ConverterValue<LinearGradientBrush> ConvertTo(ConverterData<Gradient> input) => input.Value.LinearBrush();
 
-        protected override ConverterValue<Gradient> ConvertBack(ConverterData<LinearGradientBrush> input) => new Gradient(input.Value);
-    }
+    protected override ConverterValue<Gradient> ConvertBack(ConverterData<LinearGradientBrush> input) => new Gradient(input.Value);
+}
 
-    [ValueConversion(typeof(LinearGradientBrush), typeof(Gradient))]
-    public class LinearGradientBrushConverter : Converter<LinearGradientBrush, Gradient>
-    {
-        public static LinearGradientBrushConverter Default { get; private set; } = new LinearGradientBrushConverter();
-        LinearGradientBrushConverter() { }
+[ValueConversion(typeof(LinearGradientBrush), typeof(Gradient))]
+public class LinearGradientBrushConverter : ValueConverter<LinearGradientBrush, Gradient>
+{
+    public LinearGradientBrushConverter() : base() { }
 
-        protected override ConverterValue<Gradient> ConvertTo(ConverterData<LinearGradientBrush> input) => new Gradient(input.Value);
+    protected override ConverterValue<Gradient> ConvertTo(ConverterData<LinearGradientBrush> input) => new Gradient(input.Value);
 
-        protected override ConverterValue<LinearGradientBrush> ConvertBack(ConverterData<Gradient> input) => input.Value.LinearBrush();
-    }
+    protected override ConverterValue<LinearGradientBrush> ConvertBack(ConverterData<Gradient> input) => input.Value.LinearBrush();
+}
 
-    [ValueConversion(typeof(RadialGradientBrush), typeof(Gradient))]
-    public class RadialGradientBrushConverter : Converter<RadialGradientBrush, Gradient>
-    {
-        public static RadialGradientBrushConverter Default { get; private set; } = new RadialGradientBrushConverter();
-        RadialGradientBrushConverter() { }
+[ValueConversion(typeof(RadialGradientBrush), typeof(Gradient))]
+public class RadialGradientBrushConverter : ValueConverter<RadialGradientBrush, Gradient>
+{
+    public RadialGradientBrushConverter() : base() { }
 
-        protected override ConverterValue<Gradient> ConvertTo(ConverterData<RadialGradientBrush> input) => new Gradient(input.Value);
+    protected override ConverterValue<Gradient> ConvertTo(ConverterData<RadialGradientBrush> input) => new Gradient(input.Value);
 
-        protected override ConverterValue<RadialGradientBrush> ConvertBack(ConverterData<Gradient> input) => input.Value.RadialBrush();
-    }
+    protected override ConverterValue<RadialGradientBrush> ConvertBack(ConverterData<Gradient> input) => input.Value.RadialBrush();
 }

@@ -11,11 +11,12 @@
         <ResourceDictionary Source="{local:StyleKey Key=ToggleButton}"/>
     </ResourceDictionary.MergedDictionaries>
     <Style x:Key="{x:Type TabItem}" TargetType="{x:Type TabItem}">
-        <Setter Property="Background" Value="{local:ThemeKey ActualKey=TabItemBackground}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=TabItemBorder}" />
+        <Setter Property="Background" Value="{local:ThemeKey TabItemBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey TabItemBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=TabItemForeground}" />
-        <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey ActualKey=TabItemForeground}" />
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
+        <Setter Property="Foreground" Value="{local:ThemeKey TabItemForeground}" />
+        <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey TabItemForeground}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Padding" Value="5,2" />
         <Setter Property="Template">
@@ -40,12 +41,12 @@
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=TabItemSelectedBackground}" />
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=TabItemSelectedBorder}" />
+                <Setter Property="Background" Value="{local:ThemeKey TabItemSelectedBackground}" />
+                <Setter Property="BorderBrush" Value="{local:ThemeKey TabItemSelectedBorder}" />
                 <Setter Property="BorderThickness" Value="1,1,1,0" />
                 <Setter Property="Cursor" Value="Arrow" />
-                <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=TabItemSelectedForeground}" />
-                <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey ActualKey=TabItemSelectedForeground}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey TabItemSelectedForeground}" />
+                <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey TabItemSelectedForeground}" />
             </Trigger>
             <Trigger Property="IsSelected" Value="False">
                 <Setter Property="Cursor" Value="Hand" />
@@ -55,18 +56,19 @@
                     <Condition Property="IsSelected" Value="False"/>
                     <Condition Property="IsMouseOver" Value="True"/>
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=TabItemMouseOverBackground}" />
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=TabItemMouseOverBorder}" />
-                <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=TabItemMouseOverForeground}" />
-                <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey ActualKey=TabItemMouseOverForeground}" />
+                <Setter Property="Background" Value="{local:ThemeKey TabItemMouseOverBackground}" />
+                <Setter Property="BorderBrush" Value="{local:ThemeKey TabItemMouseOverBorder}" />
+                <Setter Property="Foreground" Value="{local:ThemeKey TabItemMouseOverForeground}" />
+                <Setter Property="local:ImageElement.Foreground" Value="{local:ThemeKey TabItemMouseOverForeground}" />
             </MultiTrigger>
         </Style.Triggers>
     </Style>
     
     <Style x:Key="{x:Type TabControl}" TargetType="{x:Type TabControl}">
-        <Setter Property="Background" Value="{local:ThemeKey ActualKey=TabControlBackground}"/>
-        <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=TabControlBorder}"/>
+        <Setter Property="Background" Value="{local:ThemeKey TabControlBackground}"/>
+        <Setter Property="BorderBrush" Value="{local:ThemeKey TabControlBorder}"/>
         <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontFamily" Value="{Data:Options FontFamily}"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="Padding" Value="0"/>
@@ -81,7 +83,7 @@
                         <Grid.Resources>
                             <Data:Reference x:Key="TabControl" Data="{Data:TemplatedParent}"/>
                         </Grid.Resources>
-                        <!-- ... -->
+                        <!-- /// -->
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition x:Name="ColumnDefinition0" Width="*" />
                             <ColumnDefinition x:Name="ColumnDefinition1" Width="Auto" />
@@ -96,9 +98,10 @@
                             IsItemsHost="True"/>
                         <local:ImageButton x:Name="PART_ImageToggleButton"
                             Grid.Column="1"
-                            ButtonSource="{Markup:InternalImage TriangleDown.png}"
+                            ButtonSource="{Markup:SmallImage TriangleDown.png}"
                             ButtonVisibility="Visible"
-                            IsChecked="{Data:TemplatedParent Path=(Linq:XTabControl.IsOverflowOpen), Mode=TwoWay}">
+                            IsChecked="{Data:TemplatedParent Path=(Linq:XTabControl.IsOverflowOpen), Mode=TwoWay}"
+                            Visibility="{Data:VisibilityBinding IsEnabled, From=Self}">
                             <local:ImageButton.Resources>
                                 <CollectionViewSource x:Key="ViewSource" Source="{Data:TemplatedParent ItemsSource}"/>
                             </local:ImageButton.Resources>

@@ -161,8 +161,7 @@ namespace Imagin.Core.Collections.Concurrent
                             {
                                 try
                                 {
-                                    Action action = null;
-                                    if (ActionQueue.TryTake(out action, 1))
+                                    if (ActionQueue.TryTake(out Action action, 1))
                                     {
                                         ActionWaiting = action;
                                         break;
@@ -290,8 +289,7 @@ namespace Imagin.Core.Collections.Concurrent
                         var subscriberQueue = SubscriberQueue;
                         if(subscriberQueue != null)
                         {
-                            object Dummy;
-                            subscriberQueue.TryRemove(WeakReference, out Dummy);
+                            subscriberQueue.TryRemove(WeakReference, out object Dummy);
                         }
                     });
                 }

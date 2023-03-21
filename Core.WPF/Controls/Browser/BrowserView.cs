@@ -1,14 +1,13 @@
 ﻿using System;
 
-namespace Imagin.Core.Controls
+namespace Imagin.Core.Controls;
+
+[Serializable]
+public enum BrowserView
 {
-    [Serializable]
-    public enum BrowserView
-    {
-        Content,
-        Details,
-        List,
-        Thumbnails,
-        Tiles
-    }
+    Content,
+    Details,
+    List,
+    Thumbnails,
+    Tiles
 }

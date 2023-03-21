@@ -82,9 +82,8 @@ namespace Imagin.Core.Input
             int scanCode = checked( ( int )( flags & maskScanCode ) );
             const int fuState = 0;
 
-            char ch;
 
-            bool isSuccessfull = KeyboardNativeMethods.TryGetCharFromKeyboardState( virtualKeyCode, scanCode, fuState, out ch );
+            bool isSuccessfull = KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out char ch);
             if ( !isSuccessfull )
             {
                 return new KeyPressEventArgsExt( ( char )0 );

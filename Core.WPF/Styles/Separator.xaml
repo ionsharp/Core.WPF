@@ -5,7 +5,7 @@
     xmlns:Data="clr-namespace:Imagin.Core.Data"
     xmlns:Linq="clr-namespace:Imagin.Core.Linq">
     <Style x:Key="{x:Type Separator}" TargetType="{x:Type Separator}">
-        <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=LineStroke}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey LineStroke}" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Height" Value="Auto" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -19,7 +19,7 @@
                             Content="{Data:TemplatedParent Path=(Linq:XSeparator.Header)}"
                             ContentTemplate="{Data:TemplatedParent Path=(Linq:XSeparator.HeaderTemplate)}"
                             Margin="{TemplateBinding Padding}"
-                            Visibility="{Data:VisibilityBinding Path=(Linq:XSeparator.Header), Relative=TemplatedParent}"/>
+                            Visibility="{Data:VisibilityBinding Path=(Linq:XSeparator.Header), From=TemplatedParent}"/>
                         <local:LineElement Grid.Column="1"
                             Stroke="{TemplateBinding BorderBrush}"
                             StrokeThickness="1"/>

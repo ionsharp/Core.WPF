@@ -1,6 +1,5 @@
 ﻿using Imagin.Core.Analytics;
-using Imagin.Core.Collections.Generic;
-using Imagin.Core.Controls;
+using Imagin.Core.Collections.ObjectModel;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using Imagin.Core.Serialization;
@@ -14,7 +13,7 @@ using System.Windows.Input;
 
 namespace Imagin.Core.Collections.Serialization
 {
-    public abstract class Writer<T> : NotifableCollection<T>, ILimit, ISerialize, IWriter
+    public abstract class Writer<T> : ChangeCollection<T>, ILimit, ISerialize, IWriter
     {
         public string FilePath { get; private set; }
 
@@ -41,7 +40,7 @@ namespace Imagin.Core.Collections.Serialization
 
         public readonly string SingleFileExtension;
 
-        //...
+        ///
 
         public Writer(string folderPath, string fileName, string fileExtension, string singleFileExtension, Limit limit) : base()
         {
@@ -51,7 +50,7 @@ namespace Imagin.Core.Collections.Serialization
             Limit = limit;
         }
 
-        //...
+        ///
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
@@ -64,7 +63,7 @@ namespace Imagin.Core.Collections.Serialization
             }
         }
 
-        //...
+        ///
 
         public abstract Result Deserialize(string filePath, out object result);
 
@@ -82,13 +81,13 @@ namespace Imagin.Core.Collections.Serialization
             return result;
         }
 
-        //...
+        ///
 
         public Result Serialize(object input) => Serialize(FilePath, input);
 
         public abstract Result Serialize(string filePath, object input);
 
-        //...
+        ///
 
         public Result Load()
         {
@@ -122,7 +121,7 @@ namespace Imagin.Core.Collections.Serialization
             return Serialize(this);
         }
 
-        //...
+        ///
 
         ICommand clearCommand;
         public ICommand ClearCommand => clearCommand ??= new RelayCommand(() => Clear(), () => Count > 0);
@@ -136,7 +135,7 @@ namespace Imagin.Core.Collections.Serialization
         ICommand importCommand;
         public ICommand ImportCommand => importCommand ??= new RelayCommand(() => Import(), () => true);
 
-        //...
+        ///
 
         public async Task<Result> Export() => await Export(XArray.New<T>(this));
 
@@ -151,7 +150,7 @@ namespace Imagin.Core.Collections.Serialization
             var fileExtension = count == 1 ? SingleFileExtension : FileExtension;
 
             var path = string.Empty;
-            if (StorageWindow.Show(out path, nameof(Export), StorageWindowModes.SaveFile, new[] { fileExtension }, FilePath))
+            if (StorageDialog.Show(out path, nameof(Export), StorageDialogMode.SaveFile, new[] { fileExtension }, FilePath))
             {
                 var stuff = count == 1 ? (object)items.First() : items;
                 return await Task.Run(() => Serialize(path, stuff));
@@ -160,13 +159,13 @@ namespace Imagin.Core.Collections.Serialization
             return new Error(new OperationCanceledException());
         }
 
-        //...
+        ///
 
         public Result Import()
         {
             var e = 0;
 
-            if (StorageWindow.Show(out string[] paths, nameof(Import), StorageWindowModes.OpenFile, new[] { SingleFileExtension, FileExtension }, FilePath))
+            if (StorageDialog.Show(out string[] paths, nameof(Import), StorageDialogMode.OpenFile, new[] { SingleFileExtension, FileExtension }, FilePath))
             {
                 if (paths?.Length > 0)
                 {

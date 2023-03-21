@@ -1,81 +1,49 @@
-﻿using Imagin.Core.Collections.Generic;
-using System;
+﻿using System;
 using System.Management;
 
-namespace Imagin.Core.Storage
-{
-    public class RemovableDriveEventArgs : EventArgs
-    {
-        public readonly StringDictionary Properties;
+namespace Imagin.Core.Storage;
 
-        public RemovableDriveEventArgs(StringDictionary properties)
-        {
-            Properties = properties;
-        }
+public sealed class RemovableDriveEventArgs : EventArgs
+{
+    public readonly string Name;
+
+    public RemovableDriveEventArgs(string path) => Name = path;
+}
+
+public delegate void RemovableDriveEventHandler(RemovableDriveEventArgs e);
+
+public class RemovableDrive
+{
+    public static event RemovableDriveEventHandler Inserted;
+
+    public static event RemovableDriveEventHandler Removed;
+
+    public enum EventType
+    {
+        Inserted = 2,
+        Removed = 3
     }
 
-    public delegate void RemovableDriveEventHandler(RemovableDriveEventArgs e);
-
-    public class RemovableDrive
+    static RemovableDrive()
     {
-        public static event RemovableDriveEventHandler Inserted;
+        ManagementEventWatcher watcher = new ManagementEventWatcher();
+        WqlEventQuery query = new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 2 or EventType = 3");
 
-        public static event RemovableDriveEventHandler Removed;
-
-        static void OnInserted(object sender, EventArrivedEventArgs e)
+        watcher.EventArrived += (s, e) =>
         {
-            ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+            string driveName = e.NewEvent.Properties["DriveName"].Value.ToString();
+            EventType eventType = (EventType)(Convert.ToInt16(e.NewEvent.Properties["EventType"].Value));
 
-            var result = new StringDictionary();
-            foreach (var property in instance.Properties)
-                result.Add(property.Name, $"{property.Value}");
+            string eventName = Enum.GetName(typeof(EventType), eventType);
+            
+            if (eventType == EventType.Inserted)
+                Inserted?.Invoke(new(driveName));
 
-            Inserted?.Invoke(new RemovableDriveEventArgs(result));
-        }
+            if (eventType == EventType.Removed)
+                Removed?.Invoke(new(driveName));
+        };
 
-        static void OnRemoved(object sender, EventArrivedEventArgs e)
-        {
-            ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
-
-            var result = new StringDictionary();
-            foreach (var property in instance.Properties)
-                result.Add(property.Name, $"{property.Value}");
-
-            Removed?.Invoke(new RemovableDriveEventArgs(result));
-        }
-
-        static readonly WqlEventQuery insertQuery = new("SELECT * FROM __InstanceCreationEvent WITHIN 2 WHERE TargetInstance ISA 'Win32_USBHub'");
-
-        static readonly WqlEventQuery removeQuery = new("SELECT * FROM __InstanceDeletionEvent WITHIN 2 WHERE TargetInstance ISA 'Win32_USBHub'");
-
-        static ManagementEventWatcher insert;
-        static ManagementEventWatcher Insert
-        {
-            get
-            {
-                if (insert == null)
-                {
-                    insert = new ManagementEventWatcher(insertQuery);
-                    insert.EventArrived += OnInserted;
-                    insert.Start();
-                }
-                return insert;
-            }
-        }
-
-        static ManagementEventWatcher remove;
-        static ManagementEventWatcher Remove
-        {
-            get
-            {
-                if (remove == null)
-                {
-                    remove = new ManagementEventWatcher(removeQuery);
-                    remove.EventArrived += OnRemoved;
-                    remove.Start();
-                }
-                return remove;
-            }
-        }
+        watcher.Query = query;
+        watcher.Start();
     }
 }

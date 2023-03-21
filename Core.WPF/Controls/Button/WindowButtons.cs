@@ -1,4 +1,4 @@
-﻿using Imagin.Core.Collections.Generic;
+﻿using Imagin.Core.Collections.ObjectModel;
 
 namespace Imagin.Core.Controls
 {

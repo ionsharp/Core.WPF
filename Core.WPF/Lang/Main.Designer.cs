@@ -223,6 +223,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Animation.
+        /// </summary>
+        internal static string Animation {
+            get {
+                return ResourceManager.GetString("Animation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ascending.
         /// </summary>
         internal static string Ascending {
@@ -336,6 +345,15 @@ namespace Imagin.Core.Lang {
         internal static string Bind {
             get {
                 return ResourceManager.GetString("Bind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blend.
+        /// </summary>
+        internal static string Blend {
+            get {
+                return ResourceManager.GetString("Blend", resourceCulture);
             }
         }
         
@@ -543,6 +561,15 @@ namespace Imagin.Core.Lang {
         internal static string CloseAllButThis {
             get {
                 return ResourceManager.GetString("CloseAllButThis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing.
+        /// </summary>
+        internal static string Closing {
+            get {
+                return ResourceManager.GetString("Closing", resourceCulture);
             }
         }
         
@@ -889,6 +916,24 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dock.
+        /// </summary>
+        internal static string Dock {
+            get {
+                return ResourceManager.GetString("Dock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dock all.
+        /// </summary>
+        internal static string DockAll {
+            get {
+                return ResourceManager.GetString("DockAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Document.
         /// </summary>
         internal static string Document {
@@ -907,6 +952,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Draw.
+        /// </summary>
+        internal static string Draw {
+            get {
+                return ResourceManager.GetString("Draw", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Easy.
         /// </summary>
         internal static string Easy {
@@ -921,6 +975,15 @@ namespace Imagin.Core.Lang {
         internal static string Edit {
             get {
                 return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Effect.
+        /// </summary>
+        internal static string Effect {
+            get {
+                return ResourceManager.GetString("Effect", resourceCulture);
             }
         }
         
@@ -1029,6 +1092,15 @@ namespace Imagin.Core.Lang {
         internal static string Exit {
             get {
                 return ResourceManager.GetString("Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Explore.
+        /// </summary>
+        internal static string Explore {
+            get {
+                return ResourceManager.GetString("Explore", resourceCulture);
             }
         }
         
@@ -1303,6 +1375,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to GitHub.
+        /// </summary>
+        internal static string GitHub {
+            get {
+                return ResourceManager.GetString("GitHub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Group.
         /// </summary>
         internal static string Group {
@@ -1465,6 +1546,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        internal static string Home {
+            get {
+                return ResourceManager.GetString("Home", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hours.
         /// </summary>
         internal static string Hours {
@@ -1533,6 +1623,15 @@ namespace Imagin.Core.Lang {
         internal static string Index {
             get {
                 return ResourceManager.GetString("Index", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Issues.
+        /// </summary>
+        internal static string Issues {
+            get {
+                return ResourceManager.GetString("Issues", resourceCulture);
             }
         }
         
@@ -1659,6 +1758,15 @@ namespace Imagin.Core.Lang {
         internal static string Logs {
             get {
                 return ResourceManager.GetString("Logs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage.
+        /// </summary>
+        internal static string Manage {
+            get {
+                return ResourceManager.GetString("Manage", resourceCulture);
             }
         }
         
@@ -1902,6 +2010,15 @@ namespace Imagin.Core.Lang {
         internal static string No {
             get {
                 return ResourceManager.GetString("No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No description.
+        /// </summary>
+        internal static string NoDescription {
+            get {
+                return ResourceManager.GetString("NoDescription", resourceCulture);
             }
         }
         
@@ -2257,6 +2374,24 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Report.
+        /// </summary>
+        internal static string Report {
+            get {
+                return ResourceManager.GetString("Report", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Report a bug.
+        /// </summary>
+        internal static string ReportABug {
+            get {
+                return ResourceManager.GetString("ReportABug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reset.
         /// </summary>
         internal static string Reset {
@@ -2374,6 +2509,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Saving.
+        /// </summary>
+        internal static string Saving {
+            get {
+                return ResourceManager.GetString("Saving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Screen.
         /// </summary>
         internal static string Screen {
@@ -2419,6 +2563,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Selected.
+        /// </summary>
+        internal static string Selected {
+            get {
+                return ResourceManager.GetString("Selected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sender.
         /// </summary>
         internal static string Sender {
@@ -2433,6 +2586,24 @@ namespace Imagin.Core.Lang {
         internal static string Set {
             get {
                 return ResourceManager.GetString("Set", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shape.
+        /// </summary>
+        internal static string Shape {
+            get {
+                return ResourceManager.GetString("Shape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show all.
+        /// </summary>
+        internal static string ShowAll {
+            get {
+                return ResourceManager.GetString("ShowAll", resourceCulture);
             }
         }
         
@@ -2725,6 +2896,33 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This.
+        /// </summary>
+        internal static string This {
+            get {
+                return ResourceManager.GetString("This", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tile.
+        /// </summary>
+        internal static string Tile {
+            get {
+                return ResourceManager.GetString("Tile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tiles.
+        /// </summary>
+        internal static string Tiles {
+            get {
+                return ResourceManager.GetString("Tiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time.
         /// </summary>
         internal static string Time {
@@ -2887,6 +3085,15 @@ namespace Imagin.Core.Lang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unpin all.
+        /// </summary>
+        internal static string UnpinAll {
+            get {
+                return ResourceManager.GetString("UnpinAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Username.
         /// </summary>
         internal static string Username {
@@ -2973,6 +3180,15 @@ namespace Imagin.Core.Lang {
         internal static string Warning {
             get {
                 return ResourceManager.GetString("Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wiki.
+        /// </summary>
+        internal static string Wiki {
+            get {
+                return ResourceManager.GetString("Wiki", resourceCulture);
             }
         }
         

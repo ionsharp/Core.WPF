@@ -1,203 +1,409 @@
 ﻿using Imagin.Core.Linq;
+using Imagin.Core.Reflection;
 using Imagin.Core.Storage;
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Imagin.Core.Conversion
+namespace Imagin.Core.Conversion;
+
+[ValueConversion(typeof(object[]), typeof(bool))]
+public class BooleanOrConverter : IMultiValueConverter
 {
-    [ValueConversion(typeof(double), typeof(bool))]
-    public class DoubleGreaterThanConverter : Converter<double, bool>
+    public BooleanOrConverter() : base() { }
+
+    public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
-        public static DoubleGreaterThanConverter Default { get; private set; } = new DoubleGreaterThanConverter();
-        DoubleGreaterThanConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<double> input)
-            => input.Value > double.Parse(input.ActualParameter.ToString());
-    }
-
-    [ValueConversion(typeof(Enum), typeof(bool))]
-    public class HasFlagConverter : Converter<Enum, bool>
-    {
-        public static HasFlagConverter Default { get; private set; } = new HasFlagConverter();
-        HasFlagConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<Enum> input) => input.Value.HasFlag((Enum)input.ActualParameter);
-
-        protected override ConverterValue<Enum> ConvertBack(ConverterData<bool> input) => Nothing.Do;
-    }
-
-    [ValueConversion(typeof(string), typeof(bool))]
-    public class FileHiddenConverter : Converter<string, bool>
-    {
-        public static FileHiddenConverter Default { get; private set; } = new FileHiddenConverter();
-        FileHiddenConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<string> input) => Computer.Hidden(input.Value);
-
-        protected override ConverterValue<string> ConvertBack(ConverterData<bool> input) => Nothing.Do;
-    }
-
-    [ValueConversion(typeof(Type), typeof(bool))]
-    public class HiddenConverter : Converter<Type, bool>
-    {
-        public static HiddenConverter Default { get; private set; } = new HiddenConverter();
-        public HiddenConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<Type> input) => input.Value?.IsHidden() == true;
-
-        protected override ConverterValue<Type> ConvertBack(ConverterData<bool> input) => Nothing.Do;
-    }
-
-    //...
-
-    [ValueConversion(typeof(bool), typeof(bool))]
-    public class InverseBooleanConverter : Converter<bool, bool>
-    {
-        public static InverseBooleanConverter Default { get; private set; } = new InverseBooleanConverter();
-        InverseBooleanConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<bool> input) => !input.Value;
-
-        protected override ConverterValue<bool> ConvertBack(ConverterData<bool> input) => !input.Value;
-    }
-
-    //...
-
-    [ValueConversion(typeof(object), typeof(bool))]
-    public class IsConverter : Converter<object, bool>
-    {
-        public static IsConverter Default { get; private set; } = new IsConverter();
-        IsConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<object> input)
+        foreach (object value in values)
         {
-            var a = input.Value.GetType();
-            if (input.ActualParameter is Type b)
-                return a.IsSubclassOf(b) || a.Equals(b) || (b.GetTypeInfo().IsInterface && a.Implements(b));
+            if ((bool)value == true)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
-            return false;
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture) => throw new NotSupportedException();
+}
+
+///
+
+[ValueConversion(typeof(double), typeof(bool))]
+public class DoubleGreaterThanConverter : ValueConverter<double, bool>
+{
+    public DoubleGreaterThanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<double> input)
+        => input.Value > double.Parse($"{input.ActualParameter}");
+}
+
+///
+
+[ValueConversion(typeof(Enum), typeof(bool))]
+public class EnumFlagsToBooleanConverter : ValueConverter<Enum, bool>
+{
+    public EnumFlagsToBooleanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<Enum> input) => input.ActualParameter is Enum i && input.Value.HasFlag(i);
+
+    protected override ConverterValue<Enum> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(object), typeof(bool))]
+public class EnumHasAttributeConverter : ValueConverter<object, bool>
+{
+    public EnumHasAttributeConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input)
+    {
+        if (input.ActualParameter is Type attribute)
+        {
+            if (input.Value is Enum field)
+                return field.HasAttribute(attribute);
+        }
+        return false;
+    }
+}
+
+///
+
+[ValueConversion(typeof(object), typeof(bool))]
+public class HasAttributeConverter : ValueConverter<object, bool>
+{
+    public HasAttributeConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input)
+    {
+        if (input.ActualParameter is Type attribute)
+        {
+            if (input.Value is MemberModel member)
+                return member.HasAttribute(attribute);
+
+            if (input.Value is Type type)
+                return type.HasAttribute(attribute);
+
+            return input.Value?.GetType()?.HasAttribute(attribute) == true;
         }
 
-        protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+        return false;
+    }
+}
+
+///
+
+[ValueConversion(typeof(int), typeof(bool))]
+public class Int32GreaterThanConverter : ValueConverter<int, bool>
+{
+    public Int32GreaterThanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<int> input)
+        => input.Value > int.Parse($"{input.ActualParameter}");
+}
+
+[ValueConversion(typeof(int), typeof(bool))]
+public class Int32EqualsConverter : ValueConverter<int, bool>
+{
+    public Int32EqualsConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<int> input)
+        => input.Value == int.Parse($"{input.ActualParameter}");
+}
+
+[ValueConversion(typeof(int), typeof(bool))]
+public class Int32LessThanConverter : ValueConverter<int, bool>
+{
+    public Int32LessThanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<int> input)
+        => input.Value < int.Parse($"{input.ActualParameter}");
+}
+
+///
+
+[ValueConversion(typeof(string), typeof(bool))]
+public class FileExistsConverter : ValueConverter<string, bool>
+{
+    public FileExistsConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<string> input) => File.Long.Exists(input.Value);
+
+    protected override ConverterValue<string> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(string), typeof(bool))]
+public class FileHiddenConverter : ValueConverter<string, bool>
+{
+    public FileHiddenConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<string> input) => Computer.Hidden(input.Value);
+
+    protected override ConverterValue<string> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(string), typeof(bool))]
+public class FolderExistsConverter : ValueConverter<string, bool>
+{
+    public FolderExistsConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<string> input) => Folder.Long.Exists(input.Value);
+
+    protected override ConverterValue<string> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(Enum), typeof(bool))]
+public class HasFlagConverter : ValueConverter<Enum, bool>
+{
+    public HasFlagConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<Enum> input) => input.Value.HasFlag((Enum)input.ActualParameter);
+
+    protected override ConverterValue<Enum> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(Type), typeof(bool))]
+public class HiddenConverter : ValueConverter<Type, bool>
+{
+    public HiddenConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<Type> input) => input.Value?.IsHidden() == true;
+
+    protected override ConverterValue<Type> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+///
+
+[ValueConversion(typeof(bool), typeof(bool))]
+public class InverseBooleanConverter : ValueConverter<bool, bool>
+{
+    public InverseBooleanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<bool> input) => !input.Value;
+
+    protected override ConverterValue<bool> ConvertBack(ConverterData<bool> input) => !input.Value;
+}
+
+///
+
+[ValueConversion(typeof(object), typeof(bool))]
+public class IsConverter : ValueConverter<object, bool>
+{
+    public IsConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input)
+    {
+        var a = input.Value.GetType();
+        if (input.ActualParameter is Type b)
+            return a.IsSubclassOf(b) || a.Equals(b) || (b.GetTypeInfo().IsInterface && a.Implements(b));
+
+        return false;
     }
 
-    [ValueConversion(typeof(object), typeof(bool))]
-    public class IsNullConverter : Converter<object, bool>
+    protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(object), typeof(bool))]
+public class IsNullConverter : ValueConverter<object, bool>
+{
+    public IsNullConverter() : base() { }
+
+    protected override bool AllowNull => true;
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input)
     {
-        public static IsNullConverter Default { get; private set; } = new IsNullConverter();
-        IsNullConverter() { }
+        var result = input.Value == null;
+        return input.Parameter == 1 ? !result : result;
+    }
 
-        protected override bool AllowNull => true;
+    protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
 
-        protected override ConverterValue<bool> ConvertTo(ConverterData<object> input)
+[ValueConversion(typeof(object), typeof(bool))]
+public class IsStringConverter : ValueConverter<object, bool>
+{
+    public IsStringConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input) => input.Value is string;
+
+    protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+///
+
+[ValueConversion(typeof(IEnumerable), typeof(bool))]
+public class IEnumerableToBooleanConverter : ValueConverter<IEnumerable, bool>
+{
+    public IEnumerableToBooleanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<IEnumerable> input) => !input.Value.Empty();
+
+    protected override ConverterValue<IEnumerable> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(IList), typeof(bool))]
+public class IListToBooleanConverter : ValueConverter<IList, bool>
+{
+    public IListToBooleanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<IList> input) => input.Value.Count > 0;
+
+    protected override ConverterValue<IList> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(int), typeof(bool))]
+public class IntToBooleanConverter : ValueConverter<int, bool>
+{
+    public IntToBooleanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<int> input) => input.Value > 0;
+
+    protected override ConverterValue<int> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+///
+
+[ValueConversion(typeof(MemberModel), typeof(bool))]
+public class MemberModelHasAttributeConverter : ValueConverter<MemberModel, bool>
+{
+    public MemberModelHasAttributeConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<MemberModel> input)
+        => input.ActualParameter is Type type && input.Value.HasAttribute(type);
+}
+
+///
+
+[ValueConversion(typeof(object), typeof(bool))]
+public class ObjectHasFieldConverter : ValueConverter<object, bool>
+{
+    public ObjectHasFieldConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input) => input.Value.IfGet(i => input.ActualParameter is object name ? input.Value.GetField($"{name}") != null : false);
+
+    protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(object), typeof(bool))]
+public class ObjectHasMemberWithAttributeConverter : ValueConverter<object, bool>
+{
+    public ObjectHasMemberWithAttributeConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input)
+    {
+        if (input.ActualParameter is Type attribute)
         {
-            var result = input.Value == null;
-            return input.Parameter == 1 ? !result : result;
+            var type = input.Value is Type t ? t : input.Value.GetType();
+            return type.HasMemberWithAttribute(attribute);
         }
-
-        protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+        return false;
     }
+}
 
-    [ValueConversion(typeof(object), typeof(bool))]
-    public class IsStringConverter : Converter<object, bool>
+[ValueConversion(typeof(object), typeof(bool))]
+public class ObjectHasPropertyConverter : ValueConverter<object, bool>
+{
+    public ObjectHasPropertyConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input) => input.Value.IfGet(i => input.ActualParameter is object name ? input.Value.GetProperty($"{name}") != null : false);
+
+    protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(object), typeof(Visibility))]
+public class ObjectHasFieldVisibilityConverter : ValueConverter<object, Visibility>
+{
+    public ObjectHasFieldVisibilityConverter() : base() { }
+
+    protected override ConverterValue<Visibility> ConvertTo(ConverterData<object> input)
     {
-        public static IsStringConverter Default { get; private set; } = new IsStringConverter();
-        IsStringConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<object> input) => input.Value is string;
-
-        protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
-    }
-
-    //...
-
-    [ValueConversion(typeof(IEnumerable), typeof(bool))]
-    public class IEnumerableToBooleanConverter : Converter<IEnumerable, bool>
-    {
-        public static IEnumerableToBooleanConverter Default { get; private set; } = new IEnumerableToBooleanConverter();
-        IEnumerableToBooleanConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<IEnumerable> input) => !input.Value.Empty();
-
-        protected override ConverterValue<IEnumerable> ConvertBack(ConverterData<bool> input) => Nothing.Do;
-    }
-
-    [ValueConversion(typeof(IList), typeof(bool))]
-    public class IListToBooleanConverter : Converter<IList, bool>
-    {
-        public static IListToBooleanConverter Default { get; private set; } = new IListToBooleanConverter();
-        IListToBooleanConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<IList> input) => input.Value.Count > 0;
-
-        protected override ConverterValue<IList> ConvertBack(ConverterData<bool> input) => Nothing.Do;
-    }
-
-    [ValueConversion(typeof(int), typeof(bool))]
-    public class IntToBooleanConverter : Converter<int, bool>
-    {
-        public static IntToBooleanConverter Default { get; private set; } = new IntToBooleanConverter();
-        IntToBooleanConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<int> input) => input.Value > 0;
-
-        protected override ConverterValue<int> ConvertBack(ConverterData<bool> input) => Nothing.Do;
-    }
-
-    [ValueConversion(typeof(Orientation), typeof(bool))]
-    public class OrientationToBooleanConverter : Converter<Orientation, bool>
-    {
-        public static OrientationToBooleanConverter Default { get; private set; } = new OrientationToBooleanConverter();
-        OrientationToBooleanConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<Orientation> input) => input.Value == (Orientation)Enum.Parse(typeof(Orientation), (string)input.ActualParameter);
-
-        protected override ConverterValue<Orientation> ConvertBack(ConverterData<bool> input) => input.Value ? (Orientation)Enum.Parse(typeof(Orientation), (string)input.ActualParameter) : default;
-    }
-
-    [ValueConversion(typeof(string), typeof(bool))]
-    public class StringToBooleanConverter : Converter<string, bool>
-    {
-        public static StringToBooleanConverter Default { get; private set; } = new StringToBooleanConverter();
-        StringToBooleanConverter() { }
-
-        protected override bool AllowNull => true;
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<string> input) => input.Value.NullOrEmpty() == false;
-
-        protected override ConverterValue<string> ConvertBack(ConverterData<bool> input) => Nothing.Do;
-    }
-
-    //...
-
-    [ValueConversion(typeof(object), typeof(bool))]
-    public class ValueEqualsParameterConverter : Converter<object, bool>
-    {
-        public static ValueEqualsParameterConverter Default { get; private set; } = new ValueEqualsParameterConverter();
-        protected ValueEqualsParameterConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<object> input) => input.Value.Equals(input.ActualParameter);
-
-        protected override ConverterValue<object> ConvertBack(ConverterData<bool> input)
+        try
         {
-            if (!input.Value || input.ActualParameter == null)
-                return Nothing.Do;
-
-            return input.ActualParameter;
+            if (input.ActualParameter is object name)
+            {
+                var field = input.Value.GetField($"{name}");
+                return (field != null).Visibility();
+            }
         }
+        catch { }
+        return Visibility.Visible;
     }
 
-    [ValueConversion(typeof(object), typeof(bool))]
-    public class ValueNotEqualToParameterConverter : Converter<object, bool>
+    protected override ConverterValue<object> ConvertBack(ConverterData<Visibility> input) => Nothing.Do;
+}
+
+[ValueConversion(typeof(object), typeof(Visibility))]
+public class ObjectHasPropertyVisibilityConverter : ValueConverter<object, Visibility>
+{
+    public ObjectHasPropertyVisibilityConverter() : base() { }
+
+    protected override ConverterValue<Visibility> ConvertTo(ConverterData<object> input)
     {
-        public static ValueNotEqualToParameterConverter Default { get; private set; } = new ValueNotEqualToParameterConverter();
-        ValueNotEqualToParameterConverter() { }
-
-        protected override ConverterValue<bool> ConvertTo(ConverterData<object> input) => !input.Value.Equals(input.ActualParameter);
-
-        protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => input.ActualParameter;
+        try
+        {
+            if (input.ActualParameter is object name)
+            {
+                var property = input.Value.GetProperty($"{name}");
+                return (property != null).Visibility();
+            }
+        }
+        catch { }
+        return Visibility.Visible;
     }
+
+    protected override ConverterValue<object> ConvertBack(ConverterData<Visibility> input) => Nothing.Do;
+}
+
+///
+
+[ValueConversion(typeof(Orientation), typeof(bool))]
+public class OrientationToBooleanConverter : ValueConverter<Orientation, bool>
+{
+    public OrientationToBooleanConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<Orientation> input) => input.Value == (Orientation)Enum.Parse(typeof(Orientation), (string)input.ActualParameter);
+
+    protected override ConverterValue<Orientation> ConvertBack(ConverterData<bool> input) => input.Value ? (Orientation)Enum.Parse(typeof(Orientation), (string)input.ActualParameter) : default;
+}
+
+[ValueConversion(typeof(string), typeof(bool))]
+public class StringToBooleanConverter : ValueConverter<string, bool>
+{
+    public StringToBooleanConverter() : base() { }
+
+    protected override bool AllowNull => true;
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<string> input) => input.Value.NullOrEmpty() == false;
+
+    protected override ConverterValue<string> ConvertBack(ConverterData<bool> input) => Nothing.Do;
+}
+
+///
+
+[ValueConversion(typeof(object), typeof(bool))]
+public class ValueEqualsParameterConverter : ValueConverter<object, bool>
+{
+    public ValueEqualsParameterConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input) => input.Value.Equals(input.ActualParameter);
+
+    protected override ConverterValue<object> ConvertBack(ConverterData<bool> input)
+    {
+        if (!input.Value || input.ActualParameter == null)
+            return Nothing.Do;
+
+        return input.ActualParameter;
+    }
+}
+
+[ValueConversion(typeof(object), typeof(bool))]
+public class ValueNotEqualToParameterConverter : ValueConverter<object, bool>
+{
+    public ValueNotEqualToParameterConverter() : base() { }
+
+    protected override ConverterValue<bool> ConvertTo(ConverterData<object> input) => !input.Value.Equals(input.ActualParameter);
+
+    protected override ConverterValue<object> ConvertBack(ConverterData<bool> input) => Nothing.Do;
 }

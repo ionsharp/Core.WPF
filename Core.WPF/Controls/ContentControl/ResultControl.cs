@@ -1,12 +1,20 @@
 ﻿using Imagin.Core.Analytics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Imagin.Core.Controls
 {
     public class ResultControl : ContentControl<Result>
     {
+        public static readonly DependencyProperty CloseCommandProperty = DependencyProperty.Register(nameof(CloseCommand), typeof(ICommand), typeof(ResultControl), new FrameworkPropertyMetadata(null));
+        public ICommand CloseCommand
+        {
+            get => (ICommand)GetValue(CloseCommandProperty);
+            set => SetValue(CloseCommandProperty, value);
+        }
+
         public static readonly DependencyProperty ImageProperty = DependencyProperty.Register(nameof(Image), typeof(ImageSource), typeof(ResultControl), new FrameworkPropertyMetadata(null));
         public ImageSource Image
         {

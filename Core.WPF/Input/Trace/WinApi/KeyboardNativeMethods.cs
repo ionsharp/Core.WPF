@@ -97,8 +97,7 @@ namespace Imagin.Core.Input.WinApi
         private static uint GetActiveKeyboard()
         {
             IntPtr hActiveWnd = ThreadNativeMethods.GetForegroundWindow();  //handle to focused window
-            int dwProcessId;
-            int hCurrentWnd = ThreadNativeMethods.GetWindowThreadProcessId( hActiveWnd, out dwProcessId ); //thread of focused window
+            int hCurrentWnd = ThreadNativeMethods.GetWindowThreadProcessId(hActiveWnd, out int dwProcessId); //thread of focused window
             return GetKeyboardLayout( hCurrentWnd );  //get the layout identifier for the thread whose window is focused
         }
 

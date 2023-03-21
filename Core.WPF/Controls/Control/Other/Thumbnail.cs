@@ -19,7 +19,7 @@ namespace Imagin.Core.Controls
 
     public class Thumbnail : Control
     {
-        readonly CancelTask loadTask;
+        readonly Method loadTask;
 
         static readonly DependencyPropertyKey IsLoadingKey = DependencyProperty.RegisterReadOnly(nameof(IsLoading), typeof(bool), typeof(Thumbnail), new FrameworkPropertyMetadata(false));
         public static readonly DependencyProperty IsLoadingProperty = IsLoadingKey.DependencyProperty;
@@ -43,7 +43,7 @@ namespace Imagin.Core.Controls
             get => (string)GetValue(PathProperty);
             set => SetValue(PathProperty, value);
         }
-        static void OnPathChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => (sender as Thumbnail).OnPathChanged(new(e));
+        static void OnPathChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => (sender as Thumbnail).OnPathChanged(e.Convert<string>());
 
         static readonly DependencyPropertyKey PathTypeKey = DependencyProperty.RegisterReadOnly(nameof(PathType), typeof(ItemType), typeof(Thumbnail), new FrameworkPropertyMetadata(ItemType.Folder));
         public static readonly DependencyProperty PathTypeProperty = PathTypeKey.DependencyProperty;
@@ -67,7 +67,7 @@ namespace Imagin.Core.Controls
             get => (ThumbnailView)GetValue(ViewProperty);
             private set => SetValue(ViewProperty, value);
         }
-        static void OnViewChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => (sender as Thumbnail).OnViewChanged(new(e));
+        static void OnViewChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) => (sender as Thumbnail).OnViewChanged(e.Convert<ThumbnailView>());
 
         public Thumbnail() : base() 
         {
@@ -101,9 +101,9 @@ namespace Imagin.Core.Controls
                             {
                                 result = type switch
                                 {
-                                    ItemType.File or ItemType.Shortcut => File.Long.Thumbnail(path) ?? Computer.Icon.GetLarge(path),
-                                    ItemType.Root => Computer.Icon.GetLarge(string.Empty),
-                                    _ => Computer.Icon.GetLarge(path),
+                                    ItemType.File or ItemType.Shortcut => File.Long.Thumbnail(path) ?? Windows.Icon.GetLarge(path),
+                                    ItemType.Root => Windows.Icon.GetLarge(string.Empty),
+                                    _ => Windows.Icon.GetLarge(path),
                                 };
                             });
                         });
@@ -115,8 +115,8 @@ namespace Imagin.Core.Controls
             }
         }
         
-        protected virtual void OnPathChanged(Value<string> input) => _ = loadTask.Start();
+        protected virtual void OnPathChanged(ReadOnlyValue<string> input) => _ = loadTask.Start();
 
-        protected virtual void OnViewChanged(Value<ThumbnailView> input) => _ = loadTask.Start();
+        protected virtual void OnViewChanged(ReadOnlyValue<ThumbnailView> input) => _ = loadTask.Start();
     }
 }

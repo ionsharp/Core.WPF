@@ -20,7 +20,7 @@ namespace Imagin.Core.Controls
 
         readonly GridSplitter Splitter;
 
-        //...
+        ///
 
         public event EventHandler<EventArgs> Aligned;
 
@@ -39,7 +39,7 @@ namespace Imagin.Core.Controls
             get => (Thickness)GetValue(ButtonSpacingProperty);
             set => SetValue(ButtonSpacingProperty, value);
         }
-        
+
         public static readonly DependencyProperty CanAlignProperty = DependencyProperty.Register(nameof(CanAlign), typeof(bool), typeof(SplitGrid), new FrameworkPropertyMetadata(true));
         public bool CanAlign
         {
@@ -68,13 +68,20 @@ namespace Imagin.Core.Controls
             set => SetValue(CanSwapProperty, value);
         }
 
+        public static readonly DependencyProperty IsCollapsedProperty = DependencyProperty.Register(nameof(IsCollapsed), typeof(bool), typeof(SplitGrid), new FrameworkPropertyMetadata(false));
+        public bool IsCollapsed
+        {
+            get => (bool)GetValue(IsCollapsedProperty);
+            set => SetValue(IsCollapsedProperty, value);
+        }
+
         public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(SplitGrid), new FrameworkPropertyMetadata(DefaultOrientation, FrameworkPropertyMetadataOptions.AffectsRender, OnOrientationChanged));
         public Orientation Orientation
         {
             get => (Orientation)GetValue(OrientationProperty);
             set => SetValue(OrientationProperty, value);
         }
-        static void OnOrientationChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<SplitGrid>().OnOrientationChanged(new Value<Orientation>(e).New);
+        static void OnOrientationChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<SplitGrid>().OnOrientationChanged(e.Convert<Orientation>().New);
 
         public static readonly DependencyProperty Panel1Property = DependencyProperty.Register(nameof(Panel1), typeof(UIElement), typeof(SplitGrid), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnPanel1Changed));
         public UIElement Panel1
@@ -82,7 +89,7 @@ namespace Imagin.Core.Controls
             get => (UIElement)GetValue(Panel1Property);
             set => SetValue(Panel1Property, value);
         }
-        static void OnPanel1Changed(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<SplitGrid>().OnPanel1Changed(new Value<UIElement>(e));
+        static void OnPanel1Changed(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<SplitGrid>().OnPanel1Changed(e.Convert<UIElement>());
 
         public static readonly DependencyProperty Panel1LengthProperty = DependencyProperty.Register(nameof(Panel1Length), typeof(GridLength), typeof(SplitGrid), new FrameworkPropertyMetadata(new GridLength(1, GridUnitType.Star)));
         public GridLength Panel1Length
@@ -97,7 +104,7 @@ namespace Imagin.Core.Controls
             get => (UIElement)GetValue(Panel2Property);
             set => SetValue(Panel2Property, value);
         }
-        static void OnPanel2Changed(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<SplitGrid>().OnPanel2Changed(new Value<UIElement>(e));
+        static void OnPanel2Changed(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<SplitGrid>().OnPanel2Changed(e.Convert<UIElement>());
 
         public static readonly DependencyProperty Panel2LengthProperty = DependencyProperty.Register(nameof(Panel2Length), typeof(GridLength), typeof(SplitGrid), new FrameworkPropertyMetadata(new GridLength(1, GridUnitType.Star)));
         public GridLength Panel2Length
@@ -271,7 +278,7 @@ namespace Imagin.Core.Controls
             }
         }
 
-        //...
+        ///
 
         protected virtual void OnAligned()
         {
@@ -318,7 +325,7 @@ namespace Imagin.Core.Controls
             await this.FadeIn();
         }
 
-        protected virtual void OnPanel1Changed(Value<UIElement> input)
+        protected virtual void OnPanel1Changed(ReadOnlyValue<UIElement> input)
         {
             if (input.Old is UIElement i)
                 Children.Remove(i);
@@ -327,7 +334,7 @@ namespace Imagin.Core.Controls
                 Children.Add(j);
         }
 
-        protected virtual void OnPanel2Changed(Value<UIElement> input)
+        protected virtual void OnPanel2Changed(ReadOnlyValue<UIElement> input)
         {
             if (input.Old is UIElement i)
                 Children.Remove(i);

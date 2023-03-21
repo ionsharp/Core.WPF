@@ -3,10 +3,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Imagin.Core.Controls">
     <Style x:Key="{x:Type StatusBar}" TargetType="{x:Type StatusBar}">
-        <Setter Property="Background" Value="{local:ThemeKey ActualKey=StatusBarBackground}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=StatusBarBorder}" />
+        <Setter Property="Background" Value="{local:ThemeKey StatusBarBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey StatusBarBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=StatusBarForeground}" />
+        <Setter Property="Foreground" Value="{local:ThemeKey StatusBarForeground}" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">

@@ -21,8 +21,8 @@
                         Background="{TemplateBinding Background}">
                         <DockPanel Margin="{TemplateBinding Padding}">
                             <ScrollViewer 
-                                Background="{local:ThemeKey Key=GridView.Background}"
-                                BorderBrush="{local:ThemeKey Key=GridView.Border}"
+                                Background="{local:ThemeKey GridViewBackground}"
+                                BorderBrush="{local:ThemeKey GridViewBorder}"
                                 BorderThickness="0,1"
                                 DockPanel.Dock="Top"
                                 HorizontalScrollBarVisibility="Hidden"
@@ -65,45 +65,43 @@
         </Setter>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
+    <ControlTemplate x:Key="{x:Static Linq:XListBoxItem.TemplateKey}" TargetType="{x:Type ListBoxItem}">
+        <Grid>
+            <Control x:Name="LastSelectedControl" Style="{StaticResource {x:Static Linq:XElement.FocusVisualStyleKey}}"/>
+            <Border
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}" 
+                BorderThickness="{TemplateBinding BorderThickness}"
+                Padding="{TemplateBinding Padding}">
+                <ContentPresenter
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="Linq:XListBoxItem.LastSelected" Value="True">
+                <Setter TargetName="LastSelectedControl" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="Linq:XListBoxItem.LastSelected" Value="False">
+                <Setter TargetName="LastSelectedControl" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    
     <Style x:Key="{x:Type ListBoxItem}" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type Control}}">
-        <Setter Property="Background" Value="{local:ThemeKey ActualKey=ListBoxItemBackground}" />
-        <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=ListBoxItemBorder}" />
+        <Setter Property="Background" Value="{local:ThemeKey ListBoxItemBackground}" />
+        <Setter Property="BorderBrush" Value="{local:ThemeKey ListBoxItemBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=Text}" />
+        <Setter Property="Foreground" Value="{local:ThemeKey Text}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Linq:XElement.FadeIn" Value="True" />
         <Setter Property="Opacity" Value="0" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Padding" Value="8" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Grid>
-                        <Control x:Name="LastSelectedControl" Style="{StaticResource {x:Static Linq:XElement.FocusVisualStyleKey}}"/>
-                        <Border
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}">
-                            <ContentPresenter
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Border>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="Linq:XListBoxItem.LastSelected" Value="True">
-                            <Setter TargetName="LastSelectedControl" Property="Visibility" Value="Visible"/>
-                        </Trigger>
-                        <Trigger Property="Linq:XListBoxItem.LastSelected" Value="False">
-                            <Setter TargetName="LastSelectedControl" Property="Visibility" Value="Collapsed"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Template" Value="{StaticResource {x:Static Linq:XListBoxItem.TemplateKey}}"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Style.Triggers>
             <MultiTrigger>
@@ -111,36 +109,36 @@
                     <Condition Property="IsSelected" Value="True"/>
                     <Condition Property="Selector.IsSelectionActive" Value="True"/>
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=ListBoxItemSelectedActiveBackground}"/>
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=ListBoxItemSelectedActiveBorder}"/>
-                <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=ListBoxItemSelectedActiveForeground}"/>
+                <Setter Property="Background" Value="{local:ThemeKey ListBoxItemSelectedActiveBackground}"/>
+                <Setter Property="BorderBrush" Value="{local:ThemeKey ListBoxItemSelectedActiveBorder}"/>
+                <Setter Property="Foreground" Value="{local:ThemeKey ListBoxItemSelectedActiveForeground}"/>
             </MultiTrigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsSelected" Value="True"/>
                     <Condition Property="Selector.IsSelectionActive" Value="False"/>
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=ListBoxItemSelectedBackground}"/>
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=ListBoxItemSelectedBorder}"/>
-                <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=ListBoxItemSelectedForeground}"/>
+                <Setter Property="Background" Value="{local:ThemeKey ListBoxItemSelectedBackground}"/>
+                <Setter Property="BorderBrush" Value="{local:ThemeKey ListBoxItemSelectedBorder}"/>
+                <Setter Property="Foreground" Value="{local:ThemeKey ListBoxItemSelectedForeground}"/>
             </MultiTrigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsSelected" Value="False"/>
                     <Condition Property="IsMouseOver" Value="True"/>
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=ListBoxItemMouseOverBackground}"/>
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=ListBoxItemMouseOverBorder}"/>
-                <Setter Property="Foreground" Value="{local:ThemeKey ActualKey=ListBoxItemMouseOverForeground}"/>
+                <Setter Property="Background" Value="{local:ThemeKey ListBoxItemMouseOverBackground}"/>
+                <Setter Property="BorderBrush" Value="{local:ThemeKey ListBoxItemMouseOverBorder}"/>
+                <Setter Property="Foreground" Value="{local:ThemeKey ListBoxItemMouseOverForeground}"/>
             </MultiTrigger>
             <Trigger Property="Linq:XControl.IsDraggingOver" Value="True">
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=DropTargetBorder}" />
+                <Setter Property="BorderBrush" Value="{local:ThemeKey DropTargetBorder}" />
             </Trigger>
         </Style.Triggers>
     </Style>
 
     <Style x:Key="{x:Type ListViewItem}" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-        <Setter Property="Linq:XListViewItem.ParentHasColumns" Value="{Data:Ancestor View, {x:Type ListView}, Converter={x:Static Conversion:IsConverter.Default}, ConverterParameter={x:Type GridView}}"/>
+        <Setter Property="Linq:XListViewItem.ParentHasColumns" Value="{Data:Ancestor View, {x:Type ListView}, Convert={x:Type Conversion:IsConverter}, ConverterParameter={x:Type GridView}}"/>
         <Style.Triggers>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
@@ -149,8 +147,8 @@
                     <Condition Property="IsSelected" Value="False"/>
                     <Condition Property="IsMouseOver" Value="False"/>
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=ListBoxItemEvenBackground}"/>
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=ListBoxItemEvenBorder}"/>
+                <Setter Property="Background" Value="{local:ThemeKey ListBoxItemEvenBackground}"/>
+                <Setter Property="BorderBrush" Value="{local:ThemeKey ListBoxItemEvenBorder}"/>
             </MultiTrigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
@@ -159,17 +157,17 @@
                     <Condition Property="IsSelected" Value="False"/>
                     <Condition Property="IsMouseOver" Value="False"/>
                 </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{local:ThemeKey ActualKey=ListBoxItemOddBackground}"/>
-                <Setter Property="BorderBrush" Value="{local:ThemeKey ActualKey=ListBoxItemOddBorder}"/>
+                <Setter Property="Background" Value="{local:ThemeKey ListBoxItemOddBackground}"/>
+                <Setter Property="BorderBrush" Value="{local:ThemeKey ListBoxItemOddBorder}"/>
             </MultiTrigger>
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type ListBox}" TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ItemsControl}}">
-        <Setter Property="Background" Value="{local:ThemeKey Key=ListBox.Background}"/>
-        <Setter Property="BorderBrush" Value="{local:ThemeKey Key=ListBox.Border}"/>
+        <Setter Property="Background" Value="{local:ThemeKey ListBoxBackground}"/>
+        <Setter Property="BorderBrush" Value="{local:ThemeKey ListBoxBorder}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -185,8 +183,7 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Linq:XItemsControl.EmptyTemplateVisibility" Value="Visible"/>
-        <Setter Property="Linq:XItemsControl.SelectNoneOnEmptySpaceClick" Value="True"/>
-        <Setter Property="Linq:XListBox.EnableLastSelected" Value="True"/>
+        <Setter Property="Linq:XListBox.ShowLastSelected" Value="True"/>
         <Setter Property="Padding" Value="5"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
@@ -255,7 +252,7 @@
                         <Trigger Property="IsGrouping" Value="True">
                             <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
                         </Trigger>
-                        <DataTrigger Binding="{Data:Self View, Converter={x:Static Conversion:ObjectToTypeConverter.Default}}" Value="{x:Type GridView}">
+                        <DataTrigger Binding="{Data:Self View, Convert={x:Type Conversion:GetTypeConverter}}" Value="{x:Type GridView}">
                             <Setter TargetName="ScrollViewer" Property="Style" Value="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>

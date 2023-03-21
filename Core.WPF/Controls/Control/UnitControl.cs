@@ -9,11 +9,11 @@ namespace Imagin.Core.Controls;
 
 public class UnitControl : Control
 {
-    public static readonly ResourceKey<DoubleUpDown> ComboBoxStyleKey = new();
+    public static readonly ResourceKey ComboBoxStyleKey = new();
 
-    public static readonly ResourceKey<DoubleUpDown> DoubleUpDownStyleKey = new();
+    public static readonly ResourceKey DoubleUpDownStyleKey = new();
 
-    //...
+    ///
 
     public static readonly DependencyProperty ActualValueProperty = DependencyProperty.Register(nameof(ActualValue), typeof(double), typeof(UnitControl), new FrameworkPropertyMetadata(0.0));
     public double ActualValue
@@ -35,7 +35,7 @@ public class UnitControl : Control
         get => (float)GetValue(ResolutionProperty);
         set => SetValue(ResolutionProperty, value);
     }
-    static void OnResolutionChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<UnitControl>().OnResolutionChanged(new Value<float>(e));
+    static void OnResolutionChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<UnitControl>().OnResolutionChanged(e.Convert<float>());
 
     public static readonly DependencyProperty SpacingProperty = DependencyProperty.Register(nameof(Spacing), typeof(Thickness), typeof(UnitControl), new FrameworkPropertyMetadata(default(Thickness)));
     public Thickness Spacing
@@ -57,7 +57,7 @@ public class UnitControl : Control
         get => (Unit)GetValue(UnitProperty);
         set => SetValue(UnitProperty, value);
     }
-    static void OnUnitChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<UnitControl>().OnUnitChanged(new Value<Unit>(e));
+    static void OnUnitChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<UnitControl>().OnUnitChanged(e.Convert<Unit>());
 
     public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(UnitControl), new FrameworkPropertyMetadata(0.0));
     public double Value
@@ -68,20 +68,20 @@ public class UnitControl : Control
 
     readonly BindingExpressionBase j = null;
 
-    //...
+    ///
 
     public UnitControl() : base()
     {
-        j = this.Bind(ActualValueProperty, nameof(Value), this, BindingMode.TwoWay, new SimpleConverter<double, double>
+        j = this.Bind(ActualValueProperty, nameof(Value), this, BindingMode.TwoWay, new ValueConverter<double, double>
         (
             i => Unit.Pixel.Convert(Unit, i, Resolution),
             i => Unit.Convert(Unit.Pixel, i, Resolution)
         ));
     }
 
-    //...
+    ///
 
-    protected virtual void OnResolutionChanged(Value<float> i) => j?.UpdateTarget();
+    protected virtual void OnResolutionChanged(ReadOnlyValue<float> i) => j?.UpdateTarget();
 
-    protected virtual void OnUnitChanged(Value<Unit> i) => j?.UpdateTarget();
+    protected virtual void OnUnitChanged(ReadOnlyValue<Unit> i) => j?.UpdateTarget();
 }

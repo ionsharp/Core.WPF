@@ -16,5 +16,6 @@ public abstract class SingleApplication : BaseApplication, ISingleApplication
             arguments.RemoveAt(0);
 
         Reopened?.Invoke(this, new ReopenedEventArgs(arguments));
+        MainViewModel.OnReloaded(arguments);
     }
 }

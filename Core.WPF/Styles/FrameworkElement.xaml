@@ -18,13 +18,13 @@
         </Setter>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type FrameworkElement}" TargetType="{x:Type FrameworkElement}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource {x:Static Linq:XElement.FocusVisualStyleKey}}"/>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:ChildElement}" TargetType="{x:Type local:ChildElement}" BasedOn="{StaticResource {x:Type FrameworkElement}}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -61,10 +61,11 @@
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:ImageElement}" TargetType="{x:Type local:ImageElement}" BasedOn="{StaticResource {x:Type FrameworkElement}}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="IsHitTestVisible" Value="False" />
         <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
         <Setter Property="SourceSize" Value="16,16" />
         <Setter Property="SnapsToDevicePixels" Value="False" />
@@ -74,7 +75,7 @@
     <Style x:Key="{x:Type local:LineElement}" TargetType="{x:Type local:LineElement}" BasedOn="{StaticResource {x:Type FrameworkElement}}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Orientation" Value="Horizontal"/>
-        <Setter Property="Stroke" Value="{local:ThemeKey Key=LineStroke}"/>
+        <Setter Property="Stroke" Value="{local:ThemeKey LineStroke}"/>
         <Setter Property="StrokeThickness" Value="1"/>
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Horizontal">
@@ -88,13 +89,13 @@
         </Style.Triggers>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:XOrElement}" TargetType="{x:Type local:XOrElement}" BasedOn="{StaticResource {x:Type FrameworkElement}}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     </Style>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:XOrRegion}" TargetType="{x:Type local:XOrRegion}" BasedOn="{StaticResource {x:Type local:XOrElement}}"/>
 
@@ -102,7 +103,7 @@
 
     <Style x:Key="{x:Type local:XOrRectangle}" TargetType="{x:Type local:XOrRectangle}" BasedOn="{StaticResource {x:Type local:XOrRegion}}"/>
 
-    <!-- ... -->
+    <!-- /// -->
 
     <Style x:Key="{x:Type local:XOrLine}" TargetType="{x:Type local:XOrLine}" BasedOn="{StaticResource {x:Type local:XOrElement}}"/>
 

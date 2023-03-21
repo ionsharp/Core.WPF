@@ -19,11 +19,11 @@ namespace Imagin.Core.Controls
 
         int rotationRequests;
 
-        //...
+        ///
 
         Viewport3D PART_Viewport;
 
-        //...
+        ///
 
         public static readonly DependencyProperty AnimationLengthProperty = DependencyProperty.Register(nameof(AnimationLength), typeof(int), typeof(ContentControl3D), new FrameworkPropertyMetadata(600, OnAnimationLengthChanged));
         /// <summary>
@@ -71,7 +71,7 @@ namespace Imagin.Core.Controls
             private set => SetValue(IsFrontInViewPropertyKey, value); 
         }
 
-        //...
+        ///
 
         static ContentControl3D()
         {
@@ -85,7 +85,7 @@ namespace Imagin.Core.Controls
 
         public ContentControl3D() : base() { }
 
-        //...
+        ///
 
         PerspectiveCamera CreateCamera()
         {
@@ -180,7 +180,7 @@ namespace Imagin.Core.Controls
             PART_Viewport.If(i => i != null, i => i.Camera = CreateCamera());
         }
 
-        //...
+        ///
 
         ICommand rotateCommand;
         public ICommand RotateCommand => rotateCommand ??= new RelayCommand(Rotate);

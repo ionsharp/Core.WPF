@@ -17,13 +17,13 @@ namespace Imagin.Core.Controls
 
         Rectangle PART_Rectangle;
 
-        //...
+        ///
 
         public event EventHandler<EventArgs<Color>> ForegroundColorChanged;
 
         public event EventHandler<EventArgs<Color>> BackgroundColorChanged;
 
-        //...
+        ///
 
         public static readonly DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(Color), typeof(DualColorControl), new FrameworkPropertyMetadata(System.Windows.Media.Colors.White, OnBackgroundColorChanged));
         public Color BackgroundColor
@@ -31,7 +31,7 @@ namespace Imagin.Core.Controls
             get => (Color)GetValue(BackgroundColorProperty);
             set => SetValue(BackgroundColorProperty, value);
         }
-        static void OnBackgroundColorChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DualColorControl>().OnBackgroundColorChanged(new Value<Color>(e));
+        static void OnBackgroundColorChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DualColorControl>().OnBackgroundColorChanged(e.Convert<Color>());
 
         public static readonly DependencyProperty DefaultBackgroundProperty = DependencyProperty.Register(nameof(DefaultBackground), typeof(Color), typeof(DualColorControl), new FrameworkPropertyMetadata(System.Windows.Media.Colors.White));
         public Color DefaultBackground
@@ -53,9 +53,9 @@ namespace Imagin.Core.Controls
             get => (Color)GetValue(ForegroundColorProperty);
             set => SetValue(ForegroundColorProperty, value);
         }
-        static void OnForegroundColorChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DualColorControl>().OnForegroundColorChanged(new Value<Color>(e));
+        static void OnForegroundColorChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<DualColorControl>().OnForegroundColorChanged(e.Convert<Color>());
 
-        //...
+        ///
 
         public DualColorControl() : base()
         {
@@ -86,7 +86,7 @@ namespace Imagin.Core.Controls
             });
         }
 
-        //...
+        ///
 
         void OnReset(object sender, MouseButtonEventArgs e)
         {
@@ -107,11 +107,11 @@ namespace Imagin.Core.Controls
             BackgroundColor = a;
         }
 
-        //...
+        ///
 
-        protected virtual void OnBackgroundColorChanged(Value<Color> input) => BackgroundColorChanged?.Invoke(this, new EventArgs<Color>(input.New));
+        protected virtual void OnBackgroundColorChanged(ReadOnlyValue<Color> input) => BackgroundColorChanged?.Invoke(this, new EventArgs<Color>(input.New));
 
-        protected virtual void OnForegroundColorChanged(Value<Color> input) => ForegroundColorChanged?.Invoke(this, new EventArgs<Color>(input.New));
+        protected virtual void OnForegroundColorChanged(ReadOnlyValue<Color> input) => ForegroundColorChanged?.Invoke(this, new EventArgs<Color>(input.New));
 
         public override void OnApplyTemplate()
         {

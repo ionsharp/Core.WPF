@@ -1,18 +1,17 @@
 ﻿using System;
 
-namespace Imagin.Core.Models
+namespace Imagin.Core.Models;
+
+[Name("Options"), Image(SmallImages.Options), Serializable]
+public class OptionsPanel : Panel
 {
-    [DisplayName("Options")]
-    public class OptionsPanel : Panel
-    {
-        public static readonly ResourceKey TemplateKey = new();
+    public static readonly ResourceKey TemplateKey = new();
 
-        [Hidden]
-        public override Uri Icon => Resources.InternalImage(Images.Options);
+    [Hide]
+    public override Uri Icon => Resource.GetImageUri(SmallImages.Options);
 
-        [Hidden]
-        public override string Title => "Options";
+    [Hide]
+    public override string Title => "Options";
 
-        public OptionsPanel() : base() { }
-    }
+    public OptionsPanel() : base() { }
 }

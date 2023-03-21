@@ -158,13 +158,13 @@
                         
                         <Rectangle 
                             x:Name="TodayBackground"
-                            Fill="{local:ThemeKey Key=Calendar.Button.Today}"
+                            Fill="{local:ThemeKey CalendarButtonToday}"
                             Opacity="0"
                             RadiusX="1"
                             RadiusY="1"/>
                         <Rectangle 
                             x:Name="SelectedBackground"
-                            Fill="{local:ThemeKey Key=Calendar.Button.Selected}"
+                            Fill="{local:ThemeKey CalendarButtonSelected}"
                             Opacity="0"
                             RadiusX="1"
                             RadiusY="1"/>
@@ -176,7 +176,7 @@
                         
                         <Rectangle 
                             x:Name="HighlightBackground"
-                            Fill="{local:ThemeKey Key=Calendar.Button.Over}"
+                            Fill="{local:ThemeKey CalendarButtonOver}"
                             Opacity="0"
                             RadiusX="1"
                             RadiusY="1"/>
@@ -184,7 +184,7 @@
                         <ContentPresenter 
                             x:Name="NormalText"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            TextElement.Foreground="{local:ThemeKey Key=Text}"
+                            TextElement.Foreground="{local:ThemeKey Text}"
                             Margin="5,1,5,1"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                             
@@ -341,7 +341,7 @@
                 Margin="3,7"
                 ContentTemplate="{TemplateBinding ContentTemplate}"
                 Content="{TemplateBinding Content}"
-                TextElement.Foreground="{local:ThemeKey Key=Text}"
+                TextElement.Foreground="{local:ThemeKey Text}"
                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
         </Grid>
@@ -357,7 +357,7 @@
                                 Foreground="#FF333333"
                                 FontWeight="Bold"
                                 FontSize="9.5"
-                                FontFamily="Verdana"
+                                FontFamily="{Data:Options FontFamily}"
                                 Margin="0,6,0,6"
                                 Text="{Binding}"
                                 HorizontalAlignment="Center"
@@ -467,7 +467,7 @@
     <Style x:Key="{x:Type Calendar}" TargetType="{x:Type Calendar}">
         <Setter Property="CalendarDayButtonStyle"  Value="{StaticResource Style.CalendarDayButton}"></Setter>
         <Setter Property="CalendarButtonStyle"  Value="{StaticResource StyleCalanderButton}"></Setter>
-        <Setter Property="Foreground" Value="{local:ThemeKey Key=Text}"/>
+        <Setter Property="Foreground" Value="{local:ThemeKey Text}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="MinHeight" Value="128"/>

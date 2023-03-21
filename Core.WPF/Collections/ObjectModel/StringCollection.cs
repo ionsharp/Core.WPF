@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using Imagin.Core.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-namespace Imagin.Core.Collections.ObjectModel
+namespace Imagin.Core.Collections.ObjectModel;
+
+[Serializable]
+public class StringCollection : ObservableCollection<string>
 {
-    [Serializable]
-    public class StringCollection : ObservableCollection<string>
-    {
-        public StringCollection() : base() { }
-    }
+    public StringCollection() : base() { }
+
+    public StringCollection(IEnumerable<string> input) : base(input) { }
 }

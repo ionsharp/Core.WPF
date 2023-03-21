@@ -34,22 +34,22 @@
                                         <local:ImageElement x:Name="ImageElement"/>
                                         <local:KeyTemplate.Triggers>
                                             <DataTrigger Binding="{Binding Data.PathType, Source={StaticResource Thumbnail}}" Value="Drive">
-                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:InternalImage 512-Drive.png}"/>
+                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:SmallImage 512-Drive.png}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Data.PathType, Source={StaticResource Thumbnail}}" Value="File">
-                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:InternalImage 512-File.png}"/>
+                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:SmallImage 512-File.png}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Data.PathType, Source={StaticResource Thumbnail}}" Value="Folder">
-                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:InternalImage 512-Folder.png}"/>
+                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:SmallImage 512-Folder.png}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Data.PathType, Source={StaticResource Thumbnail}}" Value="Nothing">
                                                 <Setter TargetName="ImageElement" Property="Source" Value="{x:Null}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Data.PathType, Source={StaticResource Thumbnail}}" Value="Root">
-                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:InternalImage 512-Folder.png}"/>
+                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:SmallImage 512-Folder.png}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Data.PathType, Source={StaticResource Thumbnail}}" Value="Shortcut">
-                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:InternalImage 512-File.png}"/>
+                                                <Setter TargetName="ImageElement" Property="Source" Value="{Markup:SmallImage 512-File.png}"/>
                                             </DataTrigger>
                                         </local:KeyTemplate.Triggers>
                                     </local:KeyTemplate>

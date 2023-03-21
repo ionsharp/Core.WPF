@@ -1,20 +1,19 @@
 ﻿using Imagin.Core.Analytics;
 using Imagin.Core.Local;
-using Imagin.Core.Local.Engine;
 using System.Globalization;
+using WPFLocalizeExtension.Engine;
 
-namespace Imagin.Core.Linq
+namespace Imagin.Core.Linq;
+
+public static class XLanguage
 {
-    public static class XLanguage
+    public static void Set(this Language language)
     {
-        public static void Set(this Language language)
+        Try.Invoke(() =>
         {
-            Try.Invoke(() =>
-            {
-                LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
-                LocalizeDictionary.Instance.Culture = new CultureInfo(language.GetAttribute<CultureAttribute>().Code);
-            },
-            e => Log.Write<Language>(e));
-        }
+            LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
+            LocalizeDictionary.Instance.Culture = new CultureInfo(language.GetAttribute<CultureAttribute>().Code);
+        },
+        e => Log.Write<Language>(e));
     }
 }

@@ -20,53 +20,54 @@
             <local:TitleLabel Step="6">
                 <TextBlock Text="{Binding Name}"/>
             </local:TitleLabel>
-            <TextBlock FontSize="13" FontStyle="Italic" Opacity="0.5" Text="{Binding Converter={x:Static local:ColorModelLongNameConverter.Default}}"/>
-            <TextBlock FontSize="14" Text="{Data:DescriptionBinding}" TextWrapping="Wrap"/>
+            <TextBlock FontSize="13" FontStyle="Italic" Opacity="0.5" Text="{Data:Bind Convert={x:Type Conversion:ColorModelLongNameConverter}}"/>
+            <TextBlock FontSize="14" Text="{Data:Bind Convert=Conversion:DescriptionAttributeConverter}" TextWrapping="Wrap"/>
         </StackPanel>
     </DataTemplate>
-    
-    <DataTemplate x:Key="{x:Static Linq:XColor.ToolTipTemplateKey}">
-        <Grid Linq:XGrid.AutoColumns="True" Linq:XGrid.Columns="Auto,*">
-            <Grid.Resources>
-                <Data:Reference x:Key="Color" Data="{Binding}"/>
-            </Grid.Resources>
-            <local:ClipBorder
-                Background="{x:Static Media:CheckerBrush.Default}"
-                BorderBrush="Black"
-                BorderThickness="1"
-                CornerRadius="999"
-                Height="32"
-                Margin="0,0,10,0"
-                VerticalAlignment="Top"
-                Width="32">
-                <local:FillElement Fill="{Binding Converter={x:Static Conversion:ColorToSolidColorBrushConverter.Default}}"/>
-            </local:ClipBorder>
-            <StackPanel Linq:XPanel.Spacing="0,0,0,5" Linq:XPanel.SpacingExcept="Last">
-                <TextBlock FontSize="17" Text="{Binding Converter={x:Static Conversion:ColorNameConverter.Default}}" 
+
+    <DataTemplate x:Key="{x:Static Linq:XColor.IconTemplateKey}">
+        <Ellipse Fill="{Data:Bind Convert=Conversion:ByteVector4ToSolidColorBrushConverter}" Height="16" Width="16" Stroke="Black" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="{x:Static Linq:XColor.ToolTipHeaderTemplateKey}">
+        <StackPanel Linq:XPanel.HorizontalContentAlignment="Center">
+            <StackPanel Linq:XPanel.VerticalContentAlignment="Center" Orientation="Horizontal">
+                <local:ClipBorder Background="{x:Static Media:CheckerBrush.Default}"
+                    BorderBrush="{Data:Bind Convert={x:Type Conversion:ColorToBlackOrWhiteConverter}}" BorderThickness="1"
+                    CornerRadius="999"
+                    Height="16" Width="16">
+                    <local:FillElement Fill="{Data:Bind Convert={x:Type Conversion:ColorToSolidColorBrushConverter}}"/>
+                </local:ClipBorder>
+                <TextBlock Text="{Data:Bind Convert={x:Type Conversion:ColorNameConverter}}" 
                     FontStyle="Italic" 
-                    Opacity="0.8" 
-                    Visibility="{Data:VisibilityBinding Text, Relative=Self}"/>
-                <TextBlock FontSize="15"><Run FontWeight="Bold" Text="#"/><Run FontWeight="Bold" Text="{Binding Converter={x:Static Conversion:ColorToStringConverter.Default}, Mode=OneWay}"/><Run Text="{Binding Converter={x:Static Conversion:ColorToShortStringConverter.Default}, ConverterParameter=' ({0})', Mode=OneWay}"/></TextBlock>
-                <ItemsControl ItemsSource="{Data:RemoteBinding ColorToolTip, Converter={x:Static Conversion:StringCollectionConverter.Default}, RemoteSource=Options}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="0,5,0,0">
-                                <local:ShadeLabel Content="{Binding}" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{x:Static Conversion:ColorMultiConverter.Default}" Mode="OneWay">
-                                            <Binding Path="Data" Source="{StaticResource Color}"/>
-                                            <Binding/>
-                                            <Data:RemoteBinding Path="ColorToolTipNormalize" RemoteSource="Options"/>
-                                            <Data:RemoteBinding Path="ColorToolTipPrecision" RemoteSource="Options"/>
-                                        </MultiBinding> 
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                    Margin="5,0,0,0"/>
             </StackPanel>
-        </Grid>
+            <TextBlock Margin="0,2.5,0,0"><Run FontWeight="Bold" Text="#"/><Run FontWeight="Bold" Text="{Data:Bind Convert={x:Type Conversion:ColorToStringConverter}, Mode=OneWay}"/><Run Text="{Data:Bind Convert={x:Type Conversion:ColorToShortStringConverter}, ConverterParameter=' ({0})', Mode=OneWay}"/></TextBlock>
+        </StackPanel>
+</DataTemplate>
+
+    <DataTemplate x:Key="{x:Static Linq:XColor.ToolTipTemplateKey}">
+        <ItemsControl ItemsSource="{Data:Options ColorToolTip, Convert={x:Type Conversion:StringCollectionConverter}}">
+            <ItemsControl.Resources>
+                <Data:Reference x:Key="Color" Data="{Binding}"/>
+            </ItemsControl.Resources>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,5,0,0">
+                        <local:ShadeLabel Content="{Binding}" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock HorizontalAlignment="Center">
+                            <TextBlock.Text>
+                                <Data:MultiBind Convert="{x:Type Conversion:ColorMultiConverter}" Mode="OneWay">
+                                    <Binding Path="Data" Source="{StaticResource Color}"/>
+                                    <Binding/>
+                                    <Data:Options Path="ColorToolTipNormalize"/>
+                                    <Data:Options Path="ColorToolTipPrecision"/>
+                                </Data:MultiBind>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </DataTemplate>
 </ResourceDictionary>

@@ -1,4 +1,5 @@
 ﻿using Imagin.Core.Analytics;
+using Imagin.Core.Collections.Generic;
 using Imagin.Core.Input;
 using Imagin.Core.Linq;
 using System;
@@ -6,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Imagin.Core.Collections.Concurrent
@@ -36,18 +38,23 @@ namespace Imagin.Core.Collections.Concurrent
 
         #region Properties
 
-        public int Count 
-            => DoBaseRead(() => ReadCollection.Count);
+        [Hide]
+        public int Count => DoBaseRead(() => ReadCollection.Count);
 
-        public bool IsEmpty
-            => Count == 0;
+        [Hide]
+        public bool IsReadOnly => DoBaseRead(() => ((ICollection<T>)ReadCollection).IsReadOnly);
 
-        public bool IsNotEmpty
-            => !IsEmpty;
+        #endregion
+
+        #region IPropertyChanged
+
+        [NonSerialized]
+        readonly ObjectDictionary NonSerializedProperties = new();
+        ObjectDictionary IPropertyChanged.NonSerializedProperties => NonSerializedProperties;
+
+        readonly ObjectDictionary SerializedProperties = new();
+        ObjectDictionary IPropertyChanged.SerializedProperties => SerializedProperties;
         
-        public bool IsReadOnly 
-            => DoBaseRead(() => ((ICollection<T>)ReadCollection).IsReadOnly);
-
         #endregion
 
         #region ConcurrentCollection
@@ -148,12 +155,7 @@ namespace Imagin.Core.Collections.Concurrent
 
         protected virtual void OnAdded(T input) { }
 
-        protected virtual void OnChanged()
-        {
-            OnPropertyChanged(nameof(Count));
-            OnPropertyChanged(nameof(IsEmpty));
-            OnPropertyChanged(nameof(IsNotEmpty));
-        }
+        protected virtual void OnChanged() => this.Update(() => Count);
 
         protected virtual void OnRemoved(T input) { }
 
@@ -172,9 +174,6 @@ namespace Imagin.Core.Collections.Concurrent
             e.Cancel = f.Cancel;
             Removing?.Invoke(this, e);
         }
-
-        public virtual void OnPropertyChanged(string propertyName)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         #endregion
 
@@ -248,6 +247,16 @@ namespace Imagin.Core.Collections.Concurrent
             OnRemoved(item);
             OnChanged();
         }
+
+        ///
+
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "") => PropertyChanged?.Invoke(this, new(propertyName));
+
+        public virtual void OnPropertyChanged(PropertyEventArgs e) { }
+
+        public virtual void OnPropertyChanging(PropertyChangingEventArgs e) { }
+
+        public virtual void OnPropertyGet(GetPropertyEventArgs e) { }
 
         #endregion
 

@@ -345,7 +345,7 @@
   <data name="Paste" xml:space="preserve">
     <value>ペースト</value>
   </data>
-  <data name="Abort" xml:space="preserve">
+  <data name="Signaler un bug" xml:space="preserve">
     <value>アボート</value>
   </data>
   <data name="All" xml:space="preserve">
@@ -1118,5 +1118,77 @@
   </data>
   <data name="Profiles" xml:space="preserve">
     <value>プロファイル</value>
+  </data>
+  <data name="Tiles" xml:space="preserve">
+    <value>タイル</value>
+  </data>
+  <data name="Closing" xml:space="preserve">
+    <value>閉鎖</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Draw" xml:space="preserve">
+    <value>描く</value>
+  </data>
+  <data name="ReportABug" xml:space="preserve">
+    <value>バグを報告</value>
+  </data>
+  <data name="Animation" xml:space="preserve">
+    <value>アニメーション</value>
+  </data>
+  <data name="Selected" xml:space="preserve">
+    <value>選択済み</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>説明なし</value>
+  </data>
+  <data name="This" xml:space="preserve">
+    <value>これ</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>報告</value>
+  </data>
+  <data name="Blend" xml:space="preserve">
+    <value>ブレンド</value>
+  </data>
+  <data name="Effect" xml:space="preserve">
+    <value>効果</value>
+  </data>
+  <data name="Shape" xml:space="preserve">
+    <value>形</value>
+  </data>
+  <data name="Tile" xml:space="preserve">
+    <value>タイル</value>
+  </data>
+  <data name="Dock" xml:space="preserve">
+    <value>ドック</value>
+  </data>
+  <data name="DockAll" xml:space="preserve">
+    <value>すべてをドッキング</value>
+  </data>
+  <data name="GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="Manage" xml:space="preserve">
+    <value>管理</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>すべて表示する</value>
+  </data>
+  <data name="UnpinAll" xml:space="preserve">
+    <value>すべての固定を解除</value>
+  </data>
+  <data name="Explore" xml:space="preserve">
+    <value>探検</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>家</value>
+  </data>
+  <data name="Issues" xml:space="preserve">
+    <value>問題</value>
+  </data>
+  <data name="Wiki" xml:space="preserve">
+    <value>ウィキ</value>
   </data>
 </root>

@@ -1,20 +1,19 @@
 ﻿using System;
 
-namespace Imagin.Core.Config
+namespace Imagin.Core.Config;
+
+public class StartTask
 {
-    public class StartTask
+    public readonly bool Dispatch;
+
+    public readonly Action Action;
+
+    public readonly string Message;
+
+    public StartTask(bool dispatch, string message, Action action)
     {
-        public readonly bool Dispatch;
-
-        public readonly Action Action;
-
-        public readonly string Message;
-
-        public StartTask(bool dispatch, string message, Action action)
-        {
-            Dispatch = dispatch;
-            Message = message;
-            Action = action;
-        }
+        Dispatch = dispatch;
+        Message = message;
+        Action = action;
     }
 }

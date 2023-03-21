@@ -1,4 +1,5 @@
-﻿using Imagin.Core.Linq;
+﻿using Imagin.Core.Conversion;
+using Imagin.Core.Linq;
 using System.Collections;
 using System.Linq;
 using System.Windows;
@@ -29,7 +30,7 @@ namespace Imagin.Core.Controls
             get => (IEnumerable)GetValue(ItemsSourceProperty);
             set => SetValue(ItemsSourceProperty, value);
         }
-        static void OnItemsSourceChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<HorizontalGrid>().OnItemsSourceChanged(new Value<IEnumerable>(e));
+        static void OnItemsSourceChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => i.As<HorizontalGrid>().OnItemsSourceChanged(e.Convert<IEnumerable>());
 
         public static readonly DependencyProperty SplitterStyleProperty = DependencyProperty.Register(nameof(SplitterStyle), typeof(Style), typeof(HorizontalGrid), new FrameworkPropertyMetadata(null));
         public Style SplitterStyle
@@ -45,7 +46,7 @@ namespace Imagin.Core.Controls
             set => SetValue(SplitterVisibilityProperty, value);
         }
 
-        //...
+        ///
 
         protected virtual void Clear()
         {
@@ -53,7 +54,7 @@ namespace Imagin.Core.Controls
             Children.Clear();
         }
 
-        //...
+        ///
 
         protected virtual ContentPresenter OnContainerCreated(object input)
         {
@@ -90,14 +91,14 @@ namespace Imagin.Core.Controls
             result.Bind
                 (GridSplitter.VisibilityProperty, 
                 nameof(SplitterVisibility), 
-                this, BindingMode.OneWay, 
-                Conversion.BooleanToVisibilityConverter.Default);
+                this, BindingMode.OneWay,
+                Converter.Get<Conversion.BooleanToVisibilityConverter>());
             return result;
         }
 
-        //...
+        ///
 
-        protected virtual void OnItemsSourceChanged(Value<IEnumerable> input)
+        protected virtual void OnItemsSourceChanged(ReadOnlyValue<IEnumerable> input)
         {
             Clear();
             if (input.New != null)

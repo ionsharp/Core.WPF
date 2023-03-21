@@ -10,14 +10,14 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BackgroundStroke" Value="#22000000"/>
         <Setter Property="BackgroundStrokeThickness" Value="6"/>
-        <Setter Property="Foreground" Value="{local:ThemeKey Key=ProgressCircleForeground}"/>
+        <Setter Property="Foreground" Value="{local:ThemeKey ProgressCircleForeground}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="InnerRadius" Value="20"/>
         <Setter Property="Linq:XProgressBar.Content" Value="{Data:Self Value}" />
         <Setter Property="Linq:XProgressBar.ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <TextBlock Foreground="{local:ThemeKey Key=Text}" Text="{Binding StringFormat={}{0:p0}}"/>
+                    <TextBlock Foreground="{local:ThemeKey Text}" Text="{Binding StringFormat={}{0:p0}}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -29,23 +29,23 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProgressRing">
                     <Grid
-                        Height="{Data:TemplatedParent Radius, Converter={x:Static Conversion:RadiusToDiameterConverter.Default}}"
-                        Width="{Data:TemplatedParent Radius, Converter={x:Static Conversion:RadiusToDiameterConverter.Default}}">
+                        Height="{Data:TemplatedParent Radius, Convert={x:Type Conversion:RadiusToDiameterConverter}}"
+                        Width="{Data:TemplatedParent Radius, Convert={x:Type Conversion:RadiusToDiameterConverter}}">
                         <Grid.Resources>
                             <Data:Reference x:Key="ProgressRing" Data="{Data:TemplatedParent}"/>
                         </Grid.Resources>
                         <Path Fill="{TemplateBinding Background}">
                             <Path.Data>
                                 <EllipseGeometry 
-                                    Center="{Data:Ancestor Radius, local:ProgressRing, Converter={x:Static Conversion:DoubleToPointConverter.Default}}">
+                                    Center="{Data:Ancestor Radius, local:ProgressRing, Convert={x:Type Conversion:DoubleToPointConverter}}">
                                     <EllipseGeometry.RadiusX>
-                                        <MultiBinding Converter="{x:Static Conversion:MathMultiConverter.Default}">
+                                        <Data:MultiBind Convert="{x:Type Conversion:MathMultiConverter}">
                                             <Binding Path="Data.Radius" 
                                                 Source="{StaticResource ProgressRing}"/>
                                             <Binding Source="{x:Static Math:NumberOperation.Subtract}"/>
                                             <Binding Path="Data.StrokeThickness" 
                                                 Source="{StaticResource ProgressRing}"/>
-                                        </MultiBinding>
+                                        </Data:MultiBind>
                                     </EllipseGeometry.RadiusX>
                                     <EllipseGeometry.RadiusY>
                                         <Data:Self Path="RadiusX"/>
@@ -54,10 +54,10 @@
                             </Path.Data>
                         </Path>
                         <Ellipse
-                            Height="{TemplateBinding Radius, Converter={x:Static Conversion:RadiusToDiameterConverter.Default}}"
+                            Height="{Data:TemplatedParent Radius, Convert={x:Type Conversion:RadiusToDiameterConverter}}"
                             Stroke="{TemplateBinding BackgroundStroke}" 
                             StrokeThickness="{TemplateBinding BackgroundStrokeThickness}"
-                            Width="{TemplateBinding Radius, Converter={x:Static Conversion:RadiusToDiameterConverter.Default}}"/>
+                            Width="{Data:TemplatedParent Radius, Convert={x:Type Conversion:RadiusToDiameterConverter}}"/>
                         <Path
                             Stroke="{TemplateBinding Foreground}" 
                             StrokeThickness="{TemplateBinding StrokeThickness}">
@@ -65,34 +65,34 @@
                                 <PathGeometry>
                                     <PathFigure>
                                         <PathFigure.StartPoint>
-                                            <MultiBinding Converter="{x:Static local:ProgressRing.StrokeToStartPointConverter}">
+                                            <Data:MultiBind Convert="{x:Type local:ProgressRingStrokeToStartPointConverter}">
                                                 <Binding Path="Data.Radius" 
                                                     Source="{StaticResource ProgressRing}"/>
                                                 <Binding Path="Data.StrokeThickness" 
                                                     Source="{StaticResource ProgressRing}"/>
-                                            </MultiBinding>
+                                            </Data:MultiBind>
                                         </PathFigure.StartPoint>
                                         <ArcSegment 
                                             RotationAngle="0" 
                                             SweepDirection="Clockwise"
-                                            IsLargeArc="{Data:Ancestor Angle, local:ProgressRing, Converter={x:Static Conversion:DoubleGreaterThanConverter.Default}, ConverterParameter=180}">
+                                            IsLargeArc="{Data:Ancestor Angle, local:ProgressRing, Convert={x:Type Conversion:DoubleGreaterThanConverter}, ConverterParameter=180}">
                                             <ArcSegment.Point>
-                                                <MultiBinding Converter="{x:Static local:ProgressRing.AngleToPointConverter}">
+                                                <Data:MultiBind Convert="{x:Type local:ProgressRingAngleToPointConverter}">
                                                     <Binding Path="Data.Angle" 
                                                         Source="{StaticResource ProgressRing}"/>
                                                     <Binding Path="Data.Radius" 
                                                         Source="{StaticResource ProgressRing}"/>
                                                     <Binding Path="Data.StrokeThickness" 
                                                         Source="{StaticResource ProgressRing}"/>
-                                                </MultiBinding>
+                                                </Data:MultiBind>
                                             </ArcSegment.Point>
                                             <ArcSegment.Size>
-                                                <MultiBinding Converter="{x:Static local:ProgressRing.RadiusToSizeConverter}">
+                                                <Data:MultiBind Convert="{x:Type local:ProgressRingRadiusToSizeConverter}">
                                                     <Binding Path="Data.Radius" 
                                                         Source="{StaticResource ProgressRing}"/>
                                                     <Binding Path="Data.StrokeThickness" 
                                                         Source="{StaticResource ProgressRing}"/>
-                                                </MultiBinding>
+                                                </Data:MultiBind>
                                             </ArcSegment.Size>
                                         </ArcSegment>
                                     </PathFigure>

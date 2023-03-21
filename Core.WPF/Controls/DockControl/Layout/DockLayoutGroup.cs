@@ -8,22 +8,12 @@ namespace Imagin.Core.Controls
     [Serializable]
     public class DockLayoutGroup : DockLayoutElement
     {
-        ObservableCollection<DockLayoutElement> elements = new();
         [XmlArray]
         [XmlArrayItem("Element")]
-        public ObservableCollection<DockLayoutElement> Elements
-        {
-            get => elements;
-            set => this.Change(ref elements, value);
-        }
+        public ObservableCollection<DockLayoutElement> Elements { get => Get(new ObservableCollection<DockLayoutElement>()); set => Set(value); }
 
-        Orientation orientation = Orientation.Horizontal;
         [XmlAttribute]
-        public Orientation Orientation
-        {
-            get => orientation;
-            set => this.Change(ref orientation, value);
-        }
+        public Orientation Orientation { get => Get(Orientation.Horizontal); set => Set(value); }
 
         public DockLayoutGroup() : base() { }
 

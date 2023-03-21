@@ -13,7 +13,7 @@ namespace Imagin.Core.Controls
     {
         #region (class) DirectionModel
 
-        public class DirectionModel : BaseNamable
+        public class DirectionModel : Namable
         {
             readonly public int DefaultColumn;
 
@@ -22,26 +22,11 @@ namespace Imagin.Core.Controls
             readonly CardinalDirection _direction = CardinalDirection.Unknown;
             public CardinalDirection Direction => _direction;
 
-            int _column = 0;
-            public int Column
-            {
-                get => _column;
-                set => this.Change(ref _column, value);
-            }
+            public int Column { get => Get(0); set => Set(value); }
 
-            ImageSource _icon = default;
-            public ImageSource Icon
-            {
-                get => _icon;
-                set => this.Change(ref _icon, value);
-            }
+            public ImageSource Icon { get => Get<ImageSource>(); set => Set(value); }
 
-            int _row = 0;
-            public int Row
-            {
-                get => _row;
-                set => this.Change(ref _row, value);
-            }
+            public int Row { get => Get(0); set => Set(value); }
 
             internal DirectionModel(int column, int row, int direction) : base()
             {
@@ -69,7 +54,7 @@ namespace Imagin.Core.Controls
             get => (CardinalDirection)GetValue(DirectionProperty);
             set => SetValue(DirectionProperty, value);
         }
-        static void OnDirectionChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => (i as DirectionControl).OnDirectionChanged(new Value<CardinalDirection>(e));
+        static void OnDirectionChanged(DependencyObject i, DependencyPropertyChangedEventArgs e) => (i as DirectionControl).OnDirectionChanged(e.Convert<CardinalDirection>());
 
         public static readonly DependencyProperty ELabelProperty = DependencyProperty.Register(nameof(ELabel), typeof(string), typeof(DirectionControl), new FrameworkPropertyMetadata(default(string), OnLabelChanged));
         public string ELabel
@@ -259,7 +244,7 @@ namespace Imagin.Core.Controls
                     d.Row += y;
                 }
             }
-            else OnDirectionChanged(new Value<CardinalDirection>(CardinalDirection.Origin));
+            else OnDirectionChanged(new ReadOnlyValue<CardinalDirection>(CardinalDirection.Origin));
         }
 
         /// <summary>
@@ -283,7 +268,7 @@ namespace Imagin.Core.Controls
         /// Occurs when <see cref="Direction"/> changes.
         /// </summary>
         /// <param name="value"></param>
-        protected virtual void OnDirectionChanged(Value<CardinalDirection> input)
+        protected virtual void OnDirectionChanged(ReadOnlyValue<CardinalDirection> input)
         {
             var positions = new int[,]
             {

@@ -15,13 +15,8 @@ namespace Imagin.Core.Controls
         [XmlIgnore]
         public readonly List<Document> Documents = new();
 
-        List<DockLayoutPanel> panels = new();
         [XmlArray]
-        public List<DockLayoutPanel> Panels
-        {
-            get => panels;
-            set => this.Change(ref panels, value);
-        }
+        public List<DockLayoutPanel> Panels { get => Get(new List<DockLayoutPanel>()); set => Set(value); }
 
         public DockLayoutDocumentGroup() : base() { }
 
@@ -35,7 +30,7 @@ namespace Imagin.Core.Controls
                     Documents.Add(j);
 
                 else if (i is Panel k)
-                    panels.Add(new DockLayoutPanel(k.Name));
+                    Panels.Add(new DockLayoutPanel(k.Name));
             }
         }
 
